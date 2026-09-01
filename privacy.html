@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy — The Draft Model</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+  <div id="app"></div>
+  <script src="./assets/data.js"></script>
+  <script src="./assets/app.js"></script>
+  <script>
+    TR.renderSimple(document.getElementById("app"), "", "Privacy", "Last updated September 1, 2026", `
+      <p>This page describes how The Draft Model handles information while the site is a public prototype. We do not currently offer user accounts.</p>
+      <h2>What we collect</h2>
+      <ul>
+        <li>Server and CDN logs typical of any website: IP address, browser type, pages requested, timestamps. Cloudflare processes this traffic as our host.</li>
+        <li>Email you send to us, if you write <a href="mailto:andrew@juntonova.com">andrew@juntonova.com</a>.</li>
+        <li>Public messages you send on X if you contact <a href="https://x.com/jandrewclark" target="_blank" rel="noopener noreferrer">@jandrewclark</a>.</li>
+      </ul>
+      <h2>What we do not collect yet</h2>
+      <p>We do not run an account system, mailing-list signup, or payment form on this site. We do not sell personal information. We do not build advertising profiles from this prototype.</p>
+      <h2>Cookies and analytics</h2>
+      <p>Cloudflare may set cookies or similar signals required to deliver and secure the site. If we add a separate analytics tool later, this page will name it.</p>
+      <h2>Third parties</h2>
+      <p>The site is hosted on Cloudflare. Fonts may load from Google Fonts. Links to X leave our site and are governed by X’s policies.</p>
+      <h2>Retention</h2>
+      <p>Operational logs are kept only as long as needed to run and secure the service. Emails you send are kept as ordinary business correspondence.</p>
+      <h2>Your requests</h2>
+      <p>If you want a copy of information you sent us, or want it deleted, email <a href="mailto:andrew@juntonova.com">andrew@juntonova.com</a>. We will handle reasonable requests.</p>
+      <h2>Children</h2>
+      <p>The site is not directed at children under 13. We do not knowingly collect personal information from them.</p>
+      <h2>Changes</h2>
+      <p>If collection practices change — accounts, newsletters, paid products — we will update this page first.</p>
+    `);
+  </script>
+</body>
+</html>
