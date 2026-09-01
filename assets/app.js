@@ -21,7 +21,8 @@ function footer() {
   return `<footer class="wrap">
     <div class="foot">
       <div class="copy">
-        <div><b>© 2026 The Draft Model</b></div>
+        <div><b>© 2026 Junto Nova</b></div>
+        <div>The Draft Model is a DBA of Junto Nova.</div>
         <div>Probabilities, not opinions. · Updated ${TANK_RANK.updated} · v${TANK_RANK.version}</div>
       </div>
       <nav class="foot-links">
