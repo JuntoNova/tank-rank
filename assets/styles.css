@@ -94,10 +94,19 @@ tr:hover td { background: color-mix(in srgb, var(--lime) 4%, transparent); }
 .prose h2 { margin: 28px 0 10px; }
 .prose p, .prose li { margin-bottom: 12px; }
 .prose ul { padding-left: 18px; }
+.prose a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
 
 .banner { border: 1px solid color-mix(in srgb, var(--gold) 40%, var(--line)); background: color-mix(in srgb, var(--gold) 8%, var(--bg-2)); color: #efe3b8; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin: 16px 0 20px; }
 
-footer { border-top: 1px solid var(--line); padding: 28px 0 48px; color: var(--muted); font-size: 13px; display: flex; justify-content: space-between; gap: 16px; }
+footer { border-top: 1px solid var(--line); padding: 28px 0 48px; color: var(--muted); font-size: 13px; }
+footer .foot {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap;
+}
+footer .copy { line-height: 1.55; }
+footer .copy b { color: var(--text); font-weight: 560; }
+footer .foot-links { display: flex; flex-wrap: wrap; gap: 14px 18px; }
+footer .foot-links a { color: var(--muted); }
+footer .foot-links a:hover { color: var(--text); }
 
 @media (max-width: 860px) {
   .hero, .player-hero, .grid-3 { grid-template-columns: 1fr; }
