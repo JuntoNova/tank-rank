@@ -33,7 +33,7 @@ button { cursor: pointer; }
 .logo { display: flex; align-items: baseline; gap: 8px; letter-spacing: 0.04em; }
 .logo strong { font-family: var(--serif); font-weight: 600; font-size: 22px; }
 .logo span { color: var(--lime); font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; }
-.nav-links { display: flex; gap: 22px; font-size: 14px; color: var(--muted); }
+.nav-links { display: flex; gap: 16px; font-size: 14px; color: var(--muted); }
 .nav-links a.active, .nav-links a:hover { color: var(--text); }
 .badge { font-family: var(--mono); font-size: 11px; color: var(--bg); background: var(--lime); padding: 2px 7px; border-radius: 999px; }
 
@@ -56,6 +56,12 @@ h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(42px, 7vw, 84
 h2 { font-family: var(--serif); font-size: 32px; font-weight: 500; }
 .sub { color: var(--muted); font-size: 14px; }
 
+.yearbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+.year-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.year-card { display: block; background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+.year-card h3 { font-family: var(--serif); font-size: 28px; margin: 6px 0 8px; }
+.year-card p { color: var(--text); margin-bottom: 10px; }
+.year-card:hover { border-color: var(--lime); }
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 .chip { padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 13px; }
 .chip.on { background: var(--text); color: var(--bg); border-color: var(--text); }
