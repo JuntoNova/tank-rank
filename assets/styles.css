@@ -36,6 +36,15 @@ button { cursor: pointer; }
 .nav-links { display: flex; gap: 16px; font-size: 14px; color: var(--muted); }
 .nav-links a.active, .nav-links a:hover { color: var(--text); }
 .badge { font-family: var(--mono); font-size: 11px; color: var(--bg); background: var(--lime); padding: 2px 7px; border-radius: 999px; }
+.nav-toggle {
+  display: none;
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 13px;
+}
 
 .hero { padding: 72px 0 48px; display: grid; grid-template-columns: 1.3fr 0.9fr; gap: 48px; align-items: end; }
 .kicker { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--lime); margin-bottom: 16px; }
@@ -100,7 +109,6 @@ tr:hover td { background: color-mix(in srgb, var(--lime) 4%, transparent); }
 .prose h2 { margin: 28px 0 10px; }
 .prose p, .prose li { margin-bottom: 12px; }
 .prose ul { padding-left: 18px; }
-.prose a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
 
 .banner { border: 1px solid color-mix(in srgb, var(--gold) 40%, var(--line)); background: color-mix(in srgb, var(--gold) 8%, var(--bg-2)); color: #efe3b8; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin: 16px 0 20px; }
 
@@ -110,7 +118,7 @@ footer .foot {
 }
 footer .copy { line-height: 1.55; }
 footer .copy b { color: var(--text); font-weight: 560; }
-footer .foot-links { display: flex; flex-wrap: wrap; gap: 14px 18px; align-items: center; }
+footer .foot-links { display: flex; flex-wrap: wrap; gap: 14px 18px; }
 footer .foot-links a { color: var(--muted); }
 footer .foot-links a:hover { color: var(--text); }
 footer .icon-link { display: inline-flex; align-items: center; line-height: 0; }
@@ -119,5 +127,16 @@ footer .icon-link svg { display: block; }
 @media (max-width: 860px) {
   .hero, .player-hero, .grid-3 { grid-template-columns: 1fr; }
   .search { margin-left: 0; width: 100%; }
-  .nav-links { display: none; }
+  .nav-inner { flex-wrap: wrap; height: auto; min-height: 64px; padding: 12px 0; }
+  .nav-toggle { display: inline-flex; }
+  .badge { display: none; }
+  .nav-links {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 0 8px;
+  }
+  .nav-links a { padding: 10px 0; }
+  .nav.open .nav-links { display: flex; }
 }
