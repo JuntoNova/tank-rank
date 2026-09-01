@@ -21,6 +21,17 @@ function playersOf(year) {
 function nav(active) {
   const y = currentYear();
   return `
+    <style>
+      .nav-toggle{display:none}
+      @media (max-width:860px){
+        .nav-toggle{display:inline-flex;margin-left:auto;padding:6px 12px;border:1px solid var(--line);border-radius:999px;color:var(--text);font-size:13px}
+        .badge{display:none}
+        .nav-inner{flex-wrap:wrap;height:auto;min-height:64px;padding:12px 0}
+        .nav-links{display:none;width:100%;flex-direction:column;gap:4px;padding:4px 0 8px}
+        .nav-links a{padding:10px 0}
+        .nav.open .nav-links{display:flex}
+      }
+    </style>
     <header class="nav">
       <div class="wrap nav-inner">
         <a class="logo" href="./index.html"><strong>The Draft Model</strong><span>${y}</span></a>
