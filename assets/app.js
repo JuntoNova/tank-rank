@@ -29,7 +29,11 @@ function footer() {
         <a href="./terms.html">Terms</a>
         <a href="./privacy.html">Privacy</a>
         <a href="https://x.com/jandrewclark" target="_blank" rel="noopener noreferrer">X</a>
-        <a href="mailto:andrew@juntonova.com">andrew@juntonova.com</a>
+        <a class="icon-link" href="mailto:andrew@juntonova.com" aria-label="Email The Draft Model">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path fill="currentColor" d="M3 5.5A2.5 2.5 0 0 1 5.5 3h13A2.5 2.5 0 0 1 21 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-13Zm2.5-.5a.5.5 0 0 0-.5.5v.3l7 4.4 7-4.4V5.5a.5.5 0 0 0-.5-.5h-13Zm13.5 2.86-6.62 4.14a1.5 1.5 0 0 1-1.76 0L4 7.86V18.5a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V7.86Z"/>
+          </svg>
+        </a>
       </nav>
     </div>
   </footer>`;
