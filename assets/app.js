@@ -1,13 +1,33 @@
 const fmtPct = (n) => `${Math.round(n * 100)}%`;
 const bucketLabel = { college: "College", "high-school": "High School", international: "International" };
 
+function currentYear() {
+  return TANK_RANK.currentYear;
+}
+
+function parseYear() {
+  const y = Number(new URLSearchParams(location.search).get("year"));
+  return TANK_RANK.drafts[y] ? y : currentYear();
+}
+
+function draftOf(year) {
+  return TANK_RANK.drafts[year] || TANK_RANK.drafts[currentYear()];
+}
+
+function playersOf(year) {
+  return [...(draftOf(year).players || [])].sort((a, b) => a.rank - b.rank);
+}
+
 function nav(active) {
+  const y = currentYear();
   return `
     <header class="nav">
       <div class="wrap nav-inner">
-        <a class="logo" href="./index.html"><strong>The Draft Model</strong><span>2026</span></a>
+        <a class="logo" href="./index.html"><strong>The Draft Model</strong><span>${y}</span></a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Open menu">Menu</button>
         <nav class="nav-links">
           <a class="${active === "board" ? "active" : ""}" href="./board.html">Big Board</a>
+          <a class="${active === "drafts" ? "active" : ""}" href="./drafts.html">Previous Drafts</a>
           <a class="${active === "method" ? "active" : ""}" href="./methodology.html">Methodology</a>
           <a class="${active === "rankings" ? "active" : ""}" href="./rankings.html">All Rankings</a>
           <a class="${active === "about" ? "active" : ""}" href="./about.html">About</a>
@@ -15,6 +35,17 @@ function nav(active) {
         <span class="badge">Prototype</span>
       </div>
     </header>`;
+}
+
+function bindNav(root) {
+  const header = root.querySelector(".nav");
+  const toggle = root.querySelector(".nav-toggle");
+  if (!header || !toggle) return;
+  toggle.onclick = () => {
+    const open = header.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.textContent = open ? "Close" : "Menu";
+  };
 }
 
 function footer() {
@@ -46,20 +77,31 @@ function deltaHtml(d) {
   return `<span class="delta ${cls}">${sign}${d}</span>`;
 }
 
+function yearBar(year) {
+  return `<div class="yearbar">
+    ${TANK_RANK.years.map((y) =>
+      `<a class="chip ${y === year ? "on" : ""}" href="./board.html?year=${y}">${y}${y === currentYear() ? " · live" : ""}</a>`
+    ).join("")}
+  </div>`;
+}
+
 function renderBoard(root) {
   const params = new URLSearchParams(location.search);
+  const year = parseYear();
+  const draft = draftOf(year);
   let bucket = params.get("bucket") || "all";
   let q = params.get("q") || "";
+  document.title = `${year} Big Board — The Draft Model`;
 
   const apply = () => {
-    let rows = [...TANK_RANK.players].sort((a, b) => a.rank - b.rank);
+    let rows = playersOf(year);
     if (bucket !== "all") rows = rows.filter((p) => p.bucket === bucket);
     if (q) {
       const s = q.toLowerCase();
       rows = rows.filter((p) => p.name.toLowerCase().includes(s) || p.school.toLowerCase().includes(s));
     }
     root.querySelector("#rows").innerHTML = rows.map((p) => `
-      <tr onclick="location.href='./player.html?id=${p.id}'" style="cursor:pointer">
+      <tr onclick="location.href='./player.html?year=${year}&id=${p.id}'" style="cursor:pointer">
         <td class="rank">${String(p.rank).padStart(2, "0")}</td>
         <td>
           <div class="name">${p.name}</div>
@@ -76,16 +118,17 @@ function renderBoard(root) {
   };
 
   root.innerHTML = `
-    ${nav("board")}
+    ${nav(year === currentYear() ? "board" : "drafts")}
     <main class="wrap section">
-      <div class="banner">${TANK_RANK.disclaimer}</div>
+      <div class="banner">${TANK_RANK.disclaimer} ${draft.note || ""}</div>
       <div class="section-head">
         <div>
-          <div class="kicker">Living board</div>
-          <h2>The Draft Model Top 300</h2>
+          <div class="kicker">${year === currentYear() ? "Living board" : "Archive board"}</div>
+          <h2>${year} Top 300</h2>
           <p class="sub">Prototype slice shown. Full 100 / 100 / 100 arrives with the ranking engine.</p>
         </div>
       </div>
+      ${yearBar(year)}
       <div class="toolbar">
         ${["all", ...TANK_RANK.buckets].map((b) =>
           `<button class="chip ${bucket === b ? "on" : ""}" data-bucket="${b}">${b === "all" ? "All" : bucketLabel[b]}</button>`
@@ -115,41 +158,43 @@ function renderBoard(root) {
     };
   });
   root.querySelector("#q").oninput = (e) => { q = e.target.value; apply(); };
+  bindNav(root);
   apply();
 }
 
 function renderHome(root) {
-  const top = [...TANK_RANK.players].sort((a, b) => a.rank - b.rank).slice(0, 8);
+  const year = currentYear();
+  const top = playersOf(year).slice(0, 8);
   root.innerHTML = `
     ${nav("home")}
     <main class="wrap">
       <section class="hero">
         <div>
-          <div class="kicker">NBA rankings without the narrative</div>
+          <div class="kicker">${year} NBA Draft</div>
           <h1>Probabilities,<br>not opinions.</h1>
           <p class="lede">The Draft Model trains on decades of pre-draft profiles and actual NBA careers — then publishes transparent odds for HOF, All-Star, All-NBA, bust risk, and expected value.</p>
           <div class="cta-row">
-            <a class="btn primary" href="./board.html">Open the 2026 board</a>
-            <a class="btn ghost" href="./methodology.html">Read the methodology</a>
+            <a class="btn primary" href="./board.html">Open the ${year} board</a>
+            <a class="btn ghost" href="./drafts.html">Previous drafts</a>
           </div>
         </div>
         <div class="stat-grid">
           <div class="stat-card"><b>300</b><span>Prospects across three buckets</span></div>
           <div class="stat-card"><b>100 / 100 / 100</b><span>College · High school · International</span></div>
-          <div class="stat-card"><b>5</b><span>Probability targets per player</span></div>
+          <div class="stat-card"><b>11</b><span>Draft classes on the site, ${year - 10}–${year}</span></div>
           <div class="stat-card"><b>Weekly</b><span>Target update cadence in season</span></div>
         </div>
       </section>
       <section class="section">
         <div class="section-head">
-          <h2>Board preview</h2>
+          <h2>${year} board preview</h2>
           <a class="sub" href="./board.html">See all →</a>
         </div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Rk</th><th>Player</th><th>Bucket</th><th>P(AS)</th><th>P(Bust)</th><th>Δ</th></tr></thead>
             <tbody>
-              ${top.map((p) => `<tr onclick="location.href='./player.html?id=${p.id}'" style="cursor:pointer">
+              ${top.map((p) => `<tr onclick="location.href='./player.html?year=${year}&id=${p.id}'" style="cursor:pointer">
                 <td class="rank">${String(p.rank).padStart(2,"0")}</td>
                 <td><div class="name">${p.name}</div><div class="meta">${p.school}</div></td>
                 <td><span class="tag">${bucketLabel[p.bucket]}</span></td>
@@ -165,25 +210,55 @@ function renderHome(root) {
         <div class="grid-3">
           <article class="card"><div class="kicker">Thesis</div><h3>Data first</h3><p>Expert boards are consensus plus narrative. We map measurable pre-draft traits to what actually happened in the NBA.</p></article>
           <article class="card"><div class="kicker">Output</div><h3>Odds, not vibes</h3><p>Every player carries P(HOF), P(All-Star), P(All-NBA), bust risk, expected win shares, comps, and delta vs. consensus.</p></article>
-          <article class="card"><div class="kicker">Roadmap</div><h3>Then everything else</h3><p>Same engine, year-round: shoes, GMs, courts, historical classes — automated graphics and a commerce loop.</p></article>
+          <article class="card"><div class="kicker">Archive</div><h3>Ten years back</h3><p>The same board format runs ${year - 10} through ${year}. Historical classes stay up so the model can be judged in public.</p></article>
         </div>
       </section>
     </main>
     ${footer()}`;
+  bindNav(root);
+}
+
+function renderDrafts(root) {
+  document.title = "Previous Drafts — The Draft Model";
+  const cards = TANK_RANK.years.filter((y) => y !== currentYear()).map((y) => {
+    const d = draftOf(y);
+    const top = playersOf(y)[0];
+    return `<a class="year-card" href="./board.html?year=${y}">
+      <div class="kicker">${d.label}</div>
+      <h3>${y}</h3>
+      <p>${top ? `#1 ${top.name}` : "Board incoming"}</p>
+      <span class="sub">${d.players.length} prototype players →</span>
+    </a>`;
+  }).join("");
+
+  root.innerHTML = `
+    ${nav("drafts")}
+    <main class="wrap section">
+      <div class="kicker">Archive</div>
+      <h2>Previous drafts</h2>
+      <p class="sub" style="margin:12px 0 22px">Ten completed classes, ${currentYear() - 10}–${currentYear() - 1}. Numbers are placeholders until the engine is backfilled.</p>
+      <div class="year-grid">${cards}</div>
+    </main>
+    ${footer()}`;
+  bindNav(root);
 }
 
 function renderPlayer(root) {
-  const id = new URLSearchParams(location.search).get("id");
-  const p = TANK_RANK.players.find((x) => x.id === id) || TANK_RANK.players[0];
+  const params = new URLSearchParams(location.search);
+  const year = TANK_RANK.drafts[Number(params.get("year"))] ? Number(params.get("year")) : currentYear();
+  const id = params.get("id");
+  const p = playersOf(year).find((x) => x.id === id) || playersOf(year)[0];
+  document.title = `${p.name} — ${year} — The Draft Model`;
   root.innerHTML = `
-    ${nav("board")}
+    ${nav(year === currentYear() ? "board" : "drafts")}
     <main class="wrap">
       <div class="banner">${TANK_RANK.disclaimer}</div>
       <section class="player-hero">
         <div>
-          <div class="kicker">#${p.rank} overall · #${p.catRank} ${bucketLabel[p.bucket]}</div>
+          <div class="kicker">${year} · #${p.rank} overall · #${p.catRank} ${bucketLabel[p.bucket]}</div>
           <h1>${p.name}</h1>
           <div class="pills">
+            <span class="tag">${year}</span>
             <span class="tag">${bucketLabel[p.bucket]}</span>
             <span class="tag">${p.pos}</span>
             <span class="tag">${p.school}</span>
@@ -191,6 +266,9 @@ function renderPlayer(root) {
             <span class="tag">Age ${p.age}</span>
           </div>
           <p class="lede">Feature drivers in this prototype card: ${p.features.join(", ")}. Real SHAP-style contributions land when the model is wired in.</p>
+          <div class="cta-row">
+            <a class="btn ghost" href="./board.html?year=${year}">Back to ${year} board</a>
+          </div>
         </div>
         <div class="metrics">
           ${
@@ -216,10 +294,12 @@ function renderPlayer(root) {
       </section>
     </main>
     ${footer()}`;
+  bindNav(root);
 }
 
 function renderSimple(root, active, title, kicker, html) {
   root.innerHTML = `${nav(active)}<main class="wrap section"><div class="kicker">${kicker}</div><h2>${title}</h2><div class="prose" style="margin-top:18px">${html}</div></main>${footer()}`;
+  bindNav(root);
 }
 
-window.TR = { renderHome, renderBoard, renderPlayer, renderSimple };
+window.TR = { renderHome, renderBoard, renderPlayer, renderSimple, renderDrafts };
