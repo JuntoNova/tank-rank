@@ -34,7 +34,10 @@ function nav(active) {
     </style>
     <header class="nav">
       <div class="wrap nav-inner">
-        <a class="logo" href="./index.html"><strong>The Draft Model</strong><span>${y}</span></a>
+        <a class="logo" href="./index.html">
+          <img class="mark" src="./assets/mark.svg" width="28" height="28" alt="">
+          <strong>The Draft Model</strong><span>${y}</span>
+        </a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Open menu">Menu</button>
         <nav class="nav-links">
           <a class="${active === "board" ? "active" : ""}" href="./board.html">Big Board</a>
@@ -65,6 +68,7 @@ function footer() {
       <div class="copy">
         <div><b>© 2026 Junto Nova</b></div>
         <div>The Draft Model is a DBA of Junto Nova.</div>
+        <div>Not affiliated with, endorsed by, or sponsored by the NBA, the NBA Draft, or any NBA team.</div>
         <div>Probabilities, not opinions. · Updated ${TANK_RANK.updated} · v${TANK_RANK.version}</div>
       </div>
       <nav class="foot-links">
@@ -102,7 +106,7 @@ function renderBoard(root) {
   const draft = draftOf(year);
   let bucket = params.get("bucket") || "all";
   let q = params.get("q") || "";
-  document.title = `${year} Big Board — The Draft Model`;
+  document.title = `${year} NBA Draft Big Board | The Draft Model`;
 
   const apply = () => {
     let rows = playersOf(year);
@@ -176,6 +180,7 @@ function renderBoard(root) {
 function renderHome(root) {
   const year = currentYear();
   const top = playersOf(year).slice(0, 8);
+  document.title = `${year} NBA Draft Big Board & Prospect Rankings | The Draft Model`;
   root.innerHTML = `
     ${nav("home")}
     <main class="wrap">
@@ -183,7 +188,7 @@ function renderHome(root) {
         <div>
           <div class="kicker">${year} NBA Draft</div>
           <h1>Probabilities,<br>not opinions.</h1>
-          <p class="lede">The Draft Model trains on decades of pre-draft profiles and actual NBA careers — then publishes transparent odds for HOF, All-Star, All-NBA, bust risk, and expected value.</p>
+          <p class="lede">An independent NBA draft big board for fans who want odds, not vibes. The Draft Model trains on decades of pre-draft profiles and actual NBA careers, then publishes transparent probabilities for Hall of Fame, All-Star, All-NBA, bust risk, and expected value.</p>
           <div class="cta-row">
             <a class="btn primary" href="./board.html">Open the ${year} board</a>
             <a class="btn ghost" href="./drafts.html">Previous drafts</a>
@@ -230,7 +235,7 @@ function renderHome(root) {
 }
 
 function renderDrafts(root) {
-  document.title = "Previous Drafts — The Draft Model";
+  document.title = "NBA Draft Big Boards 2017–2026 | The Draft Model";
   const cards = TANK_RANK.years.filter((y) => y !== currentYear()).map((y) => {
     const d = draftOf(y);
     const top = playersOf(y)[0];
@@ -259,7 +264,7 @@ function renderPlayer(root) {
   const year = TANK_RANK.drafts[Number(params.get("year"))] ? Number(params.get("year")) : currentYear();
   const id = params.get("id");
   const p = playersOf(year).find((x) => x.id === id) || playersOf(year)[0];
-  document.title = `${p.name} — ${year} — The Draft Model`;
+  document.title = `${p.name} ${year} NBA Draft Prospect | The Draft Model`;
   root.innerHTML = `
     ${nav(year === currentYear() ? "board" : "drafts")}
     <main class="wrap">
@@ -288,7 +293,7 @@ function renderPlayer(root) {
               ["P(All-Star)", p.pAllStar, false],
               ["P(All-NBA)", p.pAllNba, false],
               ["P(Bust)", p.pBust, true]
-            ].map(([label, val, risk]) => `
+            ].map(([label, val, risk) => `
             <div class="metric">
               <label>${label}</label>
               <b>${fmtPct(val)}</b>
