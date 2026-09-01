@@ -30,8 +30,9 @@ button { cursor: pointer; }
   border-bottom: 1px solid var(--line);
 }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 24px; }
-.logo { display: flex; align-items: baseline; gap: 8px; letter-spacing: 0.04em; }
-.logo strong { font-family: var(--serif); font-weight: 600; font-size: 22px; }
+.logo { display: flex; align-items: center; gap: 10px; letter-spacing: 0.04em; }
+.logo .mark { width: 28px; height: 28px; flex: none; display: block; }
+.logo strong { font-family: var(--serif); font-weight: 600; font-size: 22px; line-height: 1; }
 .logo span { color: var(--lime); font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; }
 .nav-links { display: flex; gap: 16px; font-size: 14px; color: var(--muted); }
 .nav-links a.active, .nav-links a:hover { color: var(--text); }
