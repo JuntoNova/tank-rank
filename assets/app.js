@@ -18,7 +18,20 @@ function nav(active) {
 }
 
 function footer() {
-  return `<footer class="wrap"><div>The Draft Model — probabilities, not opinions.</div><div>Updated ${TANK_RANK.updated} · v${TANK_RANK.version}</div></footer>`;
+  return `<footer class="wrap">
+    <div class="foot">
+      <div class="copy">
+        <div><b>© 2026 The Draft Model</b></div>
+        <div>Probabilities, not opinions. · Updated ${TANK_RANK.updated} · v${TANK_RANK.version}</div>
+      </div>
+      <nav class="foot-links">
+        <a href="./terms.html">Terms</a>
+        <a href="./privacy.html">Privacy</a>
+        <a href="https://x.com/jandrewclark" target="_blank" rel="noopener noreferrer">X</a>
+        <a href="mailto:andrew@juntonova.com">andrew@juntonova.com</a>
+      </nav>
+    </div>
+  </footer>`;
 }
 
 function deltaHtml(d) {
