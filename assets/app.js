@@ -5,7 +5,7 @@ function nav(active) {
   return `
     <header class="nav">
       <div class="wrap nav-inner">
-        <a class="logo" href="./index.html"><strong>Tank Rank</strong><span>2026</span></a>
+        <a class="logo" href="./index.html"><strong>The Draft Model</strong><span>2026</span></a>
         <nav class="nav-links">
           <a class="${active === "board" ? "active" : ""}" href="./board.html">Big Board</a>
           <a class="${active === "method" ? "active" : ""}" href="./methodology.html">Methodology</a>
@@ -18,7 +18,7 @@ function nav(active) {
 }
 
 function footer() {
-  return `<footer class="wrap"><div>Tank Rank — probabilities, not opinions.</div><div>Updated ${TANK_RANK.updated} · v${TANK_RANK.version}</div></footer>`;
+  return `<footer class="wrap"><div>The Draft Model — probabilities, not opinions.</div><div>Updated ${TANK_RANK.updated} · v${TANK_RANK.version}</div></footer>`;
 }
 
 function deltaHtml(d) {
@@ -64,7 +64,7 @@ function renderBoard(root) {
       <div class="section-head">
         <div>
           <div class="kicker">Living board</div>
-          <h2>Tank Rank Top 300</h2>
+          <h2>The Draft Model Top 300</h2>
           <p class="sub">Prototype slice shown. Full 100 / 100 / 100 arrives with the ranking engine.</p>
         </div>
       </div>
@@ -109,7 +109,7 @@ function renderHome(root) {
         <div>
           <div class="kicker">NBA rankings without the narrative</div>
           <h1>Probabilities,<br>not opinions.</h1>
-          <p class="lede">Tank Rank trains on decades of pre-draft profiles and actual NBA careers — then publishes transparent odds for HOF, All-Star, All-NBA, bust risk, and expected value.</p>
+          <p class="lede">The Draft Model trains on decades of pre-draft profiles and actual NBA careers — then publishes transparent odds for HOF, All-Star, All-NBA, bust risk, and expected value.</p>
           <div class="cta-row">
             <a class="btn primary" href="./board.html">Open the 2026 board</a>
             <a class="btn ghost" href="./methodology.html">Read the methodology</a>
@@ -175,12 +175,13 @@ function renderPlayer(root) {
           <p class="lede">Feature drivers in this prototype card: ${p.features.join(", ")}. Real SHAP-style contributions land when the model is wired in.</p>
         </div>
         <div class="metrics">
-          ${[
-            ["P(Hall of Fame)", p.pHof, false],
-            ["P(All-Star)", p.pAllStar, false],
-            ["P(All-NBA)", p.pAllNba, false],
-            ["P(Bust)", p.pBust, true]
-          ].map(([label, val, risk]) => `
+          ${
+            [
+              ["P(Hall of Fame)", p.pHof, false],
+              ["P(All-Star)", p.pAllStar, false],
+              ["P(All-NBA)", p.pAllNba, false],
+              ["P(Bust)", p.pBust, true]
+            ].map(([label, val, risk]) => `
             <div class="metric">
               <label>${label}</label>
               <b>${fmtPct(val)}</b>
