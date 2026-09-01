@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Methodology — Tank Rank</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+  <div id="app"></div>
+  <script src="./assets/data.js"></script>
+  <script src="./assets/app.js"></script>
+  <script>
+    TR.renderSimple(document.getElementById("app"), "method", "Methodology", "Transparent by default", `
+      <div class="banner">This page describes the intended engine. Live coefficients and validation stats publish with the first trained models.</div>
+      <p>Tank Rank ranks prospects by estimated NBA career value, not by scouting consensus. Pre-draft attributes are mapped onto historical players whose NBA outcomes are already known.</p>
+      <h2>Targets</h2>
+      <ul>
+        <li>P(Hall of Fame)</li>
+        <li>P(at least one All-NBA)</li>
+        <li>P(at least one All-Star)</li>
+        <li>P(bust) — limited NBA career / out of the league within ~4 years (definition to be locked)</li>
+        <li>Expected career Win Shares / VORP / BPM with intervals</li>
+      </ul>
+      <h2>Model family</h2>
+      <p>Logistic models for binary outcomes so the public methodology stays readable. Gradient-boosted trees or ensembles for continuous value. High school and international players are first projected onto a college-equivalent scale, then scored by the same NBA-outcome model.</p>
+      <h2>What will not drive rank</h2>
+      <p>Eye-test primacy, draft-night narrative, or unpublished scout whisper networks. Text reports may appear later as optional features, clearly separated from the core numerical model.</p>
+      <h2>Update cadence</h2>
+      <p>Weekly in-season, more often near the draft. Retrain when a new NBA season of labels lands.</p>
+    `);
+  </script>
+</body>
+</html>

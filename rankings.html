@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>All Rankings — Tank Rank</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+  <div id="app"></div>
+  <script src="./assets/data.js"></script>
+  <script src="./assets/app.js"></script>
+  <script>
+    TR.renderSimple(document.getElementById("app"), "rankings", "Everything we will rank", "Draft first, then the league", `
+      <p>The draft board is the seasonal hook. The same ranking engine and graphic system is built to score anything in the NBA ecosystem.</p>
+      <h2>Live</h2>
+      <ul><li><a href="./board.html">2026 prospect board</a> — prototype slice</li></ul>
+      <h2>Next</h2>
+      <ul>
+        <li>Historical draft classes</li>
+        <li>GMs / front offices (draft hit rate, FA ROI)</li>
+        <li>Shoes — performance, resale, injury correlation</li>
+        <li>Jerseys and court designs</li>
+        <li>Owners / franchise value growth</li>
+      </ul>
+    `);
+  </script>
+</body>
+</html>
