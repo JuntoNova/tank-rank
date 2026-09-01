@@ -104,9 +104,11 @@ footer .foot {
 }
 footer .copy { line-height: 1.55; }
 footer .copy b { color: var(--text); font-weight: 560; }
-footer .foot-links { display: flex; flex-wrap: wrap; gap: 14px 18px; }
+footer .foot-links { display: flex; flex-wrap: wrap; gap: 14px 18px; align-items: center; }
 footer .foot-links a { color: var(--muted); }
 footer .foot-links a:hover { color: var(--text); }
+footer .icon-link { display: inline-flex; align-items: center; line-height: 0; }
+footer .icon-link svg { display: block; }
 
 @media (max-width: 860px) {
   .hero, .player-hero, .grid-3 { grid-template-columns: 1fr; }
