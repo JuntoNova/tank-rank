@@ -92,6 +92,10 @@ function deltaHtml(d) {
   return `<span class="delta ${cls}">${sign}${d}</span>`;
 }
 
+function metricHtml(label, val, risk) {
+  return `<div class="metric"><label>${label}</label><b>${fmtPct(val)}</b><div class="bar ${risk ? "risk" : ""}"><i style="width:${Math.round(val * 100)}%"></i></div></div>`;
+}
+
 function yearBar(year) {
   return `<div class="yearbar">
     ${TANK_RANK.years.map((y) =>
@@ -287,18 +291,10 @@ function renderPlayer(root) {
           </div>
         </div>
         <div class="metrics">
-          ${
-            [
-              ["P(Hall of Fame)", p.pHof, false],
-              ["P(All-Star)", p.pAllStar, false],
-              ["P(All-NBA)", p.pAllNba, false],
-              ["P(Bust)", p.pBust, true]
-            ].map(([label, val, risk) => `
-            <div class="metric">
-              <label>${label}</label>
-              <b>${fmtPct(val)}</b>
-              <div class="bar ${risk ? "risk" : ""}"><i style="width:${Math.round(val*100)}%"></i></div>
-            </div>`).join("")}
+          ${metricHtml("P(Hall of Fame)", p.pHof, false)}
+          ${metricHtml("P(All-Star)", p.pAllStar, false)}
+          ${metricHtml("P(All-NBA)", p.pAllNba, false)}
+          ${metricHtml("P(Bust)", p.pBust, true)}
         </div>
       </section>
       <section class="section">
