@@ -1,9 +1,8 @@
-# Tank Rank
+# The Draft Model
 
-Public-facing prototype for Tank Rank — data-first NBA rankings.
+Public-facing prototype for [The Draft Model](https://thedraftmodel.com) — data-first NBA rankings.
 
-Repo: https://github.com/JuntoNova/tank-rank
-Pages (once enabled): https://juntonova.github.io/tank-rank/
+Live: https://thedraftmodel.com
 
 ## Pages
 - `index.html` — thesis + board preview
@@ -14,3 +13,13 @@ Pages (once enabled): https://juntonova.github.io/tank-rank/
 - `about.html` — project status
 
 Numbers on the board are **illustrative placeholders** until the ranking engine is connected.
+
+## Local
+Open `index.html` in a browser, or:
+
+```bash
+python3 -m http.server 8080
+```
+
+## Stack next
+Static HTML now so the product can be judged in a browser today. Next.js + a JSON/API board can replace these files without changing the information architecture.
