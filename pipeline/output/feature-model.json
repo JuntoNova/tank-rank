@@ -1,0 +1,10 @@
+{
+  "method": "OLS implied first-round slot from last-college-season BartTorvik BPM",
+  "feature": "bpm",
+  "intercept": 23.216325960869398,
+  "bpm_coef": -1.202757431383277,
+  "n": 28,
+  "bpm_mean": 9.236428571428572,
+  "pick_mean": 12.107142857142858,
+  "note": "Implied slot is clipped to 1..30, then scored with the slot prior. Usage, eFG, and Min% are stored on each row and not in this mapping yet. Not live board odds."
+}
