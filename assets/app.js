@@ -194,7 +194,7 @@ function renderHome(root) {
         <div>
           <div class="kicker">${year} NBA Draft</div>
           <h1>Probabilities,<br>not opinions.</h1>
-          <p class="lede">An independent NBA draft big board for fans who want odds, not vibes. The Draft Model trains on decades of pre-draft profiles and actual NBA careers, then publishes transparent probabilities for Hall of Fame, All-Star, All-NBA, bust risk, and expected value.</p>
+          <p class="lede">Analytics has taken over the NBA. The draft is still a land of vibes and bias. The Draft Model uses historic pre-draft profiles and actual NBA careers to estimate who is most likely to succeed going forward.</p>
           <div class="cta-row">
             <a class="btn primary" href="./board.html">Open the ${year} board</a>
             <a class="btn ghost" href="./drafts.html">Previous drafts</a>
