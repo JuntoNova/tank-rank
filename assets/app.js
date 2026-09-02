@@ -27,12 +27,6 @@ function bucketsFor(year) {
   return TANK_RANK.buckets.filter((b) => present.has(b));
 }
 
-function yearChipLabel(y) {
-  if (y === currentYear()) return `${y} · live`;
-  if (y === nextYear()) return `${y} · next`;
-  return String(y);
-}
-
 function nav(active) {
   const y = currentYear();
   return `
@@ -111,14 +105,6 @@ function metricHtml(label, val, risk) {
   return `<div class="metric"><label>${label}</label><b>${fmtPct(val)}</b><div class="bar ${risk ? "risk" : ""}"><i style="width:${Math.round(val * 100)}%"></i></div></div>`;
 }
 
-function yearBar(year) {
-  return `<div class="yearbar">
-    ${TANK_RANK.years.map((y) =>
-      `<a class="chip ${y === year ? "on" : ""}" href="./board.html?year=${y}">${yearChipLabel(y)}</a>`
-    ).join("")}
-  </div>`;
-}
-
 function renderBoard(root) {
   const params = new URLSearchParams(location.search);
   const year = parseYear();
@@ -161,10 +147,9 @@ function renderBoard(root) {
         <div>
           <div class="kicker">${year === currentYear() ? "Living board" : year === nextYear() ? "Next class" : "Archive board"}</div>
           <h2>${year} Top 300</h2>
-          <p class="sub">${year === currentYear() ? "College and international only. High school opens on the 2028 board." : year === nextYear() ? "College, high school, and international. Prototype slice until the engine is connected." : "Prototype reconstruction. Full backfill arrives with the ranking engine."}</p>
+          <p class="sub">${year === currentYear() ? `College and international only. High school opens on the <a href="./board.html?year=${nextYear()}">2028 board</a>.` : year === nextYear() ? `College, high school, and international. <a href="./board.html">Back to ${currentYear()}</a>.` : `Prototype reconstruction. <a href="./board.html">Back to ${currentYear()}</a>.`}</p>
         </div>
       </div>
-      ${yearBar(year)}
       <div class="toolbar">
         ${["all", ...available].map((b) =>
           `<button class="chip ${bucket === b ? "on" : ""}" data-bucket="${b}">${b === "all" ? "All" : bucketLabel[b]}</button>`
