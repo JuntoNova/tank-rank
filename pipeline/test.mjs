@@ -9,6 +9,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { fitAndWrite, loadHistorical, loadModel, predictPick } from "./fit.mjs";
 import { fitFeatureModel, impliedPickFromCollege, loadCollegeBoxscores, predictFromCollege } from "./features.mjs";
+import { loadCurrentClass, scoreAndWrite } from "./score-current-class.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -24,7 +25,12 @@ function inOpenUnit(p) {
 function hasLiveBoardImport(src) {
   return /(?:import|require)\s*(?:\(|from)?\s*['"][^'"]*assets\/data\.js['"]/.test(src);
 }
-for (const name of ["fit.mjs", "predict.mjs", "test.mjs", "features.mjs"]) {
+for (const name of ["fit.mjs", "predict.mjs", "test.mjs", "features.mjs", "score-current-class.mjs"]) {
+  const src = sourceOf(name);
+  assert.equal(hasLiveBoardImport(src), false, `${name} must not import the live board data file`);
+}
+for (const name of ["current-class-2027.json", "output/current-class-2027.json"]) {
+  if (!existsSync(join(__dirname, name))) continue;
   const src = sourceOf(name);
   assert.equal(hasLiveBoardImport(src), false, `${name} must not import the live board data file`);
 }
@@ -120,6 +126,59 @@ assert.equal(
   impliedPickFromCollege(featureModel, davisBox) < impliedPickFromCollege(featureModel, goodwinBox),
   true
 );
+
+const current = loadCurrentClass();
+assert.equal(current.players.length, current.meta.n, "current-class n matches meta.n");
+assert.ok(current.players.length >= 8, `current-class n=${current.players.length} should be >= 8 when the board match allows`);
+assert.ok(current.players.length > 0, "current-class must not be empty");
+assert.ok(
+  current.players.every((p) => Number.isFinite(p.bpm) && Number.isFinite(p.usg) && Number.isFinite(p.efg) && Number.isFinite(p.min_pct)),
+  "each current-class row needs finite BPM, USG, eFG, Min%"
+);
+assert.ok(
+  current.players.every((p) => p.pick === undefined),
+  "current-class source rows are undrafted — no pick field"
+);
+
+const FORBIDDEN_FAKE_IDS = [
+  "Tyran Stokes",
+  "Caleb Holt",
+  "Jordan Smith Jr.",
+  "Bruce Branch III",
+  "Alijah Arenas",
+  "Sayon Keita",
+  "Dylan Mingo",
+  "Cam Williams",
+  "Cameron Williams",
+  "Hugo Yimga-Moukouri",
+  "Stefan Joksimovic",
+  "Cameron Houindo",
+];
+const currentNames = new Set(current.players.map((p) => p.name));
+for (const fake of FORBIDDEN_FAKE_IDS) {
+  assert.equal(
+    currentNames.has(fake),
+    false,
+    `${fake} is not a matched ESPN-returner + Torvik 2026 identity and must not appear as a current-class player`
+  );
+}
+
+const { out: scored } = scoreAndWrite();
+assert.equal(scored.players.length, current.meta.n, "scored current-class n matches source");
+assert.ok(
+  scored.players.every((p) => p.implied_pick >= 1 && p.implied_pick <= 30),
+  "implied_pick is in 1..30"
+);
+assert.ok(
+  scored.players.every((p, i) => i === 0 || p.implied_pick >= scored.players[i - 1].implied_pick),
+  "scored current-class is sorted by implied_pick ascending"
+);
+for (const row of scored.players) {
+  for (const key of ["p_all_star", "p_all_nba", "p_hof", "p_bust"]) {
+    assert.ok(inOpenUnit(row[key]), `${key} for ${row.name} must be in (0,1)`);
+  }
+}
+assert.ok(existsSync(join(__dirname, "output", "current-class-2027.json")), "scored current-class file written");
 
 console.log("ok — pipeline tests passed");
 console.log(
