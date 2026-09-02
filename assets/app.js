@@ -76,9 +76,8 @@ function footer() {
     <div class="foot">
       <div class="copy">
         <div><b>© 2026 Junto Nova</b></div>
-        <div>The Draft Model is a DBA of Junto Nova.</div>
-        <div>Not affiliated with, endorsed by, or sponsored by the NBA, the NBA Draft, or any NBA team.</div>
-        <div>Probabilities, not opinions. · Updated ${TANK_RANK.updated} · v${TANK_RANK.version}</div>
+        <div>A Junto Nova DBA. Not affiliated with the NBA.</div>
+        <div>Probabilities, not opinions.</div>
       </div>
       <nav class="foot-links">
         <a href="./terms.html">Terms</a>
