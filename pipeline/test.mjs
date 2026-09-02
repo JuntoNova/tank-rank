@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /**
  * The Draft Model — pipeline tests.
- * Proves historical labels, slot priors, college BPM features, and that this does not touch the live board.
+ * Proves historical labels, slot priors, college BPM+USG+eFG+Min% features, and that this does not touch the live board.
  */
 import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { fitAndWrite, loadHistorical, loadModel, predictPick } from "./fit.mjs";
-import { fitFeatureModel, impliedPickFromBpm, loadCollegeBoxscores, predictFromBpm } from "./features.mjs";
+import { fitFeatureModel, impliedPickFromCollege, loadCollegeBoxscores, predictFromCollege } from "./features.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -97,10 +97,12 @@ assert.ok(davisBox.bpm > goodwinBox.bpm, "Davis last-season BPM should exceed Go
 const { featureModel, featureModelPath } = fitFeatureModel();
 assert.ok(existsSync(featureModelPath), "pipeline/output/feature-model.json must exist after fit");
 assert.ok(featureModel.bpm_coef < 0, "higher BPM must map to an earlier implied slot");
+assert.equal(featureModel.n, box.players.length, "fit n is the Torvik box-score sample");
+assert.ok(["usg_coef", "efg_coef", "min_pct_coef"].every((k) => Number.isFinite(featureModel[k])), "mapping uses USG, eFG, Min%");
 
 const model = loadModel();
-const davisFeat = predictFromBpm(model, featureModel, davisBox.bpm, davisBox);
-const goodwinFeat = predictFromBpm(model, featureModel, goodwinBox.bpm, goodwinBox);
+const davisFeat = predictFromCollege(model, featureModel, davisBox);
+const goodwinFeat = predictFromCollege(model, featureModel, goodwinBox);
 assert.ok(
   davisFeat.implied_pick < goodwinFeat.implied_pick,
   `Davis implied ${davisFeat.implied_pick} should be earlier than Goodwin ${goodwinFeat.implied_pick}`
@@ -111,10 +113,13 @@ assert.ok(
 );
 for (const row of [davisFeat, goodwinFeat]) {
   for (const key of ["p_all_star", "p_all_nba", "p_hof", "p_bust"]) {
-    assert.ok(inOpenUnit(row[key]), `${key} from college BPM must be in (0,1)`);
+    assert.ok(inOpenUnit(row[key]), `${key} from college features must be in (0,1)`);
   }
 }
-assert.equal(impliedPickFromBpm(featureModel, 16.6) < impliedPickFromBpm(featureModel, 0.92), true);
+assert.equal(
+  impliedPickFromCollege(featureModel, davisBox) < impliedPickFromCollege(featureModel, goodwinBox),
+  true
+);
 
 console.log("ok — pipeline tests passed");
 console.log(
