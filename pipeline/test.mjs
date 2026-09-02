@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 /**
  * The Draft Model — pipeline tests.
- * Proves historical labels + slot priors, and that this does not touch the live board.
+ * Proves historical labels, slot priors, college BPM features, and that this does not touch the live board.
  */
 import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { fitAndWrite, loadHistorical, loadModel, predictPick } from "./fit.mjs";
+import { fitFeatureModel, impliedPickFromBpm, loadCollegeBoxscores, predictFromBpm } from "./features.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -23,7 +24,7 @@ function inOpenUnit(p) {
 function hasLiveBoardImport(src) {
   return /(?:import|require)\s*(?:\(|from)?\s*['"][^'"]*assets\/data\.js['"]/.test(src);
 }
-for (const name of ["fit.mjs", "predict.mjs", "test.mjs"]) {
+for (const name of ["fit.mjs", "predict.mjs", "test.mjs", "features.mjs"]) {
   const src = sourceOf(name);
   assert.equal(hasLiveBoardImport(src), false, `${name} must not import the live board data file`);
 }
@@ -67,9 +68,9 @@ assert.ok(
 );
 assert.equal(priors.picks.length, 30);
 
-const model = loadModel();
-const p1 = predictPick(model, 1);
-const p25 = predictPick(model, 25);
+const slotModel = loadModel();
+const p1 = predictPick(slotModel, 1);
+const p25 = predictPick(slotModel, 25);
 
 assert.ok(
   p1.p_all_star > p25.p_all_star,
@@ -81,6 +82,39 @@ for (const row of [p1, p25, ...priors.picks]) {
     assert.ok(inOpenUnit(row[key]), `${key} for pick ${row.pick} must be in (0,1), got ${row[key]}`);
   }
 }
+
+const box = loadCollegeBoxscores();
+assert.ok(box.players.length >= 20, "need Torvik-era college rows");
+assert.ok(
+  box.players.every((p) => Number.isFinite(p.bpm) && Number.isFinite(p.usg) && Number.isFinite(p.efg) && Number.isFinite(p.min_pct)),
+  "each college row needs BPM, USG, eFG, Min%"
+);
+const davisBox = box.players.find((p) => p.id === "anthony-davis");
+const goodwinBox = box.players.find((p) => p.id === "archie-goodwin");
+assert.ok(davisBox && goodwinBox, "box-score table must include Anthony Davis and Archie Goodwin");
+assert.ok(davisBox.bpm > goodwinBox.bpm, "Davis last-season BPM should exceed Goodwin");
+
+const { featureModel, featureModelPath } = fitFeatureModel();
+assert.ok(existsSync(featureModelPath), "pipeline/output/feature-model.json must exist after fit");
+assert.ok(featureModel.bpm_coef < 0, "higher BPM must map to an earlier implied slot");
+
+const model = loadModel();
+const davisFeat = predictFromBpm(model, featureModel, davisBox.bpm, davisBox);
+const goodwinFeat = predictFromBpm(model, featureModel, goodwinBox.bpm, goodwinBox);
+assert.ok(
+  davisFeat.implied_pick < goodwinFeat.implied_pick,
+  `Davis implied ${davisFeat.implied_pick} should be earlier than Goodwin ${goodwinFeat.implied_pick}`
+);
+assert.ok(
+  davisFeat.p_all_star > goodwinFeat.p_all_star,
+  `P(All-Star|Davis box) ${davisFeat.p_all_star} should exceed P(All-Star|Goodwin box) ${goodwinFeat.p_all_star}`
+);
+for (const row of [davisFeat, goodwinFeat]) {
+  for (const key of ["p_all_star", "p_all_nba", "p_hof", "p_bust"]) {
+    assert.ok(inOpenUnit(row[key]), `${key} from college BPM must be in (0,1)`);
+  }
+}
+assert.equal(impliedPickFromBpm(featureModel, 16.6) < impliedPickFromBpm(featureModel, 0.92), true);
 
 console.log("ok — pipeline tests passed");
 console.log(
