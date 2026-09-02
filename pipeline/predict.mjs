@@ -3,8 +3,9 @@
  * The Draft Model — print probabilities from the slot prior.
  *
  * With a pick: P(outcome | pick).
- * With --bpm: map last-college-season BartTorvik BPM to an implied slot,
- * then P(outcome | implied slot). Slot prior stays the baseline.
+ * With --bpm --usg --efg --min: map last-college-season BartTorvik
+ * BPM, usage, eFG, and Min% to an implied slot, then P(outcome | implied slot).
+ * Slot prior stays the baseline.
  *
  * Does not import assets/data.js. Does not claim live board odds.
  */
@@ -15,7 +16,7 @@ import { fitAndWrite, loadModel, predictPick, slotPriors } from "./fit.mjs";
 import {
   fitFeatureModel,
   loadFeatureModel,
-  predictFromBpm,
+  predictFromCollege,
 } from "./features.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -35,15 +36,26 @@ function main() {
   const bpmArg = flag("--bpm");
 
   if (bpmArg !== undefined) {
+    const usg = flag("--usg");
+    const efg = flag("--efg");
+    const minPct = flag("--min");
+    if (usg === undefined || efg === undefined || minPct === undefined) {
+      console.error("college path needs --bpm --usg --efg --min");
+      process.exit(2);
+    }
     if (!existsSync(FEATURE_MODEL_PATH)) fitFeatureModel();
     const featureModel = loadFeatureModel();
-    const extra = {};
-    if (flag("--min") !== undefined) extra.min_pct = Number(flag("--min"));
-    if (flag("--usg") !== undefined) extra.usg = Number(flag("--usg"));
-    if (flag("--efg") !== undefined) extra.efg = Number(flag("--efg"));
-    const row = predictFromBpm(model, featureModel, bpmArg, extra);
+    const row = predictFromCollege(model, featureModel, {
+      bpm: bpmArg,
+      usg,
+      efg,
+      min_pct: minPct,
+    });
     console.log("research pipeline — not live board odds");
     console.log(`bpm ${row.bpm}`);
+    console.log(`usg ${row.usg}`);
+    console.log(`efg ${row.efg}`);
+    console.log(`min_pct ${row.min_pct}`);
     console.log(`implied_pick ${row.implied_pick}`);
     console.log(`p_all_star ${row.p_all_star}`);
     console.log(`p_all_nba ${row.p_all_nba}`);
@@ -55,7 +67,7 @@ function main() {
   const pickArg = process.argv[2];
   if (pickArg === undefined || String(pickArg).startsWith("--")) {
     console.error("usage: node pipeline/predict.mjs <pick>");
-    console.error("   or: node pipeline/predict.mjs --bpm <bpm> [--min Min%] [--usg USG] [--efg eFG]");
+    console.error("   or: node pipeline/predict.mjs --bpm <bpm> --usg <usg> --efg <efg> --min <Min%>");
     process.exit(2);
   }
   const row = predictPick(model, pickArg);
