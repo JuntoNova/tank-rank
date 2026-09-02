@@ -1,0 +1,41 @@
+{
+  "method": "pick-band frequencies with Laplace smoothing",
+  "feature": "draft_pick",
+  "note": "P(outcome | draft pick) from a college first-round historical sample. Slot prior only. Does not use college box-score features. Not live board odds.",
+  "label_horizon": "NBA through the 2023-24 season; Naismith Memorial Basketball Hall of Fame through the class of 2024. Active or not-yet-eligible players are hof=0.",
+  "bust_definition": "Did not last as a rotation player for approximately 4 NBA seasons. Injury-shortened careers that fail this bar are labeled bust under this definition.",
+  "hof_trained_on": "draft_year <= 2003 (enough time for Hall class 2024)",
+  "sample_size": 72,
+  "all_star": {
+    "direction": "decreasing",
+    "bands": [
+      {"lo": 1, "hi": 5, "mid": 3, "p": 0.631578947368421, "n": 36, "k": 23},
+      {"lo": 6, "hi": 14, "mid": 10, "p": 0.4090909090909091, "n": 20, "k": 8},
+      {"lo": 15, "hi": 30, "mid": 22.5, "p": 0.16666666666666666, "n": 16, "k": 2}
+    ]
+  },
+  "all_nba": {
+    "direction": "decreasing",
+    "bands": [
+      {"lo": 1, "hi": 5, "mid": 3, "p": 0.631578947368421, "n": 36, "k": 23},
+      {"lo": 6, "hi": 14, "mid": 10, "p": 0.3181818181818182, "n": 20, "k": 6},
+      {"lo": 15, "hi": 30, "mid": 22.5, "p": 0.16666666666666666, "n": 16, "k": 2}
+    ]
+  },
+  "hof": {
+    "direction": "decreasing",
+    "bands": [
+      {"lo": 1, "hi": 5, "mid": 3, "p": 0.7222222222222222, "n": 16, "k": 12},
+      {"lo": 6, "hi": 14, "mid": 10, "p": 0.2, "n": 3, "k": 0},
+      {"lo": 15, "hi": 30, "mid": 22.5, "p": 0.2, "n": 6, "k": 1}
+    ]
+  },
+  "bust": {
+    "direction": "increasing",
+    "bands": [
+      {"lo": 1, "hi": 5, "mid": 3, "p": 0.15789473684210525, "n": 36, "k": 5},
+      {"lo": 6, "hi": 14, "mid": 10, "p": 0.36363636363636365, "n": 20, "k": 7},
+      {"lo": 15, "hi": 30, "mid": 22.5, "p": 0.36363636363636365, "n": 16, "k": 5}
+    ]
+  }
+}

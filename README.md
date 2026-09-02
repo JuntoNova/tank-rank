@@ -14,6 +14,14 @@ Live: https://thedraftmodel.com
 
 Numbers on the board are **illustrative placeholders** until the ranking engine is connected.
 
+## Pipeline
+
+`pipeline/` starts a real college probability path: historical outcomes in, probabilities out. It fits P(outcome | draft pick) from college first-round draftees — a slot prior, not a college-stat model. The public board is still placeholders. Slot priors are not live board odds. See `pipeline/README.md`.
+
+```bash
+node pipeline/test.mjs
+```
+
 ## Local
 Open `index.html` in a browser, or:
 
