@@ -76,8 +76,9 @@ function footer() {
     <div class="foot">
       <div class="copy">
         <div><b>© 2026 Junto Nova</b></div>
-        <div>A Junto Nova DBA. Not affiliated with the NBA.</div>
-        <div>Probabilities, not opinions.</div>
+        <div>The Draft Model is a DBA of Junto Nova.</div>
+        <div>Not affiliated with, endorsed by, or sponsored by the NBA, the NBA Draft, or any NBA team.</div>
+        <div>Probabilities, not opinions. · Updated ${TANK_RANK.updated} · v${TANK_RANK.version}</div>
       </div>
       <nav class="foot-links">
         <a href="./terms.html">Terms</a>
@@ -144,9 +145,9 @@ function renderBoard(root) {
       <div class="banner">${TANK_RANK.disclaimer} ${draft.note || ""}</div>
       <div class="section-head">
         <div>
-          <div class="kicker">${year === currentYear() ? "Living board" : year === nextYear() ? "Next class" : "Archive board"}</div>
-          <h2>${year} Top 300</h2>
-          <p class="sub">${year === currentYear() ? `College and international only. High school opens on the <a href="./board.html?year=${nextYear()}">2028 board</a>.` : year === nextYear() ? `College, high school, and international. <a href="./board.html">Back to ${currentYear()}</a>.` : `Prototype reconstruction. <a href="./board.html">Back to ${currentYear()}</a>.`}</p>
+          <div class="kicker">${year === currentYear() ? "Living board" : year > currentYear() ? "Upcoming class" : year <= 1949 ? "BAA draft" : "Archive board"}</div>
+          <h2>${year === currentYear() ? year + " Top 300" : year + " board"}</h2>
+          <p class="sub">${year === currentYear() ? `College and international only. High school opens on the <a href="./board.html?year=${nextYear()}">2028 board</a>.` : year > currentYear() ? `Upcoming class. High school included. <a href="./board.html">Back to ${currentYear()}</a>.` : `Prototype reconstruction from the actual draft. <a href="./drafts.html">All drafts</a>.`}</p>
         </div>
       </div>
       <div class="toolbar">
@@ -202,7 +203,7 @@ function renderHome(root) {
         <div class="stat-grid">
           <div class="stat-card"><b>300</b><span>Prospects across three buckets</span></div>
           <div class="stat-card"><b>100 / 100 / 100</b><span>College · High school · International</span></div>
-          <div class="stat-card"><b>11</b><span>Draft classes on the site, ${year - 10}–${year}</span></div>
+          <div class="stat-card"><b>${TANK_RANK.years.length}</b><span>Draft classes on the site, ${TANK_RANK.firstYear}–${TANK_RANK.horizonYear}</span></div>
           <div class="stat-card"><b>Weekly</b><span>Target update cadence in season</span></div>
         </div>
       </section>
@@ -231,7 +232,7 @@ function renderHome(root) {
         <div class="grid-3">
           <article class="card"><div class="kicker">Thesis</div><h3>Data first</h3><p>Expert boards are consensus plus narrative. We map measurable pre-draft traits to what actually happened in the NBA.</p></article>
           <article class="card"><div class="kicker">Output</div><h3>Odds, not vibes</h3><p>Every player carries P(HOF), P(All-Star), P(All-NBA), bust risk, expected win shares, comps, and delta vs. consensus.</p></article>
-          <article class="card"><div class="kicker">Archive</div><h3>Ten years back</h3><p>The same board format runs ${year - 10} through ${year}. Historical classes stay up so the model can be judged in public.</p></article>
+          <article class="card"><div class="kicker">Archive</div><h3>Every draft since 1947</h3><p>The same board format runs from the first BAA draft through ${TANK_RANK.horizonYear}. Historical classes stay up so the model can be judged in public.</p></article>
         </div>
       </section>
     </main>
@@ -239,26 +240,44 @@ function renderHome(root) {
   bindNav(root);
 }
 
+function yearCard(y) {
+  const d = draftOf(y);
+  const top = playersOf(y)[0];
+  const tag = y === currentYear() ? "Live" : y > currentYear() ? "Upcoming" : y <= 1949 ? "BAA" : "Archive";
+  return `<a class="year-card" href="./board.html?year=${y}">
+    <div class="kicker">${tag}</div>
+    <h3>${y}</h3>
+    <p>${top ? `#1 ${top.name}` : "Board incoming"}</p>
+    <span class="sub">${(d.players || []).length} players →</span>
+  </a>`;
+}
+
 function renderDrafts(root) {
-  document.title = "NBA Draft Big Boards 2017–2026 | The Draft Model";
-  const cards = TANK_RANK.years.filter((y) => y < currentYear()).map((y) => {
-    const d = draftOf(y);
-    const top = playersOf(y)[0];
-    return `<a class="year-card" href="./board.html?year=${y}">
-      <div class="kicker">${d.label}</div>
-      <h3>${y}</h3>
-      <p>${top ? `#1 ${top.name}` : "Board incoming"}</p>
-      <span class="sub">${d.players.length} prototype players →</span>
-    </a>`;
+  document.title = `NBA Draft Boards ${TANK_RANK.firstYear}–${TANK_RANK.horizonYear} | The Draft Model`;
+  const upcoming = TANK_RANK.years.filter((y) => y > currentYear());
+  const live = currentYear();
+  const archive = TANK_RANK.years.filter((y) => y < currentYear());
+  const decades = [...new Set(archive.map((y) => Math.floor(y / 10) * 10))];
+
+  const decadeBlocks = decades.map((dec) => {
+    const years = archive.filter((y) => Math.floor(y / 10) * 10 === dec);
+    return `<section class="decade" data-decade="${dec}">
+      <div class="decade-head">${dec}s</div>
+      <div class="year-grid">${years.map(yearCard).join("")}</div>
+    </section>`;
   }).join("");
 
   root.innerHTML = `
     ${nav("drafts")}
     <main class="wrap section">
-      <div class="kicker">Archive</div>
-      <h2>Previous drafts</h2>
-      <p class="sub" style="margin:12px 0 22px">Ten completed classes, ${currentYear() - 10}–${currentYear() - 1}. Numbers are placeholders until the engine is backfilled.</p>
-      <div class="year-grid">${cards}</div>
+      <div class="kicker">Full history</div>
+      <h2>Every draft since 1947</h2>
+      <p class="sub" style="margin:12px 0 22px">${TANK_RANK.years.length} classes, ${TANK_RANK.firstYear}–${TANK_RANK.horizonYear}. 1947–1949 are BAA drafts; the NBA counts them as official history. Numbers are placeholders until the engine is backfilled.</p>
+      <section class="decade">
+        <div class="decade-head">Upcoming</div>
+        <div class="year-grid">${[live, ...upcoming].map(yearCard).join("")}</div>
+      </section>
+      ${decadeBlocks}
     </main>
     ${footer()}`;
   bindNav(root);
