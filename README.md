@@ -5,7 +5,7 @@ Public-facing prototype for [The Draft Model](https://thedraftmodel.com) — dat
 Live: https://thedraftmodel.com
 
 ## Pages
-- `index.html` — thesis + board preview
+- `index.html` — two doors: upcoming drafts and historic drafts
 - `board.html` — filterable big board
 - `player.html` — probability card
 - `methodology.html` — ranking philosophy
@@ -13,14 +13,6 @@ Live: https://thedraftmodel.com
 - `about.html` — project status
 
 Numbers on the board are **illustrative placeholders** until the ranking engine is connected.
-
-## Pipeline
-
-`pipeline/` starts a real college probability path: historical outcomes in, probabilities out. It fits P(outcome | draft pick) from college first-round draftees — a slot prior, not a college-stat model. The public board is still placeholders. Slot priors are not live board odds. See `pipeline/README.md`.
-
-```bash
-node pipeline/test.mjs
-```
 
 ## Local
 Open `index.html` in a browser, or:
