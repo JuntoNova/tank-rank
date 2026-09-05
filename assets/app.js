@@ -13,8 +13,106 @@ function parseYear() {
   return currentYear();
 }
 
+function isHistoric(year) {
+  return year < currentYear();
+}
+
+function slugName(name, year, pick) {
+  return String(name).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + year + "-" + (pick || 0);
+}
+
+function ingestHistoryRows(rows) {
+  const byYear = {};
+  rows.forEach((r) => {
+    (byYear[r.y] || (byYear[r.y] = [])).push(r);
+  });
+  Object.keys(byYear).forEach((ys) => {
+    const year = Number(ys);
+    const list = byYear[year].slice().sort((a, b) => (a.pk || 999) - (b.pk || 999));
+    TANK_RANK.drafts[year] = {
+      year,
+      label: year <= 1949 ? year + " BAA Draft" : year + " NBA Draft",
+      note: "Full historic draft. Career counting stats included where known.",
+      historic: true,
+      players: list.map((r, i) => ({
+        id: slugName(r.n, year, r.pk),
+        name: r.n,
+        rank: r.pk || i + 1,
+        catRank: r.rd || i + 1,
+        bucket: "college",
+        school: r.c || "—",
+        team: r.t || "",
+        pos: r.pos || "",
+        rd: r.rd,
+        yrs: r.yrs,
+        g: r.g,
+        pts: r.pts,
+        ws: r.ws,
+        vorp: r.vorp,
+        ht: "",
+        wt: "",
+        age: "",
+        pHof: 0, pAllNba: 0, pAllStar: 0, pBust: 0,
+        expWs: r.ws || 0,
+        delta: 0,
+        features: ["Draft slot", "College", "Career WS"]
+      }))
+    };
+  });
+  TANK_RANK.historyLoaded = true;
+}
+
+function loadJSON(path) {
+  return fetch(path).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+}
+
+function decadeOf(year) {
+  return Math.floor(Number(year) / 10) * 10;
+}
+
+function playerIndex() {
+  if (TANK_RANK.playerIndex) return Promise.resolve(TANK_RANK.playerIndex);
+  return loadJSON("./assets/player-index.json").then((rows) => {
+    TANK_RANK.playerIndex = rows || [];
+    return TANK_RANK.playerIndex;
+  });
+}
+
+function loadHistory() {
+  if (TANK_RANK.historyLoaded) return Promise.resolve();
+  const decades = [1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020];
+  return Promise.all(decades.map((d) => loadJSON("./assets/history/" + d + "s.json")))
+    .then((chunks) => {
+      const rows = chunks.filter(Boolean).flat();
+      if (rows.length) {
+        ingestHistoryRows(rows);
+        return;
+      }
+      return playerIndex().then((idx) => {
+        if (idx && idx.length) ingestHistoryRows(idx);
+      });
+    });
+}
+
+function loadYearHistory(year) {
+  if (TANK_RANK.drafts[year] && (TANK_RANK.drafts[year].players || []).length) {
+    return Promise.resolve();
+  }
+  if (year >= currentYear()) return Promise.resolve();
+  const dec = decadeOf(year);
+  return loadJSON("./assets/history/" + dec + "s.json").then((rows) => {
+    if (rows && rows.length) {
+      ingestHistoryRows(rows);
+      return;
+    }
+    return playerIndex().then((idx) => {
+      ingestHistoryRows((idx || []).filter((r) => Number(r.y) === Number(year)));
+    });
+  });
+}
+
 function draftOf(year) {
-  return TANK_RANK.drafts[year] || TANK_RANK.drafts[currentYear()] || { year, players: [] };
+  return TANK_RANK.drafts[year] || { year, players: [], label: year + " draft", historic: year < currentYear() };
 }
 
 function playersOf(year) {
@@ -28,6 +126,12 @@ function nextYear() {
 function bucketsFor(year) {
   const present = new Set(playersOf(year).map((p) => p.bucket));
   return TANK_RANK.buckets.filter((b) => present.has(b));
+}
+
+function yearChipLabel(y) {
+  if (y === currentYear()) return `${y} · live`;
+  if (y === nextYear()) return `${y} · next`;
+  return String(y);
 }
 
 function nav(active) {
@@ -105,45 +209,83 @@ function renderBoard(root) {
   let bucket = params.get("bucket") || "all";
   if (bucket !== "all" && !available.includes(bucket)) bucket = "all";
   let q = params.get("q") || "";
-  document.title = `${year} NBA Draft Big Board | The Draft Model`;
+  document.title = `${year} NBA Draft ${isHistoric(year) ? "Results" : "Big Board"} | The Draft Model`;
+  const historic = isHistoric(year);
+
   const apply = () => {
     let rows = playersOf(year);
-    if (bucket !== "all") rows = rows.filter((p) => p.bucket === bucket);
+    if (!historic && bucket !== "all") rows = rows.filter((p) => p.bucket === bucket);
     if (q) {
       const s = q.toLowerCase();
-      rows = rows.filter((p) => p.name.toLowerCase().includes(s) || (p.school || "").toLowerCase().includes(s));
+      rows = rows.filter((p) => p.name.toLowerCase().includes(s) || (p.school || "").toLowerCase().includes(s) || (p.team || "").toLowerCase().includes(s));
+    }
+    if (historic) {
+      root.querySelector("#rows").innerHTML = rows.map((p) => `
+        <tr onclick="location.href='./player.html?year=${year}&id=${p.id}'" style="cursor:pointer">
+          <td class="rank">${String(p.rank).padStart(2, "0")}</td>
+          <td>
+            <div class="name">${p.name}</div>
+            <div class="meta">${[p.pos, p.school].filter(Boolean).join(" · ")}</div>
+          </td>
+          <td>${p.team || "—"}</td>
+          <td>${p.rd || "—"}</td>
+          <td class="pct">${p.yrs ?? "—"}</td>
+          <td class="pct">${p.g ?? "—"}</td>
+          <td class="pct">${p.pts ?? "—"}</td>
+          <td class="pct">${p.ws ?? "—"}</td>
+          <td class="pct">${p.vorp ?? "—"}</td>
+        </tr>`).join("") || `<tr><td colspan="9" style="color:var(--muted);padding:24px">No players match.</td></tr>`;
+      return;
     }
     root.querySelector("#rows").innerHTML = rows.map((p) => `
       <tr onclick="location.href='./player.html?year=${year}&id=${p.id}'" style="cursor:pointer">
         <td class="rank">${String(p.rank).padStart(2, "0")}</td>
-        <td><div class="name">${p.name}</div><div class="meta">${p.pos} · ${p.school} · ${p.ht}</div></td>
-        <td><span class="tag">${bucketLabel[p.bucket]}</span></td>
+        <td>
+          <div class="name">${p.name}</div>
+          <div class="meta">${p.pos} · ${p.school} · ${p.ht}</div>
+        </td>
+        <td><span class="tag">${bucketLabel[p.bucket] || p.bucket}</span></td>
         <td class="pct">${fmtPct(p.pHof)}</td>
         <td class="pct">${fmtPct(p.pAllStar)}</td>
         <td class="pct">${fmtPct(p.pAllNba)}</td>
         <td class="pct">${fmtPct(p.pBust)}</td>
-        <td class="pct">${p.expWs.toFixed(1)}</td>
+        <td class="pct">${(p.expWs || 0).toFixed(1)}</td>
         <td>${deltaHtml(p.delta)}</td>
       </tr>`).join("") || `<tr><td colspan="9" style="color:var(--muted);padding:24px">No players match.</td></tr>`;
   };
+
   root.innerHTML = `
-    ${nav(year >= currentYear() ? "upcoming" : "drafts")}
+    ${nav(year === currentYear() ? "board" : "drafts")}
     <main class="wrap section">
       <div class="banner">${TANK_RANK.disclaimer} ${draft.note || ""}</div>
-      <div class="section-head"><div>
-        <div class="kicker">${year === currentYear() ? "Living board" : year > currentYear() ? "Upcoming class" : year <= 1949 ? "BAA draft" : "Historic draft"}</div>
-        <h2>${year} draft</h2>
-        <p class="sub">${year >= currentYear() ? `<a href="./upcoming.html">All upcoming drafts</a>` : `<a href="./drafts.html">All historic drafts</a>`}</p>
-      </div></div>
-      <div class="toolbar">
-        ${["all", ...available].map((b) => `<button class="chip ${bucket === b ? "on" : ""}" data-bucket="${b}">${b === "all" ? "All" : bucketLabel[b]}</button>`).join("")}
-        <input class="search" id="q" placeholder="Search player or school" value="${q}">
+      <div class="section-head">
+        <div>
+          <div class="kicker">${year === currentYear() ? "Living board" : year > currentYear() ? "Upcoming class" : year <= 1949 ? "BAA draft" : "Historic draft"}</div>
+          <h2>${year === currentYear() ? year + " Top 300" : year + " draft"}</h2>
+          <p class="sub">${year === currentYear() ? `College and international only. High school opens on the <a href="./upcoming.html">upcoming boards</a>.` : year > currentYear() ? `Upcoming class. High school included. <a href="./board.html">Back to ${currentYear()}</a>.` : `${(draft.players || []).length} selections across every round. <a href="./drafts.html">All historic drafts</a>.`}</p>
+        </div>
       </div>
-      <div class="table-wrap"><table><thead><tr>
-        <th>Rk</th><th>Player</th><th>Bucket</th><th>P(HOF)</th><th>P(AS)</th><th>P(All-NBA)</th><th>P(Bust)</th><th>Exp WS</th><th>Δ vs cons.</th>
-      </tr></thead><tbody id="rows"></tbody></table></div>
+      <div class="toolbar">
+        ${historic ? "" : ["all", ...available].map((b) =>
+          `<button class="chip ${bucket === b ? "on" : ""}" data-bucket="${b}">${b === "all" ? "All" : bucketLabel[b]}</button>`
+        ).join("")}
+        <input class="search" id="q" placeholder="Search player, school, or team" value="${q}">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              ${historic
+                ? "<th>Pk</th><th>Player</th><th>Team</th><th>Rd</th><th>Yrs</th><th>G</th><th>PTS</th><th>WS</th><th>VORP</th>"
+                : "<th>Rk</th><th>Player</th><th>Bucket</th><th>P(HOF)</th><th>P(AS)</th><th>P(All-NBA)</th><th>P(Bust)</th><th>Exp WS</th><th>Δ vs cons.</th>"}
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
     </main>
     ${footer()}`;
+
   root.querySelectorAll("[data-bucket]").forEach((btn) => {
     btn.onclick = () => {
       bucket = btn.dataset.bucket;
@@ -195,12 +337,7 @@ function yearCard(y) {
 function cleanName(n) {
   return String(n || "").replace(/[\^~*+]+/g, "").trim();
 }
-function decadeOf(year) {
-  return Math.floor(Number(year) / 10) * 10;
-}
-function loadJSON(path) {
-  return fetch(path).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-}
+
 function historyMeta() {
   if (TANK_RANK.historyIndex) return Promise.resolve(TANK_RANK.historyIndex);
   return loadJSON("./assets/history-index.json").then((idx) => {
@@ -208,18 +345,12 @@ function historyMeta() {
     return TANK_RANK.historyIndex;
   });
 }
-function playerIndex() {
-  if (TANK_RANK.playerIndex) return Promise.resolve(TANK_RANK.playerIndex);
-  return loadJSON("./assets/player-index.json").then((rows) => {
-    TANK_RANK.playerIndex = rows || [];
-    return TANK_RANK.playerIndex;
-  });
-}
 
 function renderDrafts(root) {
   document.title = `NBA Draft History ${TANK_RANK.firstYear}–2026 | The Draft Model`;
   const archive = TANK_RANK.historicYears || TANK_RANK.years.filter((y) => y < currentYear());
   const decades = [...new Set(archive.map(decadeOf))];
+
   const paint = (meta) => {
     const yearLine = (y, highlight) => {
       const info = meta[y] || {};
@@ -229,6 +360,7 @@ function renderDrafts(root) {
         <span class="count">${info.n ? info.n + " selected" : ""}</span>
       </a>`;
     };
+
     const accordion = (openDec, highlightYear, filterYears) => {
       const visible = filterYears ? archive.filter((y) => filterYears.has(y)) : archive;
       const decs = decades.filter((dec) => visible.some((y) => decadeOf(y) === dec));
@@ -244,6 +376,7 @@ function renderDrafts(root) {
         </section>`;
       }).join("")}</div>`;
     };
+
     root.innerHTML = `
       ${nav("drafts")}
       <main class="wrap section">
@@ -253,9 +386,11 @@ function renderDrafts(root) {
       </main>
       ${footer()}`;
     bindNav(root);
+
     const accRoot = root.querySelector("#acc-root");
     const hits = root.querySelector("#hits");
     const input = root.querySelector("#archive-q");
+
     accRoot.onclick = (e) => {
       const btn = e.target.closest("[data-toggle]");
       if (!btn) return;
@@ -264,16 +399,33 @@ function renderDrafts(root) {
       const icon = btn.querySelector("i");
       if (icon) icon.textContent = item.classList.contains("open") ? "–" : "+";
     };
+
     const run = () => {
       const raw = (input.value || "").trim();
       const q = raw.toLowerCase();
       if (!q) {
-        hits.hidden = true; hits.innerHTML = ""; accRoot.innerHTML = accordion(2020); return;
+        hits.hidden = true;
+        hits.innerHTML = "";
+        accRoot.innerHTML = accordion(2020);
+        return;
       }
+
       const yearMatch = archive.find((y) => String(y) === q || String(y).slice(2) === q.replace(/^'/, ""));
-      const decadeMatch = decades.find((d) => q === String(d) + "s" || q === String(d) || q === String(d).slice(2) + "s" || q === String(d).slice(2));
-      if (yearMatch) { hits.hidden = true; accRoot.innerHTML = accordion(decadeOf(yearMatch), yearMatch); return; }
-      if (decadeMatch) { hits.hidden = true; accRoot.innerHTML = accordion(decadeMatch); return; }
+      const decadeMatch = decades.find((d) => {
+        return q === String(d) + "s" || q === String(d) || q === String(d).slice(2) + "s" || q === String(d).slice(2);
+      });
+
+      if (yearMatch) {
+        hits.hidden = true;
+        accRoot.innerHTML = accordion(decadeOf(yearMatch), yearMatch);
+        return;
+      }
+      if (decadeMatch) {
+        hits.hidden = true;
+        accRoot.innerHTML = accordion(decadeMatch);
+        return;
+      }
+
       playerIndex().then((rows) => {
         const found = rows.filter((r) => cleanName(r.n).toLowerCase().includes(q)).slice(0, 40);
         if (!found.length) {
@@ -284,12 +436,18 @@ function renderDrafts(root) {
         }
         const years = new Set(found.map((r) => r.y));
         hits.hidden = false;
-        hits.innerHTML = found.map((r) => `<a class="hit" href="./board.html?year=${r.y}"><span class="name">${cleanName(r.n)}</span><span class="meta">${r.y} · pick ${r.pk || "—"}</span></a>`).join("");
+        hits.innerHTML = found.map((r) => `
+          <a class="hit" href="./board.html?year=${r.y}&q=${encodeURIComponent(cleanName(r.n))}">
+            <span class="name">${cleanName(r.n)}</span>
+            <span class="meta">${r.y} · pick ${r.pk || "—"}</span>
+          </a>`).join("");
         accRoot.innerHTML = accordion(decadeOf(found[0].y), found[0].y, years);
       });
     };
+
     input.oninput = run;
   };
+
   historyMeta().then(paint);
 }
 
@@ -313,7 +471,7 @@ function renderPlayer(root) {
   const p = playersOf(year).find((x) => x.id === id) || playersOf(year)[0];
   document.title = `${p.name} ${year} NBA Draft Prospect | The Draft Model`;
   root.innerHTML = `
-    ${nav(year >= currentYear() ? "upcoming" : "drafts")}
+    ${nav(year === currentYear() ? "board" : "drafts")}
     <main class="wrap">
       <div class="banner">${TANK_RANK.disclaimer}</div>
       <section class="player-hero">
@@ -321,10 +479,17 @@ function renderPlayer(root) {
           <div class="kicker">${year} · #${p.rank} overall · #${p.catRank} ${bucketLabel[p.bucket]}</div>
           <h1>${p.name}</h1>
           <div class="pills">
-            <span class="tag">${year}</span><span class="tag">${bucketLabel[p.bucket]}</span><span class="tag">${p.pos}</span><span class="tag">${p.school}</span><span class="tag">${p.ht} / ${p.wt} lbs</span><span class="tag">Age ${p.age}</span>
+            <span class="tag">${year}</span>
+            <span class="tag">${bucketLabel[p.bucket]}</span>
+            <span class="tag">${p.pos}</span>
+            <span class="tag">${p.school}</span>
+            <span class="tag">${p.ht} / ${p.wt} lbs</span>
+            <span class="tag">Age ${p.age}</span>
           </div>
-          <p class="lede">Feature drivers in this prototype card: ${p.features.join(", ")}.</p>
-          <div class="cta-row"><a class="btn ghost" href="./board.html?year=${year}">Back to ${year} board</a></div>
+          <p class="lede">Feature drivers in this prototype card: ${p.features.join(", ")}. Real SHAP-style contributions land when the model is wired in.</p>
+          <div class="cta-row">
+            <a class="btn ghost" href="./board.html?year=${year}">Back to ${year} board</a>
+          </div>
         </div>
         <div class="metrics">
           ${metricHtml("P(Hall of Fame)", p.pHof, false)}
@@ -343,4 +508,14 @@ function renderSimple(root, active, title, kicker, html) {
   bindNav(root);
 }
 
-window.TR = { renderHome, renderBoard, renderPlayer, renderSimple, renderDrafts, renderUpcoming };
+window.TR = {
+  renderHome,
+  renderBoard: (root) => loadYearHistory(parseYear()).then(() => renderBoard(root)),
+  renderPlayer: (root) => {
+    const y = Number(new URLSearchParams(location.search).get("year")) || currentYear();
+    return loadYearHistory(y).then(() => renderPlayer(root));
+  },
+  renderSimple,
+  renderDrafts,
+  renderUpcoming
+};
