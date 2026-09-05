@@ -1,5 +1,15 @@
 (function () {
   if (!window.TR || !window.TANK_RANK) return;
+  const DISPLAY = {
+    "Akeem Olajuwon": "Hakeem Olajuwon",
+    "Lew Alcindor": "Kareem Abdul-Jabbar",
+    "Chris Jackson": "Mahmoud Abdul-Rauf",
+    "Ron Artest": "Metta World Peace"
+  };
+  function displayName(name) {
+    const raw = String(name || "").replace(/[\^~*+#]+/g, "").trim();
+    return DISPLAY[raw] || raw;
+  }
   function slug(name, year, pick) {
     return String(name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + year + "-" + (pick || 0);
   }
@@ -18,8 +28,8 @@
         note: "Selections in official pick order, every round.",
         historic: true,
         players: list.map((r, i) => ({
-          id: slug(r.n, year, r.pk || i + 1),
-          name: String(r.n || "").replace(/[\^~*+#]+/g, "").trim(),
+          id: slug(displayName(r.n), year, r.pk || i + 1),
+          name: displayName(r.n),
           rank: Number(r.pk) || i + 1,
           catRank: r.rd || i + 1,
           bucket: "college",
