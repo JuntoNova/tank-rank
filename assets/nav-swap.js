@@ -1,4 +1,11 @@
 (function () {
+  function stripFooterLine() {
+    document.querySelectorAll(".foot .copy div").forEach((el) => {
+      if (/Probabilities, not opinions|v0\.5\.0-prototype|Updated 2026-09-02/.test(el.textContent || "")) {
+        el.remove();
+      }
+    });
+  }
   function swap() {
     document.querySelectorAll(".nav-links a").forEach((a) => {
       if (a.textContent.trim() === "Big Board") {
@@ -10,6 +17,7 @@
         a.classList.toggle("active", onTheories);
       }
     });
+    stripFooterLine();
   }
   ["renderHome", "renderBoard", "renderDrafts", "renderUpcoming", "renderSimple", "renderPlayer"].forEach((name) => {
     const fn = window.TR && TR[name];
