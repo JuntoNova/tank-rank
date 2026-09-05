@@ -6,8 +6,10 @@
       }
     });
   }
-  function closeFreshAccordion() {
-    if (!document.getElementById("acc-root")) return;
+  function closeFreshAccordionOnce() {
+    if (window.__tdmAccClosed) return;
+    const root = document.getElementById("acc-root");
+    if (!root) return;
     const q = document.getElementById("archive-q");
     if (q && q.value.trim()) return;
     document.querySelectorAll(".acc-item.open").forEach((item) => {
@@ -15,8 +17,9 @@
       const icon = item.querySelector("i");
       if (icon) icon.textContent = "+";
     });
+    window.__tdmAccClosed = true;
   }
-  function swap() {
+  function swapNav() {
     document.querySelectorAll(".logo span").forEach((el) => el.remove());
     document.querySelectorAll(".nav-links a").forEach((a) => {
       const label = a.textContent.trim();
@@ -30,12 +33,17 @@
       }
     });
     stripFooterLine();
-    closeFreshAccordion();
+  }
+  function swap() {
+    swapNav();
+    closeFreshAccordionOnce();
   }
   function watch() {
     const root = document.getElementById("app");
     if (!root || window.__tdmNavObs) return;
-    window.__tdmNavObs = new MutationObserver(swap);
+    window.__tdmNavObs = new MutationObserver(function () {
+      swapNav();
+    });
     window.__tdmNavObs.observe(root, { childList: true, subtree: true });
   }
   ["renderHome", "renderBoard", "renderDrafts", "renderUpcoming", "renderSimple", "renderPlayer"].forEach((name) => {
@@ -52,6 +60,5 @@
   watch();
   document.addEventListener("DOMContentLoaded", function () { watch(); swap(); });
   setTimeout(swap, 0);
-  setTimeout(swap, 200);
-  setTimeout(swap, 800);
+  setTimeout(swap, 250);
 })();
