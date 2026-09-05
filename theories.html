@@ -4,17 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Draft Theories | The Draft Model</title>
-  <meta name="description" content="Testable draft theories — size, college production, blue-bloods, March Madness — scored against historic NBA drafts." />
+  <meta name="description" content="Testable draft theories scored against historic NBA drafts." />
   <link rel="canonical" href="https://thedraftmodel.com/theories.html" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#090a0c" />
-  <link rel="stylesheet" href="./assets/styles.css?v=17" />
-  <link rel="stylesheet" href="./assets/theories.css?v=17" />
+  <link rel="stylesheet" href="./assets/styles.css?v=18" />
+  <link rel="stylesheet" href="./assets/theories.css?v=18" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="./assets/data.js?v=17"></script>
-  <script src="./assets/app.js?v=17"></script>
+  <script src="./assets/data.js?v=18"></script>
+  <script src="./assets/app.js?v=18"></script>
+  <script src="./assets/nav-swap.js?v=18"></script>
   <script>
     TR.renderSimple(document.getElementById("app"), "theories", "Theories", "Claims, not gospel", `
       <p>Draft culture runs on slogans. Each one below is a testable claim against the historic boards — what actually happened after the pick, not what people said on draft night.</p>
@@ -29,13 +30,6 @@
         <article class="theory"><div class="theory-top"><h3>Defense doesn't show up until the league</h3><span class="theory-status">untested</span></div><p>College scoring is overweighted; defensive plus-minus and stocks are the missed signal.</p><p class="theory-test"><span>Test</span> Pre-draft scoring vs stocks / rebound rate as predictors of All-NBA and longevity.</p></article>
       </div>
     `);
-    document.querySelectorAll(".nav-links a").forEach((a) => {
-      if (a.textContent.trim() === "Big Board") {
-        a.textContent = "Theories";
-        a.setAttribute("href", "./theories.html");
-        a.classList.add("active");
-      }
-    });
   </script>
 </body>
 </html>
