@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Draft Theories | The Draft Model</title>
+  <meta name="description" content="Testable draft theories — size, college production, blue-bloods, March Madness — scored against historic NBA drafts." />
+  <link rel="canonical" href="https://thedraftmodel.com/theories.html" />
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#090a0c" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="The Draft Model" />
+  <meta property="og:title" content="Draft Theories | The Draft Model" />
+  <meta property="og:description" content="Claims about what predicts NBA careers. Each one gets tested against completed drafts." />
+  <meta property="og:url" content="https://thedraftmodel.com/theories.html" />
+  <meta property="og:image" content="https://thedraftmodel.com/assets/og.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./assets/styles.css?v=17" />
+</head>
+<body>
+  <div id="app"></div>
+  <script src="./assets/data.js?v=17"></script>
+  <script src="./assets/app.js?v=17"></script>
+  <script>
+    TR.renderSimple(document.getElementById("app"), "theories", "Theories", "Claims, not gospel", `
+      <p>Draft culture runs on slogans. Each one below is a testable claim against the historic boards — what actually happened after the pick, not what people said on draft night.</p>
+      <div class="theory-grid">
+        <article class="theory"><div class="theory-top"><h3>You can't teach size</h3><span class="theory-status">untested</span></div><p>Height and length are fixed traits, so bigger players at the same skill level should produce more NBA value.</p><p class="theory-test"><span>Test</span> Compare All-Star / All-NBA rates by height and wingspan within the same draft slot.</p></article>
+        <article class="theory"><div class="theory-top"><h3>College production is the best signal</h3><span class="theory-status">untested</span></div><p>What a player did against grown men in college predicts the league better than tools or high-school pedigree.</p><p class="theory-test"><span>Test</span> Hold draft slot fixed. Does last-season college box + age beat tools-only or HS-only profiles?</p></article>
+        <article class="theory"><div class="theory-top"><h3>The best players play at the best schools</h3><span class="theory-status">untested</span></div><p>Power-conference and blue-blood programs concentrate future stars; mid-majors are systematically overdrafted or underdrafted.</p><p class="theory-test"><span>Test</span> School tier vs later honors, controlling for pick number.</p></article>
+        <article class="theory"><div class="theory-top"><h3>March Madness tells you everything</h3><span class="theory-status">untested</span></div><p>Tournament runs reveal competitiveness that regular-season stats miss.</p><p class="theory-test"><span>Test</span> NCAA tournament minutes / efficiency vs the same player's regular-season profile, then NBA outcomes.</p></article>
+        <article class="theory"><div class="theory-top"><h3>Younger is better at the same pick</h3><span class="theory-status">untested</span></div><p>A 19-year-old freshman is a better bet than a 22-year-old senior drafted in the same slot.</p><p class="theory-test"><span>Test</span> Age on draft night vs All-Star / years / championships, bucketed by pick.</p></article>
+        <article class="theory"><div class="theory-top"><h3>One-and-done beats four-year stars</h3><span class="theory-status">untested</span></div><p>Early-entry freshmen outperform seniors even after you adjust for where they were picked.</p><p class="theory-test"><span>Test</span> Class year at draft vs later honors at each slot.</p></article>
+        <article class="theory"><div class="theory-top"><h3>International is a different market</h3><span class="theory-status">untested</span></div><p>Overseas prospects are systematically mispriced versus college players at the same pick.</p><p class="theory-test"><span>Test</span> College vs international origin, same slot, same era.</p></article>
+        <article class="theory"><div class="theory-top"><h3>Defense doesn't show up until the league</h3><span class="theory-status">untested</span></div><p>College scoring is overweighted; defensive plus-minus and stocks are the missed signal.</p><p class="theory-test"><span>Test</span> Pre-draft scoring vs stocks / rebound rate as predictors of All-NBA and longevity.</p></article>
+      </div>
+    `);
+  </script>
+</body>
+</html>
