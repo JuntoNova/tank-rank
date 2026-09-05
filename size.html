@@ -8,14 +8,14 @@
   <link rel="canonical" href="https://thedraftmodel.com/size.html" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#090a0c" />
-  <link rel="stylesheet" href="./assets/styles.css?v=33" />
-  <link rel="stylesheet" href="./assets/theories.css?v=33" />
+  <link rel="stylesheet" href="./assets/styles.css?v=37" />
+  <link rel="stylesheet" href="./assets/theories.css?v=37" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="./assets/data.js?v=33"></script>
-  <script src="./assets/app.js?v=33"></script>
-  <script src="./assets/nav-swap.js?v=33"></script>
+  <script src="./assets/data.js?v=37"></script>
+  <script src="./assets/app.js?v=37"></script>
+  <script src="./assets/nav-swap.js?v=37"></script>
   <script>
     TR.renderSimple(
       document.getElementById("app"),
@@ -24,8 +24,13 @@
       "",
       `
       <p class="size-note">n = 3,074. Picks 1–60, 1947–2018. Listed height and weight. Base = average draftee in this sample. AS 15.7% · All-NBA 8.6% · HOF 4.7% · MVP 1.17%. Δ is percentage points versus base. n &lt; 8 in grey.</p>
-
-      <h2 class="size-h">Height bins</h2>
+      <div class="acc size-acc">
+        <section class="acc-item">
+          <button class="acc-btn size-acc-btn" type="button" data-acc>
+            <b>Height bins</b>
+            <em>5 groups <i>+</i></em>
+          </button>
+          <div class="acc-panel">
       <div class="table-scroll">
       <table class="size-bins">
         <thead>
@@ -46,8 +51,14 @@
         </tbody>
       </table>
       </div>
-
-      <h2 class="size-h">Height, inch by inch</h2>
+          </div>
+        </section>
+        <section class="acc-item">
+          <button class="acc-btn size-acc-btn" type="button" data-acc>
+            <b>Height, inch by inch</b>
+            <em>5-9 to 7-7 <i>+</i></em>
+          </button>
+          <div class="acc-panel">
       <div class="table-scroll">
       <table class="inch-grid">
         <thead>
@@ -86,8 +97,14 @@
         </tbody>
       </table>
       </div>
-
-      <h2 class="size-h">Weight, 10 lb</h2>
+          </div>
+        </section>
+        <section class="acc-item">
+          <button class="acc-btn size-acc-btn" type="button" data-acc>
+            <b>Weight, 10 lb</b>
+            <em>16 buckets <i>+</i></em>
+          </button>
+          <div class="acc-panel">
       <div class="table-scroll">
       <table class="inch-grid">
         <thead>
@@ -119,8 +136,20 @@
         </tbody>
       </table>
       </div>
+          </div>
+        </section>
+      </div>
       `
     );
+    document.querySelectorAll("[data-acc]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const item = btn.closest(".acc-item");
+        item.classList.toggle("open");
+        const icon = btn.querySelector("i");
+        if (icon) icon.textContent = item.classList.contains("open") ? "\u2212" : "+";
+      });
+    });
   </script>
 </body>
 </html>
