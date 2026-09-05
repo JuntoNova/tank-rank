@@ -19,19 +19,6 @@
     });
     window.__tdmAccClosed = true;
   }
-  function swapHomeDoors(root) {
-    const doors = (root || document).querySelector(".doors");
-    if (!doors) return;
-    const links = Array.prototype.slice.call(doors.querySelectorAll("a.door"));
-    const hist = links.find((a) => (a.getAttribute("href") || "").indexOf("drafts") !== -1);
-    const fut = links.find((a) => (a.getAttribute("href") || "").indexOf("upcoming") !== -1);
-    if (!hist || !fut) return;
-    const k = hist.querySelector(".kicker");
-    if (k) k.textContent = "Past";
-    doors.innerHTML = "";
-    doors.appendChild(hist);
-    doors.appendChild(fut);
-  }
   function swapNav() {
     document.querySelectorAll(".logo span").forEach((el) => el.remove());
     document.querySelectorAll(".nav-links a, .foot-links a").forEach((a) => {
@@ -53,7 +40,6 @@
   }
   function swap() {
     swapNav();
-    swapHomeDoors(document.getElementById("app"));
     closeFreshAccordionOnce();
   }
   function watch() {
@@ -61,9 +47,8 @@
     if (!root || window.__tdmNavObs) return;
     window.__tdmNavObs = new MutationObserver(function () {
       swapNav();
-      swapHomeDoors(root);
     });
-    window.__tdmNavObs.observe(root, { childList: true, subtree: true });
+    window.__tdmNavObs.observe(root, { childList: true, subtree: false });
   }
   ["renderHome", "renderBoard", "renderDrafts", "renderUpcoming", "renderSimple", "renderPlayer"].forEach((name) => {
     const fn = window.TR && TR[name];
