@@ -180,9 +180,6 @@ function renderHome(root) {
   root.innerHTML = `
     ${nav("home")}
     <main class="wrap home">
-      <div class="kicker">The Draft Model</div>
-      <h1>Probabilities,<br>not opinions.</h1>
-      <p class="lede">Upcoming boards and completed drafts. That is the whole front door.</p>
       <div class="doors">
         <a class="door" href="./upcoming.html">
           <div class="kicker">Future</div>
