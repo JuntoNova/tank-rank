@@ -1,6 +1,1 @@
-const fmtPct = (n) => `${Math.round(n * 100)}%`;
-const bucketLabel = { college: "College", "high-school": "High School", international: "International" };
-
-function currentYear() {
-  return TANK_RANK.currentYear;
-}
+document.write('<script src="https://cdn.jsdelivr.net/gh/JuntoNova/tank-rank@4d2b1729cda9b9a40965b36e5c5f5ce51b72951a/assets/app.js"><\/script>');
