@@ -1,11 +1,11 @@
 (function () {
   const FILES = [
-    "./assets/measurements-listed.json?v=39",
-    "./assets/measurements-combine.json?v=39",
     "./assets/mc-00.json?v=39",
     "./assets/mc-06.json?v=39",
     "./assets/mc-12.json?v=39",
-    "./assets/mc-17.json?v=39"
+    "./assets/mc-17.json?v=39",
+    "./assets/measurements-combine.json?v=39",
+    "./assets/measurements-listed.json?v=39"
   ];
   function dash(v) { return (v === 0 || v) ? String(v) : "\u2014"; }
   function toInches(ht) {
@@ -25,39 +25,35 @@
       const year = Number(ys);
       const draft = TANK_RANK.drafts[year];
       (draft.players || []).forEach((p) => {
-        const byPick = map[year + "-" + p.rank];
-        const byName = map[year + ":" + String(p.name || "").toLowerCase()];
-        const m = byPick || byName;
+        const m = map[year + "-" + p.rank] || map[year + ":" + String(p.name || "").toLowerCase()];
         if (!m) return;
-        if (m.src === "listed") {
-          if (m.ht) { p.htListed = m.ht; if (!p.ht) p.ht = m.ht; }
-          if (m.wt) { p.wtListed = m.wt; if (!p.wt) p.wt = m.wt; }
-        } else if (m.src === "combine") {
-          if (m.ht) p.htCombine = m.ht;
-          if (m.wt) p.wtCombine = m.wt;
+        if (m.ht && m.src === "listed") { p.htListed = m.ht; if (!p.ht) p.ht = m.ht; }
+        if (m.wt && m.src === "listed") { p.wtListed = m.wt; if (!p.wt) p.wt = m.wt; }
+        if (m.src === "combine") {
+          if (m.ht) { p.htCombine = m.ht; p.ht = m.ht; }
+          if (m.wt) { p.wt = m.wt; }
           if (m.wsp) p.wsp = m.wsp;
           if (m.reach) p.reach = m.reach;
-          if (m.ht) p.ht = m.ht;
-          if (m.wt) p.wt = m.wt;
         } else {
-          if (m.ht) p.ht = m.ht;
-          if (m.wt) p.wt = m.wt;
-          if (m.wsp) p.wsp = m.wsp;
-          if (m.reach) p.reach = m.reach;
+          if (m.ht && !p.ht) p.ht = m.ht;
+          if (m.wt && !p.wt) p.wt = m.wt;
+          if (m.wsp && !p.wsp) p.wsp = m.wsp;
+          if (m.reach && !p.reach) p.reach = m.reach;
         }
-        if (m.src) p.sizeSrc = m.src;
+        if (m.src) p.sizeSrc = m.src === "combine" || p.sizeSrc === "combine" ? (p.wsp ? "combine" : m.src) : m.src;
       });
     });
   }
   function load() {
-    if (TANK_RANK._measures) {
-      apply(TANK_RANK._measures);
-      return Promise.resolve();
-    }
+    if (TANK_RANK._measures) { apply(TANK_RANK._measures); return Promise.resolve(); }
     return Promise.all(FILES.map((f) => fetch(f).then((r) => (r.ok ? r.json() : {})).catch(() => ({}))))
       .then((parts) => {
-        TANK_RANK._measures = Object.assign({}, ...parts);
-        apply(TANK_RANK._measures);
+        const map = {};
+        parts.forEach((p) => {
+          Object.keys(p).forEach((k) => { map[k] = Object.assign({}, map[k], p[k]); });
+        });
+        TANK_RANK._measures = map;
+        apply(map);
       });
   }
   function cell(label, value) {
@@ -75,7 +71,7 @@
     const wspIn = toInches(p.wsp);
     const listedIn = toInches(p.htListed);
     const combIn = toInches(p.htCombine);
-    const wt = Number(p.wtListed || p.wt) || 0;
+    const wt = Number(p.wt) || 0;
     const ape = (wspIn != null && htIn != null) ? fmtIn(wspIn - htIn) : "\u2014";
     const vs = (listedIn != null && combIn != null) ? fmtIn(combIn - listedIn) : "\u2014";
     const wpi = (wt && htIn) ? (wt / htIn).toFixed(2) : "\u2014";
@@ -95,7 +91,7 @@
       cell("Wingspan \u2212 height", ape) +
       cell("Combine vs listed", vs) +
       cell("Lbs / inch", wpi) +
-      cell("Source", p.sizeSrc === "combine" ? "Combine" : (p.ht || p.wt ? "Listed" : "\u2014")) +
+      cell("Source", p.wsp ? "Combine" : (p.ht || p.wt ? "Listed" : "\u2014")) +
       "</div>";
   }
   if (!document.getElementById("size-css")) {
