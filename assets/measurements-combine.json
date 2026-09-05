@@ -1,0 +1,15 @@
+{
+  "2012-1": {"n": "Anthony Davis", "ht": "6-9.25", "wt": 253, "wsp": "7-5.5", "reach": "9-0", "src": "combine"},
+  "2011-15": {"n": "Kawhi Leonard", "ht": "6-5.75", "wt": 227, "wsp": "7-3", "reach": "8-8.5", "src": "combine"},
+  "2015-1": {"n": "Karl-Anthony Towns", "ht": "6-11.5", "wt": 248, "wsp": "7-3.25", "reach": "9-5", "src": "combine"},
+  "2018-1": {"n": "Deandre Ayton", "ht": "6-11.25", "wt": 261, "wsp": "7-5", "reach": "9-3", "src": "combine"},
+  "2018-4": {"n": "Jaren Jackson Jr.", "ht": "6-9.75", "wt": 236, "wsp": "7-5.25", "reach": "9-1.5", "src": "combine"},
+  "2018-6": {"n": "Mohamed Bamba", "ht": "6-11.25", "wt": 225, "wsp": "7-10", "reach": "9-7.5", "src": "combine"},
+  "2019-1": {"n": "Zion Williamson", "ht": "6-5.75", "wt": 284, "wsp": "6-9.75", "reach": "8-7", "src": "combine"},
+  "2019-2": {"n": "Ja Morant", "ht": "6-2.25", "wt": 170, "wsp": "6-6.75", "reach": "8-2.5", "src": "combine"},
+  "2017-3": {"n": "Jayson Tatum", "ht": "6-7.25", "wt": 205, "wsp": "6-11", "reach": "8-9", "src": "combine"},
+  "2021-2": {"n": "Evan Mobley", "ht": "6-11.5", "wt": 210, "wsp": "7-4.25", "reach": "9-3", "src": "combine"},
+  "2022-2": {"n": "Chet Holmgren", "ht": "7-0.25", "wt": 195, "wsp": "7-6.25", "reach": "9-6", "src": "combine"},
+  "2009-3": {"n": "James Harden", "ht": "6-4.75", "wt": 220, "wsp": "6-11", "reach": "8-6", "src": "combine"},
+  "2011-1": {"n": "Kyrie Irving", "ht": "6-2", "wt": 191, "wsp": "6-4", "reach": "8-2.5", "src": "combine"}
+}
