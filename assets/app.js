@@ -106,7 +106,6 @@ function renderBoard(root) {
   if (bucket !== "all" && !available.includes(bucket)) bucket = "all";
   let q = params.get("q") || "";
   document.title = `${year} NBA Draft Big Board | The Draft Model`;
-
   const apply = () => {
     let rows = playersOf(year);
     if (bucket !== "all") rows = rows.filter((p) => p.bucket === bucket);
@@ -117,10 +116,7 @@ function renderBoard(root) {
     root.querySelector("#rows").innerHTML = rows.map((p) => `
       <tr onclick="location.href='./player.html?year=${year}&id=${p.id}'" style="cursor:pointer">
         <td class="rank">${String(p.rank).padStart(2, "0")}</td>
-        <td>
-          <div class="name">${p.name}</div>
-          <div class="meta">${p.pos} · ${p.school} · ${p.ht}</div>
-        </td>
+        <td><div class="name">${p.name}</div><div class="meta">${p.pos} · ${p.school} · ${p.ht}</div></td>
         <td><span class="tag">${bucketLabel[p.bucket]}</span></td>
         <td class="pct">${fmtPct(p.pHof)}</td>
         <td class="pct">${fmtPct(p.pAllStar)}</td>
@@ -130,39 +126,24 @@ function renderBoard(root) {
         <td>${deltaHtml(p.delta)}</td>
       </tr>`).join("") || `<tr><td colspan="9" style="color:var(--muted);padding:24px">No players match.</td></tr>`;
   };
-
   root.innerHTML = `
     ${nav(year >= currentYear() ? "upcoming" : "drafts")}
     <main class="wrap section">
       <div class="banner">${TANK_RANK.disclaimer} ${draft.note || ""}</div>
-      <div class="section-head">
-        <div>
-          <div class="kicker">${year === currentYear() ? "Living board" : year > currentYear() ? "Upcoming class" : year <= 1949 ? "BAA draft" : "Historic draft"}</div>
-          <h2>${year} draft</h2>
-          <p class="sub">${year >= currentYear() ? `<a href="./upcoming.html">All upcoming drafts</a>` : `<a href="./drafts.html">All historic drafts</a>`}</p>
-        </div>
-      </div>
+      <div class="section-head"><div>
+        <div class="kicker">${year === currentYear() ? "Living board" : year > currentYear() ? "Upcoming class" : year <= 1949 ? "BAA draft" : "Historic draft"}</div>
+        <h2>${year} draft</h2>
+        <p class="sub">${year >= currentYear() ? `<a href="./upcoming.html">All upcoming drafts</a>` : `<a href="./drafts.html">All historic drafts</a>`}</p>
+      </div></div>
       <div class="toolbar">
-        ${["all", ...available].map((b) =>
-          `<button class="chip ${bucket === b ? "on" : ""}" data-bucket="${b}">${b === "all" ? "All" : bucketLabel[b]}</button>`
-        ).join("")}
+        ${["all", ...available].map((b) => `<button class="chip ${bucket === b ? "on" : ""}" data-bucket="${b}">${b === "all" ? "All" : bucketLabel[b]}</button>`).join("")}
         <input class="search" id="q" placeholder="Search player or school" value="${q}">
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Rk</th><th>Player</th><th>Bucket</th>
-              <th>P(HOF)</th><th>P(AS)</th><th>P(All-NBA)</th><th>P(Bust)</th>
-              <th>Exp WS</th><th>Δ vs cons.</th>
-            </tr>
-          </thead>
-          <tbody id="rows"></tbody>
-        </table>
-      </div>
+      <div class="table-wrap"><table><thead><tr>
+        <th>Rk</th><th>Player</th><th>Bucket</th><th>P(HOF)</th><th>P(AS)</th><th>P(All-NBA)</th><th>P(Bust)</th><th>Exp WS</th><th>Δ vs cons.</th>
+      </tr></thead><tbody id="rows"></tbody></table></div>
     </main>
     ${footer()}`;
-
   root.querySelectorAll("[data-bucket]").forEach((btn) => {
     btn.onclick = () => {
       bucket = btn.dataset.bucket;
@@ -211,28 +192,105 @@ function yearCard(y) {
   </a>`;
 }
 
+function cleanName(n) {
+  return String(n || "").replace(/[\^~*+]+/g, "").trim();
+}
+function decadeOf(year) {
+  return Math.floor(Number(year) / 10) * 10;
+}
+function loadJSON(path) {
+  return fetch(path).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+}
+function historyMeta() {
+  if (TANK_RANK.historyIndex) return Promise.resolve(TANK_RANK.historyIndex);
+  return loadJSON("./assets/history-index.json").then((idx) => {
+    TANK_RANK.historyIndex = idx || {};
+    return TANK_RANK.historyIndex;
+  });
+}
+function playerIndex() {
+  if (TANK_RANK.playerIndex) return Promise.resolve(TANK_RANK.playerIndex);
+  return loadJSON("./assets/player-index.json").then((rows) => {
+    TANK_RANK.playerIndex = rows || [];
+    return TANK_RANK.playerIndex;
+  });
+}
+
 function renderDrafts(root) {
   document.title = `NBA Draft History ${TANK_RANK.firstYear}–2026 | The Draft Model`;
   const archive = TANK_RANK.historicYears || TANK_RANK.years.filter((y) => y < currentYear());
-  const decades = [...new Set(archive.map((y) => Math.floor(y / 10) * 10))];
-  const decadeBlocks = decades.map((dec) => {
-    const years = archive.filter((y) => Math.floor(y / 10) * 10 === dec);
-    return `<section class="decade" data-decade="${dec}">
-      <div class="decade-head">${dec}s</div>
-      <div class="year-grid">${years.map(yearCard).join("")}</div>
-    </section>`;
-  }).join("");
-
-  root.innerHTML = `
-    ${nav("drafts")}
-    <main class="wrap section">
-      <div class="kicker">Historic only</div>
-      <h2>Every completed draft</h2>
-      <p class="sub" style="margin:12px 0 22px">${archive.length} classes, 1947–2026. Upcoming classes live on <a href="./upcoming.html">Upcoming</a>.</p>
-      ${decadeBlocks}
-    </main>
-    ${footer()}`;
-  bindNav(root);
+  const decades = [...new Set(archive.map(decadeOf))];
+  const paint = (meta) => {
+    const yearLine = (y, highlight) => {
+      const info = meta[y] || {};
+      return `<a class="year-row ${highlight === y ? "on" : ""}" href="./board.html?year=${y}">
+        <b>${y}</b>
+        <span>${cleanName(info.top) || "Board incoming"}</span>
+        <span class="count">${info.n ? info.n + " selected" : ""}</span>
+      </a>`;
+    };
+    const accordion = (openDec, highlightYear, filterYears) => {
+      const visible = filterYears ? archive.filter((y) => filterYears.has(y)) : archive;
+      const decs = decades.filter((dec) => visible.some((y) => decadeOf(y) === dec));
+      return `<div class="acc">${decs.map((dec) => {
+        const years = visible.filter((y) => decadeOf(y) === dec);
+        const open = dec === openDec || (filterYears && years.length);
+        return `<section class="acc-item ${open ? "open" : ""}" data-decade="${dec}">
+          <button class="acc-btn" type="button" data-toggle="${dec}">
+            <b>${dec}s</b>
+            <em>${years.length} drafts <i>${open ? "–" : "+"}</i></em>
+          </button>
+          <div class="acc-panel">${years.map((y) => yearLine(y, highlightYear)).join("")}</div>
+        </section>`;
+      }).join("")}</div>`;
+    };
+    root.innerHTML = `
+      ${nav("drafts")}
+      <main class="wrap section">
+        <input class="archive-search" id="archive-q" placeholder="Search a year, decade, or player" autocomplete="off">
+        <div id="hits" class="hits" hidden></div>
+        <div id="acc-root">${accordion(2020)}</div>
+      </main>
+      ${footer()}`;
+    bindNav(root);
+    const accRoot = root.querySelector("#acc-root");
+    const hits = root.querySelector("#hits");
+    const input = root.querySelector("#archive-q");
+    accRoot.onclick = (e) => {
+      const btn = e.target.closest("[data-toggle]");
+      if (!btn) return;
+      const item = btn.closest(".acc-item");
+      item.classList.toggle("open");
+      const icon = btn.querySelector("i");
+      if (icon) icon.textContent = item.classList.contains("open") ? "–" : "+";
+    };
+    const run = () => {
+      const raw = (input.value || "").trim();
+      const q = raw.toLowerCase();
+      if (!q) {
+        hits.hidden = true; hits.innerHTML = ""; accRoot.innerHTML = accordion(2020); return;
+      }
+      const yearMatch = archive.find((y) => String(y) === q || String(y).slice(2) === q.replace(/^'/, ""));
+      const decadeMatch = decades.find((d) => q === String(d) + "s" || q === String(d) || q === String(d).slice(2) + "s" || q === String(d).slice(2));
+      if (yearMatch) { hits.hidden = true; accRoot.innerHTML = accordion(decadeOf(yearMatch), yearMatch); return; }
+      if (decadeMatch) { hits.hidden = true; accRoot.innerHTML = accordion(decadeMatch); return; }
+      playerIndex().then((rows) => {
+        const found = rows.filter((r) => cleanName(r.n).toLowerCase().includes(q)).slice(0, 40);
+        if (!found.length) {
+          hits.hidden = false;
+          hits.innerHTML = `<p class="sub">No drafts or players match “${raw}”.</p>`;
+          accRoot.innerHTML = accordion(2020);
+          return;
+        }
+        const years = new Set(found.map((r) => r.y));
+        hits.hidden = false;
+        hits.innerHTML = found.map((r) => `<a class="hit" href="./board.html?year=${r.y}"><span class="name">${cleanName(r.n)}</span><span class="meta">${r.y} · pick ${r.pk || "—"}</span></a>`).join("");
+        accRoot.innerHTML = accordion(decadeOf(found[0].y), found[0].y, years);
+      });
+    };
+    input.oninput = run;
+  };
+  historyMeta().then(paint);
 }
 
 function renderUpcoming(root) {
@@ -263,17 +321,10 @@ function renderPlayer(root) {
           <div class="kicker">${year} · #${p.rank} overall · #${p.catRank} ${bucketLabel[p.bucket]}</div>
           <h1>${p.name}</h1>
           <div class="pills">
-            <span class="tag">${year}</span>
-            <span class="tag">${bucketLabel[p.bucket]}</span>
-            <span class="tag">${p.pos}</span>
-            <span class="tag">${p.school}</span>
-            <span class="tag">${p.ht} / ${p.wt} lbs</span>
-            <span class="tag">Age ${p.age}</span>
+            <span class="tag">${year}</span><span class="tag">${bucketLabel[p.bucket]}</span><span class="tag">${p.pos}</span><span class="tag">${p.school}</span><span class="tag">${p.ht} / ${p.wt} lbs</span><span class="tag">Age ${p.age}</span>
           </div>
-          <p class="lede">Feature drivers in this prototype card: ${p.features.join(", ")}. Real SHAP-style contributions land when the model is wired in.</p>
-          <div class="cta-row">
-            <a class="btn ghost" href="./board.html?year=${year}">Back to ${year} board</a>
-          </div>
+          <p class="lede">Feature drivers in this prototype card: ${p.features.join(", ")}.</p>
+          <div class="cta-row"><a class="btn ghost" href="./board.html?year=${year}">Back to ${year} board</a></div>
         </div>
         <div class="metrics">
           ${metricHtml("P(Hall of Fame)", p.pHof, false)}
