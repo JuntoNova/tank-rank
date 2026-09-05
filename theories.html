@@ -8,35 +8,35 @@
   <link rel="canonical" href="https://thedraftmodel.com/theories.html" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#090a0c" />
-  <link rel="stylesheet" href="./assets/styles.css?v=27" />
-  <link rel="stylesheet" href="./assets/theories.css?v=27" />
+  <link rel="stylesheet" href="./assets/styles.css?v=30" />
+  <link rel="stylesheet" href="./assets/theories.css?v=30" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="./assets/data.js?v=27"></script>
-  <script src="./assets/app.js?v=27"></script>
-  <script src="./assets/nav-swap.js?v=27"></script>
+  <script src="./assets/data.js?v=30"></script>
+  <script src="./assets/app.js?v=30"></script>
+  <script src="./assets/nav-swap.js?v=30"></script>
   <script>
     const rows = [
-      "You can't teach size",
-      "College production is the best signal",
-      "The best players play at the best schools",
-      "March Madness tells you everything",
-      "Younger is better at the same pick",
-      "One-and-done beats four-year stars",
-      "International is a different market",
-      "Defense doesn't show up until the league"
-    ].map((name) => `
+      { name: "You can't teach size", pill: "weak", cls: "bull" },
+      { name: "College production is the best signal", pill: "N/A", cls: "na" },
+      { name: "The best players play at the best schools", pill: "N/A", cls: "na" },
+      { name: "March Madness tells you everything", pill: "N/A", cls: "na" },
+      { name: "Younger is better at the same pick", pill: "N/A", cls: "na" },
+      { name: "One-and-done beats four-year stars", pill: "N/A", cls: "na" },
+      { name: "International is a different market", pill: "N/A", cls: "na" },
+      { name: "Defense doesn't show up until the league", pill: "N/A", cls: "na" }
+    ].map((t) => `
       <div class="theory-row">
-        <span class="theory-name">${name}</span>
-        <span class="theory-pill na">N/A</span>
+        <span class="theory-name">${t.name}</span>
+        <span class="theory-pill ${t.cls}">${t.pill}</span>
       </div>`).join("");
     TR.renderSimple(
       document.getElementById("app"),
       "theories",
       "Theories",
       "True or bullshit",
-      `<div class="theory-list">${rows}</div>`
+      `<p style=\"color:var(--muted);max-width:40rem\">Size was the first test. Listed height and weight do not beat the slot prior for All-Star. Notes are on Methodology.</p><div class=\"theory-list\">${rows}</div>`
     );
   </script>
 </body>
