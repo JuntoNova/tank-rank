@@ -60,7 +60,12 @@
     if (!year || year >= TANK_RANK.currentYear) return Promise.resolve();
     if (TANK_RANK.drafts[year] && (TANK_RANK.drafts[year].players || []).length) return Promise.resolve();
     return loadJSON("./assets/history/" + year + ".json").then((rows) => {
-      if (rows && rows.length) ingest(rows);
+      if (rows && rows.length) { ingest(rows); return; }
+      const dec = String(Math.floor(year / 10) * 10) + "s";
+      return loadJSON("./assets/history/" + dec + ".json").then((all) => {
+        const mine = (all || []).filter((r) => Number(r.y) === year);
+        if (mine.length) ingest(mine);
+      });
     });
   }
   function slotBucket(pk) {
@@ -74,7 +79,7 @@
     return "31+";
   }
   function paintSettled(year) {
-    if (year > 1999 || year >= TANK_RANK.currentYear) return Promise.resolve();
+    if (!year || year >= TANK_RANK.currentYear) return Promise.resolve();
     return Promise.all([
       loadJSON("./assets/outcomes-legacy.json"),
       loadJSON("./assets/outcomes-extra.json"),
