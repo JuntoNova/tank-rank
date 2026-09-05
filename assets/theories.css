@@ -5,14 +5,28 @@
 .theory-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  gap: 14px;
   padding: 16px 2px;
   width: 100%;
-  text-align: left;
 }
 .theory-acc { border-bottom: 1px solid var(--line); }
+.theory-plus {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: 16px;
+  line-height: 1;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.theory-plus:hover { color: var(--lime); border-color: var(--lime); }
+.theory-plus.ghost { border-color: transparent; }
 .theory-name {
+  flex: 1;
   font-family: var(--serif);
   font-size: 22px;
   font-weight: 500;
@@ -36,7 +50,7 @@
 .theory-pill.true { color: #111; background: var(--lime); border-color: var(--lime); }
 .theory-pill.mid { color: #111; background: var(--gold); border-color: var(--gold); }
 .theory-pill.bull { color: #fff; background: var(--coral); border-color: var(--coral); }
-.theory-acc .acc-panel { padding: 0 2px 18px; }
+.theory-acc .acc-panel { padding: 0 2px 18px 38px; }
 .factor-list { display: grid; gap: 8px; max-width: 28rem; }
 .factor {
   display: grid;
@@ -46,16 +60,6 @@
   font-size: 14px;
 }
 .factor b { font-family: var(--mono); font-weight: 500; color: var(--lime); }
-.factor-link {
-  display: inline-block;
-  margin-top: 14px;
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--lime);
-}
-.factor-empty { color: var(--muted); font-size: 14px; }
 .size-note { color: var(--muted); max-width: 46rem; margin: 0 0 22px; font-size: 13px; }
 .table-scroll { overflow-x: auto; margin: 8px 0 28px; }
 .size-bins, .inch-grid { width: 100%; border-collapse: collapse; min-width: 720px; }
