@@ -10,6 +10,23 @@
     '<div class="kicker">Archive</div>',
     '<div class="kicker">Past</div>'
   );
+  // Trust pack: honest count (not Top 300)
+  src = src.replace(
+    'year === currentYear() ? year + " Top 300" : year + " draft"',
+    'year === currentYear() ? year + " board (" + playersOf(year).length + ")" : year + " draft"'
+  );
+  // Trust pack: remove P(Bust) until published definition
+  src = src.replace(
+    '<th>Rk</th><th>Player</th><th>Bucket</th><th>P(HOF)</th><th>P(AS)</th><th>P(All-NBA)</th><th>P(Bust)</th><th>Exp WS</th><th>Δ vs cons.</th>',
+    '<th>Rk</th><th>Player</th><th>Bucket</th><th>P(HOF)</th><th>P(AS)</th><th>P(All-NBA)</th><th>Exp WS</th><th>Δ vs cons.</th>'
+  );
+  src = src.replace('        <td class="pct">${fmtPct(p.pBust)}</td>\n', "");
+  src = src.replace('          ${metricHtml("P(Bust)", p.pBust, true)}\n', "");
+  // Living-board empty row colspan was 9; drop one for removed P(Bust)
+  src = src.replace(
+    '      </tr>`).join("") || `<tr><td colspan="9" style="color:var(--muted);padding:24px">No players match.</td></tr>`;\n  };\n\n  root.innerHTML = `\n    ${nav(year === currentYear() ? "board" : "drafts")}',
+    '      </tr>`).join("") || `<tr><td colspan="8" style="color:var(--muted);padding:24px">No players match.</td></tr>`;\n  };\n\n  root.innerHTML = `\n    ${nav(year === currentYear() ? "board" : "drafts")}'
+  );
   var future = src.match(/<a class="door" href=\"\.\/upcoming\.html\">[\s\S]*?<\/a>/);
   var historic = src.match(/<a class="door" href=\"\.\/drafts\.html\">[\s\S]*?<\/a>/);
   if (future && historic) {
