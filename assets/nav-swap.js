@@ -7,6 +7,7 @@
     });
   }
   function swap() {
+    document.querySelectorAll(".logo span").forEach((el) => el.remove());
     document.querySelectorAll(".nav-links a").forEach((a) => {
       if (a.textContent.trim() === "Big Board") {
         a.textContent = "Theories";
