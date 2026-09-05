@@ -1,5 +1,10 @@
 (function () {
-  function dash(v) { return v === 0 || v ? String(v) : "—"; }
+  const FILES = [
+    "./assets/measurements-listed.json?v=29",
+    "./assets/measurements-combine-a.json?v=29",
+    "./assets/measurements-combine-b.json?v=29"
+  ];
+  function dash(v) { return v === 0 || v ? String(v) : "\u2014"; }
   function apply(map) {
     if (!map || !window.TANK_RANK) return;
     Object.keys(TANK_RANK.drafts || {}).forEach((ys) => {
@@ -23,13 +28,11 @@
       apply(TANK_RANK._measures);
       return Promise.resolve();
     }
-    return fetch("./assets/measurements.json?v=29")
-      .then((r) => (r.ok ? r.json() : {}))
-      .then((map) => {
-        TANK_RANK._measures = map || {};
+    return Promise.all(FILES.map((f) => fetch(f).then((r) => (r.ok ? r.json() : {})).catch(() => ({}))))
+      .then((parts) => {
+        TANK_RANK._measures = Object.assign({}, ...parts);
         apply(TANK_RANK._measures);
-      })
-      .catch(() => {});
+      });
   }
   function paintSize() {
     const params = new URLSearchParams(location.search);
@@ -42,11 +45,11 @@
     const pills = document.querySelector(".pills");
     if (pills) {
       pills.querySelectorAll("[data-size]").forEach((el) => el.remove());
-      const src = p.sizeSrc === "combine" ? "combine" : p.ht || p.wt ? "listed" : "";
+      const src = p.sizeSrc === "combine" ? "combine" : (p.ht || p.wt ? "listed" : "");
       const tag = document.createElement("span");
       tag.className = "tag";
       tag.setAttribute("data-size", "1");
-      tag.textContent = (p.ht || "—") + " / " + (p.wt ? p.wt + " lbs" : "—");
+      tag.textContent = (p.ht || "\u2014") + " / " + (p.wt ? p.wt + " lbs" : "\u2014");
       pills.appendChild(tag);
       if (src) {
         const s = document.createElement("span");
@@ -64,13 +67,11 @@
       const hero = document.querySelector(".player-hero > div");
       if (hero) hero.appendChild(box);
     }
-    box.innerHTML = `
-      <div class="size-grid">
-        <div><label>Height</label><b>${dash(p.ht)}</b></div>
-        <div><label>Weight</label><b>${p.wt ? p.wt + " lbs" : "—"}</b></div>
-        <div><label>Wingspan</label><b>${dash(p.wsp)}</b></div>
-        <div><label>Standing reach</label><b>${dash(p.reach)}</b></div>
-      </div>`;
+    box.innerHTML = "<div class=\"size-grid\">" +
+      "<div><label>Height</label><b>" + dash(p.ht) + "</b></div>" +
+      "<div><label>Weight</label><b>" + (p.wt ? p.wt + " lbs" : "\u2014") + "</b></div>" +
+      "<div><label>Wingspan</label><b>" + dash(p.wsp) + "</b></div>" +
+      "<div><label>Standing reach</label><b>" + dash(p.reach) + "</b></div></div>";
   }
   if (!document.getElementById("size-css")) {
     const css = document.createElement("style");
@@ -80,7 +81,7 @@
   }
   const orig = window.TR && TR.renderPlayer;
   if (typeof orig === "function") {
-    TR.renderPlayer = function (root) {
+    TR.renderPlayer = function () {
       const r = orig.apply(this, arguments);
       load().then(paintSize);
       return r;
@@ -88,7 +89,7 @@
   }
   const origBoard = window.TR && TR.renderBoard;
   if (typeof origBoard === "function") {
-    TR.renderBoard = function (root) {
+    TR.renderBoard = function () {
       const r = origBoard.apply(this, arguments);
       if (r && typeof r.then === "function") return r.then((x) => { load(); return x; });
       load();
