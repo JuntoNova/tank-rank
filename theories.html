@@ -8,16 +8,8 @@
   <link rel="canonical" href="https://thedraftmodel.com/theories.html" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#090a0c" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="The Draft Model" />
-  <meta property="og:title" content="Draft Theories | The Draft Model" />
-  <meta property="og:description" content="Claims about what predicts NBA careers. Each one gets tested against completed drafts." />
-  <meta property="og:url" content="https://thedraftmodel.com/theories.html" />
-  <meta property="og:image" content="https://thedraftmodel.com/assets/og.jpg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./assets/styles.css?v=17" />
+  <link rel="stylesheet" href="./assets/theories.css?v=17" />
 </head>
 <body>
   <div id="app"></div>
@@ -37,6 +29,13 @@
         <article class="theory"><div class="theory-top"><h3>Defense doesn't show up until the league</h3><span class="theory-status">untested</span></div><p>College scoring is overweighted; defensive plus-minus and stocks are the missed signal.</p><p class="theory-test"><span>Test</span> Pre-draft scoring vs stocks / rebound rate as predictors of All-NBA and longevity.</p></article>
       </div>
     `);
+    document.querySelectorAll(".nav-links a").forEach((a) => {
+      if (a.textContent.trim() === "Big Board") {
+        a.textContent = "Theories";
+        a.setAttribute("href", "./theories.html");
+        a.classList.add("active");
+      }
+    });
   </script>
 </body>
 </html>
