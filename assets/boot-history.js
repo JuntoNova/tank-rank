@@ -25,7 +25,7 @@
           rank: Number(r.pk) || i + 1,
           catRank: r.rd || i + 1,
           bucket: "college",
-          school: r.c || "—",
+          school: r.c || "\u2014",
           team: r.t || "",
           pos: r.pos || "",
           rd: r.rd,
@@ -38,6 +38,8 @@
           allStar: r.as || 0,
           nba1: r.nba1 || 0,
           allNba: r.nba || 0,
+          champs: r.ch || 0,
+          mvp: r.mvp || 0,
           ht: "",
           wt: "",
           age: "",
@@ -90,6 +92,9 @@
         if (o.as) p.allStar = o.as;
         if (o.nba1) p.nba1 = o.nba1;
         if (o.nba) p.allNba = o.nba;
+        if (o.yrs) p.yrs = o.yrs;
+        if (o.ch) p.champs = o.ch;
+        if (o.mvp) p.mvp = o.mvp;
       });
       TANK_RANK.slotPriors = priors || {};
       if (!document.getElementById("hof-style")) {
@@ -105,15 +110,21 @@
       const sub = document.querySelector(".section-head .sub");
       if (!toolbar || !head || !body) return;
 
-      let view = new URLSearchParams(location.search).get("view") === "then" ? "then" : "now";
+      const params = new URLSearchParams(location.search);
+      let view = (params.get("view") === "then" || params.get("view") === "drafted") ? "drafted" : "now";
       if (!toolbar.querySelector("[data-view]")) {
         toolbar.insertAdjacentHTML("afterbegin",
           '<button class="chip ' + (view === "now" ? "on" : "") + '" data-view="now">Now</button>' +
-          '<button class="chip ' + (view === "then" ? "on" : "") + '" data-view="then">Then</button>'
+          '<button class="chip ' + (view === "drafted" ? "on" : "") + '" data-view="drafted">When drafted</button>'
         );
+      } else {
+        toolbar.querySelectorAll("[data-view]").forEach((b) => {
+          if (b.dataset.view === "then") { b.dataset.view = "drafted"; b.textContent = "When drafted"; }
+          b.classList.toggle("on", b.dataset.view === view);
+        });
       }
       if (sub) {
-        sub.innerHTML = 'What actually happened. Then is the historical rate for that draft slot \u2014 not a trained model. <a href="./drafts.html">All historic drafts</a>.';
+        sub.innerHTML = 'What actually happened. When drafted is the historical rate for that draft slot \u2014 not a trained model. <a href="./drafts.html">All historic drafts</a>.';
       }
 
       const pct = (n) => Math.round((n || 0) * 100) + "%";
@@ -125,8 +136,8 @@
           const s = q.toLowerCase();
           rows = rows.filter((p) => (p.name || "").toLowerCase().includes(s) || (p.school || "").toLowerCase().includes(s) || (p.team || "").toLowerCase().includes(s));
         }
-        if (view === "then") {
-          head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>P(HOF)</th><th>P(AS)</th><th>P(All-NBA)</th><th>P(Bust)</th>";
+        if (view === "drafted") {
+          head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>P(HOF)</th><th>P(AS)</th><th>P(All-NBA)</th>";
           body.innerHTML = rows.map((p) => {
             const slot = (TANK_RANK.slotPriors || {})[slotBucket(p.rank)] || {};
             return '<tr onclick="location.href=\'./player.html?year=' + year + '&id=' + p.id + '\'" style="cursor:pointer">' +
@@ -135,30 +146,30 @@
               '<td>' + (p.team || "\u2014") + '</td>' +
               '<td class="pct">' + pct(slot.pHof) + '</td>' +
               '<td class="pct">' + pct(slot.pAs) + '</td>' +
-              '<td class="pct">' + pct(slot.pNba) + '</td>' +
-              '<td class="pct">' + pct(slot.pBust) + '</td></tr>';
+              '<td class="pct">' + pct(slot.pNba) + '</td></tr>';
           }).join("");
         } else {
-          head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>HOF</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th>";
+          head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th>";
           body.innerHTML = rows.map((p) => {
             return '<tr onclick="location.href=\'./player.html?year=' + year + '&id=' + p.id + '\'" style="cursor:pointer">' +
               '<td class="rank">' + String(p.rank).padStart(2, "0") + '</td>' +
               '<td><div class="name">' + p.name + (p.hof ? ' <span class="hof">HOF</span>' : '') + '</div><div class="meta">' + [p.pos, p.school].filter(Boolean).join(" \u00b7 ") + '</div></td>' +
               '<td>' + (p.team || "\u2014") + '</td>' +
-              '<td>' + (p.hof ? "Yes" : "\u2014") + '</td>' +
               '<td class="pct">' + dash(p.allStar) + '</td>' +
               '<td class="pct">' + dash(p.nba1) + '</td>' +
               '<td class="pct">' + dash(p.allNba) + '</td>' +
-              '<td class="pct">' + (p.yrs ?? "\u2014") + '</td></tr>';
+              '<td class="pct">' + dash(p.yrs) + '</td>' +
+              '<td class="pct">' + dash(p.champs) + '</td>' +
+              '<td class="pct">' + dash(p.mvp) + '</td></tr>';
           }).join("");
         }
       };
 
       toolbar.querySelectorAll("[data-view]").forEach((btn) => {
         btn.onclick = () => {
-          view = btn.dataset.view;
+          view = btn.dataset.view === "then" ? "drafted" : btn.dataset.view;
           const url = new URL(location.href);
-          if (view === "then") url.searchParams.set("view", "then");
+          if (view === "drafted") url.searchParams.set("view", "drafted");
           else url.searchParams.delete("view");
           history.replaceState({}, "", url);
           toolbar.querySelectorAll("[data-view]").forEach((b) => b.classList.toggle("on", b.dataset.view === view));
