@@ -19,7 +19,8 @@
   function swap() {
     document.querySelectorAll(".logo span").forEach((el) => el.remove());
     document.querySelectorAll(".nav-links a").forEach((a) => {
-      if (a.textContent.trim() === "Big Board") {
+      const label = a.textContent.trim();
+      if (label === "Big Board" || a.getAttribute("href") === "./board.html") {
         a.textContent = "Theories";
         a.setAttribute("href", "./theories.html");
       }
@@ -31,19 +32,26 @@
     stripFooterLine();
     closeFreshAccordion();
   }
+  function watch() {
+    const root = document.getElementById("app");
+    if (!root || window.__tdmNavObs) return;
+    window.__tdmNavObs = new MutationObserver(swap);
+    window.__tdmNavObs.observe(root, { childList: true, subtree: true });
+  }
   ["renderHome", "renderBoard", "renderDrafts", "renderUpcoming", "renderSimple", "renderPlayer"].forEach((name) => {
     const fn = window.TR && TR[name];
     if (typeof fn !== "function") return;
     TR[name] = function () {
       const r = fn.apply(this, arguments);
+      watch();
       if (r && typeof r.then === "function") return r.then((x) => { swap(); return x; });
       swap();
-      setTimeout(swap, 50);
-      setTimeout(swap, 250);
       return r;
     };
   });
-  document.addEventListener("DOMContentLoaded", swap);
+  watch();
+  document.addEventListener("DOMContentLoaded", function () { watch(); swap(); });
   setTimeout(swap, 0);
-  setTimeout(swap, 300);
+  setTimeout(swap, 200);
+  setTimeout(swap, 800);
 })();
