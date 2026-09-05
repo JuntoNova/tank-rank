@@ -1,7 +1,11 @@
 (function () {
   const FILES = [
-    "./assets/measurements-listed.json?v=38",
-    "./assets/measurements-combine.json?v=38"
+    "./assets/measurements-listed.json?v=39",
+    "./assets/measurements-combine.json?v=39",
+    "./assets/mc-00.json?v=39",
+    "./assets/mc-06.json?v=39",
+    "./assets/mc-12.json?v=39",
+    "./assets/mc-17.json?v=39"
   ];
   function dash(v) { return (v === 0 || v) ? String(v) : "\u2014"; }
   function toInches(ht) {
@@ -33,8 +37,8 @@
           if (m.wt) p.wtCombine = m.wt;
           if (m.wsp) p.wsp = m.wsp;
           if (m.reach) p.reach = m.reach;
-          if (m.ht && !p.ht) p.ht = m.ht;
-          if (m.wt && !p.wt) p.wt = m.wt;
+          if (m.ht) p.ht = m.ht;
+          if (m.wt) p.wt = m.wt;
         } else {
           if (m.ht) p.ht = m.ht;
           if (m.wt) p.wt = m.wt;
@@ -67,7 +71,7 @@
     if (!draft) return;
     const p = (draft.players || []).find((x) => x.id === id) || draft.players[0];
     if (!p) return;
-    const htIn = toInches(p.htListed || p.ht);
+    const htIn = toInches(p.htListed || p.htCombine || p.ht);
     const wspIn = toInches(p.wsp);
     const listedIn = toInches(p.htListed);
     const combIn = toInches(p.htCombine);
@@ -75,22 +79,6 @@
     const ape = (wspIn != null && htIn != null) ? fmtIn(wspIn - htIn) : "\u2014";
     const vs = (listedIn != null && combIn != null) ? fmtIn(combIn - listedIn) : "\u2014";
     const wpi = (wt && htIn) ? (wt / htIn).toFixed(2) : "\u2014";
-    const pills = document.querySelector(".pills");
-    if (pills) {
-      pills.querySelectorAll("[data-size]").forEach((el) => el.remove());
-      const tag = document.createElement("span");
-      tag.className = "tag";
-      tag.setAttribute("data-size", "1");
-      tag.textContent = (p.ht || "\u2014") + " / " + (p.wt ? p.wt + " lbs" : "\u2014");
-      pills.appendChild(tag);
-      if (p.sizeSrc || p.ht || p.wt) {
-        const s = document.createElement("span");
-        s.className = "tag";
-        s.setAttribute("data-size", "1");
-        s.textContent = p.sizeSrc === "combine" ? "Combine" : (p.ht || p.wt ? "Listed" : "");
-        if (s.textContent) pills.appendChild(s);
-      }
-    }
     let box = document.getElementById("size-box");
     if (!box) {
       box = document.createElement("div");
@@ -122,15 +110,6 @@
       const r = orig.apply(this, arguments);
       if (r && typeof r.then === "function") return r.then((x) => load().then(paintSize).then(() => x));
       load().then(paintSize);
-      return r;
-    };
-  }
-  const origBoard = window.TR && TR.renderBoard;
-  if (typeof origBoard === "function") {
-    TR.renderBoard = function () {
-      const r = origBoard.apply(this, arguments);
-      if (r && typeof r.then === "function") return r.then((x) => { load(); return x; });
-      load();
       return r;
     };
   }
