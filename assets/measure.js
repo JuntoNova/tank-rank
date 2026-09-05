@@ -1,15 +1,10 @@
 (function () {
-  const FILES = [
-    "./assets/mc-2000.json?v=40",
-    "./assets/mc-2003.json?v=40",
-    "./assets/mc-2006.json?v=40",
-    "./assets/mc-2009.json?v=40",
-    "./assets/mc-2012.json?v=40",
-    "./assets/mc-2015.json?v=40",
-    "./assets/mc-2018.json?v=40",
-    "./assets/measurements-combine.json?v=40",
-    "./assets/measurements-listed.json?v=40"
-  ];
+  const FILES = [];
+  for (let y = 2000; y <= 2020; y++) FILES.push("./assets/mc-y-" + y + ".json?v=40");
+  FILES.push("./assets/mc-2000.json?v=40");
+  FILES.push("./assets/mc-17.json?v=40");
+  FILES.push("./assets/measurements-combine.json?v=40");
+  FILES.push("./assets/measurements-listed.json?v=40");
   function dash(v) { return (v === 0 || v) ? String(v) : "\u2014"; }
   function toInches(ht) {
     const m = String(ht || "").trim().match(/^(\d+)-(\d+(?:\.\d+)?)$/);
@@ -34,7 +29,7 @@
         if (m.wt && m.src === "listed") { p.wtListed = m.wt; if (!p.wt) p.wt = m.wt; }
         if (m.src === "combine") {
           if (m.ht) { p.htCombine = m.ht; p.ht = m.ht; }
-          if (m.wt) { p.wt = m.wt; }
+          if (m.wt) p.wt = m.wt;
           if (m.wsp) p.wsp = m.wsp;
           if (m.reach) p.reach = m.reach;
         } else {
@@ -53,7 +48,7 @@
       .then((parts) => {
         const map = {};
         parts.forEach((p) => {
-          Object.keys(p).forEach((k) => { map[k] = Object.assign({}, map[k], p[k]); });
+          Object.keys(p || {}).forEach((k) => { map[k] = Object.assign({}, map[k], p[k]); });
         });
         TANK_RANK._measures = map;
         apply(map);
