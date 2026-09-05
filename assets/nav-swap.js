@@ -24,10 +24,6 @@
     document.querySelectorAll(".nav-links a, .foot-links a").forEach((a) => {
       const label = a.textContent.trim();
       const href = a.getAttribute("href") || "";
-      if (label === "About" || href.indexOf("about.html") !== -1) {
-        a.remove();
-        return;
-      }
       if (label === "Big Board" || href === "./board.html") {
         a.textContent = "Theories";
         a.setAttribute("href", "./theories.html");
