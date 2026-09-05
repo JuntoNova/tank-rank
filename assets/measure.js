@@ -1,11 +1,14 @@
 (function () {
   const FILES = [
-    "./assets/mc-00.json?v=39",
-    "./assets/mc-06.json?v=39",
-    "./assets/mc-12.json?v=39",
-    "./assets/mc-17.json?v=39",
-    "./assets/measurements-combine.json?v=39",
-    "./assets/measurements-listed.json?v=39"
+    "./assets/mc-2000.json?v=40",
+    "./assets/mc-2003.json?v=40",
+    "./assets/mc-2006.json?v=40",
+    "./assets/mc-2009.json?v=40",
+    "./assets/mc-2012.json?v=40",
+    "./assets/mc-2015.json?v=40",
+    "./assets/mc-2018.json?v=40",
+    "./assets/measurements-combine.json?v=40",
+    "./assets/measurements-listed.json?v=40"
   ];
   function dash(v) { return (v === 0 || v) ? String(v) : "\u2014"; }
   function toInches(ht) {
@@ -40,7 +43,7 @@
           if (m.wsp && !p.wsp) p.wsp = m.wsp;
           if (m.reach && !p.reach) p.reach = m.reach;
         }
-        if (m.src) p.sizeSrc = m.src === "combine" || p.sizeSrc === "combine" ? (p.wsp ? "combine" : m.src) : m.src;
+        if (m.src) p.sizeSrc = p.wsp ? "combine" : m.src;
       });
     });
   }
