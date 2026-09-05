@@ -21,15 +21,19 @@
   }
   function swapNav() {
     document.querySelectorAll(".logo span").forEach((el) => el.remove());
-    document.querySelectorAll(".nav-links a").forEach((a) => {
+    document.querySelectorAll(".nav-links a, .foot-links a").forEach((a) => {
       const label = a.textContent.trim();
-      if (label === "Big Board" || a.getAttribute("href") === "./board.html") {
+      const href = a.getAttribute("href") || "";
+      if (label === "About" || href.indexOf("about.html") !== -1) {
+        a.remove();
+        return;
+      }
+      if (label === "Big Board" || href === "./board.html") {
         a.textContent = "Theories";
         a.setAttribute("href", "./theories.html");
       }
-      if (a.getAttribute("href") === "./theories.html") {
-        const onTheories = /theories\.html/.test(location.pathname);
-        a.classList.toggle("active", onTheories);
+      if ((a.getAttribute("href") || "").indexOf("theories.html") !== -1) {
+        a.classList.toggle("active", /theories\.html/.test(location.pathname));
       }
     });
     stripFooterLine();
