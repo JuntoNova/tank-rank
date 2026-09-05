@@ -245,9 +245,7 @@ function renderUpcoming(root) {
     ${nav("upcoming")}
     <main class="wrap section">
       <div class="kicker">Future classes</div>
-      <h2>2027, 2028, 2029</h2>
-      <p class="sub" style="margin:12px 0 22px">Living and upcoming boards. Completed drafts stay on <a href="./drafts.html">Historic</a>.</p>
-      <div class="year-grid">${years.map(yearCard).join("")}</div>
+      <div class="year-grid" style="margin-top:18px">${years.map(yearCard).join("")}</div>
     </main>
     ${footer()}`;
   bindNav(root);
