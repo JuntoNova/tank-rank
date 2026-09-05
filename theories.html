@@ -8,27 +8,27 @@
   <link rel="canonical" href="https://thedraftmodel.com/theories.html" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#090a0c" />
-  <link rel="stylesheet" href="./assets/styles.css?v=34" />
-  <link rel="stylesheet" href="./assets/theories.css?v=34" />
+  <link rel="stylesheet" href="./assets/styles.css?v=35" />
+  <link rel="stylesheet" href="./assets/theories.css?v=35" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="./assets/data.js?v=34"></script>
-  <script src="./assets/app.js?v=34"></script>
-  <script src="./assets/nav-swap.js?v=34"></script>
+  <script src="./assets/data.js?v=35"></script>
+  <script src="./assets/app.js?v=35"></script>
+  <script src="./assets/nav-swap.js?v=35"></script>
   <script>
     const theories = [
       {
         name: "You can't teach size",
         href: "./size.html",
-        pill: "weak",
-        cls: "bull",
+        pill: "R\u00b2 3%",
+        cls: "num",
         outliers: [
-          { k: "7-0 to 7-2", v: "MVP +2.47" },
-          { k: "250\u2013259 lb", v: "MVP +2.30" },
-          { k: "6-11", v: "MVP +2.24" },
-          { k: "6-8", v: "MVP \u22121.17" },
-          { k: "Under 6-1", v: "MVP \u22120.41" }
+          { k: "P(AS)", v: "R\u00b2 0.0%" },
+          { k: "P(All-NBA)", v: "R\u00b2 0.4%" },
+          { k: "P(HOF)", v: "R\u00b2 0.2%" },
+          { k: "P(MVP)", v: "R\u00b2 3.3%" },
+          { k: "MVP after pick", v: "+1.9 pp" }
         ]
       },
       { name: "College production is the best signal", pill: "N/A", cls: "na" },
@@ -44,7 +44,7 @@
         ? `<a class="theory-name" href="${t.href}">${t.name}</a>`
         : `<span class="theory-name">${t.name}</span>`;
       const plus = t.outliers
-        ? `<button class="theory-plus" data-acc type="button" aria-label="Toggle outliers">+</button>`
+        ? `<button class="theory-plus" data-acc type="button" aria-label="Toggle">+</button>`
         : `<span class="theory-plus ghost"></span>`;
       const panel = t.outliers
         ? `<div class="acc-panel"><div class="factor-list">${t.outliers.map((f) =>
