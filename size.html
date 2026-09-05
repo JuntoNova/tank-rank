@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>You can't teach size | The Draft Model</title>
+  <meta name="description" content="Height versus All-Star, All-NBA, Hall of Fame, and MVP in historic NBA drafts." />
+  <link rel="canonical" href="https://thedraftmodel.com/size.html" />
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#090a0c" />
+  <link rel="stylesheet" href="./assets/styles.css?v=31" />
+  <link rel="stylesheet" href="./assets/theories.css?v=31" />
+</head>
+<body>
+  <div id="app"></div>
+  <script src="./assets/data.js?v=31"></script>
+  <script src="./assets/app.js?v=31"></script>
+  <script src="./assets/nav-swap.js?v=31"></script>
+  <script>
+    TR.renderSimple(
+      document.getElementById("app"),
+      "theories",
+      "You can't teach size",
+      "Theory board",
+      `
+      <p class="size-note">3,074 drafted players, picks 1–60, classes 1947–2018. Listed Basketball-Reference height. Baseline rates in this sample: All-Star 15.7%, All-NBA 8.6%, Hall of Fame 4.7%, MVP 1.17%. Impact is percentage points versus that baseline. Rows with n under 8 are thin samples.</p>
+
+      <h2 class="size-h">What to apply to future drafts</h2>
+      <p class="size-note">Under 6-1 is not a death sentence for All-Star (+2.5 pp). It is a real tax on MVP: 0.76% versus 1.17% baseline, −35% relative. The only MVP in that bin is Allen Iverson. 7-0 to 7-2 is the opposite tax: MVP 3.65% (+2.5 pp, +211% relative). 7-3 and up has zero MVPs in 17 draftees. All-Star barely moves with height at all (r = −0.01).</p>
+
+      <h2 class="size-h">Bins</h2>
+      <table class="size-bins">
+        <thead><tr><th>Height</th><th>n</th><th>All-Star</th><th>All-NBA</th><th>HOF</th><th>MVP</th><th>MVP vs base</th></tr></thead>
+        <tbody>
+          <tr><td>Under 6-1</td><td class="num">132</td><td class="num">18.2%</td><td class="num">9.8%</td><td class="num">6.8%</td><td class="num">0.76%</td><td class="num neg">−0.41 pp</td></tr>
+          <tr><td>6-1 to 6-6</td><td class="num">1,364</td><td class="num">15.6%</td><td class="num">9.0%</td><td class="num">4.5%</td><td class="num">0.81%</td><td class="num neg">−0.36 pp</td></tr>
+          <tr><td>6-7 to 6-11</td><td class="num">1,369</td><td class="num">15.6%</td><td class="num">7.8%</td><td class="num">4.3%</td><td class="num">1.24%</td><td class="num pos">+0.07 pp</td></tr>
+          <tr><td>7-0 to 7-2</td><td class="num">192</td><td class="num">14.6%</td><td class="num">9.4%</td><td class="num">5.7%</td><td class="num">3.65%</td><td class="num pos">+2.47 pp</td></tr>
+          <tr><td>7-3 and up</td><td class="num">17</td><td class="num">17.6%</td><td class="num">11.8%</td><td class="num">17.6%</td><td class="num">0.00%</td><td class="num neg">−1.17 pp</td></tr>
+        </tbody>
+      </table>
+
+      <h2 class="size-h">Inch by inch</h2>
+      <table class="inch-grid">
+        <thead><tr><th>Height</th><th>n</th><th>All-Star</th><th>All-NBA</th><th>HOF</th><th>MVP</th><th>MVP vs base</th><th>MVP winners</th></tr></thead>
+        <tbody>
+          <tr class="thin"><td>5-9</td><td class="num">7</td><td class="num">42.9%</td><td class="num">28.6%</td><td class="num">14.3%</td><td class="num">0.00%</td><td class="num">−1.17</td><td></td></tr>
+          <tr class="thin"><td>5-10</td><td class="num">14</td><td class="num">14.3%</td><td class="num">14.3%</td><td class="num">7.1%</td><td class="num">0.00%</td><td class="num">−1.17</td><td></td></tr>
+          <tr><td>5-11</td><td class="num">20</td><td class="num">20.0%</td><td class="num">0.0%</td><td class="num">5.0%</td><td class="num">0.00%</td><td class="num neg">−1.17</td><td></td></tr>
+          <tr><td>6-0</td><td class="num">87</td><td class="num">14.9%</td><td class="num">10.3%</td><td class="num">6.9%</td><td class="num">1.15%</td><td class="num">−0.02</td><td>Iverson</td></tr>
+          <tr><td>6-1</td><td class="num">127</td><td class="num">18.9%</td><td class="num">9.4%</td><td class="num">7.1%</td><td class="num">0.79%</td><td class="num neg">−0.38</td><td>Cousy</td></tr>
+          <tr><td>6-2</td><td class="num">183</td><td class="num">15.3%</td><td class="num">9.8%</td><td class="num">1.6%</td><td class="num">0.55%</td><td class="num neg">−0.62</td><td>Curry</td></tr>
+          <tr><td>6-3</td><td class="num">269</td><td class="num">14.1%</td><td class="num">7.8%</td><td class="num">3.0%</td><td class="num">0.74%</td><td class="num neg">−0.43</td><td>Nash, Rose</td></tr>
+          <tr><td>6-4</td><td class="num">224</td><td class="num">17.9%</td><td class="num">10.7%</td><td class="num">6.7%</td><td class="num">0.45%</td><td class="num neg">−0.72</td><td>Westbrook</td></tr>
+          <tr><td>6-5</td><td class="num">277</td><td class="num">11.6%</td><td class="num">7.2%</td><td class="num">4.0%</td><td class="num">0.72%</td><td class="num neg">−0.45</td><td>Oscar, Harden</td></tr>
+          <tr><td>6-6</td><td class="num">284</td><td class="num">18.0%</td><td class="num">9.9%</td><td class="num">5.3%</td><td class="num">1.41%</td><td class="num pos">+0.24</td><td>Jordan, Barkley, Kobe, SGA</td></tr>
+          <tr><td>6-7</td><td class="num">327</td><td class="num">17.7%</td><td class="num">7.3%</td><td class="num">5.5%</td><td class="num">0.61%</td><td class="num neg">−0.56</td><td>Unseld, Erving</td></tr>
+          <tr><td>6-8</td><td class="num">314</td><td class="num">12.4%</td><td class="num">7.3%</td><td class="num">3.8%</td><td class="num">0.00%</td><td class="num neg">−1.17</td><td></td></tr>
+          <tr><td>6-9</td><td class="num">318</td><td class="num">16.7%</td><td class="num">8.5%</td><td class="num">3.8%</td><td class="num">2.20%</td><td class="num pos">+1.03</td><td>Pettit, Cowens, McAdoo, Bird, Magic, Mailman, LeBron</td></tr>
+          <tr><td>6-10</td><td class="num">234</td><td class="num">15.0%</td><td class="num">7.7%</td><td class="num">3.8%</td><td class="num">0.85%</td><td class="num neg">−0.32</td><td>Russell, Reed</td></tr>
+          <tr><td>6-11</td><td class="num">176</td><td class="num">15.9%</td><td class="num">8.5%</td><td class="num">5.1%</td><td class="num">3.41%</td><td class="num pos">+2.24</td><td>Walton, KG, Duncan, Durant, Giannis, Jokić</td></tr>
+          <tr><td>7-0</td><td class="num">137</td><td class="num">10.9%</td><td class="num">8.0%</td><td class="num">2.9%</td><td class="num">2.19%</td><td class="num pos">+1.02</td><td>Hakeem, Dirk, Embiid</td></tr>
+          <tr><td>7-1</td><td class="num">39</td><td class="num">23.1%</td><td class="num">12.8%</td><td class="num">12.8%</td><td class="num">7.69%</td><td class="num pos">+6.52</td><td>Wilt, Admiral, Shaq</td></tr>
+          <tr><td>7-2</td><td class="num">16</td><td class="num">25.0%</td><td class="num">12.5%</td><td class="num">12.5%</td><td class="num">6.25%</td><td class="num pos">+5.08</td><td>Kareem</td></tr>
+          <tr class="thin"><td>7-3</td><td class="num">8</td><td class="num">0.0%</td><td class="num">0.0%</td><td class="num">12.5%</td><td class="num">0.00%</td><td class="num">−1.17</td><td></td></tr>
+          <tr class="thin"><td>7-4</td><td class="num">3</td><td class="num">66.7%</td><td class="num">33.3%</td><td class="num">33.3%</td><td class="num">0.00%</td><td class="num">−1.17</td><td></td></tr>
+          <tr class="thin"><td>7-5</td><td class="num">2</td><td class="num">0.0%</td><td class="num">0.0%</td><td class="num">0.0%</td><td class="num">0.00%</td><td class="num">−1.17</td><td></td></tr>
+          <tr class="thin"><td>7-6</td><td class="num">2</td><td class="num">50.0%</td><td class="num">50.0%</td><td class="num">50.0%</td><td class="num">0.00%</td><td class="num">−1.17</td><td></td></tr>
+          <tr class="thin"><td>7-7</td><td class="num">2</td><td class="num">0.0%</td><td class="num">0.0%</td><td class="num">0.0%</td><td class="num">0.00%</td><td class="num">−1.17</td><td></td></tr>
+        </tbody>
+      </table>
+      <p class="size-note">Grey rows are thin. 7-1 and 7-2 look like an MVP cheat code because the bin is Wilt, Kareem, Shaq, and David Robinson plus a short list of everyone else. Treat those two inches as a wide interval, not a prior you hand to the next 7-1.</p>
+      `
+    );
+  </script>
+</body>
+</html>

@@ -8,17 +8,28 @@
   <link rel="canonical" href="https://thedraftmodel.com/theories.html" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#090a0c" />
-  <link rel="stylesheet" href="./assets/styles.css?v=30" />
-  <link rel="stylesheet" href="./assets/theories.css?v=30" />
+  <link rel="stylesheet" href="./assets/styles.css?v=31" />
+  <link rel="stylesheet" href="./assets/theories.css?v=31" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="./assets/data.js?v=30"></script>
-  <script src="./assets/app.js?v=30"></script>
-  <script src="./assets/nav-swap.js?v=30"></script>
+  <script src="./assets/data.js?v=31"></script>
+  <script src="./assets/app.js?v=31"></script>
+  <script src="./assets/nav-swap.js?v=31"></script>
   <script>
-    const rows = [
-      { name: "You can't teach size", pill: "weak", cls: "bull" },
+    const theories = [
+      {
+        name: "You can't teach size",
+        href: "./size.html",
+        pill: "weak",
+        cls: "bull",
+        factors: [
+          { k: "Under 6-1", v: "MVP \u221235%", note: "only Iverson" },
+          { k: "7-0 to 7-2", v: "MVP +211%", note: "vs draft baseline" },
+          { k: "7-3 and up", v: "MVP none", note: "n = 17" },
+          { k: "Any extra inch", v: "All-Star ~0", note: "r = \u22120.01" }
+        ]
+      },
       { name: "College production is the best signal", pill: "N/A", cls: "na" },
       { name: "The best players play at the best schools", pill: "N/A", cls: "na" },
       { name: "March Madness tells you everything", pill: "N/A", cls: "na" },
@@ -26,18 +37,38 @@
       { name: "One-and-done beats four-year stars", pill: "N/A", cls: "na" },
       { name: "International is a different market", pill: "N/A", cls: "na" },
       { name: "Defense doesn't show up until the league", pill: "N/A", cls: "na" }
-    ].map((t) => `
-      <div class="theory-row">
-        <span class="theory-name">${t.name}</span>
-        <span class="theory-pill ${t.cls}">${t.pill}</span>
-      </div>`).join("");
+    ];
+    const html = theories.map((t, i) => {
+      const factors = (t.factors || []).map((f) =>
+        `<div class="factor"><span>${f.k}</span><b>${f.v}</b><em>${f.note || ""}</em></div>`
+      ).join("");
+      const panel = t.factors
+        ? `<div class="acc-panel"><div class="factor-list">${factors}</div><a class="factor-link" href="${t.href}">Full size board</a></div>`
+        : `<div class="acc-panel"><p class="factor-empty">Not scored yet.</p></div>`;
+      const title = t.href
+        ? `<a class="theory-name" href="${t.href}">${t.name}</a>`
+        : `<span class="theory-name">${t.name}</span>`;
+      return `<div class="acc-item theory-acc${i === 0 ? " open" : ""}">
+        <div class="theory-row acc-btn" data-acc>
+          ${title}
+          <span class="theory-pill ${t.cls}">${t.pill}</span>
+        </div>
+        ${panel}
+      </div>`;
+    }).join("");
     TR.renderSimple(
       document.getElementById("app"),
       "theories",
       "Theories",
       "True or bullshit",
-      `<p style=\"color:var(--muted);max-width:40rem\">Size was the first test. Listed height and weight do not beat the slot prior for All-Star. Notes are on Methodology.</p><div class=\"theory-list\">${rows}</div>`
+      `<p class="lede-quiet">Drop a theory to see what actually moves All-Star, All-NBA, Hall of Fame, and MVP. Click the name for the full board.</p><div class="acc theory-list">${html}</div>`
     );
+    document.querySelectorAll("[data-acc]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        if (e.target.closest("a")) return;
+        btn.parentElement.classList.toggle("open");
+      });
+    });
   </script>
 </body>
 </html>
