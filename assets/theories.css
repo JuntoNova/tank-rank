@@ -88,3 +88,5 @@ h2.size-h { font-family: var(--serif); font-size: 24px; font-weight: 500; margin
 @media (max-width: 640px) {
   .theory-name { font-size: 18px; }
 }
+.size-acc .acc-btn b { font-size: 22px; }
+.size-acc .table-scroll { margin: 4px 0 8px; }
