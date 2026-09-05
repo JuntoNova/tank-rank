@@ -7,11 +7,14 @@ function currentYear() {
 
 function parseYear() {
   const y = Number(new URLSearchParams(location.search).get("year"));
-  return TANK_RANK.drafts[y] ? y : currentYear();
+  if (TANK_RANK.drafts[y]) return y;
+  if ((TANK_RANK.historicYears || []).includes(y)) return y;
+  if ((TANK_RANK.futureYears || []).includes(y)) return y;
+  return currentYear();
 }
 
 function draftOf(year) {
-  return TANK_RANK.drafts[year] || TANK_RANK.drafts[currentYear()];
+  return TANK_RANK.drafts[year] || TANK_RANK.drafts[currentYear()] || { year, players: [] };
 }
 
 function playersOf(year) {
@@ -30,17 +33,6 @@ function bucketsFor(year) {
 function nav(active) {
   const y = currentYear();
   return `
-    <style>
-      .nav-toggle{display:none}
-      @media (max-width:860px){
-        .nav-toggle{display:inline-flex;margin-left:auto;padding:6px 12px;border:1px solid var(--line);border-radius:999px;color:var(--text);font-size:13px}
-        .badge{display:none}
-        .nav-inner{flex-wrap:wrap;height:auto;min-height:64px;padding:12px 0}
-        .nav-links{display:none;width:100%;flex-direction:column;gap:4px;padding:4px 0 8px}
-        .nav-links a{padding:10px 0}
-        .nav.open .nav-links{display:flex}
-      }
-    </style>
     <header class="nav">
       <div class="wrap nav-inner">
         <a class="logo" href="./index.html">
@@ -49,10 +41,10 @@ function nav(active) {
         </a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Open menu">Menu</button>
         <nav class="nav-links">
+          <a class="${active === "upcoming" ? "active" : ""}" href="./upcoming.html">Upcoming</a>
+          <a class="${active === "drafts" ? "active" : ""}" href="./drafts.html">Historic</a>
           <a class="${active === "board" ? "active" : ""}" href="./board.html">Big Board</a>
-          <a class="${active === "drafts" ? "active" : ""}" href="./drafts.html">Previous Drafts</a>
           <a class="${active === "method" ? "active" : ""}" href="./methodology.html">Methodology</a>
-          <a class="${active === "rankings" ? "active" : ""}" href="./rankings.html">All Rankings</a>
           <a class="${active === "about" ? "active" : ""}" href="./about.html">About</a>
         </nav>
         <span class="badge">Prototype</span>
@@ -120,7 +112,7 @@ function renderBoard(root) {
     if (bucket !== "all") rows = rows.filter((p) => p.bucket === bucket);
     if (q) {
       const s = q.toLowerCase();
-      rows = rows.filter((p) => p.name.toLowerCase().includes(s) || p.school.toLowerCase().includes(s));
+      rows = rows.filter((p) => p.name.toLowerCase().includes(s) || (p.school || "").toLowerCase().includes(s));
     }
     root.querySelector("#rows").innerHTML = rows.map((p) => `
       <tr onclick="location.href='./player.html?year=${year}&id=${p.id}'" style="cursor:pointer">
@@ -140,14 +132,14 @@ function renderBoard(root) {
   };
 
   root.innerHTML = `
-    ${nav(year === currentYear() ? "board" : "drafts")}
+    ${nav(year >= currentYear() ? "upcoming" : "drafts")}
     <main class="wrap section">
       <div class="banner">${TANK_RANK.disclaimer} ${draft.note || ""}</div>
       <div class="section-head">
         <div>
-          <div class="kicker">${year === currentYear() ? "Living board" : year > currentYear() ? "Upcoming class" : year <= 1949 ? "BAA draft" : "Archive board"}</div>
-          <h2>${year === currentYear() ? year + " Top 300" : year + " board"}</h2>
-          <p class="sub">${year === currentYear() ? `College and international only. High school opens on the <a href="./board.html?year=${nextYear()}">2028 board</a>.` : year > currentYear() ? `Upcoming class. High school included. <a href="./board.html">Back to ${currentYear()}</a>.` : `Prototype reconstruction from the actual draft. <a href="./drafts.html">All drafts</a>.`}</p>
+          <div class="kicker">${year === currentYear() ? "Living board" : year > currentYear() ? "Upcoming class" : year <= 1949 ? "BAA draft" : "Historic draft"}</div>
+          <h2>${year} draft</h2>
+          <p class="sub">${year >= currentYear() ? `<a href="./upcoming.html">All upcoming drafts</a>` : `<a href="./drafts.html">All historic drafts</a>`}</p>
         </div>
       </div>
       <div class="toolbar">
@@ -184,57 +176,27 @@ function renderBoard(root) {
 }
 
 function renderHome(root) {
-  const year = currentYear();
-  const top = playersOf(year).slice(0, 8);
-  document.title = `${year} NBA Draft Big Board & Prospect Rankings | The Draft Model`;
+  document.title = "NBA Draft Boards | The Draft Model";
   root.innerHTML = `
     ${nav("home")}
-    <main class="wrap">
-      <section class="hero">
-        <div>
-          <div class="kicker">${year} NBA Draft</div>
-          <h1>Probabilities,<br>not opinions.</h1>
-          <p class="lede">Analytics has taken over the NBA. The draft is still a land of vibes and bias. The Draft Model uses historic pre-draft profiles and actual NBA careers to estimate who is most likely to succeed going forward.</p>
-          <div class="cta-row">
-            <a class="btn primary" href="./board.html">Open the ${year} board</a>
-            <a class="btn ghost" href="./drafts.html">Previous drafts</a>
-          </div>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-card"><b>300</b><span>Prospects across three buckets</span></div>
-          <div class="stat-card"><b>100 / 100 / 100</b><span>College · High school · International</span></div>
-          <div class="stat-card"><b>${TANK_RANK.years.length}</b><span>Draft classes on the site, ${TANK_RANK.firstYear}–${TANK_RANK.horizonYear}</span></div>
-          <div class="stat-card"><b>Weekly</b><span>Target update cadence in season</span></div>
-        </div>
-      </section>
-      <section class="section">
-        <div class="section-head">
-          <h2>${year} board preview</h2>
-          <a class="sub" href="./board.html">See all →</a>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Rk</th><th>Player</th><th>Bucket</th><th>P(AS)</th><th>P(Bust)</th><th>Δ</th></tr></thead>
-            <tbody>
-              ${top.map((p) => `<tr onclick="location.href='./player.html?year=${year}&id=${p.id}'" style="cursor:pointer">
-                <td class="rank">${String(p.rank).padStart(2,"0")}</td>
-                <td><div class="name">${p.name}</div><div class="meta">${p.school}</div></td>
-                <td><span class="tag">${bucketLabel[p.bucket]}</span></td>
-                <td class="pct">${fmtPct(p.pAllStar)}</td>
-                <td class="pct">${fmtPct(p.pBust)}</td>
-                <td>${deltaHtml(p.delta)}</td>
-              </tr>`).join("")}
-            </tbody>
-          </table>
-        </div>
-      </section>
-      <section class="section">
-        <div class="grid-3">
-          <article class="card"><div class="kicker">Thesis</div><h3>Data first</h3><p>Expert boards are consensus plus narrative. We map measurable pre-draft traits to what actually happened in the NBA.</p></article>
-          <article class="card"><div class="kicker">Output</div><h3>Odds, not vibes</h3><p>Every player carries P(HOF), P(All-Star), P(All-NBA), bust risk, expected win shares, comps, and delta vs. consensus.</p></article>
-          <article class="card"><div class="kicker">Archive</div><h3>Every draft since 1947</h3><p>The same board format runs from the first BAA draft through ${TANK_RANK.horizonYear}. Historical classes stay up so the model can be judged in public.</p></article>
-        </div>
-      </section>
+    <main class="wrap home">
+      <div class="kicker">The Draft Model</div>
+      <h1>Probabilities,<br>not opinions.</h1>
+      <p class="lede">Upcoming boards and completed drafts. That is the whole front door.</p>
+      <div class="doors">
+        <a class="door" href="./upcoming.html">
+          <div class="kicker">Future</div>
+          <h2>Upcoming drafts</h2>
+          <p>Living 2027 board, plus 2028 and 2029.</p>
+          <span class="go">Open upcoming →</span>
+        </a>
+        <a class="door" href="./drafts.html">
+          <div class="kicker">Archive</div>
+          <h2>Historic drafts</h2>
+          <p>Every completed class, 1947–2026. Every round.</p>
+          <span class="go">Open history →</span>
+        </a>
+      </div>
     </main>
     ${footer()}`;
   bindNav(root);
@@ -253,12 +215,9 @@ function yearCard(y) {
 }
 
 function renderDrafts(root) {
-  document.title = `NBA Draft Boards ${TANK_RANK.firstYear}–${TANK_RANK.horizonYear} | The Draft Model`;
-  const upcoming = TANK_RANK.years.filter((y) => y > currentYear());
-  const live = currentYear();
-  const archive = TANK_RANK.years.filter((y) => y < currentYear());
+  document.title = `NBA Draft History ${TANK_RANK.firstYear}–2026 | The Draft Model`;
+  const archive = TANK_RANK.historicYears || TANK_RANK.years.filter((y) => y < currentYear());
   const decades = [...new Set(archive.map((y) => Math.floor(y / 10) * 10))];
-
   const decadeBlocks = decades.map((dec) => {
     const years = archive.filter((y) => Math.floor(y / 10) * 10 === dec);
     return `<section class="decade" data-decade="${dec}">
@@ -270,14 +229,25 @@ function renderDrafts(root) {
   root.innerHTML = `
     ${nav("drafts")}
     <main class="wrap section">
-      <div class="kicker">Full history</div>
-      <h2>Every draft since 1947</h2>
-      <p class="sub" style="margin:12px 0 22px">${TANK_RANK.years.length} classes, ${TANK_RANK.firstYear}–${TANK_RANK.horizonYear}. 1947–1949 are BAA drafts; the NBA counts them as official history. Numbers are placeholders until the engine is backfilled.</p>
-      <section class="decade">
-        <div class="decade-head">Upcoming</div>
-        <div class="year-grid">${[live, ...upcoming].map(yearCard).join("")}</div>
-      </section>
+      <div class="kicker">Historic only</div>
+      <h2>Every completed draft</h2>
+      <p class="sub" style="margin:12px 0 22px">${archive.length} classes, 1947–2026. Upcoming classes live on <a href="./upcoming.html">Upcoming</a>.</p>
       ${decadeBlocks}
+    </main>
+    ${footer()}`;
+  bindNav(root);
+}
+
+function renderUpcoming(root) {
+  document.title = "Upcoming NBA Drafts 2027–2029 | The Draft Model";
+  const years = TANK_RANK.futureYears || [2027, 2028, 2029];
+  root.innerHTML = `
+    ${nav("upcoming")}
+    <main class="wrap section">
+      <div class="kicker">Future classes</div>
+      <h2>2027, 2028, 2029</h2>
+      <p class="sub" style="margin:12px 0 22px">Living and upcoming boards. Completed drafts stay on <a href="./drafts.html">Historic</a>.</p>
+      <div class="year-grid">${years.map(yearCard).join("")}</div>
     </main>
     ${footer()}`;
   bindNav(root);
@@ -290,7 +260,7 @@ function renderPlayer(root) {
   const p = playersOf(year).find((x) => x.id === id) || playersOf(year)[0];
   document.title = `${p.name} ${year} NBA Draft Prospect | The Draft Model`;
   root.innerHTML = `
-    ${nav(year === currentYear() ? "board" : "drafts")}
+    ${nav(year >= currentYear() ? "upcoming" : "drafts")}
     <main class="wrap">
       <div class="banner">${TANK_RANK.disclaimer}</div>
       <section class="player-hero">
@@ -317,13 +287,6 @@ function renderPlayer(root) {
           ${metricHtml("P(Bust)", p.pBust, true)}
         </div>
       </section>
-      <section class="section">
-        <div class="grid-3">
-          <article class="card"><h3>${p.expWs.toFixed(1)}</h3><p>Expected career Win Shares (point estimate, prototype).</p></article>
-          <article class="card"><h3>${deltaHtml(p.delta)}</h3><p>Spots above / below a blended expert consensus board.</p></article>
-          <article class="card"><h3>${p.features[0]}</h3><p>Largest placeholder feature contribution for this profile.</p></article>
-        </div>
-      </section>
     </main>
     ${footer()}`;
   bindNav(root);
@@ -334,4 +297,4 @@ function renderSimple(root, active, title, kicker, html) {
   bindNav(root);
 }
 
-window.TR = { renderHome, renderBoard, renderPlayer, renderSimple, renderDrafts };
+window.TR = { renderHome, renderBoard, renderPlayer, renderSimple, renderDrafts, renderUpcoming };
