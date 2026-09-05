@@ -1,10 +1,8 @@
 (function () {
   if (!window.TR || !window.TANK_RANK) return;
-
   function slug(name, year, pick) {
     return String(name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + year + "-" + (pick || 0);
   }
-
   function ingest(rows) {
     const byYear = {};
     (rows || []).forEach((r) => {
@@ -30,32 +28,23 @@
           pos: r.pos || "",
           rd: r.rd,
           yrs: r.yrs,
-          g: r.g,
-          pts: r.pts,
-          ws: r.ws,
-          vorp: r.vorp,
           hof: r.hof || 0,
           allStar: r.as || 0,
           nba1: r.nba1 || 0,
           allNba: r.nba || 0,
           champs: r.ch || 0,
           mvp: r.mvp || 0,
-          ht: "",
-          wt: "",
-          age: "",
+          ht: "", wt: "", age: "",
           pHof: 0, pAllNba: 0, pAllStar: 0, pBust: 0,
-          expWs: r.ws || 0,
-          delta: 0,
+          expWs: r.ws || 0, delta: 0,
           features: ["Draft slot", "College", "Career WS"]
         }))
       };
     });
   }
-
   function loadJSON(path) {
     return fetch(path).then((r) => (r.ok ? r.json() : null)).catch(() => null);
   }
-
   function loadYear(year) {
     year = Number(year);
     if (!year || year >= TANK_RANK.currentYear) return Promise.resolve();
@@ -64,7 +53,6 @@
       if (rows && rows.length) ingest(rows);
     });
   }
-
   function slotBucket(pk) {
     pk = Number(pk) || 99;
     if (pk === 1) return "1";
@@ -75,14 +63,14 @@
     if (pk <= 30) return "15-30";
     return "31+";
   }
-
   function paintSettled(year) {
     if (year > 1999 || year >= TANK_RANK.currentYear) return Promise.resolve();
     return Promise.all([
       loadJSON("./assets/outcomes-legacy.json"),
+      loadJSON("./assets/outcomes-extra.json"),
       loadJSON("./assets/slot-priors.json")
-    ]).then(([outcomes, priors]) => {
-      const pack = (outcomes || {})[String(year)] || {};
+    ]).then(([outcomes, extra, priors]) => {
+      const pack = Object.assign({}, (outcomes || {})[String(year)] || {}, (extra || {})[String(year)] || {});
       const draft = TANK_RANK.drafts[year];
       if (!draft) return;
       (draft.players || []).forEach((p) => {
@@ -103,13 +91,11 @@
         s.textContent = ".hof{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:999px;background:#f0c14b;color:#111;font-family:var(--mono);font-size:10px;letter-spacing:.08em;vertical-align:2px}";
         document.head.appendChild(s);
       }
-
       const toolbar = document.querySelector(".toolbar");
       const head = document.querySelector("thead tr");
       const body = document.querySelector("#rows");
       const sub = document.querySelector(".section-head .sub");
       if (!toolbar || !head || !body) return;
-
       const params = new URLSearchParams(location.search);
       let view = (params.get("view") === "then" || params.get("view") === "drafted") ? "drafted" : "now";
       if (!toolbar.querySelector("[data-view]")) {
@@ -126,7 +112,6 @@
       if (sub) {
         sub.innerHTML = 'What actually happened. When drafted is the historical rate for that draft slot \u2014 not a trained model. <a href="./drafts.html">All historic drafts</a>.';
       }
-
       const pct = (n) => Math.round((n || 0) * 100) + "%";
       const dash = (v) => (v ? v : "\u2014");
       const draw = () => {
@@ -164,7 +149,6 @@
           }).join("");
         }
       };
-
       toolbar.querySelectorAll("[data-view]").forEach((btn) => {
         btn.onclick = () => {
           view = btn.dataset.view === "then" ? "drafted" : btn.dataset.view;
@@ -181,7 +165,6 @@
       draw();
     });
   }
-
   const origBoard = TR.renderBoard;
   const origPlayer = TR.renderPlayer;
   TR.renderBoard = function (root) {
