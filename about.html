@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About | The Draft Model</title>
+  <meta name="description" content="What The Draft Model is — a data-first draft board prototype from Junto Nova. Not live betting odds." />
+  <link rel="canonical" href="https://thedraftmodel.com/about.html" />
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#090a0c" />
+  <link rel="stylesheet" href="./assets/styles.css?v=31" />
+</head>
+<body>
+  <div id="app"></div>
+  <script src="./assets/data.js?v=31"></script>
+  <script src="./assets/app.js?v=31"></script>
+  <script src="./assets/nav-swap.js?v=31"></script>
+  <script>
+    TR.renderSimple(document.getElementById("app"), "about", "About", "The Draft Model", `
+      <p>The Draft Model is a DBA of Junto Nova.</p>
+      <p>We build draft boards from historic outcomes and measurable traits. The living board is a <strong>prototype</strong>: consensus order plus illustrative probability columns. Those numbers are <strong>not live betting odds</strong> and are not yet from a published, locked model.</p>
+      <h2>What is on the board today</h2>
+      <ul>
+        <li>Honest player counts — the 2027 board lists the prospects we actually have, not a fake “Top 300.”</li>
+        <li>Prototype honor probabilities (Hall of Fame, All-Star, All-NBA) labeled as placeholders until the regression that produced them is published on <a href="./methodology.html">Methodology</a>.</li>
+        <li>No P(Bust) column until that outcome has a published definition.</li>
+      </ul>
+      <h2>What this is not</h2>
+      <ul>
+        <li>Not affiliated with the NBA, the NBA Draft, or any team.</li>
+        <li>Not a sportsbook and not advice to wager.</li>
+        <li>Not a finished model — pipeline work stays off the live board until it is wired on purpose.</li>
+      </ul>
+      <p>Questions: <a href="mailto:andrew@juntonova.com">andrew@juntonova.com</a> · <a href="https://x.com/jandrewclark" target="_blank" rel="noopener noreferrer">@jandrewclark</a></p>
+    `);
+  </script>
+</body>
+</html>
