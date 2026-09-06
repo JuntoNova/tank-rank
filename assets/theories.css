@@ -52,13 +52,15 @@
 .theory-pill.mid { color: #111; background: var(--gold); border-color: var(--gold); }
 .theory-pill.bull { color: #fff; background: var(--coral); border-color: var(--coral); }
 .theory-acc .acc-panel { padding: 0 2px 18px 38px; }
-.factor-list { display: grid; gap: 8px; max-width: 28rem; }
+.factor-list { display: grid; gap: 8px; max-width: 40rem; }
 .factor {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr;
   gap: 12px;
   align-items: baseline;
   font-size: 14px;
+  color: var(--muted);
+  line-height: 1.45;
 }
 .factor b { font-family: var(--mono); font-weight: 500; color: var(--lime); }
 .size-note { color: var(--muted); max-width: 46rem; margin: 0 0 22px; font-size: 13px; }

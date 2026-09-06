@@ -14,14 +14,14 @@
   <meta property="og:description" content="Claims about what predicts NBA careers. Each one gets tested against completed drafts." />
   <meta property="og:url" content="https://thedraftmodel.com/theories.html" />
   <meta property="og:image" content="https://thedraftmodel.com/assets/og.jpg" />
-  <link rel="stylesheet" href="./assets/styles.css?v=40" />
-  <link rel="stylesheet" href="./assets/theories.css?v=40" />
+  <link rel="stylesheet" href="./assets/styles.css?v=41" />
+  <link rel="stylesheet" href="./assets/theories.css?v=41" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="./assets/data.js?v=40"></script>
-  <script src="./assets/app.js?v=40"></script>
-  <script src="./assets/nav-swap.js?v=40"></script>
+  <script src="./assets/data.js?v=41"></script>
+  <script src="./assets/app.js?v=41"></script>
+  <script src="./assets/nav-swap.js?v=41"></script>
   <script>
     const groups = [
       {
@@ -30,101 +30,273 @@
           {
             name: "You can't teach size",
             href: "./size.html",
-            pill: "3× MVP",
+            pill: "Scored",
             cls: "num",
-            outliers: [
-              { k: "7-0 to 7-2", v: "3× MVP odds" },
-              { k: "250–259 lb", v: "3× MVP odds" },
-              { k: "6-11", v: "3× MVP odds" },
-              { k: "6-8", v: "0 MVPs in 314" },
-              { k: "All-Star", v: "no lift" }
+            cuts: [
+              "Bigger at the same pick should produce more NBA value",
+              "Weight and listed height are the same bet dressed differently",
+              "Size may move MVP more than All-Star",
+              "Opposite: wingspan beats height on defense"
             ]
           },
-          { name: "Wingspan beats height on defense", pill: "N/A", cls: "na", vs: "You can't teach size" },
-          { name: "Ball-handling size is the hole in the market", pill: "N/A", cls: "na" },
-          { name: "Standing reach beats vertical for bigs", pill: "N/A", cls: "na" },
-          { name: "Combine testing is mostly noise", pill: "N/A", cls: "na" }
+          {
+            name: "Wingspan beats height on defense",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Length residual predicts defense better than listed height",
+              "Why some rooms take +7-foot-wingspan guards over short-armed bigs",
+              "Opposite: you can't teach size"
+            ]
+          },
+          {
+            name: "Ball-handling size is the hole in the market",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Point-guard skills in a 6-foot-8 body, not size or handle alone",
+              "Creation rate interacted with height"
+            ]
+          },
+          {
+            name: "Standing reach beats vertical for bigs",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Rim protection is geometry, not the max-vert number",
+              "Poor testers with real standing reach still get early buzz"
+            ]
+          },
+          {
+            name: "Combine testing is mostly noise",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Game-speed film beats the lane-agility clock",
+              "Skipping the combine is itself a data point"
+            ]
+          }
         ]
       },
       {
         label: "Age and development",
         items: [
-          { name: "Younger is better at the same pick", pill: "N/A", cls: "na", vs: "Late bloomers get left on the board" },
-          { name: "Late bloomers get left on the board", pill: "N/A", cls: "na", vs: "Younger is better at the same pick" },
-          { name: "One-and-done beats four-year stars", pill: "N/A", cls: "na" },
-          { name: "Sophomore-to-junior jumps beat freshman flashes", pill: "N/A", cls: "na" },
-          { name: "Draft-and-stash cuts risk on swingy international bigs", pill: "N/A", cls: "na" }
+          {
+            name: "Younger is better at the same pick",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "A 19-year-old freshman beats a 22-year-old senior in the same slot",
+              "Teams currently over-index on this",
+              "Opposite: late bloomers get left on the board"
+            ]
+          },
+          {
+            name: "Late bloomers get left on the board",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Older breakouts are undervalued relative to their production",
+              "Analytics rooms lean this way; traditional rooms do not",
+              "Opposite: younger is better at the same pick"
+            ]
+          },
+          {
+            name: "One-and-done beats four-year stars",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Early-entry freshmen outperform seniors after you adjust for slot",
+              "Class year at draft vs later honors"
+            ]
+          },
+          {
+            name: "Sophomore-to-junior jumps beat freshman flashes",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "A real year-two leap predicts readiness better than a one-and-done explosion",
+              "Year-over-year college box deltas"
+            ]
+          },
+          {
+            name: "Draft-and-stash cuts risk on swingy international bigs",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Leaving a raw overseas big in place changes the risk math",
+              "Stash vs immediate arrival, same slot, same era"
+            ]
+          }
         ]
       },
       {
         label: "Role and translation",
         items: [
-          { name: "College production is the best signal", pill: "N/A", cls: "na" },
-          { name: "Free-throw rate beats field-goal percentage", pill: "N/A", cls: "na" },
-          { name: "Three-point volume beats percentage", pill: "N/A", cls: "na" },
-          { name: "Assist-to-usage beats raw assists", pill: "N/A", cls: "na" },
-          { name: "Defense doesn't show up until the league", pill: "N/A", cls: "na" },
-          { name: "Switchability beats rim protection", pill: "N/A", cls: "na", vs: "You still need a shot-blocker" },
-          { name: "You still need a shot-blocker", pill: "N/A", cls: "na", vs: "Switchability beats rim protection" }
+          {
+            name: "College production is the best signal",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Grown-man production beats tools or high-school pedigree",
+              "Last-season box plus age vs tools-only profiles"
+            ]
+          },
+          {
+            name: "Free-throw rate beats field-goal percentage",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Getting downhill and drawing fouls translates",
+              "High FG% against weak college defense does not"
+            ]
+          },
+          {
+            name: "Three-point volume beats percentage",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Shot profile and mechanics over small-sample percentages",
+              "Attempts tell you more than makes at the margin"
+            ]
+          },
+          {
+            name: "Assist-to-usage beats raw assists",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Playmaking translation is a ratio problem",
+              "Assists on tiny usage are not the same skill as creating at scale"
+            ]
+          },
+          {
+            name: "Defense doesn't show up until the league",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "College scoring is overweighted",
+              "Stocks and rebound rate are the missed signal"
+            ]
+          },
+          {
+            name: "Switchability beats rim protection",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "The switch-everything era prices positional defense first",
+              "Opposite: you still need a shot-blocker"
+            ]
+          },
+          {
+            name: "You still need a shot-blocker",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "A defense without a back-line presence leaks at the rim",
+              "Opposite: switchability beats rim protection"
+            ]
+          }
         ]
       },
       {
         label: "Organizations and markets",
         items: [
-          { name: "The best players play at the best schools", pill: "N/A", cls: "na" },
-          { name: "March Madness tells you everything", pill: "N/A", cls: "na" },
-          { name: "International is a different market", pill: "N/A", cls: "na" },
-          { name: "Scheme fit beats the board at the margin", pill: "N/A", cls: "na", vs: "Development beats the board" },
-          { name: "Development beats the board", pill: "N/A", cls: "na", vs: "Scheme fit beats the board at the margin" },
-          { name: "Teams overweight medical, media underweights it", pill: "N/A", cls: "na" },
-          { name: "Character predicts busts on its own", pill: "N/A", cls: "na" }
+          {
+            name: "The best players play at the best schools",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Blue-bloods concentrate future stars",
+              "Mid-majors are systematically mispriced"
+            ]
+          },
+          {
+            name: "March Madness tells you everything",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Tournament runs reveal what regular-season stats miss",
+              "NCAA minutes and efficiency vs the same player's regular season"
+            ]
+          },
+          {
+            name: "International is a different market",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Overseas prospects are mispriced versus college at the same pick",
+              "Same slot, same era, split by origin"
+            ]
+          },
+          {
+            name: "Scheme fit beats the board at the margin",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "A lot of draft-night reaches are fit bets, not talent errors",
+              "Opposite: development beats the board"
+            ]
+          },
+          {
+            name: "Development beats the board",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Where a player lands matters as much as who they were on draft night",
+              "Same player, different room, different career",
+              "Opposite: scheme fit beats the board at the margin"
+            ]
+          },
+          {
+            name: "Teams overweight medical, media underweights it",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Front offices have imaging. Public boards do not.",
+              "Medical slides boards more than outsider analysis admits"
+            ]
+          },
+          {
+            name: "Character predicts busts on its own",
+            pill: "N/A",
+            cls: "na",
+            cuts: [
+              "Makeup red flags move boards independent of talent",
+              "Widely believed inside rooms. Almost never quantified in public models."
+            ]
+          }
         ]
       }
     ];
 
     function row(t) {
       const title = t.href
-        ? `<a class="theory-name" href="${t.href}">${t.name}</a>`
-        : `<span class="theory-name">${t.name}</span>`;
-      const extras = [];
-      if (t.vs) extras.push({ k: "Paired opposite", v: t.vs });
-      if (t.outliers) extras.push(...t.outliers);
-      const plus = extras.length
-        ? `<button class="theory-plus" data-acc type="button" aria-label="Toggle">+</button>`
-        : `<span class="theory-plus ghost"></span>`;
-      const panel = extras.length
-        ? `<div class="acc-panel"><div class="factor-list">${extras.map((f) =>
-            `<div class="factor"><span>${f.k}</span><b>${f.v}</b></div>`
-          ).join("")}</div></div>`
-        : "";
-      return `<div class="acc-item theory-acc">
-        <div class="theory-row">
-          ${plus}
-          ${title}
-          <span class="theory-pill ${t.cls}">${t.pill}</span>
-        </div>
-        ${panel}
-      </div>`;
+        ? `<a class=\"theory-name\" href=\"${t.href}\">${t.name}</a>`
+        : `<span class=\"theory-name\">${t.name}</span>`;
+      const plus = `<button class=\"theory-plus\" data-acc type=\"button\" aria-label=\"Toggle\">+</button>`;
+      const panel = `<div class=\"acc-panel\"><div class=\"factor-list\">${t.cuts.map((c) =>
+        `<div class=\"factor\"><span>${c}</span></div>`
+      ).join(\"\")}</div></div>`;
+      return `<div class=\"acc-item theory-acc\">\n        <div class=\"theory-row\">\n          ${plus}\n          ${title}\n          <span class=\"theory-pill ${t.cls}\">${t.pill}</span>\n        </div>\n        ${panel}\n      </div>`;
     }
 
-    const html = `<p class="theory-lede">Draft culture runs on slogans. Front offices run on arguments that still have two live sides. Size is scored. The rest stay N/A until the historic boards can pick a side.</p>` +
-      groups.map((g) =>
-        `<div class="theory-section"><div class="theory-section-label">${g.label}</div><div class="acc theory-list">${g.items.map(row).join("")}</div></div>`
-      ).join("");
+    const html = groups.map((g) =>
+      `<div class=\"theory-section\"><div class=\"theory-section-label\">${g.label}</div><div class=\"acc theory-list\">${g.items.map(row).join(\"\")}</div></div>`
+    ).join(\"\");
 
     TR.renderSimple(
-      document.getElementById("app"),
-      "theories",
-      "Theories",
-      "",
+      document.getElementById(\"app\"),
+      \"theories\",
+      \"Theories\",
+      \"\",
       html
     );
-    document.querySelectorAll("[data-acc]").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
+    document.querySelectorAll(\"[data-acc]\").forEach((btn) => {
+      btn.addEventListener(\"click\", (e) => {
         e.preventDefault();
-        const item = btn.closest(".theory-acc");
-        item.classList.toggle("open");
-        btn.textContent = item.classList.contains("open") ? "\u2212" : "+";
+        const item = btn.closest(\".theory-acc\");
+        item.classList.toggle(\"open\");
+        btn.textContent = item.classList.contains(\"open\") ? \"\\u2212\" : \"+\";
       });
     });
   </script>
