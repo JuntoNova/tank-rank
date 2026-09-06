@@ -1,5 +1,5 @@
 window.TANK_RANK = {
-  version: "0.5.1-prototype",
+  version: "0.5.2-prototype",
   updated: "2026-09-06",
   currentYear: 2027,
   nextYear: 2028,
@@ -40,7 +40,7 @@ window.TANK_RANK = {
     TANK_RANK.drafts[year] = { year, label, note, players };
   }
 
-  pack(2027, "2027 NBA Draft", "College + international only. Ranks are a working consensus of public boards (see PR sources). Probability columns unavailable — not invented.", [
+  pack(2027, "2027 NBA Draft", "College + international only (depth pass). Top order is working consensus; added ESPN top-60 college/intl names not yet listed. No high school. Probability columns unavailable — not invented.", [
     { id: "tyran-stokes-2027", name: "Tyran Stokes", bucket: "college", school: "Kansas", pos: "F", age: 19.1, ht: "6-7", wt: 230 },
     { id: "caleb-holt-2027", name: "Caleb Holt", bucket: "college", school: "Arizona", pos: "G", age: 19.2, ht: "6-5", wt: 200 },
     { id: "jordan-smith-jr-2027", name: "Jordan Smith Jr.", bucket: "college", school: "Arkansas", pos: "G", age: 19.0, ht: "6-2", wt: 200 },
@@ -80,7 +80,29 @@ window.TANK_RANK = {
     { id: "andrej-stojakovic-2027", name: "Andrej Stojakovic", bucket: "college", school: "Illinois", pos: "G", age: 21.6, ht: "6-7", wt: 205 },
     { id: "shelton-henderson-2027", name: "Shelton Henderson", bucket: "college", school: "Miami", pos: "F", age: 20.2, ht: "6-6", wt: 205 },
     { id: "juke-harris-2027", name: "Juke Harris", bucket: "college", school: "Tennessee", pos: "G", age: 21.0, ht: "6-7", wt: 210 },
-    { id: "rueben-chinyelu-2027", name: "Rueben Chinyelu", bucket: "college", school: "Florida", pos: "C", age: 21.2, ht: "6-11", wt: 240 }
+    { id: "rueben-chinyelu-2027", name: "Rueben Chinyelu", bucket: "college", school: "Florida", pos: "C", age: 21.2, ht: "6-11", wt: 240 },
+    { id: "joseph-tugler-2027", name: "Joseph Tugler", bucket: "college", school: "Houston", pos: "—" },
+    { id: "flory-bidunga-2027", name: "Flory Bidunga", bucket: "college", school: "Louisville", pos: "—" },
+    { id: "pryce-sandfort-2027", name: "Pryce Sandfort", bucket: "college", school: "Nebraska", pos: "—" },
+    { id: "jeremy-fears-jr-2027", name: "Jeremy Fears Jr.", bucket: "college", school: "Michigan State", pos: "—" },
+    { id: "miles-byrd-2027", name: "Miles Byrd", bucket: "college", school: "Providence", pos: "—" },
+    { id: "john-blackwell-2027", name: "John Blackwell", bucket: "college", school: "Duke", pos: "—" },
+    { id: "moustapha-thiam-2027", name: "Moustapha Thiam", bucket: "college", school: "Michigan", pos: "—" },
+    { id: "massamba-diop-2027", name: "Massamba Diop", bucket: "college", school: "Gonzaga", pos: "—" },
+    { id: "matas-vokietaitis-2027", name: "Matas Vokietaitis", bucket: "college", school: "Texas", pos: "—" },
+    { id: "killyan-toure-2027", name: "Killyan Toure", bucket: "college", school: "Iowa State", pos: "—" },
+    { id: "sam-lewis-2027", name: "Sam Lewis", bucket: "college", school: "Virginia", pos: "—" },
+    { id: "dame-sarr-2027", name: "Dame Sarr", bucket: "college", school: "Duke", pos: "—" },
+    { id: "jacob-cofie-2027", name: "Jacob Cofie", bucket: "college", school: "USC", pos: "—" },
+    { id: "stefan-vaaks-2027", name: "Stefan Vaaks", bucket: "college", school: "Illinois", pos: "—" },
+    { id: "neoklis-avdalas-2027", name: "Neoklis Avdalas", bucket: "college", school: "North Carolina", pos: "—" },
+    { id: "caleb-gaskins-2027", name: "Caleb Gaskins", bucket: "college", school: "Miami", pos: "—" },
+    { id: "austin-goosby-2027", name: "Austin Goosby", bucket: "college", school: "Texas", pos: "—" },
+    { id: "jaxon-richardson-2027", name: "Jaxon Richardson", bucket: "college", school: "Alabama", pos: "—" },
+    { id: "cheickh-niang-2027", name: "Cheickh Niang", bucket: "international", school: "Trento", pos: "—" },
+    { id: "colben-landrew-2027", name: "Colben Landrew", bucket: "college", school: "UConn", pos: "—" },
+    { id: "obinna-ekezie-jr-2027", name: "Obinna Ekezie Jr.", bucket: "college", school: "Louisville", pos: "—" },
+    { id: "dash-daniels-2027", name: "Dash Daniels", bucket: "international", school: "Melbourne United", pos: "—" }
   ]);
 
   pack(2028, "2028 NBA Draft", "Next class. High school bucket is open.", [
