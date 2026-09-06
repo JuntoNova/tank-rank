@@ -271,32 +271,39 @@
 
     function row(t) {
       const title = t.href
-        ? `<a class=\"theory-name\" href=\"${t.href}\">${t.name}</a>`
-        : `<span class=\"theory-name\">${t.name}</span>`;
-      const plus = `<button class=\"theory-plus\" data-acc type=\"button\" aria-label=\"Toggle\">+</button>`;
-      const panel = `<div class=\"acc-panel\"><div class=\"factor-list\">${t.cuts.map((c) =>
-        `<div class=\"factor\"><span>${c}</span></div>`
-      ).join(\"\")}</div></div>`;
-      return `<div class=\"acc-item theory-acc\">\n        <div class=\"theory-row\">\n          ${plus}\n          ${title}\n          <span class=\"theory-pill ${t.cls}\">${t.pill}</span>\n        </div>\n        ${panel}\n      </div>`;
+        ? `<a class="theory-name" href="${t.href}">${t.name}</a>`
+        : `<span class="theory-name">${t.name}</span>`;
+      const plus = `<button class="theory-plus" data-acc type="button" aria-label="Toggle">+</button>`;
+      const panel = `<div class="acc-panel"><div class="factor-list">${t.cuts.map((c) =>
+        `<div class="factor"><span>${c}</span></div>`
+      ).join("")}</div></div>`;
+      return `<div class="acc-item theory-acc">
+        <div class="theory-row">
+          ${plus}
+          ${title}
+          <span class="theory-pill ${t.cls}">${t.pill}</span>
+        </div>
+        ${panel}
+      </div>`;
     }
 
     const html = groups.map((g) =>
-      `<div class=\"theory-section\"><div class=\"theory-section-label\">${g.label}</div><div class=\"acc theory-list\">${g.items.map(row).join(\"\")}</div></div>`
-    ).join(\"\");
+      `<div class="theory-section"><div class="theory-section-label">${g.label}</div><div class="acc theory-list">${g.items.map(row).join("")}</div></div>`
+    ).join("");
 
     TR.renderSimple(
-      document.getElementById(\"app\"),
-      \"theories\",
-      \"Theories\",
-      \"\",
+      document.getElementById("app"),
+      "theories",
+      "Theories",
+      "",
       html
     );
-    document.querySelectorAll(\"[data-acc]\").forEach((btn) => {
-      btn.addEventListener(\"click\", (e) => {
+    document.querySelectorAll("[data-acc]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         e.preventDefault();
-        const item = btn.closest(\".theory-acc\");
-        item.classList.toggle(\"open\");
-        btn.textContent = item.classList.contains(\"open\") ? \"\\u2212\" : \"+\";
+        const item = btn.closest(".theory-acc");
+        item.classList.toggle("open");
+        btn.textContent = item.classList.contains("open") ? "\u2212" : "+";
       });
     });
   </script>
