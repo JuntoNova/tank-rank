@@ -89,7 +89,7 @@
     s.id = "th-card-css";
     s.textContent = ".vs{display:block;margin-top:6px;font-size:11px;color:var(--muted)}"
       + ".vs.up{color:var(--lime)}.vs.down{color:var(--coral)}.vs.even{color:var(--gold)}"
-      + ".th-ledger{margin-top:8px}.th-ledger table{min-width:560px}"
+      + ".th-ledger{margin-top:8px}.th-ledger table{min-width:480px}"
       + ".th-ledger td,.th-ledger th{vertical-align:middle;font-variant-numeric:tabular-nums}"
       + ".th-ledger .pct{text-align:right}"
       + ".num-zero{color:var(--muted)}"
@@ -119,7 +119,6 @@
     const htIn = inches(feat.ht);
     function delta(iso) {
       return {
-        pp: fmtPp((iso.pAs || 0) - (slot.pAs || 0)),
         as: fmtSigned((iso.expAs || 0) - (slot.expAs || 0)),
         nba: fmtSigned((iso.expNba || 0) - (slot.expNba || 0)),
         rawPp: (iso.pAs || 0) - (slot.pAs || 0)
@@ -133,20 +132,20 @@
     const stash = delta(only(p, feat, priors, { origin: "intl", stash: feat.stash, delay: feat.delay, never: feat.never }));
     const wpi = feat.wt && htIn ? (feat.wt / htIn).toFixed(2) : "\u2014";
     return [
-      ["Slot", "Pk " + String(p.rank).padStart(2, "0") + " \u00b7 " + slot.slot, fmtPct(slot.pAs), fmtExp(slot.expAs), fmtExp(slot.expNba), "zero"],
-      ["Age", feat.age != null ? String(feat.age) : "\u2014", age.pp, age.as, age.nba, kind(age.rawPp)],
-      ["Class", feat.cls || "\u2014", cls.pp, cls.as, cls.nba, kind(cls.rawPp)],
-      ["School", p.school || "\u2014", "0", "0", "0", "zero"],
-      ["Origin", feat.origin || "\u2014", intl.pp, intl.as, intl.nba, kind(intl.rawPp)],
-      ["Stash", feat.never ? "never" : (feat.delay >= 2 ? "+" + feat.delay + " yr" : feat.origin === "intl" ? "0 yr" : "\u2014"), stash.pp, stash.as, stash.nba, kind(stash.rawPp)],
-      ["Height", feat.ht || "\u2014", "0", "0", "0", "zero"],
-      ["Weight", feat.wt != null ? String(feat.wt) : "\u2014", "0", "0", "0", "zero"],
-      ["Lb/in", wpi, "0", "0", "0", "zero"],
-      ["Create", feat.create ? "1" : "0", handle.pp, handle.as, handle.nba, kind(handle.rawPp)],
-      ["Wingspan", p.wsp || "\u2014", "\u2014", "\u2014", "\u2014", "zero"],
-      ["Reach", p.reach || "\u2014", "\u2014", "\u2014", "\u2014", "zero"],
-      ["Combine", "\u2014", "\u2014", "\u2014", "\u2014", "zero"],
-      ["Box", "\u2014", "\u2014", "\u2014", "\u2014", "zero"]
+      ["Slot", "Pk " + String(p.rank).padStart(2, "0") + " \u00b7 " + slot.slot, fmtExp(slot.expAs), fmtExp(slot.expNba), "zero"],
+      ["Age", feat.age != null ? String(feat.age) : "\u2014", age.as, age.nba, kind(age.rawPp)],
+      ["Class", feat.cls || "\u2014", cls.as, cls.nba, kind(cls.rawPp)],
+      ["School", p.school || "\u2014", "0", "0", "zero"],
+      ["Origin", feat.origin || "\u2014", intl.as, intl.nba, kind(intl.rawPp)],
+      ["Stash", feat.never ? "never" : (feat.delay >= 2 ? "+" + feat.delay + " yr" : feat.origin === "intl" ? "0 yr" : "\u2014"), stash.as, stash.nba, kind(stash.rawPp)],
+      ["Height", feat.ht || "\u2014", "0", "0", "zero"],
+      ["Weight", feat.wt != null ? String(feat.wt) : "\u2014", "0", "0", "zero"],
+      ["Lb/in", wpi, "0", "0", "zero"],
+      ["Create", feat.create ? "1" : "0", handle.as, handle.nba, kind(handle.rawPp)],
+      ["Wingspan", p.wsp || "\u2014", "\u2014", "\u2014", "zero"],
+      ["Reach", p.reach || "\u2014", "\u2014", "\u2014", "zero"],
+      ["Combine", "\u2014", "\u2014", "\u2014", "zero"],
+      ["Box", "\u2014", "\u2014", "\u2014", "zero"]
     ];
   }
   function paint(root, p, priors) {
@@ -186,12 +185,12 @@
     if (root.querySelector(".th-player")) return;
     const body = rows(p, slot, priors).map(function (r) {
       return "<tr><td>" + r[0] + "</td><td class=\"pct\">" + r[1] + "</td>"
-        + numCell(r[2], r[5]) + numCell(r[3], r[5]) + numCell(r[4], r[5]) + "</tr>";
+        + numCell(r[2], r[4]) + numCell(r[3], r[4]) + "</tr>";
     }).join("");
     const box = document.createElement("section");
     box.className = "section th-player";
     box.innerHTML = '<div class="table-wrap th-ledger"><table><thead><tr>'
-      + "<th></th><th>Value</th><th>\u0394 P(AS)</th><th>\u0394 AS</th><th>\u0394 NBA</th>"
+      + "<th></th><th>Value</th><th>\u0394 AS</th><th>\u0394 NBA</th>"
       + "</tr></thead><tbody>" + body + "</tbody></table></div>";
     const hero = root.querySelector(".player-hero");
     if (hero && hero.parentNode) hero.parentNode.insertBefore(box, hero.nextSibling);
