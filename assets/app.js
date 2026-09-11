@@ -36,6 +36,10 @@
     '<a class="${active === "upcoming" ? "active" : ""}" href="./upcoming.html">Upcoming</a>\n          <a class="${active === "drafts" ? "active" : ""}" href="./drafts.html">Historic</a>',
     '<a class="${active === "drafts" ? "active" : ""}" href="./drafts.html">Historic</a>\n          <a class="${active === "upcoming" ? "active" : ""}" href="./upcoming.html">Upcoming</a>'
   );
+  src = src.replace(
+    '\n          <a class="${active === "about" ? "active" : ""}" href="./about.html">About</a>',
+    ''
+  );
   var future = extractDoor(src, "./upcoming.html");
   var historic = extractDoor(src, "./drafts.html");
   if (future && historic) {
