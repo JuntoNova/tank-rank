@@ -32,6 +32,10 @@
     '      </tr>`).join("") || `<tr><td colspan="9" style="color:var(--muted);padding:24px">No players match.</td></tr>`;\n  };\n\n  root.innerHTML = `\n    ${nav(year === currentYear() ? "board" : "drafts")}',
     '      </tr>`).join("") || `<tr><td colspan="8" style="color:var(--muted);padding:24px">No players match.</td></tr>`;\n  };\n\n  root.innerHTML = `\n    ${nav(year === currentYear() ? "board" : "drafts")}'
   );
+  src = src.replace(
+    '<a class="${active === "upcoming" ? "active" : ""}" href="./upcoming.html">Upcoming</a>\n          <a class="${active === "drafts" ? "active" : ""}" href="./drafts.html">Historic</a>',
+    '<a class="${active === "drafts" ? "active" : ""}" href="./drafts.html">Historic</a>\n          <a class="${active === "upcoming" ? "active" : ""}" href="./upcoming.html">Upcoming</a>'
+  );
   var future = extractDoor(src, "./upcoming.html");
   var historic = extractDoor(src, "./drafts.html");
   if (future && historic) {
