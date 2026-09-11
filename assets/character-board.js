@@ -1,1 +1,23 @@
-(function(){TR.renderSimple(document.getElementById("app"),"theories","Character predicts busts on its own","",'<p class="size-note"><strong>Score: N/A.</strong> No public makeup-flag series, and no published bust definition.</p>');})();
+(function () {
+  const items = [
+    { title: "What is missing", hint: "why N/A", src: "/assets/chr-t-missing.html?v=49" }
+  ];
+  const rows = items.map((it, i) => {
+    return '<section class="acc-item"><button class="acc-btn size-acc-btn" type="button" data-acc="' + i + '"><b>' + it.title + '</b><em>' + it.hint + ' <i>+</i></em></button><div class="acc-panel" data-src="' + it.src + '"></div></section>';
+  }).join('');
+  TR.renderSimple(document.getElementById("app"), "theories", "Character predicts busts on its own", "",
+    '<p class="size-note"><strong>Score: N/A.</strong> Widely believed inside rooms. We do not have a consistent public makeup flag joined to draftees, and we still do not publish a bust definition. Until both exist this cannot be scored.</p><div class="acc size-acc">' + rows + '</div>');
+  document.querySelectorAll("[data-acc]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const item = btn.closest(".acc-item");
+      item.classList.toggle("open");
+      const icon = btn.querySelector("i");
+      if (icon) icon.textContent = item.classList.contains("open") ? "\u2212" : "+";
+      const panel = item.querySelector(".acc-panel");
+      if (item.classList.contains("open") && panel && panel.dataset.src && !panel.dataset.loaded) {
+        fetch(panel.dataset.src).then((r) => r.text()).then((html) => { panel.innerHTML = html; panel.dataset.loaded = "1"; });
+      }
+    });
+  });
+})();
