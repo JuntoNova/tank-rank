@@ -112,7 +112,7 @@
     const rows = filtered(draft);
     const view = viewOf();
     if (view === "drafted") {
-      head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th>";
+      head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th><th>HOF</th>";
       body.innerHTML = rows.map(function (p) {
         const proj = p.proj || project(p, p.theoryFeat, priors);
         return '<tr onclick="location.href=\'./player.html?year=' + year + "&id=" + p.id + '\'" style="cursor:pointer">'
@@ -124,23 +124,25 @@
           + '<td class="pct">' + fmtExp(proj.expNba) + "</td>"
           + '<td class="pct">' + fmtExp(proj.expYrs) + "</td>"
           + '<td class="pct">' + fmtExp(proj.expCh) + "</td>"
-          + '<td class="pct">' + fmtExp(proj.expMvp) + "</td></tr>";
+          + '<td class="pct">' + fmtExp(proj.expMvp) + "</td>"
+          + '<td class="pct">' + fmtPct(proj.pHof) + "</td></tr>";
       }).join("");
     } else {
-      head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th>";
+      head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th><th>HOF</th>";
       body.innerHTML = rows.map(function (p) {
         const proj = p.proj || project(p, p.theoryFeat, priors);
         const known = p.yrs != null;
         return '<tr onclick="location.href=\'./player.html?year=' + year + "&id=" + p.id + '\'" style="cursor:pointer">'
           + '<td class="rank">' + String(p.rank).padStart(2, "0") + "</td>"
-          + '<td><div class="name">' + p.name + (p.hof ? ' <span class="hof">HOF</span>' : "") + '</div><div class="meta">' + [p.pos, p.school].filter(Boolean).join(" \u00b7 ") + "</div></td>"
+          + '<td><div class="name">' + p.name + '</div><div class="meta">' + [p.pos, p.school].filter(Boolean).join(" \u00b7 ") + "</div></td>"
           + "<td>" + (p.team || "\u2014") + "</td>"
           + '<td class="pct">' + vsCell(p.allStar, proj.expAs) + "</td>"
           + '<td class="pct">' + vsCell(p.nba1, proj.expNba1) + "</td>"
           + '<td class="pct">' + vsCell(p.allNba, proj.expNba) + "</td>"
           + '<td class="pct">' + (known ? vsCell(p.yrs, proj.expYrs) : "\u2014") + "</td>"
           + '<td class="pct">' + (known ? vsCell(p.champs, proj.expCh) : (p.champs ? vsCell(p.champs, proj.expCh) : "\u2014")) + "</td>"
-          + '<td class="pct">' + (known ? vsCell(p.mvp, proj.expMvp) : (p.mvp ? vsCell(p.mvp, proj.expMvp) : "\u2014")) + "</td></tr>";
+          + '<td class="pct">' + (known ? vsCell(p.mvp, proj.expMvp) : (p.mvp ? vsCell(p.mvp, proj.expMvp) : "\u2014")) + "</td>"
+          + '<td class="pct">' + vsCell(p.hof ? 1 : 0, proj.pHof) + "</td></tr>";
       }).join("");
     }
     const sub = document.querySelector(".section-head .sub");
