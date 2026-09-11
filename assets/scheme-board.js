@@ -1,0 +1,1 @@
+(function(){TR.renderSimple(document.getElementById("app"),"theories","Scheme fit beats the board at the margin","",'<p class="size-note"><strong>Score: N/A.</strong> There is no draft-night scheme tag and no way to mark which reaches were fit bets.</p>');})();

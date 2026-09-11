@@ -1,0 +1,1 @@
+(function(){TR.renderSimple(document.getElementById("app"),"theories","Teams overweight medical, media underweights it","",'<p class="size-note"><strong>Score: N/A.</strong> There is no player-matched pre-draft imaging or team-doctor grade in the public files.</p>');})();

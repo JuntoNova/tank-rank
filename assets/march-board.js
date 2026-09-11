@@ -1,0 +1,1 @@
+(function(){TR.renderSimple(document.getElementById("app"),"theories","March Madness tells you everything","",'<p class="size-note"><strong>Score: N/A.</strong> The college box file is a season total. There is no player-matched NCAA-tournament series to hold against the same player\'s regular season.</p>');})();

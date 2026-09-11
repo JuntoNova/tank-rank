@@ -1,0 +1,1 @@
+(function(){TR.renderSimple(document.getElementById("app"),"theories","Switchability beats rim protection","",'<p class="size-note"><strong>Score: untested.</strong> There is no player-matched series for who actually switched on an island before the draft. Wingspan residual is scored on /wingspan. College blocks are scored on /rim. Neither is switchability.</p>');})();

@@ -1,0 +1,1 @@
+(function(){TR.renderSimple(document.getElementById("app"),"theories","Character predicts busts on its own","",'<p class="size-note"><strong>Score: N/A.</strong> No public makeup-flag series, and no published bust definition.</p>');})();
