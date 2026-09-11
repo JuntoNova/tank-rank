@@ -1,8 +1,12 @@
 (function () {
   const INTENSITY = {
-    "1": { as: 5.5, nba: 3.2 }, "2-3": { as: 4.2, nba: 2.4 }, "4-5": { as: 3.8, nba: 2.2 },
-    "6-10": { as: 3.2, nba: 1.8 }, "11-14": { as: 2.8, nba: 1.6 },
-    "15-30": { as: 2.2, nba: 1.4 }, "31+": { as: 1.8, nba: 1.3 }
+    "1":    { as: 5.5, nba: 3.2, nba1: 0.90, yrs: 13.5, ch: 0.55, mvp: 0.12 },
+    "2-3":  { as: 4.2, nba: 2.4, nba1: 0.65, yrs: 11.5, ch: 0.40, mvp: 0.06 },
+    "4-5":  { as: 3.8, nba: 2.2, nba1: 0.45, yrs: 10.5, ch: 0.32, mvp: 0.03 },
+    "6-10": { as: 3.2, nba: 1.8, nba1: 0.28, yrs: 9.0,  ch: 0.25, mvp: 0.015 },
+    "11-14":{ as: 2.8, nba: 1.6, nba1: 0.20, yrs: 8.0,  ch: 0.20, mvp: 0.008 },
+    "15-30":{ as: 2.2, nba: 1.4, nba1: 0.12, yrs: 6.5,  ch: 0.14, mvp: 0.003 },
+    "31+":  { as: 1.8, nba: 1.3, nba1: 0.08, yrs: 3.5,  ch: 0.06, mvp: 0.001 }
   };
   function slotBucket(pk) {
     pk = Number(pk) || 99;
@@ -56,7 +60,17 @@
     pNba = clamp(pNba, 0.001, 0.80);
     pHof = clamp(pHof, 0.0005, 0.55);
     const inten = INTENSITY[key] || INTENSITY["31+"];
-    return { pAs: pAs, pNba: pNba, pHof: pHof, expAs: pAs * inten.as, expNba: pNba * inten.nba };
+    const slotAs = slot.pAs || 0;
+    const scale = clamp(slotAs ? pAs / slotAs : 1, 0.45, 1.55);
+    return {
+      pAs: pAs, pNba: pNba, pHof: pHof,
+      expAs: pAs * inten.as,
+      expNba: pNba * inten.nba,
+      expNba1: pNba * inten.nba1,
+      expYrs: inten.yrs * scale,
+      expCh: inten.ch * scale,
+      expMvp: inten.mvp * scale
+    };
   }
   function vsCell(got, exp) {
     const n = Number(got) || 0;
@@ -98,7 +112,7 @@
     const rows = filtered(draft);
     const view = viewOf();
     if (view === "drafted") {
-      head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>E[AS]</th><th>E[NBA]</th><th>P(AS)</th><th>P(HOF)</th>";
+      head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th>";
       body.innerHTML = rows.map(function (p) {
         const proj = p.proj || project(p, p.theoryFeat, priors);
         return '<tr onclick="location.href=\'./player.html?year=' + year + "&id=" + p.id + '\'" style="cursor:pointer">'
@@ -106,9 +120,11 @@
           + '<td><div class="name">' + p.name + '</div><div class="meta">' + [p.pos, p.school].filter(Boolean).join(" \u00b7 ") + "</div></td>"
           + "<td>" + (p.team || "\u2014") + "</td>"
           + '<td class="pct">' + fmtExp(proj.expAs) + "</td>"
+          + '<td class="pct">' + fmtExp(proj.expNba1) + "</td>"
           + '<td class="pct">' + fmtExp(proj.expNba) + "</td>"
-          + '<td class="pct">' + fmtPct(proj.pAs) + "</td>"
-          + '<td class="pct">' + fmtPct(proj.pHof) + "</td></tr>";
+          + '<td class="pct">' + fmtExp(proj.expYrs) + "</td>"
+          + '<td class="pct">' + fmtExp(proj.expCh) + "</td>"
+          + '<td class="pct">' + fmtExp(proj.expMvp) + "</td></tr>";
       }).join("");
     } else {
       head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th>";
@@ -127,7 +143,7 @@
       }).join("");
     }
     const sub = document.querySelector(".section-head .sub");
-    if (sub) sub.textContent = view === "drafted" ? "E = slot prior \u00d7 scored theories." : "Actual \u2212 E.";
+    if (sub) { sub.textContent = ""; sub.style.display = "none"; }
   }
   function load(year) {
     return Promise.all([
@@ -137,10 +153,12 @@
       const pack = pair[0], priors = pair[1] || (window.TANK_RANK && TANK_RANK.slotPriors) || {};
       if (priors && window.TANK_RANK) TANK_RANK.slotPriors = priors;
       const draft = window.TANK_RANK && TANK_RANK.drafts[year];
-      if (!pack || !draft) return { pack: pack, priors: priors };
-      const byPk = {};
-      (pack.players || []).forEach(function (f) { byPk[f.pk] = f; });
-      (draft.players || []).forEach(function (p) { p.theoryFeat = byPk[p.rank]; });
+      if (!draft) return { pack: pack, priors: priors };
+      if (pack) {
+        const byPk = {};
+        (pack.players || []).forEach(function (f) { byPk[f.pk] = f; });
+        (draft.players || []).forEach(function (p) { p.theoryFeat = byPk[p.rank]; });
+      }
       return { pack: pack, priors: priors, draft: draft };
     });
   }
