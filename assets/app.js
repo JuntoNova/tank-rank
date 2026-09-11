@@ -36,22 +36,26 @@
   // Populate honesty: unavailable probs/metrics render as em dash
   src = src.replace(
     'const fmtPct = (n) => `${Math.round(n * 100)}%`;',
-    'const fmtPct = (n) => (n == null || Number.isNaN(Number(n))) ? "—" : `${Math.round(Number(n) * 100)}%`;'
+    'const fmtPct = (n) => (n == null || Number.isNaN(Number(n))) ? "\u2014" : `${Math.round(Number(n) * 100)}%`;'
   );
   src = src.replace(
     'function metricHtml(label, val, risk) {\n  return `<div class="metric"><label>${label}</label><b>${fmtPct(val)}</b><div class="bar ${risk ? "risk" : ""}"><i style="width:${Math.round(val * 100)}%"></i></div></div>`;\n}',
-    'function metricHtml(label, val, risk) {\n  if (val == null || Number.isNaN(Number(val))) return `<div class="metric"><label>${label}</label><b>—</b><div class="bar"><i style="width:0%"></i></div></div>`;\n  return `<div class="metric"><label>${label}</label><b>${fmtPct(val)}</b><div class="bar ${risk ? "risk" : ""}"><i style="width:${Math.round(val * 100)}%"></i></div></div>`;\n}'
+    'function metricHtml(label, val, risk) {\n  if (val == null || Number.isNaN(Number(val))) return `<div class="metric"><label>${label}</label><b>\u2014</b><div class="bar"><i style="width:0%"></i></div></div>`;\n  return `<div class="metric"><label>${label}</label><b>${fmtPct(val)}</b><div class="bar ${risk ? "risk" : ""}"><i style="width:${Math.round(val * 100)}%"></i></div></div>`;\n}'
   );
   src = src.replace(
     '<td class="pct">${(p.expWs || 0).toFixed(1)}</td>',
-    '<td class="pct">${p.expWs == null ? "—" : Number(p.expWs).toFixed(1)}</td>'
+    '<td class="pct">${p.expWs == null ? "\u2014" : Number(p.expWs).toFixed(1)}</td>'
   );
   src = src.replace(
-    'function deltaHtml(d) {\n  if (!d) return `<span class="delta">—</span>`;',
-    'function deltaHtml(d) {\n  if (d == null || d === "" || Number.isNaN(Number(d))) return `<span class="delta">—</span>`;'
+    'function deltaHtml(d) {\n  if (!d) return `<span class="delta">\u2014</span>`;',
+    'function deltaHtml(d) {\n  if (d == null || d === "" || Number.isNaN(Number(d))) return `<span class="delta">\u2014</span>`;'
   );
   src = src.replace(
-    '<div>The Draft Model is a DBA of Junto Nova.</div>\n        <div>Not affiliated with, endorsed by, or sponsored by the NBA, the NBA Draft, or any NBA team.</div>\n        ',
+    '<div>The Draft Model is a DBA of Junto Nova.</div>',
+    ''
+  );
+  src = src.replace(
+    '<div>Not affiliated with, endorsed by, or sponsored by the NBA, the NBA Draft, or any NBA team.</div>',
     ''
   );
   eval(src);
