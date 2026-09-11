@@ -61,6 +61,8 @@
     'function deltaHtml(d) {\n  if (!d) return `<span class="delta">\u2014</span>`;',
     'function deltaHtml(d) {\n  if (d == null || d === "" || Number.isNaN(Number(d))) return `<span class="delta">\u2014</span>`;'
   );
+  src = src.replace('<div class="banner">${TANK_RANK.disclaimer} ${draft.note || ""}</div>', "");
+  src = src.replace('<div class="banner">${TANK_RANK.disclaimer}</div>', "");
   src = src.replace('<div>The Draft Model is a DBA of Junto Nova.</div>', "");
   src = src.replace('<div>Not affiliated with, endorsed by, or sponsored by the NBA, the NBA Draft, or any NBA team.</div>', "");
   eval(src);
