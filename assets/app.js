@@ -27,8 +27,8 @@
     '      </tr>`).join("") || `<tr><td colspan="9" style="color:var(--muted);padding:24px">No players match.</td></tr>`;\n  };\n\n  root.innerHTML = `\n    ${nav(year === currentYear() ? "board" : "drafts")}',
     '      </tr>`).join("") || `<tr><td colspan="8" style="color:var(--muted);padding:24px">No players match.</td></tr>`;\n  };\n\n  root.innerHTML = `\n    ${nav(year === currentYear() ? "board" : "drafts")}'
   );
-  var future = src.match(/<a class="door" href=\"\.\/upcoming\.html\">[\s\S]*?<\/a>/);
-  var historic = src.match(/<a class="door" href=\"\.\/drafts\.html\">[\s\S]*?<\/a>/);
+  var future = src.match(/<a class="door" href=\"\\.\\/upcoming\\.html\">[\\s\\S]*?<\\/a>/);
+  var historic = src.match(/<a class="door" href=\"\\.\\/drafts\\.html\">[\\s\\S]*?<\\/a>/);
   if (future && historic) {
     src = src.replace(future[0] + "\n        " + historic[0], historic[0] + "\n        " + future[0]);
   }
@@ -49,6 +49,10 @@
   src = src.replace(
     'function deltaHtml(d) {\n  if (!d) return `<span class="delta">—</span>`;',
     'function deltaHtml(d) {\n  if (d == null || d === "" || Number.isNaN(Number(d))) return `<span class="delta">—</span>`;'
+  );
+  src = src.replace(
+    '<div>The Draft Model is a DBA of Junto Nova.</div>\n        <div>Not affiliated with, endorsed by, or sponsored by the NBA, the NBA Draft, or any NBA team.</div>\n        ',
+    ''
   );
   eval(src);
 })();
