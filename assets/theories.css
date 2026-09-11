@@ -109,3 +109,22 @@ h2.size-h { font-family: var(--serif); font-size: 24px; font-weight: 500; margin
   color: var(--lime);
   margin: 0 0 2px;
 }
+.theory-families { border-top: 1px solid var(--line); }
+.group-acc > .acc-btn.group-acc-btn {
+  padding: 20px 2px;
+}
+.group-acc > .acc-btn.group-acc-btn b {
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+.group-acc > .acc-panel {
+  padding: 0 0 10px;
+}
+.group-acc .theory-list {
+  margin-top: 0;
+  border-top: 1px solid var(--line);
+}
+.group-acc .theory-name { font-size: 20px; }
+@media (max-width: 640px) {
+  .group-acc > .acc-btn.group-acc-btn b { font-size: 22px; }
+}

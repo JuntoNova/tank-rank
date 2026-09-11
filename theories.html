@@ -14,8 +14,8 @@
   <meta property="og:description" content="Claims about what predicts NBA careers. Each one gets tested against completed drafts." />
   <meta property="og:url" content="https://thedraftmodel.com/theories.html" />
   <meta property="og:image" content="https://thedraftmodel.com/assets/og.jpg" />
-  <link rel="stylesheet" href="./assets/styles.css?v=45" />
-  <link rel="stylesheet" href="./assets/theories.css?v=45" />
+  <link rel="stylesheet" href="./assets/styles.css?v=47" />
+  <link rel="stylesheet" href="./assets/theories.css?v=47" />
 </head>
 <body>
   <div id="app"></div>
@@ -91,49 +91,57 @@
         items: [
           {
             name: "Younger is better at the same pick",
-            pill: "N/A",
-            cls: "na",
+            href: "./age.html",
+            pill: "Scored",
+            cls: "num",
             cuts: [
               "A 19-year-old freshman beats a 22-year-old senior in the same slot",
-              "Teams currently over-index on this",
-              "Opposite: late bloomers get left on the board"
+              "Opposite: late bloomers get left on the board",
+              "Score: lean true. Under 19.5 is 24.1% All-Star against 3.5% for 22.5+"
             ]
           },
           {
             name: "Late bloomers get left on the board",
-            pill: "N/A",
-            cls: "na",
+            href: "./late.html",
+            pill: "Scored",
+            cls: "num",
             cuts: [
               "Older breakouts are undervalued relative to their production",
-              "Analytics rooms lean this way; traditional rooms do not",
-              "Opposite: younger is better at the same pick"
+              "Opposite: younger is better at the same pick",
+              "Score: false as a general rule. Older high-scorers do not beat younger ones"
             ]
           },
           {
             name: "One-and-done beats four-year stars",
-            pill: "N/A",
-            cls: "na",
+            href: "./onedone.html",
+            pill: "Scored",
+            cls: "num",
             cuts: [
               "Early-entry freshmen outperform seniors after you adjust for slot",
-              "Class year at draft vs later honors"
+              "Class year at draft vs later honors",
+              "Score: lean true, slot-dependent. Freshmen 18.9% All-Star vs seniors 5.9%"
             ]
           },
           {
             name: "Sophomore-to-junior jumps beat freshman flashes",
-            pill: "N/A",
-            cls: "na",
+            href: "./jump.html",
+            pill: "Scored",
+            cls: "num",
             cuts: [
               "A real year-two leap predicts readiness better than a one-and-done explosion",
-              "Year-over-year college box deltas"
+              "Year-over-year college box deltas",
+              "Score: false as a general rule. Freshman flashes 23.3% All-Star vs +3-pt jumps 6.6%"
             ]
           },
           {
             name: "Draft-and-stash cuts risk on swingy international bigs",
-            pill: "N/A",
-            cls: "na",
+            href: "./stash.html",
+            pill: "Scored",
+            cls: "num",
             cuts: [
               "Leaving a raw overseas big in place changes the risk math",
-              "Stash vs immediate arrival, same slot, same era"
+              "Stash vs immediate arrival, same slot, same era",
+              "Score: lean true on never-arriving risk, unproven as a value edge"
             ]
           }
         ]
@@ -295,9 +303,21 @@
       </div>`;
     }
 
-    const html = groups.map((g) =>
-      `<div class="theory-section"><div class="theory-section-label">${g.label}</div><div class="acc theory-list">${g.items.map(row).join("")}</div></div>`
-    ).join("");
+    function groupHint(g) {
+      const scored = g.items.filter((t) => t.pill === "Scored").length;
+      const n = g.items.length;
+      return scored === n ? `${n} scored` : `${scored} of ${n} scored`;
+    }
+
+    const html = `<div class="acc theory-families">${groups.map((g, i) =>
+      `<section class="acc-item group-acc">
+        <button class="acc-btn group-acc-btn" type="button" data-group="${i}">
+          <b>${g.label}</b>
+          <em>${groupHint(g)} <i>+</i></em>
+        </button>
+        <div class="acc-panel"><div class="acc theory-list">${g.items.map(row).join("")}</div></div>
+      </section>`
+    ).join("")}</div>`;
 
     TR.renderSimple(
       document.getElementById("app"),
@@ -306,9 +326,19 @@
       "",
       html
     );
+    document.querySelectorAll("[data-group]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const item = btn.closest(".group-acc");
+        item.classList.toggle("open");
+        const icon = btn.querySelector("i");
+        if (icon) icon.textContent = item.classList.contains("open") ? "\u2212" : "+";
+      });
+    });
     document.querySelectorAll("[data-acc]").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
+        e.stopPropagation();
         const item = btn.closest(".theory-acc");
         item.classList.toggle("open");
         btn.textContent = item.classList.contains("open") ? "\u2212" : "+";
