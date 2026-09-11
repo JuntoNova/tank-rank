@@ -129,17 +129,18 @@
     } else {
       head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th>";
       body.innerHTML = rows.map(function (p) {
-        const proj = p.proj || (p.theoryFeat ? project(p, p.theoryFeat, priors) : null);
+        const proj = p.proj || project(p, p.theoryFeat, priors);
+        const known = p.yrs != null;
         return '<tr onclick="location.href=\'./player.html?year=' + year + "&id=" + p.id + '\'" style="cursor:pointer">'
           + '<td class="rank">' + String(p.rank).padStart(2, "0") + "</td>"
           + '<td><div class="name">' + p.name + (p.hof ? ' <span class="hof">HOF</span>' : "") + '</div><div class="meta">' + [p.pos, p.school].filter(Boolean).join(" \u00b7 ") + "</div></td>"
           + "<td>" + (p.team || "\u2014") + "</td>"
-          + '<td class="pct">' + (proj ? vsCell(p.allStar, proj.expAs) : (p.allStar || "\u2014")) + "</td>"
-          + '<td class="pct">' + (p.nba1 || "\u2014") + "</td>"
-          + '<td class="pct">' + (proj ? vsCell(p.allNba, proj.expNba) : (p.allNba || "\u2014")) + "</td>"
-          + '<td class="pct">' + (p.yrs || "\u2014") + "</td>"
-          + '<td class="pct">' + (p.champs || "\u2014") + "</td>"
-          + '<td class="pct">' + (p.mvp || "\u2014") + "</td></tr>";
+          + '<td class="pct">' + vsCell(p.allStar, proj.expAs) + "</td>"
+          + '<td class="pct">' + vsCell(p.nba1, proj.expNba1) + "</td>"
+          + '<td class="pct">' + vsCell(p.allNba, proj.expNba) + "</td>"
+          + '<td class="pct">' + (known ? vsCell(p.yrs, proj.expYrs) : "\u2014") + "</td>"
+          + '<td class="pct">' + (known ? vsCell(p.champs, proj.expCh) : (p.champs ? vsCell(p.champs, proj.expCh) : "\u2014")) + "</td>"
+          + '<td class="pct">' + (known ? vsCell(p.mvp, proj.expMvp) : (p.mvp ? vsCell(p.mvp, proj.expMvp) : "\u2014")) + "</td></tr>";
       }).join("");
     }
     const sub = document.querySelector(".section-head .sub");
@@ -148,9 +149,10 @@
   function load(year) {
     return Promise.all([
       fetch("./assets/theory-packs/" + year + ".json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-      fetch("./assets/slot-priors.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
-    ]).then(function (pair) {
-      const pack = pair[0], priors = pair[1] || (window.TANK_RANK && TANK_RANK.slotPriors) || {};
+      fetch("./assets/slot-priors.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      fetch("./assets/outcomes-extra.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+    ]).then(function (triple) {
+      const pack = triple[0], priors = triple[1] || (window.TANK_RANK && TANK_RANK.slotPriors) || {}, extra = (triple[2] || {})[String(year)] || {};
       if (priors && window.TANK_RANK) TANK_RANK.slotPriors = priors;
       const draft = window.TANK_RANK && TANK_RANK.drafts[year];
       if (!draft) return { pack: pack, priors: priors };
@@ -159,6 +161,17 @@
         (pack.players || []).forEach(function (f) { byPk[f.pk] = f; });
         (draft.players || []).forEach(function (p) { p.theoryFeat = byPk[p.rank]; });
       }
+      (draft.players || []).forEach(function (p) {
+        const o = extra[String(p.rank)];
+        if (!o) return;
+        if (o.hof) p.hof = 1;
+        if (o.as != null) p.allStar = o.as;
+        if (o.nba1 != null) p.nba1 = o.nba1;
+        if (o.nba != null) p.allNba = o.nba;
+        if (o.yrs != null) p.yrs = o.yrs;
+        if (o.ch != null) p.champs = o.ch;
+        if (o.mvp != null) p.mvp = o.mvp;
+      });
       return { pack: pack, priors: priors, draft: draft };
     });
   }
