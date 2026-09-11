@@ -4,296 +4,73 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Draft Theories | The Draft Model</title>
-  <meta name="description" content="Draft theories scored against historic NBA drafts — size vs wingspan, youth vs late bloomers, switchability vs rim protection, development vs talent." />
+  <meta name="description" content="Draft theories scored against historic NBA drafts, plus qualitative claims that have no public series." />
   <link rel="canonical" href="https://thedraftmodel.com/theories.html" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#090a0c" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="The Draft Model" />
   <meta property="og:title" content="Draft Theories | The Draft Model" />
-  <meta property="og:description" content="Claims about what predicts NBA careers. Each one gets tested against completed drafts." />
+  <meta property="og:description" content="Claims about what predicts NBA careers. Scored ones get a table. Qualitative ones stay open." />
   <meta property="og:url" content="https://thedraftmodel.com/theories.html" />
   <meta property="og:image" content="https://thedraftmodel.com/assets/og.jpg" />
-  <link rel="stylesheet" href="./assets/styles.css?v=47" />
-  <link rel="stylesheet" href="./assets/theories.css?v=47" />
+  <link rel="stylesheet" href="./assets/styles.css?v=50" />
+  <link rel="stylesheet" href="./assets/theories.css?v=50" />
 </head>
 <body>
   <div id="app"></div>
   <script src="./assets/data.js?v=42"></script>
-  <script src="./assets/app.js?v=43"></script>
-  <script src="./assets/nav-swap.js?v=42"></script>
+  <script src="./assets/app.js?v=50"></script>
   <script>
     const groups = [
       {
         label: "Physical traits",
         items: [
-          {
-            name: "You can't teach size",
-            href: "./size.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Bigger at the same pick should produce more NBA value",
-              "Weight and listed height are the same bet dressed differently",
-              "Size may move MVP more than All-Star",
-              "Opposite: wingspan beats height on defense"
-            ]
-          },
-          {
-            name: "Wingspan beats height on defense",
-            href: "./wingspan.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Length residual predicts defense better than listed height",
-              "Why some rooms take +7-foot-wingspan guards over short-armed bigs",
-              "Opposite: you can't teach size",
-              "Score: lean true on career honors. Defense: untested"
-            ]
-          },
-          {
-            name: "Ball-handling size is the hole in the market",
-            href: "./handle.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Point-guard skills in a 6-foot-8 body, not size or handle alone",
-              "Creation rate interacted with height",
-              "Score: lean true on career honors. 6-7+ with 2.2+ ast is 30% All-Star"
-            ]
-          },
-          {
-            name: "Standing reach beats vertical",
-            href: "./reach.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Tested on all drafted combine testers, not just bigs",
-              "Rim protection is geometry, not the max-vert number",
-              "Score: false as a general rule. Lean true only at 6-10 and up"
-            ]
-          },
-          {
-            name: "Combine testing is mostly noise",
-            href: "./combine.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Game-speed film beats the lane-agility clock",
-              "Skipping the combine is itself a data point",
-              "Score: lean true on the clock and the bench. False on max vertical"
-            ]
-          }
+          { name: "You can't teach size", href: "./size.html", pill: "Scored", cls: "num", cuts: ["Bigger at the same pick should produce more NBA value","Weight and listed height are the same bet dressed differently","Opposite: wingspan beats height on defense"] },
+          { name: "Wingspan beats height on defense", href: "./wingspan.html", pill: "Scored", cls: "num", cuts: ["Length residual predicts defense better than listed height","Score: lean true on career honors. Defense: untested"] },
+          { name: "Ball-handling size is the hole in the market", href: "./handle.html", pill: "Scored", cls: "num", cuts: ["Point-guard skills in a 6-foot-8 body","Score: lean true. 6-7+ with 2.2+ ast is 30% All-Star"] },
+          { name: "Standing reach beats vertical", href: "./reach.html", pill: "Scored", cls: "num", cuts: ["Tested on all drafted combine testers, not just bigs","Score: false as a general rule. Lean true only at 6-10 and up"] },
+          { name: "Combine testing is mostly noise", href: "./combine.html", pill: "Scored", cls: "num", cuts: ["Game-speed film beats the lane-agility clock","Score: lean true on the clock and the bench. False on max vertical"] }
         ]
       },
       {
         label: "Age and development",
         items: [
-          {
-            name: "Younger is better at the same pick",
-            href: "./age.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "A 19-year-old freshman beats a 22-year-old senior in the same slot",
-              "Opposite: late bloomers get left on the board",
-              "Score: lean true. Under 19.5 is 24.1% All-Star against 3.5% for 22.5+"
-            ]
-          },
-          {
-            name: "Late bloomers get left on the board",
-            href: "./late.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Older breakouts are undervalued relative to their production",
-              "Opposite: younger is better at the same pick",
-              "Score: false as a general rule. Older high-scorers do not beat younger ones"
-            ]
-          },
-          {
-            name: "One-and-done beats four-year stars",
-            href: "./onedone.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Early-entry freshmen outperform seniors after you adjust for slot",
-              "Class year at draft vs later honors",
-              "Score: lean true, slot-dependent. Freshmen 18.9% All-Star vs seniors 5.9%"
-            ]
-          },
-          {
-            name: "Sophomore-to-junior jumps beat freshman flashes",
-            href: "./jump.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "A real year-two leap predicts readiness better than a one-and-done explosion",
-              "Year-over-year college box deltas",
-              "Score: false as a general rule. Freshman flashes 23.3% All-Star vs +3-pt jumps 6.6%"
-            ]
-          },
-          {
-            name: "Draft-and-stash cuts risk on swingy international bigs",
-            href: "./stash.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Leaving a raw overseas big in place changes the risk math",
-              "Stash vs immediate arrival, same slot, same era",
-              "Score: lean true on never-arriving risk, unproven as a value edge"
-            ]
-          }
+          { name: "Younger is better at the same pick", href: "./age.html", pill: "Scored", cls: "num", cuts: ["A 19-year-old freshman beats a 22-year-old senior in the same slot","Score: lean true. Under 19.5 is 24.1% All-Star against 3.5% for 22.5+"] },
+          { name: "Late bloomers get left on the board", href: "./late.html", pill: "Scored", cls: "num", cuts: ["Older breakouts are undervalued relative to their production","Score: false as a general rule. Older high-scorers do not beat younger ones"] },
+          { name: "One-and-done beats four-year stars", href: "./onedone.html", pill: "Scored", cls: "num", cuts: ["Early-entry freshmen outperform seniors after you adjust for slot","Score: lean true, slot-dependent. Freshmen 18.9% All-Star vs seniors 5.9%"] },
+          { name: "Sophomore-to-junior jumps beat freshman flashes", href: "./jump.html", pill: "Scored", cls: "num", cuts: ["A real year-two leap predicts readiness better than a one-and-done explosion","Score: false as a general rule. Freshman flashes 23.3% All-Star vs +3-pt jumps 6.6%"] },
+          { name: "Draft-and-stash cuts risk on swingy international bigs", href: "./stash.html", pill: "Scored", cls: "num", cuts: ["Leaving a raw overseas big in place changes the risk math","Score: lean true on never-arriving risk, unproven as a value edge"] }
         ]
       },
       {
         label: "Role and translation",
         items: [
-          {
-            name: "College production is the best signal",
-            href: "./prod.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Grown-man production beats tools or high-school pedigree",
-              "Score: false as a general rule. High college pts 13.1% All-Star vs 11.7% low"
-            ]
-          },
-          {
-            name: "Free-throw rate beats field-goal percentage",
-            href: "./ftrate.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Getting downhill and drawing fouls translates",
-              "Score: lean true. High FTA/FGA 16.8% All-Star vs 8.3% low. FG% is flat"
-            ]
-          },
-          {
-            name: "Three-point volume beats percentage",
-            href: "./three.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Shot profile and mechanics over small-sample percentages",
-              "Score: false as a general rule. High 3PAr 10.1% AS. High 3P% at volume 8.9%"
-            ]
-          },
-          {
-            name: "Assist-to-usage beats raw assists",
-            href: "./astu.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Playmaking translation is a ratio problem",
-              "Score: unproven the ratio beats raw assists. Creation itself lean true"
-            ]
-          },
-          {
-            name: "Defense doesn't show up until the league",
-            href: "./defense.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "College scoring is overweighted",
-              "Score: false. High college stocks 16.6% All-Star vs 8.5% low"
-            ]
-          },
-          {
-            name: "Switchability beats rim protection",
-            href: "./switch.html",
-            pill: "N/A",
-            cls: "na",
-            cuts: [
-              "The switch-everything era prices positional defense first",
-              "Score: untested. No pre-draft switch series. Opposite is /rim"
-            ]
-          },
-          {
-            name: "You still need a shot-blocker",
-            href: "./rim.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "A defense without a back-line presence leaks at the rim",
-              "Score: lean true for bigs. High-block C/PF 14.5% AS vs 8.2%. Flat for all positions"
-            ]
-          }
+          { name: "College production is the best signal", href: "./prod.html", pill: "Scored", cls: "num", cuts: ["Grown-man production beats tools or high-school pedigree","Score: false as a general rule. High college pts 13.1% All-Star vs 11.7% low"] },
+          { name: "Free-throw rate beats field-goal percentage", href: "./ftrate.html", pill: "Scored", cls: "num", cuts: ["Getting downhill and drawing fouls translates","Score: lean true. High FTA/FGA 16.8% All-Star vs 8.3% low. FG% is flat"] },
+          { name: "Three-point volume beats percentage", href: "./three.html", pill: "Scored", cls: "num", cuts: ["Shot profile and mechanics over small-sample percentages","Score: false as a general rule. High 3PAr 10.1% AS. High 3P% at volume 8.9%"] },
+          { name: "Assist-to-usage beats raw assists", href: "./astu.html", pill: "Scored", cls: "num", cuts: ["Playmaking translation is a ratio problem","Score: unproven the ratio beats raw assists. Creation itself lean true"] },
+          { name: "Defense doesn't show up until the league", href: "./defense.html", pill: "Scored", cls: "num", cuts: ["College scoring is overweighted","Score: false. High college stocks 16.6% All-Star vs 8.5% low"] },
+          { name: "You still need a shot-blocker", href: "./rim.html", pill: "Scored", cls: "num", cuts: ["A defense without a back-line presence leaks at the rim","Score: lean true for bigs. High-block C/PF 14.5% AS vs 8.2%. Flat for all positions"] }
         ]
       },
       {
         label: "Organizations and markets",
         items: [
-          {
-            name: "The best players play at the best schools",
-            href: "./schools.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Blue-bloods concentrate future stars",
-              "Score: false once you condition on pick. 6–14 other college 19.6% AS vs 16.1% blue blood"
-            ]
-          },
-          {
-            name: "March Madness tells you everything",
-            href: "./march.html",
-            pill: "N/A",
-            cls: "na",
-            cuts: [
-              "Tournament runs reveal what regular-season stats miss",
-              "Score: N/A. No player-matched NCAA-tournament box"
-            ]
-          },
-          {
-            name: "International is a different market",
-            href: "./intl.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Overseas prospects are mispriced versus college at the same pick",
-              "Score: lean true at the top, flat later. Picks 1–5 intl 33% AS vs college 48%"
-            ]
-          },
-          {
-            name: "Scheme fit beats the board at the margin",
-            href: "./scheme.html",
-            pill: "N/A",
-            cls: "na",
-            cuts: [
-              "A lot of draft-night reaches are fit bets, not talent errors",
-              "Score: N/A. No draft-night scheme tag"
-            ]
-          },
-          {
-            name: "Development beats the board",
-            href: "./develop.html",
-            pill: "Scored",
-            cls: "num",
-            cuts: [
-              "Where a player lands matters as much as who they were on draft night",
-              "Score: untested as a value edge. Drafting-team honors follow slot"
-            ]
-          },
-          {
-            name: "Teams overweight medical, media underweights it",
-            href: "./medical.html",
-            pill: "N/A",
-            cls: "na",
-            cuts: [
-              "Front offices have imaging. Public boards do not.",
-              "Score: N/A. No public imaging series"
-            ]
-          },
-          {
-            name: "Character predicts busts on its own",
-            href: "./character.html",
-            pill: "N/A",
-            cls: "na",
-            cuts: [
-              "Makeup red flags move boards independent of talent",
-              "Score: N/A. No public makeup-flag series and no published bust definition"
-            ]
-          }
+          { name: "The best players play at the best schools", href: "./schools.html", pill: "Scored", cls: "num", cuts: ["Blue-bloods concentrate future stars","Score: false once you condition on pick. 6–14 other college 19.6% AS vs 16.1% blue blood"] },
+          { name: "International is a different market", href: "./intl.html", pill: "Scored", cls: "num", cuts: ["Overseas prospects are mispriced versus college at the same pick","Score: lean true at the top, flat later. Picks 1–5 intl 33% AS vs college 48%"] },
+          { name: "Development beats the board", href: "./develop.html", pill: "Scored", cls: "num", cuts: ["Where a player lands matters as much as who they were on draft night","Score: untested as a value edge. Drafting-team honors follow slot"] }
+        ]
+      },
+      {
+        label: "Qualitative theories",
+        kind: "qual",
+        items: [
+          { name: "Switchability beats rim protection", href: "./switch.html", pill: "Unscored", cls: "na", cuts: ["The switch-everything era prices positional defense first","No pre-draft switch series. Opposite claim is scored on /rim"] },
+          { name: "March Madness tells you everything", href: "./march.html", pill: "Unscored", cls: "na", cuts: ["Tournament runs reveal what regular-season stats miss","No player-matched NCAA-tournament box"] },
+          { name: "Scheme fit beats the board at the margin", href: "./scheme.html", pill: "Unscored", cls: "na", cuts: ["A lot of draft-night reaches are fit bets, not talent errors","No draft-night scheme tag"] },
+          { name: "Teams overweight medical, media underweights it", href: "./medical.html", pill: "Unscored", cls: "na", cuts: ["Front offices have imaging. Public boards do not.","No public imaging series"] },
+          { name: "Character predicts busts on its own", href: "./character.html", pill: "Unscored", cls: "na", cuts: ["Makeup red flags move boards independent of talent","No public makeup-flag series and no published bust definition"] }
         ]
       }
     ];
@@ -317,6 +94,7 @@
     }
 
     function groupHint(g) {
+      if (g.kind === "qual") return `${g.items.length} untested`;
       const scored = g.items.filter((t) => t.pill === "Scored").length;
       const n = g.items.length;
       return scored === n ? `${n} scored` : `${scored} of ${n} scored`;
