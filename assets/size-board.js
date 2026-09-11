@@ -7,6 +7,7 @@
     { title: "Wingspan \u2212 height", hint: "n = 716", src: "./assets/size-t-ape.html?v=39" },
     { title: "Standing reach", hint: "n = 715", src: "./assets/size-t-reach.html?v=39" },
     { title: "Listed vs combine height", hint: "N/A", note: "Needs the listed-height series on the same players. Not the same as shoes vs no shoes." },
+    { title: "Listed vs combine weight", hint: "n = 175", src: "./assets/size-t-lvw.html?v=40" },
     { title: "Weight per inch", hint: "n = 715", src: "./assets/size-t-wpi.html?v=39" }
   ];
   const rows = items.map((it, i) => {
@@ -20,7 +21,7 @@
     "theories",
     "You can't teach size",
     "",
-    `<p class=\"size-note\">Height / weight tables: listed size, picks 1\u201360, 1947\u20132018, n = 3,074. Wingspan / reach / lbs-per-inch: combine drafted players, 2000\u20132018, n = 716. Base is the average draftee in that sample. \u0394 is percentage points versus that base. n &lt; 20 in grey.</p>\n    <div class=\"acc size-acc\">${rows}</div>`
+    `<p class=\"size-note\">Height / weight tables: listed size, picks 1\u201360, 1947\u20132018, n = 3,074. Wingspan / reach / lbs-per-inch: combine drafted players, 2000\u20132018, n = 716. Listed vs combine weight is a first-round subset (n = 175) until the full listed file lands. Base is the average draftee in that sample. \u0394 is percentage points versus that base. n &lt; 20 in grey.</p>\n    <div class=\"acc size-acc\">${rows}</div>`
   );
   document.querySelectorAll("[data-acc]").forEach((btn) => {
     btn.addEventListener("click", (e) => {
