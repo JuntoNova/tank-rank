@@ -1,14 +1,46 @@
 (function () {
-  function fmtExp(n) { return (window.TR && TR.Model ? TR.Model.fmtExp(n) : String(n)); }
+  function fmtExp(n) {
+    if (window.TR && TR.Model) return TR.Model.fmtExp(n);
+    if (n == null || isNaN(n)) return "—";
+    if (Math.abs(n) < 0.05) return "0";
+    if (Math.abs(n) < 0.1) return "<0.1";
+    return Math.abs(n) >= 10 ? String(Math.round(n)) : Number(n).toFixed(1);
+  }
   function fmtPct(n) { return (window.TR && TR.Model ? TR.Model.fmtPct(n) : Math.round((n || 0) * 100) + "%"); }
   function fmtSigned(n) {
     if (n == null || isNaN(n) || Math.abs(n) < 0.25) return "0";
     return (n > 0 ? "+" : "−") + Math.abs(n).toFixed(1);
   }
+  const FALLBACK_INT = {
+    "1":    { as: 5.5, nba: 3.2, nba1: 0.90, yrs: 13.5, ch: 0.55, mvp: 0.12 },
+    "2-3":  { as: 4.2, nba: 2.4, nba1: 0.65, yrs: 11.5, ch: 0.40, mvp: 0.06 },
+    "4-5":  { as: 3.8, nba: 2.2, nba1: 0.45, yrs: 10.5, ch: 0.32, mvp: 0.03 },
+    "6-10": { as: 3.2, nba: 1.8, nba1: 0.28, yrs: 9.0,  ch: 0.25, mvp: 0.015 },
+    "11-14":{ as: 2.8, nba: 1.6, nba1: 0.20, yrs: 8.0,  ch: 0.20, mvp: 0.008 },
+    "15-30":{ as: 2.2, nba: 1.4, nba1: 0.12, yrs: 6.5,  ch: 0.14, mvp: 0.003 },
+    "31+":  { as: 1.8, nba: 1.3, nba1: 0.08, yrs: 3.5,  ch: 0.06, mvp: 0.001 }
+  };
+  function slotKey(pk) {
+    pk = Number(pk) || 99;
+    if (pk === 1) return "1";
+    if (pk <= 3) return "2-3";
+    if (pk <= 5) return "4-5";
+    if (pk <= 10) return "6-10";
+    if (pk <= 14) return "11-14";
+    if (pk <= 30) return "15-30";
+    return "31+";
+  }
   function project(p, feat, priors) {
     const fn = window.TR && (TR.projectPlayer || (TR.Model && TR.Model.project));
     if (typeof fn === "function") return fn(p, feat, priors);
-    return { expAs: 0, expNba: 0, expNba1: 0, expYrs: 0, expCh: 0, expMvp: 0, pHof: 0 };
+    const key = slotKey(p.rank);
+    const slot = (priors || {})[key] || {};
+    const inten = FALLBACK_INT[key] || FALLBACK_INT["31+"];
+    const pAs = slot.pAs || 0, pNba = slot.pNba || 0, pHof = slot.pHof || 0;
+    return {
+      expAs: pAs * inten.as, expNba: pNba * inten.nba, expNba1: pNba * inten.nba1,
+      expYrs: inten.yrs, expCh: inten.ch, expMvp: inten.mvp, pHof: pHof, pAs: pAs
+    };
   }
   function vsCell(got, exp) {
     const n = Number(got) || 0;
@@ -17,6 +49,8 @@
     return n + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
   }
   function viewOf() {
+    const y = Number(new URLSearchParams(location.search).get("year")) || (window.TANK_RANK && TANK_RANK.currentYear);
+    if (y >= ((window.TANK_RANK && TANK_RANK.currentYear) || 2027)) return "drafted";
     const v = new URLSearchParams(location.search).get("view");
     return (v === "then" || v === "drafted") ? "drafted" : "now";
   }
