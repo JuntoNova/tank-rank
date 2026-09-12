@@ -6,13 +6,13 @@ window.TANK_RANK = {
   firstYear: 1947,
   horizonYear: 2029,
   years: [],
-  disclaimer: "Prototype board. Not live betting odds. Probability columns unavailable until the published model is connected.",
+  disclaimer: "Prototype board. Probability columns unavailable until the published model is connected.",
   buckets: ["college", "high-school", "international"],
   drafts: {}
 };
 
 (function () {
-  var EXACT = "Prototype board. Not live betting odds. Probability columns unavailable until the published model is connected.";
+  var EXACT = "Prototype board. Probability columns unavailable until the published model is connected.";
   function load(url) {
     var x = new XMLHttpRequest();
     x.open("GET", url, false);
