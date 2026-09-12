@@ -4,7 +4,7 @@
   FILES.push("./assets/mc-2000.json?v=40");
   FILES.push("./assets/mc-17.json?v=40");
   FILES.push("./assets/measurements-combine.json?v=40");
-  FILES.push("./assets/measurements-listed.json?v=40");
+  FILES.push("./assets/measurements-listed.json?v=68");
   function dash(v) { return (v === 0 || v) ? String(v) : "\u2014"; }
   function toInches(ht) {
     const m = String(ht || "").trim().match(/^(\d+)-(\d+(?:\.\d+)?)$/);
@@ -23,7 +23,9 @@
       const year = Number(ys);
       const draft = TANK_RANK.drafts[year];
       (draft.players || []).forEach((p) => {
-        const m = map[year + "-" + p.rank] || map[year + ":" + String(p.name || "").toLowerCase()];
+        const m = map[year + "-" + p.rank]
+          || map[year + ":" + String(p.name || "").toLowerCase()]
+          || map[String(p.name || "").toLowerCase()];
         if (!m) return;
         if (m.ht && m.src === "listed") { p.htListed = m.ht; if (!p.ht) p.ht = m.ht; }
         if (m.wt && m.src === "listed") { p.wtListed = m.wt; if (!p.wt) p.wt = m.wt; }
@@ -108,4 +110,7 @@
     };
   }
   document.addEventListener("DOMContentLoaded", function () { load().then(paintSize); });
+  window.TR = window.TR || {};
+  TR.paintSize = paintSize;
+  TR.applyMeasures = function () { if (TANK_RANK._measures) apply(TANK_RANK._measures); };
 })();
