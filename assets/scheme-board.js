@@ -7,7 +7,7 @@
     return '<section class="acc-item"><button class="acc-btn size-acc-btn" type="button" data-acc="' + i + '"><b>' + it.title + '</b><em>' + it.hint + ' <i>+</i></em></button><div class="acc-panel" data-src="' + it.src + '"></div></section>';
   }).join('');
   TR.renderSimple(document.getElementById("app"), "theories", "Scheme fit beats the board at the margin", "",
-    '<p class="size-note"><strong>Score: N/A.</strong> There is no draft-night scheme tag, no play-type file, and no way to mark which reaches were fit bets versus talent errors. Opposite claim is on <a href="./develop.html">/develop</a>.</p><div class="acc size-acc">' + rows + '</div>');
+    '<p class="size-note"><strong>Score: N/A.</strong> There is no draft-night scheme tag, no play-type file, and no way to mark which reaches were fit calls versus talent errors. Opposite claim is on <a href="./develop.html">/develop</a>.</p><div class="acc size-acc">' + rows + '</div>');
   document.querySelectorAll("[data-acc]").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
