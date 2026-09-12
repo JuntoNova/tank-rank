@@ -179,7 +179,7 @@
     const abs = Math.abs(n);
     return (n < 0 ? "-" : "") + (abs >= 10 ? String(Math.round(abs)) : abs.toFixed(1));
   }
-  function fmtPct(n) { return Math.round((n || 0) * 100) + "%"; }
+  function fmtPct(n) { return (n == null || !isFinite(Number(n))) ? "\u2014" : Math.round(n * 100) + "%"; }
   function fmtMul(m) { return "x" + Number(m == null ? 1 : m).toFixed(2); }
   window.TR = window.TR || {};
   TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, INTENSITY: INTENSITY, fmtExp: fmtExp, fmtPct: fmtPct, fmtMul: fmtMul };
