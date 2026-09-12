@@ -1,137 +1,154 @@
 (function () {
-  const INTENSITY = {
-    "1": { as: 5.5, nba: 3.2 }, "2-3": { as: 4.2, nba: 2.4 }, "4-5": { as: 3.8, nba: 2.2 },
-    "6-10": { as: 3.2, nba: 1.8 }, "11-14": { as: 2.8, nba: 1.6 },
-    "15-30": { as: 2.2, nba: 1.4 }, "31+": { as: 1.8, nba: 1.3 }
-  };
-  function slotBucket(pk) {
-    pk = Number(pk) || 99;
-    if (pk === 1) return "1";
-    if (pk <= 3) return "2-3";
-    if (pk <= 5) return "4-5";
-    if (pk <= 10) return "6-10";
-    if (pk <= 14) return "11-14";
-    if (pk <= 30) return "15-30";
-    return "31+";
+  function fold(s) {
+    return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   }
-  function inches(ht) {
-    const m = String(ht || "").match(/(\d+)\s*-\s*(\d+)/);
-    return m ? Number(m[1]) * 12 + Number(m[2]) : 0;
-  }
-  function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
-  function project(p, feat, priors) {
-    const key = slotBucket(p.rank);
-    const slot = (priors || {})[key] || {};
-    let pAs = slot.pAs || 0, pNba = slot.pNba || 0, pHof = slot.pHof || 0;
-    const pk = Number(p.rank) || 99;
-    function mul(m) { if (m && m !== 1) { pAs *= m; pNba *= m; pHof *= m; } }
-    if (feat) {
-      if (feat.age != null && feat.age <= 19) mul(pk <= 5 ? 1.10 : 1.25);
-      else if (feat.age != null && feat.age >= 23) mul(0.70);
-      if (feat.origin === "college") {
-        if ((feat.cls === "Fr" || feat.cls === "RS-Fr") && !(feat.age <= 19)) mul(1.15);
-        if (feat.cls === "Sr" && !(feat.age >= 23)) mul(0.85);
-      }
-      if (feat.origin === "intl") {
-        if (pk <= 5) mul(0.69);
-        else if (pk <= 14) mul(0.59);
-        if (feat.never) mul(0.05);
-        else if (feat.stash || (feat.delay || 0) >= 2) mul(0.59);
-      }
-      if (feat.create && inches(feat.ht) >= 79) mul(1.35);
+  function fmtExp(n) { return TR.Model ? TR.Model.fmtExp(n) : String(n); }
+  function fmtPct(n) { return TR.Model ? TR.Model.fmtPct(n) : Math.round((n || 0) * 100) + "%"; }
+  function fmtMul(m) { return TR.Model ? TR.Model.fmtMul(m) : ("\u00d7" + Number(m).toFixed(2)); }
+  function project(p, feat, priors) { return TR.projectPlayer(p, feat, priors); }
+  function deriveFeat(p) { return TR.deriveFeat(p); }
+
+  function findPlayer(draft, id) {
+    const list = (draft && draft.players) || [];
+    if (!list.length) return null;
+    let p = list.find(function (x) { return x.id === id; });
+    if (p) return p;
+    const fid = fold(id);
+    p = list.find(function (x) { return fold(x.id) === fid; });
+    if (p) return p;
+    const m = String(id || "").match(/-(\d{4})-(\d+)$/);
+    if (m) {
+      const pk = Number(m[2]);
+      p = list.find(function (x) { return Number(x.rank) === pk; });
     }
-    pAs = clamp(pAs, 0.002, 0.92);
-    pNba = clamp(pNba, 0.001, 0.80);
-    pHof = clamp(pHof, 0.0005, 0.55);
-    const inten = INTENSITY[key] || INTENSITY["31+"];
-    return { slot: key, pAs: pAs, pNba: pNba, pHof: pHof, expAs: pAs * inten.as, expNba: pNba * inten.nba };
+    return p || list[0];
   }
-  function attach(p, feat) {
-    if (!p || !feat) return;
-    p.theoryFeat = feat;
-    p.draftAge = feat.age; p.draftHt = feat.ht; p.draftWt = feat.wt;
-    p.cls = feat.cls; p.origin = feat.origin; p.tier = feat.tier;
-    if (feat.ht) { if (!p.ht) p.ht = feat.ht; p.htListed = p.htListed || feat.ht; }
-    if (feat.wt) { if (!p.wt) p.wt = feat.wt; p.wtListed = p.wtListed || feat.wt; }
-    if (feat.age != null && (p.age === "" || p.age == null)) p.age = feat.age;
+
+  function css() {
+    if (document.getElementById("th-card-css")) return;
+    const s = document.createElement("style");
+    s.id = "th-card-css";
+    s.textContent = ""
+      + ".th-math{margin:8px 0 28px}"
+      + ".th-eq{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 16px}"
+      + ".th-eq div{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px}"
+      + ".th-eq label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}"
+      + ".th-eq b{font-family:var(--serif);font-size:26px;font-weight:500}"
+      + ".th-eq span{display:block;margin-top:4px;color:var(--muted);font-size:12px}"
+      + ".th-formula{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 16px;font-size:13px;line-height:1.55}"
+      + ".th-formula code{font-family:var(--mono);font-size:12px;color:var(--lime)}"
+      + ".th-ledger table{min-width:720px}"
+      + ".th-ledger td,.th-ledger th{vertical-align:top}"
+      + ".th-why{color:var(--muted);font-size:12px;line-height:1.45;max-width:46ch}"
+      + ".th-mul{font-family:var(--mono);white-space:nowrap}"
+      + ".th-mul.up{color:var(--lime)}.th-mul.down{color:var(--coral)}.th-mul.flat{color:var(--muted)}"
+      + "@media (max-width:860px){.th-eq{grid-template-columns:1fr 1fr}}";
+    document.head.appendChild(s);
   }
-  function fillSize(p) {
-    const box = document.getElementById("size-box");
-    if (!box) return;
-    box.querySelectorAll(".size-grid div").forEach(function (d) {
-      const lab = d.querySelector("label");
-      const b = d.querySelector("b");
-      if (!lab || !b) return;
-      const k = lab.textContent.toLowerCase();
-      if (k === "source") { d.style.display = "none"; return; }
-      if (k === "height" && p.ht) b.textContent = p.ht;
-      if (k === "weight" && p.wt) b.textContent = p.wt + " lbs";
-      if (k === "lbs / inch" && p.wt && inches(p.ht)) b.textContent = (p.wt / inches(p.ht)).toFixed(2);
-    });
+
+  function mulClass(m) {
+    if (!m || Math.abs(m - 1) < 0.02) return "flat";
+    return m > 1 ? "up" : "down";
   }
-  function rows(p) {
-    const feat = p.theoryFeat || {};
-    const htIn = inches(feat.ht);
-    const wpi = feat.wt && htIn ? (feat.wt / htIn).toFixed(2) : "\u2014";
-    return [
-      ["Slot", "Pk " + String(p.rank).padStart(2, "0")],
-      ["Age", feat.age != null ? String(feat.age) : "\u2014"],
-      ["Class", feat.cls || "\u2014"],
-      ["School", p.school || "\u2014"],
-      ["Origin", feat.origin || "\u2014"],
-      ["Stash", feat.never ? "never" : (feat.delay >= 2 ? "+" + feat.delay + " yr" : feat.origin === "intl" ? "0 yr" : "\u2014")],
-      ["Height", feat.ht || "\u2014"],
-      ["Weight", feat.wt != null ? String(feat.wt) : "\u2014"],
-      ["Lb/in", wpi],
-      ["Create", feat.create ? "1" : "0"],
-      ["Wingspan", p.wsp || "\u2014"],
-      ["Reach", p.reach || "\u2014"],
-      ["Combine", "\u2014"],
-      ["Box", "\u2014"]
-    ];
-  }
+
   function paint(root, p, priors) {
-    const full = project(p, p.theoryFeat, priors);
+    css();
+    const feat = deriveFeat(p);
+    p.theoryFeat = feat;
+    const full = project(p, feat, priors);
     p.proj = full;
+    p.pHof = full.pHof;
+    p.pAllStar = full.pAs;
+    p.pAllNba = full.pNba;
+
+    const lede = root.querySelector(".lede");
+    if (lede) {
+      lede.textContent = "Slot prior \u00d7 scored theories. Age, class, origin, stash, handle \u00d7 size, wingspan, and reach each get their own multiplier. MVP is not a copy of the All-Star column.";
+    }
+    const metrics = root.querySelector(".metrics");
+    if (metrics) {
+      metrics.innerHTML =
+        '<div class="metric"><label>P(AS) drafted</label><b>' + fmtPct(full.pAs) + '</b><div class="bar"><i style="width:' + Math.round(full.pAs * 100) + '%"></i></div><div class="vs">slot ' + fmtPct(full.slotAs) + "</div></div>"
+        + '<div class="metric"><label>P(All-NBA)</label><b>' + fmtPct(full.pNba) + '</b><div class="bar"><i style="width:' + Math.round(full.pNba * 100) + '%"></i></div><div class="vs">slot ' + fmtPct(full.slotNba) + "</div></div>"
+        + '<div class="metric"><label>P(HOF)</label><b>' + fmtPct(full.pHof) + '</b><div class="bar"><i style="width:' + Math.round(full.pHof * 100) + '%"></i></div><div class="vs">slot ' + fmtPct(full.slotHof) + "</div></div>"
+        + '<div class="metric"><label>E[MVP]</label><b>' + fmtExp(full.expMvp) + '</b><div class="vs">slot ' + fmtExp(full.slotMvp) + " \u00d7 " + fmtMul(full.mMvp) + "</div></div>";
+    }
     root.querySelectorAll(".pills .tag").forEach(function (t) {
       const v = t.textContent.replace(/\s+/g, " ").trim();
-      if (v === "Age" && p.draftAge != null) t.textContent = "Age " + p.draftAge;
-      if ((/^\/?\s*lbs$/i.test(v) || v === "/ lbs") && p.draftHt) {
-        t.textContent = p.draftHt + (p.draftWt ? " / " + p.draftWt : "");
-      }
+      if (/^Age/i.test(v) && feat.age != null) t.textContent = "Age " + feat.age;
+      if ((/lbs/i.test(v) || v === "/ lbs") && feat.ht) t.textContent = feat.ht + (feat.wt ? " / " + feat.wt : "");
     });
-    const lede = root.querySelector(".lede");
-    if (lede) lede.remove();
-    const metrics = root.querySelector(".metrics");
-    if (metrics) metrics.remove();
-    fillSize(p);
-    if (root.querySelector(".th-player")) return;
-    const body = rows(p).map(function (r) {
-      return "<tr><td>" + r[0] + "</td><td class=\"pct\">" + r[1] + "</td></tr>";
+    const h1 = root.querySelector(".player-hero h1");
+    if (h1 && p.name) h1.textContent = p.name;
+
+    const existing = root.querySelector(".th-player");
+    if (existing) existing.remove();
+
+    const moved = (full.steps || []).filter(function (s) {
+      return s.id !== "slot" && (Math.abs((s.mAs || 1) - 1) >= 0.02 || Math.abs((s.mMvp || 1) - 1) >= 0.02);
+    });
+    const product = moved.length
+      ? moved.map(function (s) { return fmtMul(s.mAs) + " " + s.label.toLowerCase(); }).join(" \u00d7 ")
+      : "\u00d71.00 (no scored bump fired)";
+    const mvpProduct = moved.length
+      ? moved.map(function (s) { return fmtMul(s.mMvp) + " " + s.label.toLowerCase(); }).join(" \u00d7 ")
+      : "\u00d71.00";
+    const intenAs = ((TR.Model && TR.Model.INTENSITY[full.slot]) || {}).as;
+
+    const body = (full.steps || []).map(function (s) {
+      return "<tr><td>" + s.label + "</td><td>" + s.value + "</td>"
+        + '<td class="th-mul ' + mulClass(s.mAs) + '">' + fmtMul(s.mAs) + "</td>"
+        + '<td class="th-mul ' + mulClass(s.mMvp) + '">' + fmtMul(s.mMvp) + "</td>"
+        + '<td class="th-why">' + s.why + "</td></tr>";
     }).join("");
+
     const box = document.createElement("section");
-    box.className = "section th-player";
-    box.innerHTML = '<div class="table-wrap th-ledger"><table><thead><tr>'
-      + "<th></th><th>Value</th></tr></thead><tbody>" + body + "</tbody></table></div>";
+    box.className = "section th-player th-math";
+    box.innerHTML =
+      '<div class="kicker">Draft-night math</div>'
+      + "<h2 style=\"font-size:28px;margin:8px 0 14px\">Slot \u00d7 scored theories</h2>"
+      + '<div class="th-eq">'
+      + "<div><label>Expected AS</label><b>" + fmtExp(full.expAs) + "</b><span>career " + (Number(p.allStar) || 0) + " \u00b7 slot " + fmtPct(full.slotAs) + "</span></div>"
+      + "<div><label>Expected All-NBA</label><b>" + fmtExp(full.expNba) + "</b><span>career " + (Number(p.allNba) || 0) + "</span></div>"
+      + "<div><label>Expected years</label><b>" + fmtExp(full.expYrs) + "</b><span>career " + (p.yrs != null && p.yrs !== "" ? p.yrs : "\u2014") + "</span></div>"
+      + "<div><label>Expected MVP</label><b>" + fmtExp(full.expMvp) + "</b><span>career " + (Number(p.mvp) || 0) + " \u00b7 slot " + fmtExp(full.slotMvp) + "</span></div>"
+      + "</div>"
+      + '<div class="th-formula">'
+      + "<div><code>P(AS) = " + fmtPct(full.slotAs) + " slot \u00d7 " + product + " = " + fmtPct(full.pAs) + "</code></div>"
+      + "<div><code>E[AS] = " + fmtPct(full.pAs) + " \u00d7 " + intenAs + " if-star intensity = " + fmtExp(full.expAs) + "</code></div>"
+      + "<div><code>E[MVP] = " + fmtExp(full.slotMvp) + " slot \u00d7 " + mvpProduct + " = " + fmtExp(full.expMvp) + "</code></div>"
+      + "</div>"
+      + '<p class="theory-note">Each row is one scored claim and the number he had that night. All-Star and MVP have separate multipliers because the age and origin pages do not move those columns the same way. Missing measurements stay at \u00d71.00 instead of inventing a number.</p>'
+      + '<div class="table-wrap th-ledger"><table><thead><tr><th>Theory</th><th>His number</th><th>\u00d7 AS</th><th>\u00d7 MVP</th><th>Why</th></tr></thead><tbody>'
+      + body + "</tbody></table></div>";
     const hero = root.querySelector(".player-hero");
     if (hero && hero.parentNode) hero.parentNode.insertBefore(box, hero.nextSibling);
   }
+
   function load(year) {
     return Promise.all([
-      fetch("./assets/theory-packs/" + year + ".json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-      fetch("./assets/slot-priors.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+      fetch("./assets/slot-priors.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      fetch("./assets/theory-packs/all.json").then(function (r) { return r.ok ? r.json() : null; }).then(function (all) {
+        if (all && all[String(year)]) return all[String(year)];
+        return fetch("./assets/theory-packs/" + year + ".json").then(function (r) { return r.ok ? r.json() : null; });
+      }).catch(function () { return null; })
     ]).then(function (pair) {
-      const pack = pair[0], priors = pair[1] || (window.TANK_RANK && TANK_RANK.slotPriors) || {};
+      const priors = pair[0] || (window.TANK_RANK && TANK_RANK.slotPriors) || {};
       if (priors && window.TANK_RANK) TANK_RANK.slotPriors = priors;
-      if (!pack || !window.TANK_RANK) return { pack: null, priors: priors };
-      const draft = TANK_RANK.drafts[year];
-      if (!draft) return { pack: pack, priors: priors };
-      const byPk = {};
-      (pack.players || []).forEach(function (f) { byPk[f.pk] = f; });
-      (draft.players || []).forEach(function (p) { attach(p, byPk[p.rank]); });
-      return { pack: pack, priors: priors, draft: draft };
+      const draft = window.TANK_RANK && TANK_RANK.drafts[year];
+      if (!draft) return { priors: priors };
+      const pack = pair[1];
+      if (pack) {
+        const byPk = {};
+        (pack.players || []).forEach(function (f) { byPk[f.pk] = f; });
+        (draft.players || []).forEach(function (p) {
+          p.theoryFeat = Object.assign({}, deriveFeat(p), byPk[p.rank] || {});
+        });
+      }
+      return { priors: priors, draft: draft };
     });
   }
+
   const orig = window.TR && TR.renderPlayer;
   if (typeof orig === "function") {
     TR.renderPlayer = function (root) {
@@ -139,9 +156,10 @@
       const id = new URLSearchParams(location.search).get("id");
       return Promise.resolve(orig(root)).then(function () {
         return load(y).then(function (out) {
-          if (!out || !out.draft) return;
-          const p = (out.draft.players || []).find(function (x) { return x.id === id; }) || out.draft.players[0];
-          if (p && p.theoryFeat) paint(root, p, out.priors);
+          const draft = (out && out.draft) || (window.TANK_RANK && TANK_RANK.drafts[y]);
+          if (!draft) return;
+          const p = findPlayer(draft, id);
+          if (p) paint(root, p, (out && out.priors) || TANK_RANK.slotPriors || {});
         });
       });
     };
