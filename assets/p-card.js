@@ -2,10 +2,7 @@
   function fold(s) {
     return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   }
-  function fmtExp(n) { return window.TR && TR.Model ? TR.Model.fmtExp(n) : String(n); }
-  function fmtPct(n) { return window.TR && TR.Model ? TR.Model.fmtPct(n) : Math.round((n || 0) * 100) + "%"; }
   function fmtMul(m) { return window.TR && TR.Model ? TR.Model.fmtMul(m) : ("\u00d7" + Number(m).toFixed(2)); }
-  function dash(v) { return (v == null || v === "") ? "\u2014" : String(v); }
   function project(p, feat, priors) { return TR.projectPlayer(p, feat, priors); }
   function deriveFeat(p) { return TR.deriveFeat(p); }
   function findPlayer(draft, id) {
@@ -23,7 +20,7 @@
     if (document.getElementById("th-card-css")) return;
     const s = document.createElement("style");
     s.id = "th-card-css";
-    s.textContent = ".player-hero .lede{display:none!important}.player-hero + .section .grid-3{display:none!important}.th-math{margin:8px 0 28px}.th-eq{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:12px 0 18px}.th-eq div{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px}.th-eq label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}.th-eq b{font-family:var(--serif);font-size:26px;font-weight:500}.th-eq span{display:block;margin-top:4px;color:var(--muted);font-size:12px}.th-mul.up{color:var(--lime)}.th-mul.down{color:var(--coral)}.th-mul.flat{color:var(--muted)}@media (max-width:860px){.th-eq{grid-template-columns:1fr 1fr}}";
+    s.textContent = ".player-hero .lede,.player-hero .metrics{display:none!important}.player-hero + .section .grid-3{display:none!important}.th-math{margin:8px 0 28px}.th-mul.up{color:var(--lime)}.th-mul.down{color:var(--coral)}.th-mul.flat{color:var(--muted)}";
     document.head.appendChild(s);
   }
   function mulClass(m) {
@@ -37,16 +34,7 @@
     const lede = root.querySelector(".lede");
     if (lede) lede.remove();
     const metrics = root.querySelector(".metrics");
-    if (metrics) {
-      metrics.innerHTML =
-        '<div class="metric"><label>AS</label><b>' + dash(p.allStar) + "</b></div>" +
-        '<div class="metric"><label>1st</label><b>' + dash(p.nba1) + "</b></div>" +
-        '<div class="metric"><label>All-NBA</label><b>' + dash(p.allNba) + "</b></div>" +
-        '<div class="metric"><label>Yrs</label><b>' + dash(p.yrs) + "</b></div>" +
-        '<div class="metric"><label>Chips</label><b>' + dash(p.champs) + "</b></div>" +
-        '<div class="metric"><label>MVP</label><b>' + dash(p.mvp) + "</b></div>" +
-        '<div class="metric"><label>HOF</label><b>' + (p.hof ? "Yes" : "No") + "</b></div>";
-    }
+    if (metrics) metrics.remove();
     const h1 = root.querySelector(".player-hero h1");
     if (h1 && p.name) h1.textContent = p.name;
     const kick = root.querySelector(".player-hero .kicker");
@@ -64,6 +52,7 @@
     const rows = (full.steps || []).filter(function (s) {
       return s.id === "slot" || Math.abs((s.mAs || 1) - 1) >= 0.02 || Math.abs((s.mHof || s.mMvp || 1) - 1) >= 0.02;
     });
+    if (!rows.length) return;
     const body = rows.map(function (s) {
       return "<tr><td>" + s.label + "</td><td>" + (s.value || "\u2014") + "</td>" +
         '<td class="th-mul ' + mulClass(s.mAs) + '">' + fmtMul(s.mAs) + "</td>" +
@@ -71,15 +60,13 @@
     }).join("");
     const box = document.createElement("section");
     box.className = "section th-player th-math";
-    box.innerHTML = '<div class="kicker">When drafted</div><div class="th-eq">' +
-      "<div><label>AS</label><b>" + fmtExp(full.expAs) + "</b><span>career " + dash(p.allStar) + "</span></div>" +
-      "<div><label>All-NBA</label><b>" + fmtExp(full.expNba) + "</b><span>career " + dash(p.allNba) + "</span></div>" +
-      "<div><label>Yrs</label><b>" + fmtExp(full.expYrs) + "</b><span>career " + dash(p.yrs) + "</span></div>" +
-      "<div><label>MVP</label><b>" + fmtExp(full.expMvp) + "</b><span>career " + dash(p.mvp) + "</span></div>" +
-      "<div><label>HOF</label><b>" + fmtPct(full.pHof) + "</b><span>career " + (p.hof ? "Yes" : "No") + "</span></div></div>" +
-      (body ? '<div class="table-wrap"><table><thead><tr><th>Theory</th><th>Draft night</th><th>\u00d7 AS</th><th>\u00d7 HOF</th></tr></thead><tbody>' + body + "</tbody></table></div>" : "");
+    box.innerHTML = '<div class="kicker">Draft-night factors</div>'
+      + '<div class="table-wrap"><table><thead><tr><th>Theory</th><th>Draft night</th><th>\u00d7 AS</th><th>\u00d7 HOF</th></tr></thead><tbody>'
+      + body + "</tbody></table></div>";
     const hero = root.querySelector(".player-hero");
-    if (hero && hero.parentNode) hero.parentNode.insertBefore(box, hero.nextSibling);
+    const pd = document.getElementById("pd-box");
+    if (pd && pd.parentNode) pd.parentNode.insertBefore(box, pd.nextSibling);
+    else if (hero && hero.parentNode) hero.parentNode.insertBefore(box, hero.nextSibling);
   }
   function load(year) {
     const dec = (Math.floor(Number(year) / 10) * 10) + "s";
