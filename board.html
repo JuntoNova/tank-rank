@@ -13,7 +13,7 @@
   <div id="app"></div>
   <script src="./assets/data.js?v=63"></script>
   <script src="./assets/trust-disclaimer.js?v=53"></script>
-  <script src="./assets/app.js?v=71"></script>
+  <script src="./assets/app.js?v=73"></script>
   <script src="./assets/nav-swap.js?v=31"></script>
   <script src="./assets/boot-history.js?v=72"></script>
   <script src="./assets/measure.js?v=40"></script>
@@ -23,6 +23,12 @@
   <script>TR.renderBoard(document.getElementById("app"));</script>
   <script>
     (function () {
+      function scrubFooter() {
+        document.querySelectorAll("footer .copy div, footer p, .foot .copy div").forEach(function (el) {
+          var t = (el.textContent || "").replace(/\s+/g, " ").trim();
+          if (/DBA of Junto Nova/i.test(t) || /Not affiliated with, endorsed by, or sponsored by the NBA/i.test(t)) el.remove();
+        });
+      }
       function addChips() {
         var t = document.querySelector(".toolbar");
         if (!t) return false;
@@ -49,6 +55,8 @@
         var q = document.querySelector("#q");
         if (q) q.dispatchEvent(new Event("input", { bubbles: true }));
       });
+      scrubFooter();
+      setInterval(scrubFooter, 400);
       if (!addChips()) {
         var n = 0;
         var id = setInterval(function () {
