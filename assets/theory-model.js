@@ -173,13 +173,13 @@
     };
   }
   function fmtExp(n) {
-    if (n == null || isNaN(n)) return "-";
+    if (n == null || isNaN(n)) return "";
     if (Math.abs(n) < 0.05) return "0";
     if (Math.abs(n) < 0.1) return n < 0 ? "-<0.1" : "<0.1";
     const abs = Math.abs(n);
     return (n < 0 ? "-" : "") + (abs >= 10 ? String(Math.round(abs)) : abs.toFixed(1));
   }
-  function fmtPct(n) { return (n == null || !isFinite(Number(n))) ? "\u2014" : Math.round(n * 100) + "%"; }
+  function fmtPct(n) { return (n == null || !isFinite(Number(n))) ? "" : Math.round(n * 100) + "%"; }
   function fmtMul(m) { return "x" + Number(m == null ? 1 : m).toFixed(2); }
   window.TR = window.TR || {};
   TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, INTENSITY: INTENSITY, fmtExp: fmtExp, fmtPct: fmtPct, fmtMul: fmtMul };
