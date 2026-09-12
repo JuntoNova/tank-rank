@@ -30,4 +30,6 @@ window.TANK_RANK = {
   TANK_RANK.disclaimer = saved.disclaimer;
   TANK_RANK.version = saved.version;
   TANK_RANK.updated = saved.updated;
+  // Local 2027 bio fills only (pos/age/ht/wt + Dash Daniels club). CDN pin and disclaimer unchanged.
+  eval(load("assets/living-2027-bios.js"));
 })();
