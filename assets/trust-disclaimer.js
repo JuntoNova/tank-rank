@@ -1,5 +1,5 @@
-/* Honesty: keep banner visible; enforce exact Hitch disclaimer string. */
+/* Honesty: keep banner visible; enforce exact Hitch disclaimer. */
 (function () {
-  var exact = "Prototype board. Probability columns unavailable until the published model is connected.";
+  var exact = "Probability columns unavailable until the published model is connected.";
   if (window.TANK_RANK) TANK_RANK.disclaimer = exact;
 })();
