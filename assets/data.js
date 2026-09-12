@@ -117,7 +117,7 @@ window.TANK_RANK = {
     { id: "colton-hiller-2028", name: "Colton Hiller", bucket: "high-school", school: "Coatesville", pos: "G/F", age: 16.8, ht: "6-5", wt: 190 },
     { id: "bamba-touray-2028", name: "Bamba Touray", bucket: "high-school", school: "IMG Academy", pos: "C", age: 16.9, ht: "6-11", wt: 230 },
     { id: "erick-dampier-jr-2028", name: "Erick Dampier Jr.", bucket: "high-school", school: "Madison-Ridgeland Academy", pos: "C", age: 16.7, ht: "6-9", wt: 230 },
-    { id: "adan-diggs-2028", name: "Adan Diggs", bucket: "high-school", school: "Millennium", pos: "G", age: 16.6, ht: "6-3", wt: 175 },
+    { id: "adan-diggs-2028", name: "Adan Diggs", bucket: "high-school", school: "Millennium", pos: "G", age: 16.7, ht: "6-3", wt: 175 },
     { id: "derek-swartz-2028", name: "Derek Swartz", bucket: "high-school", school: "New Hampton School", pos: "G", age: 16.8, ht: "6-5", wt: 185 },
     { id: "josiah-rose-2028", name: "Josiah Rose", bucket: "high-school", school: "Oak Cliff Faith Family", pos: "G", age: 16.6, ht: "6-2", wt: 175 },
     { id: "bentley-lusakueno-2028", name: "Bentley Lusakueno", bucket: "high-school", school: "Woodward Academy", pos: "F", age: 16.7, ht: "6-8", wt: 210 },
