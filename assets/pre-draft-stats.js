@@ -13,7 +13,7 @@
     if (document.getElementById("pd-css")) return;
     const s = document.createElement("style");
     s.id = "pd-css";
-    s.textContent = ".pd-stats{margin:8px 0 28px}.pd-stats .table-wrap{margin-top:12px}.pd-stats td,.pd-stats th{white-space:nowrap}.pd-lvl{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--lime)}.pd-meta{color:var(--muted);font-size:12px}.pd-empty{color:var(--muted);font-size:14px;margin-top:8px}";
+    s.textContent = ".pd-stats{margin:8px 0 28px}.pd-stats .table-wrap{margin-top:12px}.pd-stats td,.pd-stats th{white-space:nowrap}.pd-lvl{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--lime)}.pd-meta{color:var(--muted);font-size:12px}";
     document.head.appendChild(s);
   }
   function rowsOf(entry) {
@@ -25,9 +25,12 @@
   function paint(root, year, pick) {
     css();
     const pack = window.TANK_RANK && TANK_RANK.preDraft && TANK_RANK.preDraft[String(year)];
-    const entry = pack && (pack[String(pick)] || pack[pick]);
-    const rows = rowsOf(entry);
+    const rows = rowsOf(pack && (pack[String(pick)] || pack[pick]));
     let box = document.getElementById("pd-box");
+    if (!rows.length) {
+      if (box) box.remove();
+      return;
+    }
     if (!box) {
       box = document.createElement("section");
       box.id = "pd-box";
@@ -38,20 +41,14 @@
       else if (hero && hero.parentNode) hero.parentNode.insertBefore(box, hero.nextSibling);
       else root.appendChild(box);
     }
-    if (!rows.length) {
-      box.innerHTML = '<div class="kicker">Pre-draft stats</div><h2 style="font-size:28px;margin:8px 0 10px">College / HS / international</h2>'
-        + '<p class="pd-empty">No pre-draft box score in the file yet. Other classes stay empty until the season line is joined.</p>';
-      return;
-    }
     const body = rows.map(function (r) {
       return "<tr>"
         + '<td><div class="pd-lvl">' + (r.lvl || "\u2014") + '</div><div class="pd-meta">' + [r.team, r.season, r.cls].filter(Boolean).join(" \u00b7 ") + "</div></td>"
         + "<td>" + num(r.g) + "</td><td>" + num(r.mp) + "</td><td>" + num(r.pts) + "</td><td>" + num(r.trb) + "</td>"
-        + "<td>" + num(r.ast) + "</td><td>" + num(r.stl) + "</td><td>" + num(r.blk) + "</td><td>" + num(r.tov) + "</td>"
-        + "<td>" + pct(r.fg) + "</td><td>" + pct(r.tp) + "</td><td>" + pct(r.ft) + "</td></tr>";
+        + "<td>" + num(r.ast) + "</td><td>" + num(r.stl) + "</td><td>" + num(r.blk) + "</td>"
+        + "<td>" + num(r.tov) + "</td><td>" + pct(r.fg) + "</td><td>" + pct(r.tp) + "</td><td>" + pct(r.ft) + "</td></tr>";
     }).join("");
-    box.innerHTML = '<div class="kicker">Pre-draft stats</div><h2 style="font-size:28px;margin:8px 0 10px">College / HS / international</h2>'
-      + '<p class="pd-meta">Last season before the draft. Per game.</p>'
+    box.innerHTML = '<div class="kicker">Pre-draft stats</div>'
       + '<div class="table-wrap"><table><thead><tr><th>Level</th><th>G</th><th>MP</th><th>PTS</th><th>REB</th><th>AST</th><th>STL</th><th>BLK</th><th>TO</th><th>FG%</th><th>3P%</th><th>FT%</th></tr></thead><tbody>'
       + body + "</tbody></table></div>";
   }
