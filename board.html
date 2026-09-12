@@ -15,7 +15,7 @@
   <script src="./assets/trust-disclaimer.js?v=53"></script>
   <script src="./assets/app.js?v=73"></script>
   <script src="./assets/nav-swap.js?v=31"></script>
-  <script src="./assets/boot-history.js?v=72"></script>
+  <script src="./assets/boot-history.js?v=75"></script>
   <script src="./assets/measure.js?v=40"></script>
   <script src="./assets/theory-model.js?v=69"></script>
   <script src="./assets/theory-card.js?v=68"></script>
@@ -23,15 +23,31 @@
   <script>TR.renderBoard(document.getElementById("app"));</script>
   <script>
     (function () {
+      function yearOf() {
+        return Number(new URLSearchParams(location.search).get("year")) || (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+      }
+      function isFuture() {
+        var cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+        return yearOf() >= cur;
+      }
       function scrubFooter() {
         document.querySelectorAll("footer .copy div, footer p, .foot .copy div").forEach(function (el) {
           var t = (el.textContent || "").replace(/\s+/g, " ").trim();
           if (/DBA of Junto Nova/i.test(t) || /Not affiliated with, endorsed by, or sponsored by the NBA/i.test(t)) el.remove();
         });
       }
-      function addChips() {
+      function syncChips() {
         var t = document.querySelector(".toolbar");
         if (!t) return false;
+        if (isFuture()) {
+          t.querySelectorAll("[data-view]").forEach(function (b) { b.remove(); });
+          var url = new URL(location.href);
+          if (url.searchParams.get("view")) {
+            url.searchParams.delete("view");
+            history.replaceState({}, "", url);
+          }
+          return true;
+        }
         if (!t.querySelector("[data-view]")) {
           t.insertAdjacentHTML("afterbegin",
             '<button type="button" class="chip on" data-view="now">Now</button>' +
@@ -57,12 +73,14 @@
       });
       scrubFooter();
       setInterval(scrubFooter, 400);
-      if (!addChips()) {
+      if (!syncChips()) {
         var n = 0;
         var id = setInterval(function () {
           n += 1;
-          if (addChips() || n > 40) clearInterval(id);
+          if (syncChips() || n > 40) clearInterval(id);
         }, 250);
+      } else {
+        setInterval(syncChips, 500);
       }
     })();
   </script>

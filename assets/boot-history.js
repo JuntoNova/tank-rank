@@ -66,11 +66,15 @@
   function ensureChips(year) {
     const toolbar = document.querySelector(".toolbar");
     if (!toolbar) return;
+    const future = Number(year) >= TANK_RANK.currentYear;
+    if (future) {
+      toolbar.querySelectorAll("[data-view]").forEach((b) => b.remove());
+      return;
+    }
     if (!toolbar.querySelector("[data-view]")) {
-      const future = Number(year) >= TANK_RANK.currentYear;
       toolbar.insertAdjacentHTML("afterbegin",
-        '<button type="button" class="chip' + (future ? "" : " on") + '" data-view="now">Now</button>' +
-        '<button type="button" class="chip' + (future ? " on" : "") + '" data-view="drafted">When drafted</button>'
+        '<button type="button" class="chip on" data-view="now">Now</button>' +
+        '<button type="button" class="chip" data-view="drafted">When drafted</button>'
       );
     }
   }
