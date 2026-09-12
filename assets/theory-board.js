@@ -1,76 +1,14 @@
 (function () {
-  const INTENSITY = {
-    "1":    { as: 5.5, nba: 3.2, nba1: 0.90, yrs: 13.5, ch: 0.55, mvp: 0.12 },
-    "2-3":  { as: 4.2, nba: 2.4, nba1: 0.65, yrs: 11.5, ch: 0.40, mvp: 0.06 },
-    "4-5":  { as: 3.8, nba: 2.2, nba1: 0.45, yrs: 10.5, ch: 0.32, mvp: 0.03 },
-    "6-10": { as: 3.2, nba: 1.8, nba1: 0.28, yrs: 9.0,  ch: 0.25, mvp: 0.015 },
-    "11-14":{ as: 2.8, nba: 1.6, nba1: 0.20, yrs: 8.0,  ch: 0.20, mvp: 0.008 },
-    "15-30":{ as: 2.2, nba: 1.4, nba1: 0.12, yrs: 6.5,  ch: 0.14, mvp: 0.003 },
-    "31+":  { as: 1.8, nba: 1.3, nba1: 0.08, yrs: 3.5,  ch: 0.06, mvp: 0.001 }
-  };
-  function slotBucket(pk) {
-    pk = Number(pk) || 99;
-    if (pk === 1) return "1";
-    if (pk <= 3) return "2-3";
-    if (pk <= 5) return "4-5";
-    if (pk <= 10) return "6-10";
-    if (pk <= 14) return "11-14";
-    if (pk <= 30) return "15-30";
-    return "31+";
-  }
-  function inches(ht) {
-    const m = String(ht || "").match(/(\d+)\s*-\s*(\d+)/);
-    return m ? Number(m[1]) * 12 + Number(m[2]) : 0;
-  }
-  function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
-  function fmtExp(n) {
-    if (n == null || isNaN(n)) return "—";
-    if (Math.abs(n) < 0.05) return "0";
-    if (Math.abs(n) < 0.1) return n < 0 ? "−<0.1" : "<0.1";
-    const abs = Math.abs(n);
-    return (n < 0 ? "−" : "") + (abs >= 10 ? String(Math.round(abs)) : abs.toFixed(1));
-  }
+  function fmtExp(n) { return (window.TR && TR.Model ? TR.Model.fmtExp(n) : String(n)); }
+  function fmtPct(n) { return (window.TR && TR.Model ? TR.Model.fmtPct(n) : Math.round((n || 0) * 100) + "%"); }
   function fmtSigned(n) {
     if (n == null || isNaN(n) || Math.abs(n) < 0.25) return "0";
     return (n > 0 ? "+" : "−") + Math.abs(n).toFixed(1);
   }
-  function fmtPct(n) { return Math.round((n || 0) * 100) + "%"; }
   function project(p, feat, priors) {
-    const key = slotBucket(p.rank);
-    const slot = (priors || {})[key] || {};
-    let pAs = slot.pAs || 0, pNba = slot.pNba || 0, pHof = slot.pHof || 0;
-    const pk = Number(p.rank) || 99;
-    function mul(m) { if (m && m !== 1) { pAs *= m; pNba *= m; pHof *= m; } }
-    if (feat) {
-      if (feat.age != null && feat.age <= 19) mul(pk <= 5 ? 1.10 : 1.25);
-      else if (feat.age != null && feat.age >= 23) mul(0.70);
-      if (feat.origin === "college") {
-        if ((feat.cls === "Fr" || feat.cls === "RS-Fr") && !(feat.age <= 19)) mul(1.15);
-        if (feat.cls === "Sr" && !(feat.age >= 23)) mul(0.85);
-      }
-      if (feat.origin === "intl") {
-        if (pk <= 5) mul(0.69);
-        else if (pk <= 14) mul(0.59);
-        if (feat.never) mul(0.05);
-        else if (feat.stash || (feat.delay || 0) >= 2) mul(0.59);
-      }
-      if (feat.create && inches(feat.ht) >= 79) mul(1.35);
-    }
-    pAs = clamp(pAs, 0.002, 0.92);
-    pNba = clamp(pNba, 0.001, 0.80);
-    pHof = clamp(pHof, 0.0005, 0.55);
-    const inten = INTENSITY[key] || INTENSITY["31+"];
-    const slotAs = slot.pAs || 0;
-    const scale = clamp(slotAs ? pAs / slotAs : 1, 0.45, 1.55);
-    return {
-      pAs: pAs, pNba: pNba, pHof: pHof,
-      expAs: pAs * inten.as,
-      expNba: pNba * inten.nba,
-      expNba1: pNba * inten.nba1,
-      expYrs: inten.yrs * scale,
-      expCh: inten.ch * scale,
-      expMvp: inten.mvp * scale
-    };
+    const fn = window.TR && (TR.projectPlayer || (TR.Model && TR.Model.project));
+    if (typeof fn === "function") return fn(p, feat, priors);
+    return { expAs: 0, expNba: 0, expNba1: 0, expYrs: 0, expCh: 0, expMvp: 0, pHof: 0 };
   }
   function vsCell(got, exp) {
     const n = Number(got) || 0;
@@ -107,12 +45,15 @@
     if (!draft || !head || !body) return;
     css();
     (draft.players || []).forEach(function (p) {
-      if (p.theoryFeat) p.proj = project(p, p.theoryFeat, priors);
+      if (window.TR && typeof TR.deriveFeat === "function") {
+        p.theoryFeat = Object.assign({}, TR.deriveFeat(p), p.theoryFeat || {});
+      }
+      p.proj = project(p, p.theoryFeat, priors);
     });
     const rows = filtered(draft);
     const view = viewOf();
+    head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th><th>HOF</th>";
     if (view === "drafted") {
-      head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th><th>HOF</th>";
       body.innerHTML = rows.map(function (p) {
         const proj = p.proj || project(p, p.theoryFeat, priors);
         return '<tr onclick="location.href=\'./player.html?year=' + year + "&id=" + p.id + '\'" style="cursor:pointer">'
@@ -128,7 +69,6 @@
           + '<td class="pct">' + fmtPct(proj.pHof) + "</td></tr>";
       }).join("");
     } else {
-      head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th><th>HOF</th>";
       body.innerHTML = rows.map(function (p) {
         const proj = p.proj || project(p, p.theoryFeat, priors);
         const known = p.yrs != null && p.yrs !== "";
@@ -172,7 +112,10 @@
       if (pack) {
         const byPk = {};
         (pack.players || []).forEach(function (f) { byPk[f.pk] = f; });
-        (draft.players || []).forEach(function (p) { p.theoryFeat = byPk[p.rank]; });
+        (draft.players || []).forEach(function (p) {
+          const derived = (window.TR && TR.deriveFeat) ? TR.deriveFeat(p) : {};
+          p.theoryFeat = Object.assign({}, derived, byPk[p.rank] || {});
+        });
       }
       (draft.players || []).forEach(function (p) {
         const o = extra[String(p.rank)];
