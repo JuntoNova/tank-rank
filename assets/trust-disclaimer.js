@@ -1,6 +1,5 @@
+/* Honesty: keep banner visible; enforce exact Hitch disclaimer string. */
 (function () {
-  if (window.TANK_RANK) TANK_RANK.disclaimer = "";
-  var s = document.createElement("style");
-  s.textContent = ".banner{display:none !important}";
-  document.documentElement.appendChild(s);
+  var exact = "Prototype board. Not live betting odds. Probability columns unavailable until the published model is connected.";
+  if (window.TANK_RANK) TANK_RANK.disclaimer = exact;
 })();

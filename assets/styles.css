@@ -148,7 +148,7 @@ tr:hover td { background: color-mix(in srgb, var(--lime) 4%, transparent); }
 .prose p, .prose li { margin-bottom: 12px; }
 .prose ul { padding-left: 18px; }
 
-.banner { border: 1px solid color-mix(in srgb, var(--gold) 40%, var(--line)); background: color-mix(in srgb, var(--gold) 8%, var(--bg-2)); color: #efe3b8; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin: 16px 0 20px; }
+.banner { border: 1px solid color-mix(in srgb, var(--gold) 40%, var(--line)); background: color-mix(in srgb, var(--gold) 8%, var(--bg-2)); color: #F0C14B; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin: 16px 0 20px; }
 
 footer { border-top: 1px solid var(--line); padding: 28px 0 48px; color: var(--muted); font-size: 13px; }
 footer .foot {
