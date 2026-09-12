@@ -27,5 +27,17 @@
     '<div class="kicker">Archive</div>',
     '<div class="kicker">Past</div>'
   );
+  src = src.replace(/<div>The Draft Model is a DBA of Junto Nova\.<\/div>/g, "");
+  src = src.replace(/<div>Not affiliated with, endorsed by, or sponsored by the NBA, the NBA Draft, or any NBA team\.<\/div>/g, "");
   eval(src);
+  function scrubFooter() {
+    document.querySelectorAll("footer .copy div, footer p, .foot .copy div").forEach(function (el) {
+      var t = (el.textContent || "").replace(/\s+/g, " ").trim();
+      if (/DBA of Junto Nova/i.test(t) || /Not affiliated with, endorsed by, or sponsored by the NBA/i.test(t)) {
+        el.remove();
+      }
+    });
+  }
+  scrubFooter();
+  setInterval(scrubFooter, 400);
 })();
