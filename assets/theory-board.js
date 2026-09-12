@@ -24,15 +24,15 @@
   }
   function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
   function fmtExp(n) {
-    if (n == null || isNaN(n)) return "\u2014";
+    if (n == null || isNaN(n)) return "—";
     if (Math.abs(n) < 0.05) return "0";
-    if (Math.abs(n) < 0.1) return n < 0 ? "\u2212<0.1" : "<0.1";
+    if (Math.abs(n) < 0.1) return n < 0 ? "−<0.1" : "<0.1";
     const abs = Math.abs(n);
-    return (n < 0 ? "\u2212" : "") + (abs >= 10 ? String(Math.round(abs)) : abs.toFixed(1));
+    return (n < 0 ? "−" : "") + (abs >= 10 ? String(Math.round(abs)) : abs.toFixed(1));
   }
   function fmtSigned(n) {
     if (n == null || isNaN(n) || Math.abs(n) < 0.25) return "0";
-    return (n > 0 ? "+" : "\u2212") + Math.abs(n).toFixed(1);
+    return (n > 0 ? "+" : "−") + Math.abs(n).toFixed(1);
   }
   function fmtPct(n) { return Math.round((n || 0) * 100) + "%"; }
   function project(p, feat, priors) {
@@ -117,8 +117,8 @@
         const proj = p.proj || project(p, p.theoryFeat, priors);
         return '<tr onclick="location.href=\'./player.html?year=' + year + "&id=" + p.id + '\'" style="cursor:pointer">'
           + '<td class="rank">' + String(p.rank).padStart(2, "0") + "</td>"
-          + '<td><div class="name">' + p.name + '</div><div class="meta">' + [p.pos, p.school].filter(Boolean).join(" \u00b7 ") + "</div></td>"
-          + "<td>" + (p.team || "\u2014") + "</td>"
+          + '<td><div class="name">' + p.name + '</div><div class="meta">' + [p.pos, p.school].filter(Boolean).join(" · ") + "</div></td>"
+          + "<td>" + (p.team || "—") + "</td>"
           + '<td class="pct">' + fmtExp(proj.expAs) + "</td>"
           + '<td class="pct">' + fmtExp(proj.expNba1) + "</td>"
           + '<td class="pct">' + fmtExp(proj.expNba) + "</td>"
@@ -131,17 +131,17 @@
       head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th><th>HOF</th>";
       body.innerHTML = rows.map(function (p) {
         const proj = p.proj || project(p, p.theoryFeat, priors);
-        const known = p.yrs != null;
+        const known = p.yrs != null && p.yrs !== "";
         return '<tr onclick="location.href=\'./player.html?year=' + year + "&id=" + p.id + '\'" style="cursor:pointer">'
           + '<td class="rank">' + String(p.rank).padStart(2, "0") + "</td>"
-          + '<td><div class="name">' + p.name + '</div><div class="meta">' + [p.pos, p.school].filter(Boolean).join(" \u00b7 ") + "</div></td>"
-          + "<td>" + (p.team || "\u2014") + "</td>"
+          + '<td><div class="name">' + p.name + '</div><div class="meta">' + [p.pos, p.school].filter(Boolean).join(" · ") + "</div></td>"
+          + "<td>" + (p.team || "—") + "</td>"
           + '<td class="pct">' + vsCell(p.allStar, proj.expAs) + "</td>"
           + '<td class="pct">' + vsCell(p.nba1, proj.expNba1) + "</td>"
           + '<td class="pct">' + vsCell(p.allNba, proj.expNba) + "</td>"
-          + '<td class="pct">' + (known ? vsCell(p.yrs, proj.expYrs) : "\u2014") + "</td>"
-          + '<td class="pct">' + (known ? vsCell(p.champs, proj.expCh) : (p.champs ? vsCell(p.champs, proj.expCh) : "\u2014")) + "</td>"
-          + '<td class="pct">' + (known ? vsCell(p.mvp, proj.expMvp) : (p.mvp ? vsCell(p.mvp, proj.expMvp) : "\u2014")) + "</td>"
+          + '<td class="pct">' + (known ? vsCell(p.yrs, proj.expYrs) : "—") + "</td>"
+          + '<td class="pct">' + (known || p.champs ? vsCell(p.champs, proj.expCh) : "—") + "</td>"
+          + '<td class="pct">' + (known || p.mvp ? vsCell(p.mvp, proj.expMvp) : "—") + "</td>"
           + '<td class="pct">' + vsCell(p.hof ? 1 : 0, proj.pHof) + "</td></tr>";
       }).join("");
     }
@@ -150,11 +150,22 @@
   }
   function load(year) {
     return Promise.all([
-      fetch("./assets/theory-packs/" + year + ".json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      fetch("./assets/theory-packs/all.json").then(function (r) { return r.ok ? r.json() : null; }).then(function (all) {
+        if (all && all[String(year)]) return all[String(year)];
+        return fetch("./assets/theory-packs/" + year + ".json").then(function (r) { return r.ok ? r.json() : null; });
+      }).catch(function () { return null; }),
       fetch("./assets/slot-priors.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-      fetch("./assets/outcomes-extra.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
-    ]).then(function (triple) {
-      const pack = triple[0], priors = triple[1] || (window.TANK_RANK && TANK_RANK.slotPriors) || {}, extra = (triple[2] || {})[String(year)] || {};
+      fetch("./assets/outcomes-legacy.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      fetch("./assets/outcomes-extra.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      fetch("./assets/outcomes/" + (Math.floor(Number(year) / 10) * 10) + "s.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+    ]).then(function (parts) {
+      const pack = parts[0], priors = parts[1] || (window.TANK_RANK && TANK_RANK.slotPriors) || {};
+      const yk = String(year);
+      const extra = Object.assign({},
+        ((parts[2] || {})[yk] || {}),
+        ((parts[3] || {})[yk] || {}),
+        ((parts[4] || {})[yk] || {})
+      );
       if (priors && window.TANK_RANK) TANK_RANK.slotPriors = priors;
       const draft = window.TANK_RANK && TANK_RANK.drafts[year];
       if (!draft) return { pack: pack, priors: priors };
