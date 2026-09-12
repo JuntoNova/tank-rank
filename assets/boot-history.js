@@ -23,12 +23,12 @@
       const year = Number(ys);
       const list = byYear[year].slice().sort((a, b) => (Number(a.pk) || 9999) - (Number(b.pk) || 9999));
       TANK_RANK.drafts[year] = {
-        year,
+        year: year,
         label: year <= 1949 ? year + " BAA Draft" : year + " NBA Draft",
         note: "Selections in official pick order, every round.",
         historic: true,
         players: list.map((r, i) => ({
-          id: slug(displayName(r.n), year, r.pk || i + 1),
+          id: slug(r.n, year, r.pk || i + 1),
           name: displayName(r.n),
           rank: Number(r.pk) || i + 1,
           catRank: r.rd || i + 1,
@@ -36,14 +36,9 @@
           school: r.c || "\u2014",
           team: r.t || "",
           pos: r.pos || "",
-          rd: r.rd,
-          yrs: r.yrs,
-          hof: r.hof || 0,
-          allStar: r.as || 0,
-          nba1: r.nba1 || 0,
-          allNba: r.nba || 0,
-          champs: r.ch || 0,
-          mvp: r.mvp || 0,
+          rd: r.rd, yrs: r.yrs, g: r.g, pts: r.pts, ws: r.ws, vorp: r.vorp,
+          hof: r.hof || 0, allStar: r.as || 0, nba1: r.nba1 || 0, allNba: r.nba || 0,
+          champs: r.ch || 0, mvp: r.mvp || 0,
           ht: "", wt: "", age: "",
           pHof: 0, pAllNba: 0, pAllStar: 0, pBust: 0,
           expWs: r.ws || 0, delta: 0,
@@ -68,50 +63,25 @@
       });
     });
   }
-  function slotBucket(pk) {
-    pk = Number(pk) || 99;
-    if (pk === 1) return "1";
-    if (pk <= 3) return "2-3";
-    if (pk <= 5) return "4-5";
-    if (pk <= 10) return "6-10";
-    if (pk <= 14) return "11-14";
-    if (pk <= 30) return "15-30";
-    return "31+";
-  }
-  function paintSettled(year) {
-    if (!year || year >= TANK_RANK.currentYear) return Promise.resolve();
-    const dec = String(Math.floor(Number(year) / 10) * 10) + "s";
-    return Promise.all([
-      loadJSON("./assets/outcomes-legacy.json"),
-      loadJSON("./assets/outcomes-extra.json"),
-      loadJSON("./assets/outcomes/" + dec + ".json"),
-      loadJSON("./assets/slot-priors.json")
-    ]).then(([outcomes, extra, decade, priors]) => {
-      const pack = Object.assign({}, (outcomes || {})[String(year)] || {}, (extra || {})[String(year)] || {}, (decade || {})[String(year)] || {});
-      const draft = TANK_RANK.drafts[year];
-      if (!draft) return;
-      (draft.players || []).forEach((p) => {
-        const o = pack[String(p.rank)];
-        if (!o) return;
-        if (o.hof) p.hof = 1;
-        if (o.as != null) p.allStar = o.as;
-        if (o.nba1 != null) p.nba1 = o.nba1;
-        if (o.nba != null) p.allNba = o.nba;
-        if (o.yrs != null) p.yrs = o.yrs;
-        if (o.ch != null) p.champs = o.ch;
-        if (o.mvp != null) p.mvp = o.mvp;
-      });
-      TANK_RANK.slotPriors = priors || {};
-    });
+  function ensureChips(year) {
+    const toolbar = document.querySelector(".toolbar");
+    if (!toolbar) return;
+    if (!toolbar.querySelector("[data-view]")) {
+      const future = Number(year) >= TANK_RANK.currentYear;
+      toolbar.insertAdjacentHTML("afterbegin",
+        '<button type="button" class="chip' + (future ? "" : " on") + '" data-view="now">Now</button>' +
+        '<button type="button" class="chip' + (future ? " on" : "") + '" data-view="drafted">When drafted</button>'
+      );
+    }
   }
   const origBoard = TR.renderBoard;
   const origPlayer = TR.renderPlayer;
   TR.renderBoard = function (root) {
     const y = Number(new URLSearchParams(location.search).get("year")) || TANK_RANK.currentYear;
-    return loadYear(y).then(() => origBoard(root)).then(() => paintSettled(y));
+    return loadYear(y).then(() => origBoard(root)).then(() => ensureChips(y));
   };
   TR.renderPlayer = function (root) {
     const y = Number(new URLSearchParams(location.search).get("year")) || TANK_RANK.currentYear;
-    return loadYear(y).then(() => origPlayer(root)).then(() => paintSettled(y));
+    return loadYear(y).then(() => origPlayer(root));
   };
 })();
