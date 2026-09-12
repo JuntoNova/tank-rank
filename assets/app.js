@@ -63,6 +63,13 @@
     '      </tr>`).join("") || `<tr><td colspan="9" style="color:var(--muted);padding:24px">No players match.</td></tr>`;\n  };\n\n  root.innerHTML = `\n    ${nav(year === currentYear() ? "board" : "drafts")}',
     '      </tr>`).join("") || `<tr><td colspan="8" style="color:var(--muted);padding:24px">No players match.</td></tr>`;\n  };\n\n  root.innerHTML = `\n    ${nav(year === currentYear() ? "board" : "drafts")}'
   );
+  if (/betting|sportsbook|wager|gambling/i.test(src)) {
+    throw new Error("Refusing to eval app blob containing banned betting language");
+  }
+  // PR-D: strip legacy badge / framing from CDN app blob before eval.
+  src = src.replace(/<span class="badge">Prototype<\/span>/g, "");
+  src = src.replace(/Feature drivers in this prototype card:/g, "Feature drivers in this card:");
+  src = src.replace(/v0\.5\.\d-prototype/g, "v0.5.2");
   eval(src);
   function scrubFooter() {
     document.querySelectorAll("footer .copy div, footer p, .foot .copy div").forEach(function (el) {
