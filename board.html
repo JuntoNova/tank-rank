@@ -19,11 +19,11 @@
   <script src="./assets/measure.js?v=40"></script>
   <script src="./assets/theory-model.js?v=69"></script>
   <script src="./assets/theory-card.js?v=68"></script>
-  <script src="./assets/theory-board.js?v=72"></script>
+  <script src="./assets/theory-board.js?v=67"></script>
   <script>TR.renderBoard(document.getElementById("app"));</script>
   <script>
-    (function pinViews() {
-      function add() {
+    (function () {
+      function addChips() {
         var t = document.querySelector(".toolbar");
         if (!t) return false;
         if (!t.querySelector("[data-view]")) {
@@ -32,13 +32,28 @@
             '<button type="button" class="chip" data-view="drafted">When drafted</button>'
           );
         }
-        return !!t;
+        return true;
       }
-      if (!add()) {
+      document.addEventListener("click", function (ev) {
+        var b = ev.target.closest("[data-view]");
+        if (!b) return;
+        var view = b.getAttribute("data-view");
+        if (view === "then") view = "drafted";
+        var url = new URL(location.href);
+        if (view === "now") url.searchParams.delete("view");
+        else url.searchParams.set("view", view);
+        history.replaceState({}, "", url);
+        document.querySelectorAll("[data-view]").forEach(function (x) {
+          x.classList.toggle("on", x.getAttribute("data-view") === view);
+        });
+        var q = document.querySelector("#q");
+        if (q) q.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+      if (!addChips()) {
         var n = 0;
         var id = setInterval(function () {
           n += 1;
-          if (add() || n > 40) clearInterval(id);
+          if (addChips() || n > 40) clearInterval(id);
         }, 250);
       }
     })();
