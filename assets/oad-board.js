@@ -17,7 +17,7 @@
     "theories",
     "One-and-done beats four-year stars",
     "",
-    '<p class="size-note">' + "<strong>Score: lean true on freshman vs senior, slot-dependent.</strong> College draftees 2006\u20132018 with a birthdate, n = 544. Freshmen hit 18.9% All-Star against 5.9% for seniors. A lot of that is pick slot \u2014 teams spend lottery chips on one-and-dones. Inside the same band the freshman edge shrinks. Prep-to-pro 1995\u20132005 is the earlier version of the same bet." + '</p><div class="acc size-acc">' + rows + '</div>'
+    '<p class="size-note">' + "<strong>Score: lean true on freshman vs senior, slot-dependent.</strong> College draftees 2006\u20132018 with a birthdate, n = 544. Freshmen hit 18.9% All-Star against 5.9% for seniors. A lot of that is pick slot \u2014 teams spend lottery chips on one-and-dones. Inside the same band the freshman edge shrinks. Prep-to-pro 1995\u20132005 is the earlier version of the same claim." + '</p><div class="acc size-acc">' + rows + '</div>'
   );
   document.querySelectorAll("[data-acc]").forEach((btn) => {
     btn.addEventListener("click", (e) => {
