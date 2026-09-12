@@ -1,6 +1,6 @@
 # The Draft Model
 
-Public-facing prototype for [The Draft Model](https://thedraftmodel.com) — data-first NBA rankings.
+Public site for [The Draft Model](https://thedraftmodel.com) — data-first NBA rankings.
 
 Live: https://thedraftmodel.com
 
