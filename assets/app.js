@@ -29,6 +29,27 @@
   );
   src = src.replace(/<div>The Draft Model is a DBA of Junto Nova\.<\/div>/g, "");
   src = src.replace(/<div>Not affiliated with, endorsed by, or sponsored by the NBA, the NBA Draft, or any NBA team\.<\/div>/g, "");
+  // Honesty: null/NaN probabilities render as an em dash, never 0%.
+  src = src.replace(
+    "const fmtPct = (n) => `${Math.round(n * 100)}%`;",
+    "const fmtPct = (n) => (n == null || !Number.isFinite(Number(n))) ? \"\\u2014\" : `${Math.round(n * 100)}%`;"
+  );
+  // Honesty: living board heading uses actual count, not \"Top 300\".
+  src = src.replace(
+    'year === currentYear() ? year + " Top 300" : year + " draft"',
+    'year === currentYear() ? year + " board (" + playersOf(year).length + ")" : year + " draft"'
+  );
+  // Honesty: hide P(Bust) until a published definition exists.
+  src = src.replace(
+    '<th>Rk</th><th>Player</th><th>Bucket</th><th>P(HOF)</th><th>P(AS)</th><th>P(All-NBA)</th><th>P(Bust)</th><th>Exp WS</th><th>Δ vs cons.</th>',
+    '<th>Rk</th><th>Player</th><th>Bucket</th><th>P(HOF)</th><th>P(AS)</th><th>P(All-NBA)</th><th>Exp WS</th><th>Δ vs cons.</th>'
+  );
+  src = src.replace(/<td class="pct">\$\{fmtPct\(p\.pBust\)\}<\/td>\s*/, "");
+  src = src.replace(/\$\{metricHtml\("P\(Bust\)", p\.pBust, true\)\}\s*/, "");
+  src = src.replace(
+    '      </tr>`).join("") || `<tr><td colspan="9" style="color:var(--muted);padding:24px">No players match.</td></tr>`;\n  };\n\n  root.innerHTML = `\n    ${nav(year === currentYear() ? "board" : "drafts")}',
+    '      </tr>`).join("") || `<tr><td colspan="8" style="color:var(--muted);padding:24px">No players match.</td></tr>`;\n  };\n\n  root.innerHTML = `\n    ${nav(year === currentYear() ? "board" : "drafts")}'
+  );
   eval(src);
   function scrubFooter() {
     document.querySelectorAll("footer .copy div, footer p, .foot .copy div").forEach(function (el) {
