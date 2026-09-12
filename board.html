@@ -20,6 +20,7 @@
   <script src="./assets/theory-model.js?v=69"></script>
   <script src="./assets/theory-card.js?v=68"></script>
   <script src="./assets/theory-board.js?v=67"></script>
+  <script src="./assets/yrs-overlay.js?v=1"></script>
   <script>TR.renderBoard(document.getElementById("app"));</script>
   <script>
     (function () {
@@ -41,11 +42,6 @@
         if (!t) return false;
         if (isFuture()) {
           t.querySelectorAll("[data-view]").forEach(function (b) { b.remove(); });
-          var url = new URL(location.href);
-          if (url.searchParams.get("view")) {
-            url.searchParams.delete("view");
-            history.replaceState({}, "", url);
-          }
           return true;
         }
         if (!t.querySelector("[data-view]")) {
@@ -79,8 +75,6 @@
           n += 1;
           if (syncChips() || n > 40) clearInterval(id);
         }, 250);
-      } else {
-        setInterval(syncChips, 500);
       }
     })();
   </script>
