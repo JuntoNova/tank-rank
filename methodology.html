@@ -8,13 +8,13 @@
   <link rel="canonical" href="https://thedraftmodel.com/methodology.html" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#090a0c" />
-  <link rel="stylesheet" href="./assets/styles.css?v=30" />
+  <link rel="stylesheet" href="./assets/styles.css?v=31" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="./assets/data.js?v=30"></script>
-  <script src="./assets/app.js?v=30"></script>
-  <script src="./assets/nav-swap.js?v=30"></script>
+  <script src="./assets/data.js?v=66"></script>
+  <script src="./assets/app.js?v=75"></script>
+  <script src="./assets/nav-swap.js?v=32"></script>
   <script>
     TR.renderSimple(document.getElementById("app"), "method", "Methodology", "The spec",
       `<p>We fit what happened after past drafts, then apply that fit to players who have not been drafted yet.</p>
@@ -69,6 +69,10 @@
         <li>Publication rule: a number only goes on the site if we can write the regression that produced it.</li>
         <li>A theory stays N/A until it beats the slot prior on a locked sample.</li>
       </ul>
+
+
+      <h2>2027 living board</h2>
+      <p>The 2027 board loads <code>assets/theory-packs/2027.json</code> into the feature project. Each row starts from the slot prior, then multiplies age, origin (/intl), class-year, and related theory steps documented on the theory pages. Painted AS / All-NBA / HOF cells are those theory-adjusted estimates — not guarantees. A number only stays on the site if we can write the regression that produced it (publication rule above).</p>
 
       <h2>What this page is for</h2>
       <p>Assumptions, features, coefficients, and failed tests land here. If it is not on this page, it is not part of the model.</p>`
