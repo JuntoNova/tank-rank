@@ -93,8 +93,9 @@
       mul(pk <= 14 ? 0.95 : 1.15, pk <= 5 ? 1.55 : 1.35, pk <= 5 ? 1.20 : 1.10);
     }
     const htIn = inches(feat.ht);
-    if (feat.create && htIn >= 79) mul(1.22, 1.05, 1.18);
-    else if (htIn && htIn < 77 && /(PG|SG|G)/i.test(feat.pos || "")) mul(1.08, 1.20, 1.08);
+    if (feat.create && htIn >= 79) mul(1.22, 1.05, 1);
+    else if (feat.create && htIn >= 77) mul(1.16, 1.18, 1);
+    else if (htIn && htIn < 77 && /(PG|SG|G)/i.test(feat.pos || "")) mul(1.08, 1.20, 1);
     const wspIn = inches(feat.wsp);
     if (wspIn && htIn) {
       const ape = wspIn - htIn;
