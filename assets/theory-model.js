@@ -138,13 +138,13 @@
     }
     const htIn = inches(feat.ht);
     if (feat.create && htIn >= 79) {
-      add("handle", "Handle x size", (feat.ht || "6-7+") + " creation tag", 1.22, 1.05, "6-7+ creation on /handle.");
+      add("handle", "Handle x size", (feat.ht || "6-7+") + " creation tag", 1.22, 1.05, "6-7+ creation on /handle.", { hof: 1 });
     } else if (feat.create && htIn >= 77) {
-      add("handle", "Handle x size", (feat.ht || "6-5") + " creation tag", 1.16, 1.18, "6-5/6-6 creator. Below the 6-7 /handle cut; two-thirds of that bump.");
+      add("handle", "Handle x size", (feat.ht || "6-5") + " creation tag", 1.16, 1.18, "6-5/6-6 creator. Below the 6-7 /handle cut; two-thirds of that bump.", { hof: 1 });
     } else if (htIn && htIn < 77 && /(PG|SG|G)/i.test(feat.pos || "")) {
-      add("handle", "Handle x size", (feat.ht || "short") + " guard", 1.08, 1.20, "Short-guard cell.");
+      add("handle", "Handle x size", (feat.ht || "short") + " guard", 1.08, 1.20, "Short-guard cell.", { hof: 1 });
     } else {
-      add("handle", "Handle x size", feat.ht ? feat.ht : "missing", 1, 1, "No creation tag at a scored height.");
+      add("handle", "Handle x size", feat.ht ? feat.ht : "missing", 1, 1, "No creation tag at a scored height.", { hof: 1 });
     }
     const wspIn = inches(feat.wsp);
     const ape = (wspIn && htIn) ? (wspIn - htIn) : null;
