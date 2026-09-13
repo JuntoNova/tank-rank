@@ -20,18 +20,7 @@
     window.__tdmAccClosed = true;
   }
   function swapNav() {
-    document.querySelectorAll(".logo span").forEach((el) => el.remove());
-    document.querySelectorAll(".nav-links a, .foot-links a").forEach((a) => {
-      const label = a.textContent.trim();
-      const href = a.getAttribute("href") || "";
-      if (label === "Big Board" || href === "./board.html") {
-        a.textContent = "Theories";
-        a.setAttribute("href", "./theories.html");
-      }
-      if ((a.getAttribute("href") || "").indexOf("theories.html") !== -1) {
-        a.classList.toggle("active", /theories\.html/.test(location.pathname));
-      }
-    });
+    // Keep Big Board → board.html. Do not strip .logo span.
     stripFooterLine();
   }
   function swap() {
