@@ -36,6 +36,7 @@
   }
   function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
   function featOf(p) {
+    if (window.TR && typeof TR.deriveFeat === "function") return TR.deriveFeat(p);
     const g = p.theoryFeat || {};
     const school = String(p.school || g.school || "").toLowerCase();
     let origin = g.origin || p.origin || "";
@@ -46,9 +47,10 @@
     }
     let cls = g.cls || p.cls || "";
     if (!cls) {
-      if (origin === "intl") cls = "Intl";
+      var cm = String(p.school || g.school || "").match(/\((RS-Fr|RS-So|RS-Jr|RS-Sr|Fr|So|Jr|Sr)[.]?\)/i);
+      if (cm) cls = cm[1].replace(/\./g, "");
+      else if (origin === "intl") cls = "Intl";
       else if (origin === "hs") cls = "HS";
-      else cls = "Fr";
     }
     let age = g.age != null ? g.age : p.age;
     age = age === "" || age == null ? (origin === "hs" ? 18.5 : origin === "intl" ? 19 : 19.5) : Number(age);

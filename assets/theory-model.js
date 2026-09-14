@@ -88,7 +88,7 @@
       const v = mmvp == null ? a : mmvp;
       const nba = extra.nba == null ? a : extra.nba;
       const hof = extra.hof == null ? a : extra.hof;
-      const yrs = extra.yrs == null ? a : extra.yrs;
+      const yrs = extra.yrs == null ? 1 : extra.yrs;
       mAs *= a; mNba *= nba; mHof *= hof; mMvp *= v; mYrs *= yrs;
       steps.push({ id: id, label: label, value: value, mAs: a, mNba: nba, mHof: hof, mMvp: v, mYrs: yrs, why: why });
     }
@@ -105,9 +105,15 @@
     else if (ageNum <= 22) ageMvpRaw = 0.75;
     else ageMvpRaw = 0.40;
     const ageMvp = clamp(1 + (ageMvpRaw - 1) * (pk <= 5 ? 0.85 : pk <= 14 ? 0.95 : 1), 0.30, 2.20);
+    let ageYrs = 1;
+    if (ageNum < 19) ageYrs = 1.18;
+    else if (ageNum < 20) ageYrs = 1.12;
+    else if (ageNum < 21) ageYrs = 1.04;
+    else if (ageNum < 22) ageYrs = 0.96;
+    else ageYrs = 0.80;
     add("age", "Age", feat.age != null ? feat.age + " " + ageLabel(ak) : "unknown",
       ageAs, ageMvp, "From /age. Youth moves a #1 off the all-era 34% HOF prior.",
-      { nba: ageAs, hof: clamp(shrink(rawAs, keepAs(pk) * 0.85), 0.72, 1.45), yrs: clamp(shrink(rawAs, 0.25), 0.80, 1.20) });
+      { nba: ageAs, hof: clamp(shrink(rawAs, keepAs(pk) * 0.85), 0.72, 1.45), yrs: clamp(ageYrs, 0.70, 1.25) });
     const cls = feat.cls || "";
     if (feat.origin === "college") {
       let cAs = 1, cMvp = 1, note = "Sophomore / junior is the middle of /onedone.";
@@ -117,18 +123,18 @@
       } else if (cls === "Sr" || cls === "RS-Sr") {
         if (ak !== "a22") { cAs = 0.88; cMvp = 0.70; note = "Senior, not yet in the old-age bin."; }
       } else if (cls === "Jr" || cls === "RS-Jr") { cAs = 0.96; cMvp = 0.90; note = "Junior."; }
-      add("onedone", "Class year", cls || "-", cAs, cMvp, note);
+      add("onedone", "Class year", cls || "-", cAs, cMvp, note, { yrs: 1 });
     } else {
-      add("onedone", "Class year", cls || feat.origin || "-", 1, 1, "No extra class-year market.");
+      add("onedone", "Class year", cls || feat.origin || "-", 1, 1, "No extra class-year market.", { yrs: 1 });
     }
     if (feat.origin === "intl") {
       let iAs = 1, iMvp = 1;
       if (pk <= 5) { iAs = 0.69; iMvp = 0.45; }
       else if (pk <= 14) { iAs = 0.59; iMvp = 0.80; }
-      add("intl", "Origin", "international pick " + pk, iAs, iMvp, "From /intl.", { hof: pk <= 5 ? 1.05 : 1 });
-      if (feat.never) add("stash", "Stash", "never arrived", 0.05, 0.05, "Never arrived.");
-      else if (feat.stash || (feat.delay || 0) >= 2) add("stash", "Stash", "delayed", 0.59, 0.50, "Stash.");
-      else add("stash", "Stash", "immediate", 1, 1, "Immediate.");
+      add("intl", "Origin", "international pick " + pk, iAs, iMvp, "From /intl.", { hof: pk <= 5 ? 1.05 : 1, yrs: pk <= 5 ? 0.92 : 0.88 });
+      if (feat.never) add("stash", "Stash", "never arrived", 0.05, 0.05, "Never arrived.", { yrs: 0.10 });
+      else if (feat.stash || (feat.delay || 0) >= 2) add("stash", "Stash", "delayed", 0.59, 0.50, "Stash.", { yrs: 0.55 });
+      else add("stash", "Stash", "immediate", 1, 1, "Immediate.", { yrs: 0.94 });
     } else if (feat.origin === "hs") {
       add("intl", "Origin", "high school pick " + pk, pk <= 14 ? 0.95 : 1.15, pk <= 5 ? 1.55 : 1.35, "HS cell.");
       add("stash", "Stash", "-", 1, 1, "Stash is international only.");
@@ -177,7 +183,7 @@
     if (Math.abs(n) < 0.05) return "0";
     if (Math.abs(n) < 0.1) return n < 0 ? "-<0.1" : "<0.1";
     const abs = Math.abs(n);
-    return (n < 0 ? "-" : "") + (abs >= 10 ? String(Math.round(abs)) : abs.toFixed(1));
+    return (n < 0 ? "-" : "") + (abs >= 100 ? String(Math.round(abs)) : abs.toFixed(1));
   }
   function fmtPct(n) { return (n == null || !isFinite(Number(n))) ? "" : Math.round(n * 100) + "%"; }
   function fmtMul(m) { return "x" + Number(m == null ? 1 : m).toFixed(2); }
