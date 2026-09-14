@@ -65,3 +65,4 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 - 2026-09-13 (Grok chat): 1967 Mel Daniels player card was empty. NBA table had yrs=1 (11 Nets games); career is 9 ABA/NBA seasons, 18.4 ppg, HOF. New Mexico 1964-67 lines, listed 6-9 / 220, age 22.8 Sr.
 - 2026-09-13 (Grok chat): 1997 Yrs column empty except Duncan. Joined Basketball-Reference seasons (Duncan 19). Honors unchanged.
 - 2026-09-13 (Grok chat): 1997 Tony Battie player card was empty. Texas Tech 1994-97 lines (Jr 18.8/11.8/2.5), listed 6-11 / 230, age 21.4 Jr, NBA yrs 14.
+- 2026-09-13 (Grok chat): 1977 Greg Ballard player card was empty. Oregon 1973-77 lines (Sr 21.7/9.8/2.5), listed 6-7 / 215, age 22.4 Sr, NBA yrs 11, 1978 title.

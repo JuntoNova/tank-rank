@@ -55,6 +55,56 @@
           "ft": 0.737
         }
       ]
+    },
+    "4": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Oregon",
+          "season": "1976-77",
+          "cls": "Sr",
+          "g": 29,
+          "mp": 35.1,
+          "pts": 21.7,
+          "trb": 9.8,
+          "ast": 2.5,
+          "fg": 0.527,
+          "ft": 0.855
+        },
+        {
+          "lvl": "College",
+          "team": "Oregon",
+          "season": "1975-76",
+          "cls": "Jr",
+          "g": 30,
+          "pts": 17.6,
+          "trb": 10.4,
+          "fg": 0.525,
+          "ft": 0.761
+        },
+        {
+          "lvl": "College",
+          "team": "Oregon",
+          "season": "1974-75",
+          "cls": "So",
+          "g": 30,
+          "pts": 14.0,
+          "trb": 9.6,
+          "fg": 0.488,
+          "ft": 0.736
+        },
+        {
+          "lvl": "College",
+          "team": "Oregon",
+          "season": "1973-74",
+          "cls": "Fr",
+          "g": 26,
+          "pts": 9.4,
+          "trb": 8.8,
+          "fg": 0.467,
+          "ft": 0.739
+        }
+      ]
     }
   }
 }
