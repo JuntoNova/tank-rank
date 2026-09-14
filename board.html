@@ -23,7 +23,7 @@
   <script src="./assets/theory-model.js?v=73"></script>
   <script src="./assets/honesty-fmt.js?v=1"></script>
   <script src="./assets/theory-card.js?v=68"></script>
-  <script src="./assets/theory-board.js?v=70"></script>
+  <script src="./assets/theory-board.js?v=71"></script>
   <script src="./assets/yrs-overlay.js?v=2"></script>
   <script>TR.renderBoard(document.getElementById("app"));</script>
   <script>
@@ -34,6 +34,18 @@
       function isFuture() {
         var cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
         return yearOf() >= cur;
+      }
+      function ensureHistoricBack() {
+        var y = yearOf();
+        var cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+        if (y >= cur) return;
+        var head = document.querySelector(".section-head");
+        if (!head || head.querySelector(".back-historic")) return;
+        var a = document.createElement("a");
+        a.className = "btn ghost back-historic";
+        a.href = "./drafts.html";
+        a.textContent = "← Historic drafts";
+        head.appendChild(a);
       }
       function scrubFooter() {
         document.querySelectorAll("footer .copy div, footer p, .foot .copy div").forEach(function (el) {
@@ -73,6 +85,8 @@
       });
       scrubFooter();
       setInterval(scrubFooter, 400);
+      ensureHistoricBack();
+      setInterval(ensureHistoricBack, 400);
       if (!syncChips()) {
         var n = 0;
         var id = setInterval(function () {

@@ -194,6 +194,16 @@
     }
     const sub = document.querySelector(".section-head .sub");
     if (sub) { sub.textContent = ""; sub.style.display = "none"; }
+    const headEl = document.querySelector(".section-head");
+    if (headEl && year < ((window.TANK_RANK && TANK_RANK.currentYear) || 2027)) {
+      if (!headEl.querySelector(".back-historic")) {
+        const a = document.createElement("a");
+        a.className = "btn ghost back-historic";
+        a.href = "./drafts.html";
+        a.textContent = "← Historic drafts";
+        headEl.appendChild(a);
+      }
+    }
   }
   function load(year) {
     return Promise.all([
