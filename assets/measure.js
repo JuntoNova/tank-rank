@@ -4,7 +4,7 @@
   FILES.push("./assets/mc-2000.json?v=40");
   FILES.push("./assets/mc-17.json?v=40");
   FILES.push("./assets/measurements-combine.json?v=40");
-  FILES.push("./assets/measurements-listed.json?v=78");
+  FILES.push("./assets/measurements-listed.json?v=79");
   function dash(v) { return (v === 0 || v) ? String(v) : "\u2014"; }
   function toInches(ht) {
     const m = String(ht || "").trim().match(/^(\d+)-(\d+(?:\.\d+)?)$/);
@@ -75,6 +75,11 @@
     const ape = (wspIn != null && htIn != null) ? fmtIn(wspIn - htIn) : "\u2014";
     const vs = (listedIn != null && combIn != null) ? fmtIn(combIn - listedIn) : "\u2014";
     const wpi = (wt && htIn) ? (wt / htIn).toFixed(2) : "\u2014";
+    if (!p.ht && !p.wt && !p.wsp && !p.htListed && !p.htCombine) {
+      var dead = document.getElementById("size-box");
+      if (dead) dead.remove();
+      return;
+    }
     let box = document.getElementById("size-box");
     if (!box) {
       box = document.createElement("div");

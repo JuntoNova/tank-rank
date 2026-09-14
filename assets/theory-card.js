@@ -38,13 +38,48 @@
     return m > 1 ? "up" : "down";
   }
   function hideEmptySize() {
-    document.querySelectorAll(".size-grid .tile, .measures .tile").forEach(function (tile) {
-      const label = ((tile.querySelector("label") || {}).textContent || "");
-      const b = ((tile.querySelector("b") || {}).textContent || "").trim();
-      if (/source|combine vs listed|lbs \/ inch/i.test(label) && (b === "\u2014" || b === "-" || b === "")) tile.classList.add("th-empty");
+    var box = document.getElementById("size-box");
+    if (!box) return;
+    var cells = box.querySelectorAll(".size-grid > div");
+    var real = 0;
+    cells.forEach(function (tile) {
+      var label = ((tile.querySelector("label") || {}).textContent || "");
+      var b = ((tile.querySelector("b") || {}).textContent || "").trim();
+      var empty = !b || b === "\u2014" || b === "-" || b === "undefined" || b === "/ lbs" || b === "lbs";
+      var meta = /source|combine vs listed|lbs \/ inch|wingspan|standing reach/i.test(label);
+      if (empty) tile.style.display = "none";
+      else {
+        tile.style.display = "";
+        if (/height|weight/i.test(label)) real++;
+        if (/wingspan/i.test(label) && !/height/.test(label)) real++;
+      }
+      if (meta && empty) tile.style.display = "none";
     });
+    box.style.display = real ? "" : "none";
+  }
+  function scrubPills(root, p, feat, year) {
+    var pills = root.querySelector(".pills");
+    if (!pills) return;
+    var school = String(p.school || "").replace(/\s*\((RS-)?(Fr|So|Jr|Sr|HS)[^)]*\)\s*$/i, "").trim();
+    var ht = feat.ht || p.htListed || p.htCombine || p.ht;
+    var wt = feat.wt || p.wt;
+    var age = (p.draftAge != null) ? p.draftAge : ((p.age !== "" && p.age != null) ? p.age : null);
+    var tags = [];
+    if (year) tags.push(String(year));
+    if (p.pos) tags.push(p.pos);
+    if (school && school !== "\u2014") tags.push(school);
+    if (ht && wt) tags.push(ht + " / " + wt);
+    else if (ht) tags.push(String(ht));
+    if (age != null && age !== "") tags.push("Age " + age);
+    if (p.hof) tags.push("Hall of Fame");
+    pills.innerHTML = tags.map(function (x) { return '<span class="tag">' + x + "</span>"; }).join("");
+  }
+  function cell(label, val) {
+    if (val == null || val === "") return "";
+    return '<div class="metric"><label>' + label + "</label><b>" + val + "</b></div>";
   }
   function paint(root, p, priors) {
+    window.__TDM_THEORY_CARD = true;
     css();
     const feat = Object.assign({}, deriveFeat(p), p.theoryFeat || {});
     p.theoryFeat = feat;
@@ -52,29 +87,30 @@
     p.proj = full;
     const lede = root.querySelector(".lede");
     if (lede) { lede.textContent = ""; lede.style.display = "none"; }
+    const year = new URLSearchParams(location.search).get("year") || "";
+    const cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+    const historic = Number(year) < cur;
+    scrubPills(root, p, feat, year);
     const metrics = root.querySelector(".metrics");
     if (metrics) {
+      var g = (p.g != null && p.g !== "") ? Number(p.g).toLocaleString("en-US") : "";
+      var pts = (p.pts != null && p.pts !== "") ? Number(p.pts).toFixed(1) : "";
+      var ws = (p.ws != null && p.ws !== "") ? Number(p.ws).toFixed(1) : "";
       metrics.innerHTML =
-        '<div class="metric"><label>AS</label><b>' + dash(p.allStar) + "</b></div>" +
-        '<div class="metric"><label>1st</label><b>' + dash(p.nba1) + "</b></div>" +
-        '<div class="metric"><label>All-NBA</label><b>' + dash(p.allNba) + "</b></div>" +
-        '<div class="metric"><label>Yrs</label><b>' + (p.yrs != null && p.yrs !== "" ? p.yrs : "\u2014") + "</b></div>" +
-        '<div class="metric"><label>Chips</label><b>' + dash(p.champs) + "</b></div>" +
-        '<div class="metric"><label>MVP</label><b>' + dash(p.mvp) + "</b></div>" +
-        '<div class="metric"><label>HOF</label><b>' + (p.hof ? "Yes" : "No") + "</b></div>";
+        cell("Yrs", p.yrs != null && p.yrs !== "" ? p.yrs : "") +
+        cell("G", g) +
+        cell("PTS", pts) +
+        cell("WS", ws) +
+        cell("AS", p.allStar != null && p.allStar !== "" ? p.allStar : (historic ? 0 : "")) +
+        cell("All-NBA", p.allNba != null && p.allNba !== "" ? p.allNba : (historic ? 0 : "")) +
+        cell("MVP", p.mvp != null && p.mvp !== "" ? p.mvp : (historic ? 0 : "")) +
+        cell("Titles", p.champs != null && p.champs !== "" ? p.champs : (historic ? 0 : "")) +
+        cell("HOF", p.hof ? "Yes" : (historic ? "No" : ""));
     }
-    root.querySelectorAll(".pills .tag").forEach(function (t) {
-      const v = t.textContent.replace(/\s+/g, " ").trim();
-      if (/^Age/i.test(v) && feat.age != null) t.textContent = "Age " + feat.age;
-      if ((/lbs/i.test(v) || v === "/ lbs") && (feat.ht || p.ht)) {
-        t.textContent = (feat.ht || p.ht) + ((feat.wt || p.wt) ? " / " + (feat.wt || p.wt) : "");
-      }
-    });
     const h1 = root.querySelector(".player-hero h1");
     if (h1 && p.name) h1.textContent = p.name;
     const kick = root.querySelector(".player-hero .kicker");
     if (kick) {
-      const year = new URLSearchParams(location.search).get("year") || "";
       kick.textContent = year + " \u00b7 #" + p.rank + (p.team ? " \u00b7 " + p.team : "");
     }
     const existing = root.querySelector(".th-player");
@@ -89,21 +125,28 @@
     }).join("");
     const box = document.createElement("section");
     box.className = "section th-player th-math";
-    box.innerHTML =
-      '<div class="kicker">When drafted</div>'
-      + '<div class="th-eq">'
-      + "<div><label>AS</label><b>" + fmtExp(full.expAs) + "</b><span>career " + dash(p.allStar) + "</span></div>"
-      + "<div><label>All-NBA</label><b>" + fmtExp(full.expNba) + "</b><span>career " + dash(p.allNba) + "</span></div>"
-      + "<div><label>Yrs</label><b>" + fmtExp(full.expYrs) + "</b><span>career " + (p.yrs != null && p.yrs !== "" ? p.yrs : "\u2014") + "</span></div>"
-      + "<div><label>MVP</label><b>" + fmtExp(full.expMvp) + "</b><span>career " + dash(p.mvp) + "</span></div>"
-      + "<div><label>HOF</label><b>" + fmtPct(full.pHof) + "</b><span>career " + (p.hof ? "Yes" : "No") + "</span></div></div>"
-      + (body ? '<div class="table-wrap th-ledger"><table><thead><tr><th>Theory</th><th>Draft night</th><th>\u00d7 AS</th><th>\u00d7 HOF</th></tr></thead><tbody>' + body + "</tbody></table></div>" : "");
+    if (historic) {
+      box.innerHTML = body
+        ? ('<div class="kicker">Draft-night factors</div>'
+          + '<div class="table-wrap th-ledger"><table><thead><tr><th>Theory</th><th>Draft night</th><th>\u00d7 AS</th><th>\u00d7 HOF</th></tr></thead><tbody>' + body + "</tbody></table></div>")
+        : "";
+      if (!box.innerHTML) box.remove();
+    } else {
+      box.innerHTML =
+        '<div class="kicker">When drafted</div>'
+        + '<div class="th-eq">'
+        + "<div><label>AS</label><b>" + fmtExp(full.expAs) + "</b><span>career " + dash(p.allStar) + "</span></div>"
+        + "<div><label>All-NBA</label><b>" + fmtExp(full.expNba) + "</b><span>career " + dash(p.allNba) + "</span></div>"
+        + "<div><label>Yrs</label><b>" + fmtExp(full.expYrs) + "</b><span>career " + (p.yrs != null && p.yrs !== "" ? p.yrs : "") + "</span></div>"
+        + "<div><label>MVP</label><b>" + fmtExp(full.expMvp) + "</b><span>career " + dash(p.mvp) + "</span></div>"
+        + "<div><label>HOF</label><b>" + fmtPct(full.pHof) + "</b><span>career " + (p.hof ? "Yes" : "No") + "</span></div></div>"
+        + (body ? '<div class="table-wrap th-ledger"><table><thead><tr><th>Theory</th><th>Draft night</th><th>\u00d7 AS</th><th>\u00d7 HOF</th></tr></thead><tbody>' + body + "</tbody></table></div>" : "");
+    }
     const hero = root.querySelector(".player-hero");
-    if (hero && hero.parentNode) hero.parentNode.insertBefore(box, hero.nextSibling);
+    if (box.parentNode == null && box.innerHTML && hero && hero.parentNode) hero.parentNode.insertBefore(box, hero.nextSibling);
+    else if (hero && hero.parentNode && box.parentNode == null) hero.parentNode.insertBefore(box, hero.nextSibling);
     hideEmptySize();
-    var cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
-    var yearNow = Number(new URLSearchParams(location.search).get("year")) || cur;
-    if (yearNow < cur) {
+    if (historic) {
       document.querySelectorAll(".banner").forEach(function (el) { el.remove(); });
       var cta = document.querySelector(".player-hero .cta-row");
       if (cta && !cta.querySelector(".back-historic")) {

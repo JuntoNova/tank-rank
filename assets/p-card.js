@@ -28,6 +28,7 @@
     return m > 1 ? "up" : "down";
   }
   function paint(root, p, priors) {
+    if (window.__TDM_THEORY_CARD) return;
     css();
     const feat = Object.assign({}, deriveFeat(p), p.theoryFeat || {});
     const full = project(p, feat, priors);

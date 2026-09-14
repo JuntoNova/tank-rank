@@ -40,8 +40,8 @@
           hof: r.hof || 0, allStar: r.as || 0, nba1: r.nba1 || 0, allNba: r.nba || 0,
           champs: r.ch || 0, mvp: r.mvp || 0,
           ht: "", wt: "", age: "",
-          pHof: 0, pAllNba: 0, pAllStar: 0, pBust: 0,
-          expWs: r.ws || 0, delta: 0,
+          pHof: null, pAllNba: null, pAllStar: null, pBust: null,
+          expWs: r.ws || null, delta: null,
           features: ["Draft slot", "College", "Career WS"]
         }))
       };
