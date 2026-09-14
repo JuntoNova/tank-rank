@@ -123,6 +123,7 @@
       var open = header.classList.toggle("open");
       toggle.setAttribute("aria-expanded", String(open));
       toggle.textContent = open ? "Close" : "Menu";
+      setNavH();
     };
   }
 
@@ -139,6 +140,13 @@
     orderDoors();
     hideHistoricBanner();
     fixDraftsNames();
+    setNavH();
+  }
+
+  function setNavH() {
+    var n = document.querySelector(".nav");
+    if (!n) return;
+    document.documentElement.style.setProperty("--nav-h", Math.round(n.getBoundingClientRect().height) + "px");
   }
 
   function swapNav() {
@@ -174,6 +182,7 @@
   });
   watch();
   document.addEventListener("DOMContentLoaded", function () { watch(); swap(); });
+  window.addEventListener("resize", setNavH);
   setTimeout(swap, 0);
   setTimeout(swap, 250);
 })();
