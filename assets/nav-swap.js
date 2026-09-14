@@ -2,8 +2,8 @@
   var NAV_ORDER = [
     { match: /drafts\.html/i, label: /^historic$/i },
     { match: /upcoming\.html/i, label: /^upcoming$/i },
-    { match: /outliers\.html/i, label: /^outliers$/i },
     { match: /theories\.html/i, label: /^theories$/i },
+    { match: /outliers\.html/i, label: /^outliers$/i },
     { match: /methodology\.html/i, label: /^methodology$/i }
   ];
   var THEORY_PATH = /(theories|size|wingspan|handle|reach|combine|age|late|onedone|jump|stash|prod|ftrate|three|astu|defense|rim|schools|intl|develop|switch|march|scheme|medical|character)\.html/i;
@@ -131,8 +131,8 @@
     if (nav) {
       stripAbout(nav);
       stripBigBoard(nav);
-      ensureOutliers(nav);
       ensureTheories(nav);
+      ensureOutliers(nav);
       orderNav(nav);
     }
     bindMenu();
