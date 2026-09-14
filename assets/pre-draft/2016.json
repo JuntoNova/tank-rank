@@ -1,0 +1,44 @@
+{
+  "year": 2016,
+  "src": "Sports-Reference CBB",
+  "players": {
+    "17": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Vanderbilt",
+          "season": "2015-16",
+          "cls": "So",
+          "g": 33,
+          "mp": 30.4,
+          "pts": 14.1,
+          "trb": 4.0,
+          "ast": 5.2,
+          "stl": 1.2,
+          "blk": 0.3,
+          "tov": 2.8,
+          "fg": 0.427,
+          "tp": 0.406,
+          "ft": 0.799
+        },
+        {
+          "lvl": "College",
+          "team": "Vanderbilt",
+          "season": "2014-15",
+          "cls": "Fr",
+          "g": 35,
+          "mp": 28.8,
+          "pts": 9.3,
+          "trb": 4.1,
+          "ast": 4.4,
+          "stl": 1.4,
+          "blk": 0.1,
+          "tov": 1.9,
+          "fg": 0.436,
+          "tp": 0.439,
+          "ft": 0.802
+        }
+      ]
+    }
+  }
+}

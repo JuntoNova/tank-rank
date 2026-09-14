@@ -1,6 +1,6 @@
 {
   "year": 2024,
-  "src": "LNB / EuroCup reporting",
+  "src": "Sports-Reference CBB",
   "players": {
     "1": {
       "rows": [
@@ -29,6 +29,416 @@
           "trb": 3.3,
           "fg": 0.503,
           "tp": 0.45
+        }
+      ]
+    },
+    "3": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Kentucky",
+          "season": "2023-24",
+          "cls": "Fr",
+          "g": 33,
+          "mp": 28.9,
+          "pts": 12.5,
+          "trb": 4.1,
+          "ast": 4.5,
+          "stl": 2.5,
+          "blk": 0.7,
+          "tov": 2.0,
+          "fg": 0.536,
+          "tp": 0.521,
+          "ft": 0.831
+        }
+      ]
+    },
+    "4": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "UConn",
+          "season": "2023-24",
+          "cls": "Fr",
+          "g": 34,
+          "mp": 27.0,
+          "pts": 11.1,
+          "trb": 4.7,
+          "ast": 2.9,
+          "stl": 0.8,
+          "blk": 0.5,
+          "tov": 1.5,
+          "fg": 0.472,
+          "tp": 0.267,
+          "ft": 0.755
+        }
+      ]
+    },
+    "19": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Baylor",
+          "season": "2023-24",
+          "cls": "Fr",
+          "g": 35,
+          "mp": 32.3,
+          "pts": 14.5,
+          "trb": 4.4,
+          "ast": 1.4,
+          "stl": 1.1,
+          "blk": 0.2,
+          "tov": 1.3,
+          "fg": 0.376,
+          "tp": 0.341,
+          "ft": 0.792
+        }
+      ]
+    },
+    "20": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Cal",
+          "season": "2023-24",
+          "cls": "Jr",
+          "g": 31,
+          "mp": 34.3,
+          "pts": 19.6,
+          "trb": 6.8,
+          "ast": 3.5,
+          "stl": 1.2,
+          "blk": 0.5,
+          "tov": 3.1,
+          "fg": 0.465,
+          "tp": 0.36,
+          "ft": 0.796
+        },
+        {
+          "lvl": "College",
+          "team": "Texas Tech",
+          "season": "2022-23",
+          "cls": "So",
+          "g": 31,
+          "mp": 28.9,
+          "pts": 10.7,
+          "trb": 6.1,
+          "ast": 1.3,
+          "stl": 1.4,
+          "blk": 0.4,
+          "tov": 1.7,
+          "fg": 0.483,
+          "tp": 0.402,
+          "ft": 0.723
+        },
+        {
+          "lvl": "College",
+          "team": "Texas",
+          "season": "2021-22",
+          "cls": "Fr",
+          "g": 8,
+          "mp": 6.9,
+          "pts": 1.8,
+          "trb": 1.1,
+          "ast": 0.4,
+          "stl": 0.5,
+          "blk": 0.3,
+          "tov": 0.4,
+          "fg": 0.4,
+          "tp": 0.0,
+          "ft": 0.667
+        }
+      ]
+    },
+    "21": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Baylor",
+          "season": "2023-24",
+          "cls": "Fr",
+          "g": 34,
+          "mp": 22.9,
+          "pts": 10.7,
+          "trb": 5.6,
+          "ast": 0.4,
+          "stl": 0.6,
+          "blk": 1.5,
+          "tov": 1.1,
+          "fg": 0.614,
+          "tp": null,
+          "ft": 0.616
+        }
+      ]
+    },
+    "45": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Houston",
+          "season": "2023-24",
+          "cls": "Sr",
+          "g": 37,
+          "mp": 31.1,
+          "pts": 12.9,
+          "trb": 3.7,
+          "ast": 6.3,
+          "stl": 2.2,
+          "blk": 0.5,
+          "tov": 2.0,
+          "fg": 0.409,
+          "tp": 0.309,
+          "ft": 0.779
+        },
+        {
+          "lvl": "College",
+          "team": "Houston",
+          "season": "2022-23",
+          "cls": "Jr",
+          "g": 37,
+          "mp": 32.6,
+          "pts": 10.5,
+          "trb": 3.0,
+          "ast": 5.4,
+          "stl": 1.7,
+          "blk": 0.2,
+          "tov": 2.1,
+          "fg": 0.415,
+          "tp": 0.31,
+          "ft": 0.732
+        },
+        {
+          "lvl": "College",
+          "team": "Houston",
+          "season": "2021-22",
+          "cls": "So",
+          "g": 38,
+          "mp": 31.0,
+          "pts": 10.0,
+          "trb": 3.0,
+          "ast": 5.8,
+          "stl": 1.6,
+          "blk": 0.2,
+          "tov": 2.0,
+          "fg": 0.405,
+          "tp": 0.298,
+          "ft": 0.802
+        },
+        {
+          "lvl": "College",
+          "team": "Houston",
+          "season": "2020-21",
+          "cls": "Fr",
+          "g": 26,
+          "mp": 9.9,
+          "pts": 3.3,
+          "trb": 1.1,
+          "ast": 1.5,
+          "stl": 0.8,
+          "blk": 0.2,
+          "tov": 1.0,
+          "fg": 0.455,
+          "tp": 0.125,
+          "ft": 0.75
+        }
+      ]
+    },
+    "46": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Minnesota",
+          "season": "2023-24",
+          "cls": "Fr",
+          "g": 33,
+          "mp": 30.1,
+          "pts": 11.3,
+          "trb": 3.6,
+          "ast": 2.2,
+          "stl": 0.6,
+          "blk": 0.3,
+          "tov": 1.2,
+          "fg": 0.403,
+          "tp": 0.391,
+          "ft": 0.791
+        }
+      ]
+    },
+    "47": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Kentucky",
+          "season": "2023-24",
+          "cls": "Sr",
+          "g": 33,
+          "mp": 31.4,
+          "pts": 20.2,
+          "trb": 4.2,
+          "ast": 1.6,
+          "stl": 0.7,
+          "blk": 0.2,
+          "tov": 1.2,
+          "fg": 0.512,
+          "tp": 0.447,
+          "ft": 0.863
+        },
+        {
+          "lvl": "College",
+          "team": "Kentucky",
+          "season": "2022-23",
+          "cls": "Sr",
+          "g": 34,
+          "mp": 27.9,
+          "pts": 14.4,
+          "trb": 2.1,
+          "ast": 1.1,
+          "stl": 0.4,
+          "blk": 0.2,
+          "tov": 1.5,
+          "fg": 0.416,
+          "tp": 0.398,
+          "ft": 0.783
+        },
+        {
+          "lvl": "College",
+          "team": "Illinois St.",
+          "season": "2021-22",
+          "cls": "Jr",
+          "g": 33,
+          "mp": 34.9,
+          "pts": 20.1,
+          "trb": 3.5,
+          "ast": 1.8,
+          "stl": 1.1,
+          "blk": 0.5,
+          "tov": 2.3,
+          "fg": 0.469,
+          "tp": 0.39,
+          "ft": 0.818
+        },
+        {
+          "lvl": "College",
+          "team": "Illinois St.",
+          "season": "2020-21",
+          "cls": "So",
+          "g": 25,
+          "mp": 29.9,
+          "pts": 12.4,
+          "trb": 3.3,
+          "ast": 1.4,
+          "stl": 0.4,
+          "blk": 0.2,
+          "tov": 1.8,
+          "fg": 0.425,
+          "tp": 0.306,
+          "ft": 0.763
+        },
+        {
+          "lvl": "College",
+          "team": "Illinois St.",
+          "season": "2019-20",
+          "cls": "Fr",
+          "g": 31,
+          "mp": 22.4,
+          "pts": 7.2,
+          "trb": 2.5,
+          "ast": 0.7,
+          "stl": 0.6,
+          "blk": 0.1,
+          "tov": 1.0,
+          "fg": 0.384,
+          "tp": 0.314,
+          "ft": 0.659
+        }
+      ]
+    },
+    "50": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Akron",
+          "season": "2023-24",
+          "cls": "Sr",
+          "g": 35,
+          "mp": 32.5,
+          "pts": 18.6,
+          "trb": 12.9,
+          "ast": 1.6,
+          "stl": 0.8,
+          "blk": 1.7,
+          "tov": 2.5,
+          "fg": 0.584,
+          "tp": 0.37,
+          "ft": 0.728
+        },
+        {
+          "lvl": "College",
+          "team": "Akron",
+          "season": "2022-23",
+          "cls": "Jr",
+          "g": 33,
+          "mp": 31.2,
+          "pts": 16.8,
+          "trb": 11.2,
+          "ast": 1.9,
+          "stl": 0.6,
+          "blk": 1.2,
+          "tov": 2.1,
+          "fg": 0.616,
+          "tp": 0.333,
+          "ft": 0.616
+        },
+        {
+          "lvl": "College",
+          "team": "Akron",
+          "season": "2021-22",
+          "cls": "So",
+          "g": 34,
+          "mp": 28.8,
+          "pts": 13.2,
+          "trb": 10.8,
+          "ast": 1.4,
+          "stl": 0.5,
+          "blk": 1.1,
+          "tov": 1.9,
+          "fg": 0.665,
+          "tp": 0.0,
+          "ft": 0.649
+        },
+        {
+          "lvl": "College",
+          "team": "Akron",
+          "season": "2020-21",
+          "cls": "So",
+          "g": 23,
+          "mp": 22.3,
+          "pts": 7.9,
+          "trb": 9.2,
+          "ast": 0.3,
+          "stl": 0.5,
+          "blk": 1.9,
+          "tov": 1.5,
+          "fg": 0.74,
+          "tp": null,
+          "ft": 0.659
+        },
+        {
+          "lvl": "College",
+          "team": "Akron",
+          "season": "2019-20",
+          "cls": "Fr",
+          "g": 7,
+          "mp": 1.9,
+          "pts": 0.7,
+          "trb": 0.6,
+          "ast": 0.0,
+          "stl": 0.0,
+          "blk": 0.1,
+          "tov": 0.0,
+          "fg": 1.0,
+          "tp": null,
+          "ft": 0.75
         }
       ]
     }

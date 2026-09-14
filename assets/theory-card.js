@@ -161,14 +161,14 @@
   function load(year) {
     const dec = (Math.floor(Number(year) / 10) * 10) + "s";
     return Promise.all([
-      fetch("./assets/slot-priors.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-      fetch("./assets/theory-packs/all.json").then(function (r) { return r.ok ? r.json() : null; }).then(function (all) {
+      fetch("./assets/slot-priors.json?v=77").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      fetch("./assets/theory-packs/all.json?v=77").then(function (r) { return r.ok ? r.json() : null; }).then(function (all) {
         if (all && all[String(year)]) return all[String(year)];
-        return fetch("./assets/theory-packs/" + year + ".json").then(function (r) { return r.ok ? r.json() : null; });
+        return fetch("./assets/theory-packs/" + year + ".json?v=77").then(function (r) { return r.ok ? r.json() : null; });
       }).catch(function () { return null; }),
-      fetch("./assets/outcomes/" + dec + ".json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-      fetch("./assets/outcomes-extra.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-      fetch("./assets/measurements-listed.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+      fetch("./assets/outcomes/" + dec + ".json?v=77").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      fetch("./assets/outcomes-extra.json?v=77").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      fetch("./assets/measurements-listed.json?v=80").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
     ]).then(function (parts) {
       const priors = parts[0] || (window.TANK_RANK && TANK_RANK.slotPriors) || {};
       if (priors && window.TANK_RANK) TANK_RANK.slotPriors = priors;

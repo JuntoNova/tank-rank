@@ -1,0 +1,27 @@
+{
+  "year": 2023,
+  "src": "Sports-Reference CBB",
+  "players": {
+    "17": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Indiana",
+          "season": "2022-23",
+          "cls": "Fr",
+          "g": 32,
+          "mp": 33.1,
+          "pts": 13.5,
+          "trb": 4.1,
+          "ast": 3.7,
+          "stl": 0.8,
+          "blk": 0.3,
+          "tov": 2.8,
+          "fg": 0.417,
+          "tp": 0.333,
+          "ft": 0.776
+        }
+      ]
+    }
+  }
+}

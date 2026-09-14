@@ -1,0 +1,703 @@
+{
+  "year": 2019,
+  "src": "Sports-Reference CBB",
+  "players": {
+    "1": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Duke",
+          "season": "2018-19",
+          "cls": "Fr",
+          "g": 33,
+          "mp": 30.0,
+          "pts": 22.6,
+          "trb": 8.9,
+          "ast": 2.1,
+          "stl": 2.1,
+          "blk": 1.8,
+          "tov": 2.4,
+          "fg": 0.68,
+          "tp": 0.338,
+          "ft": 0.64
+        }
+      ]
+    },
+    "3": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Duke",
+          "season": "2018-19",
+          "cls": "Fr",
+          "g": 38,
+          "mp": 35.3,
+          "pts": 22.6,
+          "trb": 7.6,
+          "ast": 4.3,
+          "stl": 0.9,
+          "blk": 0.4,
+          "tov": 3.2,
+          "fg": 0.454,
+          "tp": 0.308,
+          "ft": 0.665
+        }
+      ]
+    },
+    "4": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Virginia",
+          "season": "2018-19",
+          "cls": "So",
+          "g": 38,
+          "mp": 32.5,
+          "pts": 15.2,
+          "trb": 5.1,
+          "ast": 2.0,
+          "stl": 0.6,
+          "blk": 0.6,
+          "tov": 1.4,
+          "fg": 0.52,
+          "tp": 0.438,
+          "ft": 0.783
+        },
+        {
+          "lvl": "College",
+          "team": "Virginia",
+          "season": "2017-18",
+          "cls": "Fr",
+          "g": 33,
+          "mp": 19.9,
+          "pts": 9.2,
+          "trb": 3.5,
+          "ast": 1.1,
+          "stl": 0.6,
+          "blk": 0.4,
+          "tov": 0.9,
+          "fg": 0.488,
+          "tp": 0.382,
+          "ft": 0.755
+        },
+        {
+          "lvl": "College",
+          "team": "Did not play - redshirt",
+          "season": "2016-17",
+          "cls": "",
+          "g": null,
+          "mp": null,
+          "pts": null,
+          "trb": null,
+          "ast": null,
+          "stl": null,
+          "blk": null,
+          "tov": null,
+          "fg": null,
+          "tp": null,
+          "ft": null
+        }
+      ]
+    },
+    "5": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Vanderbilt",
+          "season": "2018-19",
+          "cls": "Fr",
+          "g": 5,
+          "mp": 27.8,
+          "pts": 16.2,
+          "trb": 3.8,
+          "ast": 2.6,
+          "stl": 0.8,
+          "blk": 0.4,
+          "tov": 3.0,
+          "fg": 0.537,
+          "tp": 0.478,
+          "ft": 0.75
+        }
+      ]
+    },
+    "6": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Texas Tech",
+          "season": "2018-19",
+          "cls": "So",
+          "g": 38,
+          "mp": 32.5,
+          "pts": 18.5,
+          "trb": 6.4,
+          "ast": 3.7,
+          "stl": 1.5,
+          "blk": 0.6,
+          "tov": 2.7,
+          "fg": 0.461,
+          "tp": 0.304,
+          "ft": 0.707
+        },
+        {
+          "lvl": "College",
+          "team": "Texas Tech",
+          "season": "2017-18",
+          "cls": "Fr",
+          "g": 37,
+          "mp": 26.4,
+          "pts": 11.2,
+          "trb": 4.8,
+          "ast": 1.8,
+          "stl": 1.1,
+          "blk": 0.7,
+          "tov": 1.5,
+          "fg": 0.455,
+          "tp": 0.382,
+          "ft": 0.648
+        }
+      ]
+    },
+    "20": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Washington",
+          "season": "2018-19",
+          "cls": "Sr",
+          "g": 36,
+          "mp": 31.1,
+          "pts": 9.1,
+          "trb": 3.1,
+          "ast": 2.1,
+          "stl": 3.5,
+          "blk": 2.3,
+          "tov": 1.8,
+          "fg": 0.415,
+          "tp": 0.305,
+          "ft": 0.851
+        },
+        {
+          "lvl": "College",
+          "team": "Washington",
+          "season": "2017-18",
+          "cls": "Jr",
+          "g": 34,
+          "mp": 32.3,
+          "pts": 11.2,
+          "trb": 2.9,
+          "ast": 2.6,
+          "stl": 3.0,
+          "blk": 1.4,
+          "tov": 2.2,
+          "fg": 0.445,
+          "tp": 0.365,
+          "ft": 0.714
+        },
+        {
+          "lvl": "College",
+          "team": "Washington",
+          "season": "2016-17",
+          "cls": "So",
+          "g": 31,
+          "mp": 29.9,
+          "pts": 10.5,
+          "trb": 3.1,
+          "ast": 1.8,
+          "stl": 2.1,
+          "blk": 0.7,
+          "tov": 2.0,
+          "fg": 0.448,
+          "tp": 0.405,
+          "ft": 0.841
+        },
+        {
+          "lvl": "College",
+          "team": "Washington",
+          "season": "2015-16",
+          "cls": "Fr",
+          "g": 34,
+          "mp": 24.1,
+          "pts": 6.2,
+          "trb": 3.2,
+          "ast": 1.6,
+          "stl": 1.1,
+          "blk": 0.9,
+          "tov": 1.4,
+          "fg": 0.397,
+          "tp": 0.366,
+          "ft": 0.714
+        }
+      ]
+    },
+    "21": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Gonzaga",
+          "season": "2018-19",
+          "cls": "Jr",
+          "g": 37,
+          "mp": 28.1,
+          "pts": 16.9,
+          "trb": 8.6,
+          "ast": 1.9,
+          "stl": 1.2,
+          "blk": 3.2,
+          "tov": 1.5,
+          "fg": 0.687,
+          "tp": 0.267,
+          "ft": 0.694
+        },
+        {
+          "lvl": "College",
+          "team": "Did not play - transfer (Transfer)",
+          "season": "2017-18",
+          "cls": "",
+          "g": null,
+          "mp": null,
+          "pts": null,
+          "trb": null,
+          "ast": null,
+          "stl": null,
+          "blk": null,
+          "tov": null,
+          "fg": null,
+          "tp": null,
+          "ft": null
+        },
+        {
+          "lvl": "College",
+          "team": "San Jose St.",
+          "season": "2016-17",
+          "cls": "So",
+          "g": 30,
+          "mp": 31.9,
+          "pts": 17.3,
+          "trb": 8.7,
+          "ast": 2.3,
+          "stl": 1.2,
+          "blk": 2.6,
+          "tov": 1.8,
+          "fg": 0.592,
+          "tp": 0.333,
+          "ft": 0.572
+        },
+        {
+          "lvl": "College",
+          "team": "San Jose St.",
+          "season": "2015-16",
+          "cls": "Fr",
+          "g": 31,
+          "mp": 23.5,
+          "pts": 8.8,
+          "trb": 5.6,
+          "ast": 1.5,
+          "stl": 0.7,
+          "blk": 1.2,
+          "tov": 1.1,
+          "fg": 0.634,
+          "tp": 0.167,
+          "ft": 0.561
+        }
+      ]
+    },
+    "45": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Nebraska",
+          "season": "2018-19",
+          "cls": "Jr",
+          "g": 35,
+          "mp": 31.2,
+          "pts": 11.8,
+          "trb": 6.9,
+          "ast": 1.9,
+          "stl": 1.3,
+          "blk": 1.9,
+          "tov": 2.0,
+          "fg": 0.454,
+          "tp": 0.333,
+          "ft": 0.677
+        },
+        {
+          "lvl": "College",
+          "team": "Nebraska",
+          "season": "2017-18",
+          "cls": "So",
+          "g": 32,
+          "mp": 24.0,
+          "pts": 8.7,
+          "trb": 6.3,
+          "ast": 1.7,
+          "stl": 0.6,
+          "blk": 2.0,
+          "tov": 1.5,
+          "fg": 0.565,
+          "tp": 0.405,
+          "ft": 0.724
+        },
+        {
+          "lvl": "College",
+          "team": "Nebraska",
+          "season": "2016-17",
+          "cls": "Fr",
+          "g": 30,
+          "mp": 15.2,
+          "pts": 3.1,
+          "trb": 2.9,
+          "ast": 0.7,
+          "stl": 0.5,
+          "blk": 0.8,
+          "tov": 1.2,
+          "fg": 0.394,
+          "tp": 0.2,
+          "ft": 0.762
+        }
+      ]
+    },
+    "46": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Iowa St.",
+          "season": "2018-19",
+          "cls": "Fr",
+          "g": 35,
+          "mp": 27.2,
+          "pts": 11.8,
+          "trb": 4.9,
+          "ast": 2.3,
+          "stl": 1.3,
+          "blk": 0.7,
+          "tov": 1.7,
+          "fg": 0.406,
+          "tp": 0.308,
+          "ft": 0.625
+        }
+      ]
+    },
+    "50": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Charleston",
+          "season": "2018-19",
+          "cls": "Sr",
+          "g": 33,
+          "mp": 34.0,
+          "pts": 19.4,
+          "trb": 8.4,
+          "ast": 2.4,
+          "stl": 1.4,
+          "blk": 0.9,
+          "tov": 2.6,
+          "fg": 0.517,
+          "tp": 0.328,
+          "ft": 0.785
+        },
+        {
+          "lvl": "College",
+          "team": "Charleston",
+          "season": "2017-18",
+          "cls": "Jr",
+          "g": 24,
+          "mp": 32.3,
+          "pts": 17.3,
+          "trb": 7.1,
+          "ast": 1.7,
+          "stl": 1.0,
+          "blk": 0.8,
+          "tov": 2.5,
+          "fg": 0.5,
+          "tp": 0.385,
+          "ft": 0.821
+        },
+        {
+          "lvl": "College",
+          "team": "Charleston",
+          "season": "2016-17",
+          "cls": "So",
+          "g": 35,
+          "mp": 32.0,
+          "pts": 14.2,
+          "trb": 8.4,
+          "ast": 1.2,
+          "stl": 1.1,
+          "blk": 0.7,
+          "tov": 2.6,
+          "fg": 0.459,
+          "tp": 0.369,
+          "ft": 0.758
+        },
+        {
+          "lvl": "College",
+          "team": "Charleston",
+          "season": "2015-16",
+          "cls": "Fr",
+          "g": 31,
+          "mp": 28.4,
+          "pts": 11.7,
+          "trb": 7.3,
+          "ast": 1.3,
+          "stl": 1.3,
+          "blk": 0.5,
+          "tov": 2.5,
+          "fg": 0.462,
+          "tp": 0.333,
+          "ft": 0.716
+        }
+      ]
+    },
+    "51": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "LSU",
+          "season": "2018-19",
+          "cls": "So",
+          "g": 33,
+          "mp": 32.4,
+          "pts": 15.3,
+          "trb": 2.8,
+          "ast": 5.8,
+          "stl": 2.9,
+          "blk": 0.1,
+          "tov": 3.5,
+          "fg": 0.43,
+          "tp": 0.327,
+          "ft": 0.813
+        },
+        {
+          "lvl": "College",
+          "team": "LSU",
+          "season": "2017-18",
+          "cls": "Fr",
+          "g": 33,
+          "mp": 33.0,
+          "pts": 15.9,
+          "trb": 3.4,
+          "ast": 6.0,
+          "stl": 2.0,
+          "blk": 0.1,
+          "tov": 2.9,
+          "fg": 0.417,
+          "tp": 0.351,
+          "ft": 0.801
+        }
+      ]
+    },
+    "7": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "UNC",
+          "season": "2018-19",
+          "cls": "Fr",
+          "g": 35,
+          "mp": 28.5,
+          "pts": 16.1,
+          "trb": 3.5,
+          "ast": 4.1,
+          "stl": 1.1,
+          "blk": 0.3,
+          "tov": 2.7,
+          "fg": 0.423,
+          "tp": 0.353,
+          "ft": 0.8
+        }
+      ]
+    },
+    "8": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Texas",
+          "season": "2018-19",
+          "cls": "Fr",
+          "g": 32,
+          "mp": 23.3,
+          "pts": 10,
+          "trb": 5,
+          "ast": 0.3,
+          "stl": 0.6,
+          "blk": 2.2,
+          "tov": 0.9,
+          "fg": 0.728,
+          "tp": null,
+          "ft": 0.74
+        }
+      ]
+    },
+    "9": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Gonzaga",
+          "season": "2018-19",
+          "cls": "Jr",
+          "g": 37,
+          "mp": 30.2,
+          "pts": 19.7,
+          "trb": 6.5,
+          "ast": 1.5,
+          "stl": 0.9,
+          "blk": 0.7,
+          "tov": 1.8,
+          "fg": 0.591,
+          "tp": 0.417,
+          "ft": 0.739
+        },
+        {
+          "lvl": "College",
+          "team": "Gonzaga",
+          "season": "2017-18",
+          "cls": "So",
+          "g": 37,
+          "mp": 20.7,
+          "pts": 11.6,
+          "trb": 4.7,
+          "ast": 0.6,
+          "stl": 0.5,
+          "blk": 0.5,
+          "tov": 1.2,
+          "fg": 0.568,
+          "tp": 0.192,
+          "ft": 0.795
+        },
+        {
+          "lvl": "College",
+          "team": "Gonzaga",
+          "season": "2016-17",
+          "cls": "Fr",
+          "g": 28,
+          "mp": 4.6,
+          "pts": 2.6,
+          "trb": 1.4,
+          "ast": 0.1,
+          "stl": 0.2,
+          "blk": 0.1,
+          "tov": 0.3,
+          "fg": 0.528,
+          "tp": 0.286,
+          "ft": 0.542
+        }
+      ]
+    },
+    "10": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Duke",
+          "season": "2018-19",
+          "cls": "Fr",
+          "g": 36,
+          "mp": 29.7,
+          "pts": 13.5,
+          "trb": 3.7,
+          "ast": 1.9,
+          "stl": 1.6,
+          "blk": 0.6,
+          "tov": 2.7,
+          "fg": 0.356,
+          "tp": 0.333,
+          "ft": 0.772
+        }
+      ]
+    },
+    "11": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Texas St.",
+          "season": "2010-11",
+          "cls": "Sr",
+          "g": 29,
+          "mp": 24.1,
+          "pts": 12.9,
+          "trb": 5.4,
+          "ast": 0.7,
+          "stl": 0.8,
+          "blk": 0.6,
+          "tov": 2.3,
+          "fg": 0.484,
+          "tp": null,
+          "ft": 0.645
+        },
+        {
+          "lvl": "College",
+          "team": "Texas St.",
+          "season": "2009-10",
+          "cls": "Jr",
+          "g": 30,
+          "mp": 25.4,
+          "pts": 14.6,
+          "trb": 7.9,
+          "ast": 1.1,
+          "stl": 1.6,
+          "blk": 0.5,
+          "tov": 3,
+          "fg": 0.452,
+          "tp": 0,
+          "ft": 0.631
+        },
+        {
+          "lvl": "College",
+          "team": "Texas St.",
+          "season": "2008-09",
+          "cls": "So",
+          "g": 30,
+          "mp": 19.2,
+          "pts": 9.5,
+          "trb": 5.3,
+          "ast": 0.6,
+          "stl": 0.8,
+          "blk": 0.7,
+          "tov": 1.8,
+          "fg": 0.487,
+          "tp": null,
+          "ft": 0.583
+        },
+        {
+          "lvl": "College",
+          "team": "Texas St.",
+          "season": "2007-08",
+          "cls": "Fr",
+          "g": 29,
+          "mp": 10.7,
+          "pts": 3.2,
+          "trb": 2.9,
+          "ast": 0.4,
+          "stl": 0.4,
+          "blk": 0.2,
+          "tov": 1,
+          "fg": 0.396,
+          "tp": 1,
+          "ft": 0.394
+        }
+      ]
+    },
+    "13": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Kentucky",
+          "season": "2018-19",
+          "cls": "Fr",
+          "g": 37,
+          "mp": 32.6,
+          "pts": 14,
+          "trb": 4.5,
+          "ast": 2.5,
+          "stl": 1.1,
+          "blk": 0.3,
+          "tov": 1.6,
+          "fg": 0.462,
+          "tp": 0.355,
+          "ft": 0.935
+        }
+      ]
+    }
+  }
+}

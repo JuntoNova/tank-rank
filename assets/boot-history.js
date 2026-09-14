@@ -39,7 +39,7 @@
           rd: r.rd, yrs: r.yrs, g: r.g, pts: r.pts, ws: r.ws, vorp: r.vorp,
           hof: r.hof || 0, allStar: r.as || 0, nba1: r.nba1 || 0, allNba: r.nba || 0,
           champs: r.ch || 0, mvp: r.mvp || 0,
-          ht: "", wt: "", age: "",
+          ht: r.ht || "", wt: r.wt || "", age: r.age || "",
           pHof: null, pAllNba: null, pAllStar: null, pBust: null,
           expWs: r.ws || null, delta: null,
           features: ["Draft slot", "College", "Career WS"]
@@ -54,10 +54,10 @@
     year = Number(year);
     if (!year || year >= TANK_RANK.currentYear) return Promise.resolve();
     if (TANK_RANK.drafts[year] && (TANK_RANK.drafts[year].players || []).length) return Promise.resolve();
-    return loadJSON("./assets/history/" + year + ".json").then((rows) => {
+    return loadJSON("./assets/history/" + year + ".json?v=77").then((rows) => {
       if (rows && rows.length) { ingest(rows); return; }
       const dec = String(Math.floor(year / 10) * 10) + "s";
-      return loadJSON("./assets/history/" + dec + ".json").then((all) => {
+      return loadJSON("./assets/history/" + dec + ".json?v=77").then((all) => {
         const mine = (all || []).filter((r) => Number(r.y) === year);
         if (mine.length) ingest(mine);
       });

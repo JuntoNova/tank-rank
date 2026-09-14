@@ -1,0 +1,27 @@
+{
+  "year": 2017,
+  "src": "Sports-Reference CBB",
+  "players": {
+    "16": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Creighton",
+          "season": "2016-17",
+          "cls": "Fr",
+          "g": 35,
+          "mp": 25.3,
+          "pts": 12.9,
+          "trb": 6.2,
+          "ast": 1.2,
+          "stl": 0.9,
+          "blk": 1.4,
+          "tov": 1.7,
+          "fg": 0.676,
+          "tp": 0.533,
+          "ft": 0.517
+        }
+      ]
+    }
+  }
+}

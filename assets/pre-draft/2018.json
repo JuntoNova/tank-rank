@@ -1,0 +1,82 @@
+{
+  "year": 2018,
+  "src": "Sports-Reference CBB",
+  "players": {
+    "16": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Texas Tech",
+          "season": "2017-18",
+          "cls": "Fr",
+          "g": 37,
+          "mp": 28.4,
+          "pts": 11.3,
+          "trb": 5.0,
+          "ast": 1.8,
+          "stl": 1.1,
+          "blk": 1.1,
+          "tov": 1.1,
+          "fg": 0.556,
+          "tp": 0.45,
+          "ft": 0.717
+        }
+      ]
+    },
+    "17": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Villanova",
+          "season": "2017-18",
+          "cls": "So",
+          "g": 40,
+          "mp": 29.3,
+          "pts": 13.4,
+          "trb": 4.8,
+          "ast": 3.5,
+          "stl": 1.1,
+          "blk": 0.2,
+          "tov": 2.0,
+          "fg": 0.481,
+          "tp": 0.401,
+          "ft": 0.71
+        },
+        {
+          "lvl": "College",
+          "team": "Villanova",
+          "season": "2016-17",
+          "cls": "Fr",
+          "g": 36,
+          "mp": 25.5,
+          "pts": 8.8,
+          "trb": 3.8,
+          "ast": 1.7,
+          "stl": 0.9,
+          "blk": 0.3,
+          "tov": 1.4,
+          "fg": 0.466,
+          "tp": 0.365,
+          "ft": 0.699
+        },
+        {
+          "lvl": "College",
+          "team": "Villanova",
+          "season": "2015-16",
+          "cls": "Fr",
+          "g": 9,
+          "mp": 8.2,
+          "pts": 1.7,
+          "trb": 1.8,
+          "ast": 0.4,
+          "stl": 0.4,
+          "blk": 0.0,
+          "tov": 0.8,
+          "fg": 0.286,
+          "tp": 0.176,
+          "ft": null
+        }
+      ]
+    }
+  }
+}
