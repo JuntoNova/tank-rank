@@ -2,6 +2,7 @@
   var NAV_ORDER = [
     { match: /drafts\.html/i, label: /^historic$/i },
     { match: /upcoming\.html/i, label: /^upcoming$/i },
+    { match: /outliers\.html/i, label: /^outliers$/i },
     { match: /theories\.html/i, label: /^theories$/i },
     { match: /methodology\.html/i, label: /^methodology$/i }
   ];
@@ -45,19 +46,32 @@
     });
   }
 
-  function ensureTheories(nav) {
+  function ensureLink(nav, href, label, pathRe) {
     var has = Array.from(nav.querySelectorAll("a")).some(function (a) {
-      return /theories\.html/i.test(a.getAttribute("href") || "") || /^theories$/i.test((a.textContent || "").trim());
+      return pathRe.test(a.getAttribute("href") || "") || new RegExp("^" + label + "$", "i").test((a.textContent || "").trim());
     });
     if (!has) {
       var a = document.createElement("a");
-      a.href = "./theories.html";
-      a.textContent = "Theories";
+      a.href = href;
+      a.textContent = label;
       nav.appendChild(a);
     }
+  }
+
+  function ensureTheories(nav) {
+    ensureLink(nav, "./theories.html", "Theories", /theories\.html/i);
     if (THEORY_PATH.test(location.pathname || "") || THEORY_PATH.test(location.href || "")) {
       nav.querySelectorAll("a").forEach(function (a) {
         a.classList.toggle("active", /theories\.html/i.test(a.getAttribute("href") || "") || /^theories$/i.test((a.textContent || "").trim()));
+      });
+    }
+  }
+
+  function ensureOutliers(nav) {
+    ensureLink(nav, "./outliers.html", "Outliers", /outliers\.html/i);
+    if (/outliers\.html/i.test(location.pathname || "") || /outliers\.html/i.test(location.href || "")) {
+      nav.querySelectorAll("a").forEach(function (a) {
+        a.classList.toggle("active", /outliers\.html/i.test(a.getAttribute("href") || "") || /^outliers$/i.test((a.textContent || "").trim()));
       });
     }
   }
@@ -117,6 +131,7 @@
     if (nav) {
       stripAbout(nav);
       stripBigBoard(nav);
+      ensureOutliers(nav);
       ensureTheories(nav);
       orderNav(nav);
     }
@@ -146,7 +161,7 @@
     window.__tdmNavObs.observe(root, { childList: true, subtree: false });
   }
 
-  ["renderHome", "renderBoard", "renderDrafts", "renderUpcoming", "renderSimple", "renderPlayer"].forEach((name) => {
+  ["renderHome", "renderBoard", "renderDrafts", "renderUpcoming", "renderSimple", "renderPlayer", "renderOutliers"].forEach((name) => {
     const fn = window.TR && TR[name];
     if (typeof fn !== "function") return;
     TR[name] = function () {

@@ -8,13 +8,14 @@ Repo: https://github.com/JuntoNova/tank-rank
 
 ## Locked IA (do not “fix” back)
 
-- **Menu order:** Historic → Upcoming → Theories → Methodology
+- **Menu order:** Historic → Upcoming → Outliers → Theories → Methodology
 - **Homepage doors:** Historic (Past) on the left / first. Upcoming (Future) on the right / second.
 - **Homepage door blurbs:** Historic `1947–2026.` Upcoming `2027 board, plus 2028 and 2029.` Do not use “living”, “every completed class”, or “every round” on the home doors.
 - **Historic board banner:** none. Do not restore “Theory-adjusted estimates…” on completed classes.
 - **Historic year boards:** keep a `← Historic drafts` button to `drafts.html` in `.section-head`.
 - **About is off the menu.** `about.html` may stay as a direct URL. Do not add About back to `.nav-links`.
 - **Theories is on the menu.** Hub is `theories.html`. Do not drop it. Individual theory pages (`size.html`, `age.html`, …) stay off the top nav and highlight Theories.
+- **Outliers is on the menu.** Hub is `outliers.html`. Three pills: Overachieved / Underachieved / Most different. Do not drop it. Data lives in `assets/outliers.json`; rebuild with `pipeline/score-outliers.py`.
 - **Big Board is off the menu.** It duplicates Upcoming. `board.html?year=` stays as the board URL. Do not put Big Board back in `.nav-links`. About stays off the menu.
 
 ## Living boards
@@ -80,3 +81,4 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 - 2026-09-14 (Grok bot): PR-F — honor pct honesty (`<1%` / blank, never `0%`); pack vs depth disclose for 2027 (features 1–62; 63–100 slot×origin only). No read-2027 SEO page. Stokes create/HOF and Daniels SE Melbourne Phoenix untouched.
 - 2026-09-14 (Grok chat): Bulk-filled Yrs for every historic class 1947–2026 from Basketball-Reference draft tables (seasons/G/PTS/WS). Existing honors kept. Incomplete BAA tables (1947–49, 1952–53) only overlay matching picks then 0 for the rest. Do not wipe decade overlays when filling a single year. 1947 now has history/1947.json (was only 1940s.json).
 - 2026-09-14 (Grok chat): Mobile top-right Menu was broken — .nav-inner was a 64px row so the dropdown could not wrap under the hamburger. Flex-wrap + full-width sheet, hide logo year on small screens, rebind Menu click in nav-swap.
+- 2026-09-14 (Grok chat): New Outliers menu page (`outliers.html`). Three pills: Overachieved (all-time surplus vs theory-adjusted slot), Underachieved (lottery 1–8, 1989–2017), Most different (relative |delta|/expected). Order is Historic → Upcoming → Outliers → Theories → Methodology. Rebuild lists with `pipeline/score-outliers.py`. Do not invent honors. Do not put Big Board or About back.

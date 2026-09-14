@@ -10,7 +10,7 @@
 
   src = src.replace(
     '<a class="${active === \"upcoming\" ? \"active\" : \"\"}" href="./upcoming.html">Upcoming</a>\n          <a class="${active === \"drafts\" ? \"active\" : \"\"}" href="./drafts.html">Historic</a>\n          <a class="${active === \"board\" ? \"active\" : \"\"}" href="./board.html">Big Board</a>\n          <a class="${active === \"method\" ? \"active\" : \"\"}" href="./methodology.html">Methodology</a>\n          <a class="${active === \"about\" ? \"active\" : \"\"}" href="./about.html">About</a>',
-    '<a class="${active === \"drafts\" ? \"active\" : \"\"}" href="./drafts.html">Historic</a>\n          <a class="${active === \"upcoming\" ? \"active\" : \"\"}" href="./upcoming.html">Upcoming</a>\n          <a class="${active === \"theories\" ? \"active\" : \"\"}" href="./theories.html">Theories</a>\n          <a class="${active === \"method\" ? \"active\" : \"\"}" href="./methodology.html">Methodology</a>'
+    '<a class="${active === \"drafts\" ? \"active\" : \"\"}" href="./drafts.html">Historic</a>\n          <a class="${active === \"upcoming\" ? \"active\" : \"\"}" href="./upcoming.html">Upcoming</a>\n          <a class="${active === \"outliers\" ? \"active\" : \"\"}" href="./outliers.html">Outliers</a>\n          <a class="${active === \"theories\" ? \"active\" : \"\"}" href="./theories.html">Theories</a>\n          <a class="${active === \"method\" ? \"active\" : \"\"}" href="./methodology.html">Methodology</a>'
   );
   src = src.replace(
     "function isSettled(year) {\n  return year <= 1999;\n}",
