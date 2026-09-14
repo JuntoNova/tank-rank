@@ -101,6 +101,19 @@
     const hero = root.querySelector(".player-hero");
     if (hero && hero.parentNode) hero.parentNode.insertBefore(box, hero.nextSibling);
     hideEmptySize();
+    var cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+    var yearNow = Number(new URLSearchParams(location.search).get("year")) || cur;
+    if (yearNow < cur) {
+      document.querySelectorAll(".banner").forEach(function (el) { el.remove(); });
+      var cta = document.querySelector(".player-hero .cta-row");
+      if (cta && !cta.querySelector(".back-historic")) {
+        var a = document.createElement("a");
+        a.className = "btn ghost back-historic";
+        a.href = "./drafts.html";
+        a.textContent = "← Historic drafts";
+        cta.appendChild(a);
+      }
+    }
   }
   function load(year) {
     const dec = (Math.floor(Number(year) / 10) * 10) + "s";
@@ -152,6 +165,8 @@
           if (L.wsp && !p.wsp) p.wsp = L.wsp;
           if (L.reach && !p.reach) p.reach = L.reach;
         }
+        var cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+        if ((p.yrs == null || p.yrs === "") && year === cur - 1) p.yrs = 0;
       });
       return { priors: priors, draft: draft };
     });

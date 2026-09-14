@@ -1,15 +1,96 @@
 {
-  "2020-1": {"src":"listed","ht":"6-5","wt":225,"wsp":"6-9","reach":"8-4","n":"Anthony Edwards"},
-  "2020-2": {"src":"listed","ht":"7-1","wt":235,"wsp":"7-6","n":"James Wiseman"},
-  "2020-3": {"src":"listed","ht":"6-7","wt":181,"wsp":"6-9","n":"LaMelo Ball"},
-  "2020-4": {"src":"listed","ht":"6-7","wt":225,"wsp":"6-11","n":"Patrick Williams"},
-  "2020-5": {"src":"listed","ht":"6-6","wt":225,"n":"Isaac Okoro"},
-  "2020-7": {"src":"listed","ht":"6-5","wt":195,"wsp":"6-8","n":"Killian Hayes"},
-  "2020-9": {"src":"listed","ht":"6-9","wt":210,"wsp":"6-9","n":"Deni Avdija"},
-  "2020-11": {"src":"listed","ht":"6-7","wt":200,"n":"Devin Vassell"},
-  "2020-12": {"src":"listed","ht":"6-5","wt":175,"wsp":"6-8","n":"Tyrese Haliburton"},
-  "2020-15": {"src":"listed","ht":"6-3","wt":185,"n":"Cole Anthony"},
-  "2020-21": {"src":"listed","ht":"6-2","wt":200,"wsp":"6-6","n":"Tyrese Maxey"},
-  "2020-28": {"src":"listed","ht":"6-9","wt":185,"wsp":"7-0","n":"Jaden McDaniels"},
-  "2020-30": {"src":"listed","ht":"6-6","wt":215,"n":"Desmond Bane"}
+  "2020-1": {
+    "src": "listed",
+    "ht": "6-5",
+    "wt": 225,
+    "wsp": "6-9",
+    "reach": "8-4",
+    "n": "Anthony Edwards"
+  },
+  "2020-2": {
+    "src": "listed",
+    "ht": "7-1",
+    "wt": 235,
+    "wsp": "7-6",
+    "n": "James Wiseman"
+  },
+  "2020-3": {
+    "src": "listed",
+    "ht": "6-7",
+    "wt": 181,
+    "wsp": "6-9",
+    "n": "LaMelo Ball"
+  },
+  "2020-4": {
+    "src": "listed",
+    "ht": "6-7",
+    "wt": 225,
+    "wsp": "6-11",
+    "n": "Patrick Williams"
+  },
+  "2020-5": {
+    "src": "listed",
+    "ht": "6-6",
+    "wt": 225,
+    "n": "Isaac Okoro"
+  },
+  "2020-7": {
+    "src": "listed",
+    "ht": "6-5",
+    "wt": 195,
+    "wsp": "6-8",
+    "n": "Killian Hayes"
+  },
+  "2020-9": {
+    "src": "listed",
+    "ht": "6-9",
+    "wt": 210,
+    "wsp": "6-9",
+    "n": "Deni Avdija"
+  },
+  "2020-11": {
+    "src": "listed",
+    "ht": "6-7",
+    "wt": 200,
+    "n": "Devin Vassell"
+  },
+  "2020-12": {
+    "src": "listed",
+    "ht": "6-5",
+    "wt": 175,
+    "wsp": "6-8",
+    "n": "Tyrese Haliburton"
+  },
+  "2020-15": {
+    "src": "listed",
+    "ht": "6-3",
+    "wt": 185,
+    "n": "Cole Anthony"
+  },
+  "2020-21": {
+    "src": "listed",
+    "ht": "6-2",
+    "wt": 200,
+    "wsp": "6-6",
+    "n": "Tyrese Maxey"
+  },
+  "2020-28": {
+    "src": "listed",
+    "ht": "6-9",
+    "wt": 185,
+    "wsp": "7-0",
+    "n": "Jaden McDaniels"
+  },
+  "2020-30": {
+    "src": "listed",
+    "ht": "6-6",
+    "wt": 215,
+    "n": "Desmond Bane"
+  },
+  "2026-1": {
+    "src": "listed",
+    "ht": "6-9",
+    "wt": 217,
+    "n": "AJ Dybantsa"
+  }
 }

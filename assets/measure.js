@@ -1,6 +1,6 @@
 (function () {
   const FILES = [];
-  for (let y = 2000; y <= 2020; y++) FILES.push("./assets/mc-y-" + y + ".json?v=40");
+  for (let y = 2000; y <= 2026; y++) FILES.push("./assets/mc-y-" + y + ".json?v=69");
   FILES.push("./assets/mc-2000.json?v=40");
   FILES.push("./assets/mc-17.json?v=40");
   FILES.push("./assets/measurements-combine.json?v=40");

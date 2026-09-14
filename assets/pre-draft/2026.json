@@ -1,0 +1,27 @@
+{
+  "year": 2026,
+  "src": "Sports-Reference CBB; ESPN; NBA Combine",
+  "players": {
+    "1": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "BYU",
+          "season": "2025-26",
+          "cls": "Fr",
+          "g": 35,
+          "mp": 34.8,
+          "pts": 25.5,
+          "trb": 6.8,
+          "ast": 3.7,
+          "stl": 1.1,
+          "blk": 0.3,
+          "tov": 3.1,
+          "fg": 0.51,
+          "tp": 0.331,
+          "ft": 0.774
+        }
+      ]
+    }
+  }
+}
