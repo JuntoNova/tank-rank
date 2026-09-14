@@ -13,6 +13,13 @@ Repo: https://github.com/JuntoNova/tank-rank
 - **About is off the menu.** `about.html` may stay as a direct URL. Do not add About back to `.nav-links`.
 - Theories pages stay linked from Methodology / Theories, not from the top nav, unless Andrew asks.
 
+## Living boards
+
+- 2027 / 2028 / 2029 public boards target **at least 100 prospects**.
+- Depth overlays: `assets/board-2027-depth.js`, `board-2028-depth.js`, `board-2029-depth.js`.
+- Keep existing top-of-board order. Append public-consensus names. No invented honor odds.
+- 2028/2029 are HS-heavy. Rank is working consensus, not official pick order.
+
 ## Why this keeps breaking
 
 `assets/app.js` on main is a **wrapper**. It `GET`s a pinned CDN blob:
@@ -34,3 +41,6 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 ## Changelog
 
 - 2026-09-13 (Grok chat): Andrew reported Historic/Upcoming swapped on home + menu, and About back in the nav. Locked Historic-first / Upcoming-second. Stripped About from `.nav-links`. Added this file so the two agents stop overwriting IA.
+- 2026-09-13 (Grok chat): 2027 board to 100 via `assets/board-2027-depth.js` (Tankathon remainder + BR Wasserman Aug 2026).
+- 2026-09-13 (Grok chat): 2028 board to 100 via `assets/board-2028-depth.js` (ESPN 2027 SC Next remainder after existing 1–20).
+- 2026-09-13 (Grok chat): 2029 board to 100 via `assets/board-2029-depth.js` (keep 1–14; ESPN 2029 SC Next + On3/Rivals 2029; then ESPN 2028 SC Next names not already on the 2028 board).
