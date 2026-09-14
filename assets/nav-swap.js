@@ -2,7 +2,6 @@
   var NAV_ORDER = [
     { match: /drafts\.html/i, label: /^historic$/i },
     { match: /upcoming\.html/i, label: /^upcoming$/i },
-    { match: /board\.html/i, label: /^big board$/i },
     { match: /theories\.html/i, label: /^theories$/i },
     { match: /methodology\.html/i, label: /^methodology$/i }
   ];
@@ -35,6 +34,14 @@
       const href = a.getAttribute("href") || "";
       const text = (a.textContent || "").replace(/\s+/g, " ").trim();
       if (/about\.html/i.test(href) || /^about$/i.test(text)) a.remove();
+    });
+  }
+
+  function stripBigBoard(nav) {
+    nav.querySelectorAll("a").forEach((a) => {
+      const href = a.getAttribute("href") || "";
+      const text = (a.textContent || "").replace(/\s+/g, " ").trim();
+      if (/^big board$/i.test(text) || (/board\.html/i.test(href) && !/theories\.html/i.test(href))) a.remove();
     });
   }
 
@@ -98,6 +105,7 @@
     const nav = document.querySelector(".nav-links");
     if (nav) {
       stripAbout(nav);
+      stripBigBoard(nav);
       ensureTheories(nav);
       orderNav(nav);
     }
@@ -107,7 +115,7 @@
   }
 
   function swapNav() {
-    // Keep Big Board → board.html. Do not strip .logo span.
+    // Big Board is off the menu (redundant with Upcoming). board.html stays as a URL. Do not strip .logo span.
     stripFooterLine();
     lockIA();
   }

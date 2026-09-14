@@ -8,13 +8,14 @@ Repo: https://github.com/JuntoNova/tank-rank
 
 ## Locked IA (do not “fix” back)
 
-- **Menu order:** Historic → Upcoming → Big Board → Theories → Methodology
+- **Menu order:** Historic → Upcoming → Theories → Methodology
 - **Homepage doors:** Historic (Past) on the left / first. Upcoming (Future) on the right / second.
 - **Homepage door blurbs:** Historic `1947–2026.` Upcoming `2027 board, plus 2028 and 2029.` Do not use “living”, “every completed class”, or “every round” on the home doors.
 - **Historic board banner:** none. Do not restore “Theory-adjusted estimates…” on completed classes.
 - **Historic year boards:** keep a `← Historic drafts` button to `drafts.html` in `.section-head`.
 - **About is off the menu.** `about.html` may stay as a direct URL. Do not add About back to `.nav-links`.
-- **Theories is on the menu.** Hub is `theories.html`. Do not drop it. Individual theory pages (`size.html`, `age.html`, …) stay off the top nav and highlight Theories. About stays off the menu.
+- **Theories is on the menu.** Hub is `theories.html`. Do not drop it. Individual theory pages (`size.html`, `age.html`, …) stay off the top nav and highlight Theories.
+- **Big Board is off the menu.** It duplicates Upcoming. `board.html?year=` stays as the board URL. Do not put Big Board back in `.nav-links`. About stays off the menu.
 
 ## Living boards
 
@@ -70,3 +71,4 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 - 2026-09-13 (Grok chat): Drafts index showed “Akeem Olajuwon” for 1984. Display name is Hakeem. history-index.json + nav-swap lock.
 - 2026-09-13 (Grok chat): 1980 Yrs column empty except McHale. Joined Basketball-Reference seasons (Carroll 10, McHale 13). Honors kept. Do not overwrite 1984 in outcomes/1980s.json.
 - 2026-09-13 (Grok chat): 1980 Don Collins player card was empty. Washington State 1976-80 lines (Sr 23.1/6.0/2.7 stl, Pac-10 POY), listed 6-6 / 190, age 21.5 Sr, NBA yrs 6.
+- 2026-09-13 (Grok chat): Andrew said Big Board on the main menu is redundant with Upcoming. Removed it. Order is Historic → Upcoming → Theories → Methodology. board.html stays as a URL.
