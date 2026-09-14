@@ -1,0 +1,60 @@
+{
+  "year": 1977,
+  "src": "Sports-Reference CBB",
+  "players": {
+    "3": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "UCLA",
+          "season": "1976-77",
+          "cls": "Sr",
+          "g": 27,
+          "mp": 37.2,
+          "pts": 21.4,
+          "trb": 11.1,
+          "ast": 2.0,
+          "fg": 0.591,
+          "ft": 0.621
+        },
+        {
+          "lvl": "College",
+          "team": "UCLA",
+          "season": "1975-76",
+          "cls": "Jr",
+          "g": 32,
+          "mp": 36.4,
+          "pts": 17.3,
+          "trb": 9.4,
+          "ast": 2.5,
+          "fg": 0.54,
+          "ft": 0.757
+        },
+        {
+          "lvl": "College",
+          "team": "UCLA",
+          "season": "1974-75",
+          "cls": "So",
+          "g": 29,
+          "pts": 11.6,
+          "trb": 7.1,
+          "ast": 1.7,
+          "fg": 0.543,
+          "ft": 0.686
+        },
+        {
+          "lvl": "College",
+          "team": "UCLA",
+          "season": "1973-74",
+          "cls": "Fr",
+          "g": 27,
+          "pts": 7.2,
+          "trb": 3.3,
+          "ast": 0.9,
+          "fg": 0.634,
+          "ft": 0.737
+        }
+      ]
+    }
+  }
+}
