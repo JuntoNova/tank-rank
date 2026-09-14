@@ -4,11 +4,11 @@
   }
   function fmtExp(n) { return TR.Model ? TR.Model.fmtExp(n) : String(n); }
   function fmtPct(n) { return TR.Model ? TR.Model.fmtPct(n) : Math.round((n || 0) * 100) + "%"; }
-  function fmtMul(m) { return TR.Model ? TR.Model.fmtMul(m) : ("\u00d7" + Number(m).toFixed(2)); }
   function dash(v) {
     if (v == null || v === "") return "\u2014";
     return String(v);
   }
+  function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
   function project(p, feat, priors) { return TR.projectPlayer(p, feat, priors); }
   function deriveFeat(p) { return TR.deriveFeat(p); }
   function findPlayer(draft, id) {
@@ -30,12 +30,8 @@
     if (document.getElementById("th-card-css")) return;
     const s = document.createElement("style");
     s.id = "th-card-css";
-    s.textContent = ".player-hero .lede{display:none!important}.player-hero + .section .grid-3{display:none!important}.th-math{margin:8px 0 28px}.th-eq{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:0 0 16px}.th-eq div{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px}.th-eq label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}.th-eq b{font-family:var(--serif);font-size:26px;font-weight:500}.th-eq span{display:block;margin-top:4px;color:var(--muted);font-size:12px}.th-how{margin:0 0 14px;color:var(--text);font-size:15px;line-height:1.55;max-width:46em}.th-how a{text-decoration:underline;text-underline-offset:2px}.th-note{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.5;max-width:46em}.th-ledger table{min-width:720px}.th-ledger th:nth-child(5),.th-ledger td:nth-child(5){min-width:16em}.th-why{color:var(--muted);font-size:12px;line-height:1.45;max-width:28em}.th-mul{font-family:var(--mono);white-space:nowrap}.th-mul.up{color:var(--lime)}.th-mul.down{color:var(--coral)}.th-mul.flat{color:var(--muted)}.size-grid .tile.th-empty{display:none}@media (max-width:860px){.th-eq{grid-template-columns:1fr 1fr}}";
+    s.textContent = ".player-hero .lede{display:none!important}.player-hero + .section .grid-3{display:none!important}.th-math{margin:8px 0 28px}.th-ledger table{min-width:640px}.th-ledger .name{font-weight:500}.th-ledger .meta{color:var(--muted);font-size:12px;margin-top:2px}.th-mul.up{color:var(--lime)}.th-mul.down{color:var(--coral)}.th-mul.flat{color:inherit}.size-grid .tile.th-empty{display:none}";
     document.head.appendChild(s);
-  }
-  function mulClass(m) {
-    if (!m || Math.abs(m - 1) < 0.02) return "flat";
-    return m > 1 ? "up" : "down";
   }
   function hideEmptySize() {
     var box = document.getElementById("size-box");
@@ -78,40 +74,72 @@
     if (val == null || val === "") return "";
     return '<div class="metric"><label>' + label + "</label><b>" + val + "</b></div>";
   }
-  function theoryLink(s) {
-    if (s.href) return '<a href="' + s.href + '">' + s.label + "</a>";
-    return s.label;
+  function theoryName(s) {
+    var name = s.label || s.id;
+    if (s.href) name = '<a href="' + s.href + '">' + name + "</a>";
+    var meta = (s.value && s.value !== "-" && s.value !== "missing") ? String(s.value) : "";
+    return '<div class="name">' + name + "</div>" + (meta ? '<div class="meta">' + meta + "</div>" : "");
   }
-  function howLine(full) {
-    var parts = [fmtPct(full.slotHof) + " slot"];
+  function scoreOf(full, mAs, mNba, mHof, mMvp, mYrs) {
+    var inten = (TR.Model && TR.Model.INTENSITY && TR.Model.INTENSITY[full.slot]) || {};
+    mAs = clamp(mAs, 0.20, 2.20);
+    mNba = clamp(mNba, 0.20, 2.20);
+    mHof = clamp(mHof, 0.20, 1.80);
+    mMvp = clamp(mMvp, 0.15, 3.20);
+    mYrs = clamp(mYrs, 0.55, 1.35);
+    var pAs = clamp((full.slotAs || 0) * mAs, 0.002, 0.92);
+    var pNba = clamp((full.slotNba || 0) * mNba, 0.001, 0.80);
+    var pHof = clamp((full.slotHof || 0) * mHof, 0.0005, 0.72);
+    return {
+      expAs: pAs * (inten.as || 0),
+      expNba1: pNba * (inten.nba1 || 0),
+      expNba: pNba * (inten.nba || 0),
+      expYrs: (inten.yrs || 0) * mYrs,
+      expCh: (inten.ch || 0) * clamp((mAs + mHof) / 2, 0.50, 1.40),
+      expMvp: (inten.mvp || 0) * mMvp,
+      pHof: pHof
+    };
+  }
+  function moved(s) {
+    return Math.abs((s.mAs || 1) - 1) >= 0.02
+      || Math.abs((s.mNba || 1) - 1) >= 0.02
+      || Math.abs((s.mHof || 1) - 1) >= 0.02
+      || Math.abs((s.mMvp || 1) - 1) >= 0.02
+      || Math.abs((s.mYrs || 1) - 1) >= 0.02;
+  }
+  function td(now, was, pct) {
+    var txt = pct ? fmtPct(now) : fmtExp(now);
+    var old = was == null ? txt : (pct ? fmtPct(was) : fmtExp(was));
+    var cls = "flat";
+    if (old !== txt) cls = now > was ? "up" : "down";
+    return '<td class="pct th-mul ' + cls + '">' + txt + "</td>";
+  }
+  function ledgerRows(full) {
+    var mAs = 1, mNba = 1, mHof = 1, mMvp = 1, mYrs = 1;
+    var prev = scoreOf(full, 1, 1, 1, 1, 1);
+    var html = "";
     (full.steps || []).forEach(function (s) {
+      mAs *= (s.mAs == null ? 1 : s.mAs);
+      mNba *= (s.mNba == null ? 1 : s.mNba);
+      mHof *= (s.mHof == null ? 1 : s.mHof);
+      mMvp *= (s.mMvp == null ? 1 : s.mMvp);
+      mYrs *= (s.mYrs == null ? 1 : s.mYrs);
       if (s.id === "slot") return;
-      var m = s.mHof == null ? 1 : Number(s.mHof);
-      if (Math.abs(m - 1) < 0.02) return;
-      parts.push(Number(m).toFixed(2) + " " + String(s.label || "").toLowerCase());
+      if (s.id === "stash" && (s.value === "-" || s.value === "")) return;
+      if (s.id !== "size" && !moved(s)) return;
+      var cur = scoreOf(full, mAs, mNba, mHof, mMvp, mYrs);
+      html += "<tr><td>" + theoryName(s) + "</td>"
+        + td(cur.expAs, prev.expAs, false)
+        + td(cur.expNba1, prev.expNba1, false)
+        + td(cur.expNba, prev.expNba, false)
+        + td(cur.expYrs, prev.expYrs, false)
+        + td(cur.expCh, prev.expCh, false)
+        + td(cur.expMvp, prev.expMvp, false)
+        + td(cur.pHof, prev.pHof, true)
+        + "</tr>";
+      prev = cur;
     });
-    return parts.join(" \u00d7 ") + " = " + fmtPct(full.pHof) + " Hall of Fame";
-  }
-  function ledgerRows(full, keepAll) {
-    var rows = (full.steps || []).filter(function (s) {
-      if (keepAll) return true;
-      if (s.id === "slot" || s.id === "size") return true;
-      return Math.abs((s.mAs || 1) - 1) >= 0.02 || Math.abs((s.mHof || s.mMvp || 1) - 1) >= 0.02;
-    });
-    return rows.map(function (s) {
-      return "<tr><td>" + theoryLink(s) + "</td><td>" + (s.value || "\u2014") + "</td>"
-        + '<td class="th-mul ' + mulClass(s.mAs) + '">' + fmtMul(s.mAs) + "</td>"
-        + '<td class="th-mul ' + mulClass(s.mHof || s.mMvp) + '">' + fmtMul(s.mHof || s.mMvp) + "</td>"
-        + '<td class="th-why">' + (s.why || "") + "</td></tr>";
-    }).join("");
-  }
-  function eqGrid(full, p) {
-    return '<div class="th-eq">'
-      + "<div><label>AS</label><b>" + fmtExp(full.expAs) + "</b><span>career " + dash(p.allStar) + "</span></div>"
-      + "<div><label>All-NBA</label><b>" + fmtExp(full.expNba) + "</b><span>career " + dash(p.allNba) + "</span></div>"
-      + "<div><label>Yrs</label><b>" + fmtExp(full.expYrs) + "</b><span>career " + (p.yrs != null && p.yrs !== "" ? p.yrs : "") + "</span></div>"
-      + "<div><label>MVP</label><b>" + fmtExp(full.expMvp) + "</b><span>career " + dash(p.mvp) + "</span></div>"
-      + "<div><label>HOF</label><b>" + fmtPct(full.pHof) + "</b><span>career " + (p.hof ? "Yes" : "No") + "</span></div></div>";
+    return html;
   }
   function paint(root, p, priors) {
     window.__TDM_THEORY_CARD = true;
@@ -161,26 +189,14 @@
     }
     const existing = root.querySelector(".th-player");
     if (existing) existing.remove();
-    const body = ledgerRows(full, projectionHero);
-    const sizeStep = (full.steps || []).find(function (s) { return s.id === "size"; });
-    const sizeNote = (sizeStep && /7-3/.test(sizeStep.value || ""))
-      ? ' The 17.6% HOF rate on <a href="./size.html">/size</a> is the raw 7-3+ bin (n=17). This card starts from the pick, then shrinks that ~3.7\u00d7 lift to 1.80\u00d7 so 17 players cannot outrank the slot.'
-      : "";
+    const body = ledgerRows(full);
     const box = document.createElement("section");
     box.className = "section th-player th-math";
-    if (projectionHero) {
+    if (body) {
       box.innerHTML =
-        '<div class="kicker">How we got here</div>'
-        + '<p class="th-how">' + howLine(full) + ". Each row below multiplies the pick prior.</p>"
-        + eqGrid(full, p)
-        + '<p class="th-note">Green raises the pick prior; coral cuts it. Linked names are the essays.' + sizeNote + "</p>"
-        + (body ? '<div class="table-wrap th-ledger"><table><thead><tr><th>Theory</th><th>Draft night</th><th>\u00d7 AS</th><th>\u00d7 HOF</th><th>Why</th></tr></thead><tbody>' + body + "</tbody></table></div>" : "");
-    } else {
-      box.innerHTML =
-        '<div class="kicker">When drafted</div>'
-        + '<p class="th-how">' + howLine(full) + "</p>"
-        + eqGrid(full, p)
-        + (body ? '<div class="table-wrap th-ledger"><table><thead><tr><th>Theory</th><th>Draft night</th><th>\u00d7 AS</th><th>\u00d7 HOF</th><th>Why</th></tr></thead><tbody>' + body + "</tbody></table></div>" : "");
+        '<div class="kicker">' + (projectionHero ? "Theories" : "When drafted") + "</div>"
+        + '<div class="table-wrap th-ledger"><table><thead><tr><th>Theory</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th><th>HOF</th></tr></thead><tbody>'
+        + body + "</tbody></table></div>";
     }
     const hero = root.querySelector(".player-hero");
     if (box.parentNode == null && box.innerHTML && hero && hero.parentNode) hero.parentNode.insertBefore(box, hero.nextSibling);
@@ -248,8 +264,8 @@
           if (L.wsp && !p.wsp) p.wsp = L.wsp;
           if (L.reach && !p.reach) p.reach = L.reach;
         }
-        var cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
-        if ((p.yrs == null || p.yrs === "") && year === cur - 1) p.yrs = 0;
+        var now = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+        if ((p.yrs == null || p.yrs === "") && year === now - 1) p.yrs = 0;
       });
       return { priors: priors, draft: draft };
     });
