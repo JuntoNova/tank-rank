@@ -72,3 +72,4 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 - 2026-09-13 (Grok chat): 1980 Yrs column empty except McHale. Joined Basketball-Reference seasons (Carroll 10, McHale 13). Honors kept. Do not overwrite 1984 in outcomes/1980s.json.
 - 2026-09-13 (Grok chat): 1980 Don Collins player card was empty. Washington State 1976-80 lines (Sr 23.1/6.0/2.7 stl, Pac-10 POY), listed 6-6 / 190, age 21.5 Sr, NBA yrs 6.
 - 2026-09-13 (Grok chat): Andrew said Big Board on the main menu is redundant with Upcoming. Removed it. Order is Historic → Upcoming → Theories → Methodology. board.html stays as a URL.
+- 2026-09-14 (Grok chat): 1974 Leon Benbow player card was empty. Jacksonville 1971-74 lines (Sr 20.6/6.0), listed 6-4 / 185, age 23.8 Sr, NBA yrs 2 / 5.5 ppg.

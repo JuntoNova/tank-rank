@@ -1,0 +1,45 @@
+{
+  "year": 1974,
+  "src": "Sports-Reference CBB",
+  "players": {
+    "27": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Jacksonville",
+          "season": "1973-74",
+          "cls": "Sr",
+          "g": 30,
+          "pts": 20.6,
+          "trb": 6.0,
+          "fg": 0.495,
+          "ft": 0.765
+        },
+        {
+          "lvl": "College",
+          "team": "Jacksonville",
+          "season": "1972-73",
+          "cls": "Jr",
+          "g": 27,
+          "pts": 15.9,
+          "trb": 4.4,
+          "ast": 4.3,
+          "fg": 0.441,
+          "ft": 0.832
+        },
+        {
+          "lvl": "College",
+          "team": "Jacksonville",
+          "season": "1971-72",
+          "cls": "So",
+          "g": 26,
+          "pts": 13.9,
+          "trb": 4.4,
+          "ast": 2.3,
+          "fg": 0.483,
+          "ft": 0.753
+        }
+      ]
+    }
+  }
+}
