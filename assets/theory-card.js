@@ -30,7 +30,7 @@
     if (document.getElementById("th-card-css")) return;
     const s = document.createElement("style");
     s.id = "th-card-css";
-    s.textContent = ".player-hero .lede{display:none!important}.player-hero + .section .grid-3{display:none!important}.th-math{margin:8px 0 28px}.th-eq{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:0 0 16px}.th-eq div{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px}.th-eq label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}.th-eq b{font-family:var(--serif);font-size:26px;font-weight:500}.th-eq span{display:block;margin-top:4px;color:var(--muted);font-size:12px}.th-ledger table{min-width:560px}.th-mul{font-family:var(--mono);white-space:nowrap}.th-mul.up{color:var(--lime)}.th-mul.down{color:var(--coral)}.th-mul.flat{color:var(--muted)}.size-grid .tile.th-empty{display:none}@media (max-width:860px){.th-eq{grid-template-columns:1fr 1fr}}";
+    s.textContent = ".player-hero .lede{display:none!important}.player-hero + .section .grid-3{display:none!important}.th-math{margin:8px 0 28px}.th-eq{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:0 0 16px}.th-eq div{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px}.th-eq label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}.th-eq b{font-family:var(--serif);font-size:26px;font-weight:500}.th-eq span{display:block;margin-top:4px;color:var(--muted);font-size:12px}.th-how{margin:0 0 14px;color:var(--text);font-size:15px;line-height:1.55;max-width:46em}.th-how a{text-decoration:underline;text-underline-offset:2px}.th-note{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.5;max-width:46em}.th-ledger table{min-width:720px}.th-ledger th:nth-child(5),.th-ledger td:nth-child(5){min-width:16em}.th-why{color:var(--muted);font-size:12px;line-height:1.45;max-width:28em}.th-mul{font-family:var(--mono);white-space:nowrap}.th-mul.up{color:var(--lime)}.th-mul.down{color:var(--coral)}.th-mul.flat{color:var(--muted)}.size-grid .tile.th-empty{display:none}@media (max-width:860px){.th-eq{grid-template-columns:1fr 1fr}}";
     document.head.appendChild(s);
   }
   function mulClass(m) {
@@ -78,6 +78,41 @@
     if (val == null || val === "") return "";
     return '<div class="metric"><label>' + label + "</label><b>" + val + "</b></div>";
   }
+  function theoryLink(s) {
+    if (s.href) return '<a href="' + s.href + '">' + s.label + "</a>";
+    return s.label;
+  }
+  function howLine(full) {
+    var parts = [fmtPct(full.slotHof) + " slot"];
+    (full.steps || []).forEach(function (s) {
+      if (s.id === "slot") return;
+      var m = s.mHof == null ? 1 : Number(s.mHof);
+      if (Math.abs(m - 1) < 0.02) return;
+      parts.push(Number(m).toFixed(2) + " " + String(s.label || "").toLowerCase());
+    });
+    return parts.join(" \u00d7 ") + " = " + fmtPct(full.pHof) + " Hall of Fame";
+  }
+  function ledgerRows(full, keepAll) {
+    var rows = (full.steps || []).filter(function (s) {
+      if (keepAll) return true;
+      if (s.id === "slot" || s.id === "size") return true;
+      return Math.abs((s.mAs || 1) - 1) >= 0.02 || Math.abs((s.mHof || s.mMvp || 1) - 1) >= 0.02;
+    });
+    return rows.map(function (s) {
+      return "<tr><td>" + theoryLink(s) + "</td><td>" + (s.value || "\u2014") + "</td>"
+        + '<td class="th-mul ' + mulClass(s.mAs) + '">' + fmtMul(s.mAs) + "</td>"
+        + '<td class="th-mul ' + mulClass(s.mHof || s.mMvp) + '">' + fmtMul(s.mHof || s.mMvp) + "</td>"
+        + '<td class="th-why">' + (s.why || "") + "</td></tr>";
+    }).join("");
+  }
+  function eqGrid(full, p) {
+    return '<div class="th-eq">'
+      + "<div><label>AS</label><b>" + fmtExp(full.expAs) + "</b><span>career " + dash(p.allStar) + "</span></div>"
+      + "<div><label>All-NBA</label><b>" + fmtExp(full.expNba) + "</b><span>career " + dash(p.allNba) + "</span></div>"
+      + "<div><label>Yrs</label><b>" + fmtExp(full.expYrs) + "</b><span>career " + (p.yrs != null && p.yrs !== "" ? p.yrs : "") + "</span></div>"
+      + "<div><label>MVP</label><b>" + fmtExp(full.expMvp) + "</b><span>career " + dash(p.mvp) + "</span></div>"
+      + "<div><label>HOF</label><b>" + fmtPct(full.pHof) + "</b><span>career " + (p.hof ? "Yes" : "No") + "</span></div></div>";
+  }
   function paint(root, p, priors) {
     window.__TDM_THEORY_CARD = true;
     css();
@@ -89,23 +124,34 @@
     if (lede) { lede.textContent = ""; lede.style.display = "none"; }
     const year = new URLSearchParams(location.search).get("year") || "";
     const cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
-    const historic = Number(year) < cur;
+    const yNum = Number(year);
+    const historic = yNum < cur;
+    const projectionHero = yNum >= cur || yNum === cur - 1;
     scrubPills(root, p, feat, year);
     const metrics = root.querySelector(".metrics");
     if (metrics) {
-      var g = (p.g != null && p.g !== "") ? Number(p.g).toLocaleString("en-US") : "";
-      var pts = (p.pts != null && p.pts !== "") ? Number(p.pts).toFixed(1) : "";
-      var ws = (p.ws != null && p.ws !== "") ? Number(p.ws).toFixed(1) : "";
-      metrics.innerHTML =
-        cell("Yrs", p.yrs != null && p.yrs !== "" ? p.yrs : "") +
-        cell("G", g) +
-        cell("PTS", pts) +
-        cell("WS", ws) +
-        cell("AS", p.allStar != null && p.allStar !== "" ? p.allStar : (historic ? 0 : "")) +
-        cell("All-NBA", p.allNba != null && p.allNba !== "" ? p.allNba : (historic ? 0 : "")) +
-        cell("MVP", p.mvp != null && p.mvp !== "" ? p.mvp : (historic ? 0 : "")) +
-        cell("Titles", p.champs != null && p.champs !== "" ? p.champs : (historic ? 0 : "")) +
-        cell("HOF", p.hof ? "Yes" : (historic ? "No" : ""));
+      if (projectionHero) {
+        metrics.innerHTML =
+          cell("AS", fmtExp(full.expAs)) +
+          cell("All-NBA", fmtExp(full.expNba)) +
+          cell("Yrs", fmtExp(full.expYrs)) +
+          cell("MVP", fmtExp(full.expMvp)) +
+          cell("HOF", fmtPct(full.pHof));
+      } else {
+        var g = (p.g != null && p.g !== "") ? Number(p.g).toLocaleString("en-US") : "";
+        var pts = (p.pts != null && p.pts !== "") ? Number(p.pts).toFixed(1) : "";
+        var ws = (p.ws != null && p.ws !== "") ? Number(p.ws).toFixed(1) : "";
+        metrics.innerHTML =
+          cell("Yrs", p.yrs != null && p.yrs !== "" ? p.yrs : "") +
+          cell("G", g) +
+          cell("PTS", pts) +
+          cell("WS", ws) +
+          cell("AS", p.allStar != null && p.allStar !== "" ? p.allStar : (historic ? 0 : "")) +
+          cell("All-NBA", p.allNba != null && p.allNba !== "" ? p.allNba : (historic ? 0 : "")) +
+          cell("MVP", p.mvp != null && p.mvp !== "" ? p.mvp : (historic ? 0 : "")) +
+          cell("Titles", p.champs != null && p.champs !== "" ? p.champs : (historic ? 0 : "")) +
+          cell("HOF", p.hof ? "Yes" : (historic ? "No" : ""));
+      }
     }
     const h1 = root.querySelector(".player-hero h1");
     if (h1 && p.name) h1.textContent = p.name;
@@ -115,32 +161,26 @@
     }
     const existing = root.querySelector(".th-player");
     if (existing) existing.remove();
-    const rows = (full.steps || []).filter(function (s) {
-      return s.id === "slot" || Math.abs((s.mAs || 1) - 1) >= 0.02 || Math.abs((s.mHof || s.mMvp || 1) - 1) >= 0.02;
-    });
-    const body = rows.map(function (s) {
-      return "<tr><td>" + s.label + "</td><td>" + (s.value || "\u2014") + "</td>"
-        + '<td class="th-mul ' + mulClass(s.mAs) + '">' + fmtMul(s.mAs) + "</td>"
-        + '<td class="th-mul ' + mulClass(s.mHof || s.mMvp) + '">' + fmtMul(s.mHof || s.mMvp) + "</td></tr>";
-    }).join("");
+    const body = ledgerRows(full, projectionHero);
+    const sizeStep = (full.steps || []).find(function (s) { return s.id === "size"; });
+    const sizeNote = (sizeStep && /7-3/.test(sizeStep.value || ""))
+      ? ' The 17.6% HOF rate on <a href="./size.html">/size</a> is the raw 7-3+ bin (n=17). This card starts from the pick, then shrinks that ~3.7\u00d7 lift to 1.80\u00d7 so 17 players cannot outrank the slot.'
+      : "";
     const box = document.createElement("section");
     box.className = "section th-player th-math";
-    if (historic) {
-      box.innerHTML = body
-        ? ('<div class="kicker">Draft-night factors</div>'
-          + '<div class="table-wrap th-ledger"><table><thead><tr><th>Theory</th><th>Draft night</th><th>\u00d7 AS</th><th>\u00d7 HOF</th></tr></thead><tbody>' + body + "</tbody></table></div>")
-        : "";
-      if (!box.innerHTML) box.remove();
+    if (projectionHero) {
+      box.innerHTML =
+        '<div class="kicker">How we got here</div>'
+        + '<p class="th-how">' + howLine(full) + ". Each row below multiplies the pick prior.</p>"
+        + eqGrid(full, p)
+        + '<p class="th-note">Green raises the pick prior; coral cuts it. Linked names are the essays.' + sizeNote + "</p>"
+        + (body ? '<div class="table-wrap th-ledger"><table><thead><tr><th>Theory</th><th>Draft night</th><th>\u00d7 AS</th><th>\u00d7 HOF</th><th>Why</th></tr></thead><tbody>' + body + "</tbody></table></div>" : "");
     } else {
       box.innerHTML =
         '<div class="kicker">When drafted</div>'
-        + '<div class="th-eq">'
-        + "<div><label>AS</label><b>" + fmtExp(full.expAs) + "</b><span>career " + dash(p.allStar) + "</span></div>"
-        + "<div><label>All-NBA</label><b>" + fmtExp(full.expNba) + "</b><span>career " + dash(p.allNba) + "</span></div>"
-        + "<div><label>Yrs</label><b>" + fmtExp(full.expYrs) + "</b><span>career " + (p.yrs != null && p.yrs !== "" ? p.yrs : "") + "</span></div>"
-        + "<div><label>MVP</label><b>" + fmtExp(full.expMvp) + "</b><span>career " + dash(p.mvp) + "</span></div>"
-        + "<div><label>HOF</label><b>" + fmtPct(full.pHof) + "</b><span>career " + (p.hof ? "Yes" : "No") + "</span></div></div>"
-        + (body ? '<div class="table-wrap th-ledger"><table><thead><tr><th>Theory</th><th>Draft night</th><th>\u00d7 AS</th><th>\u00d7 HOF</th></tr></thead><tbody>' + body + "</tbody></table></div>" : "");
+        + '<p class="th-how">' + howLine(full) + "</p>"
+        + eqGrid(full, p)
+        + (body ? '<div class="table-wrap th-ledger"><table><thead><tr><th>Theory</th><th>Draft night</th><th>\u00d7 AS</th><th>\u00d7 HOF</th><th>Why</th></tr></thead><tbody>' + body + "</tbody></table></div>" : "");
     }
     const hero = root.querySelector(".player-hero");
     if (box.parentNode == null && box.innerHTML && hero && hero.parentNode) hero.parentNode.insertBefore(box, hero.nextSibling);
@@ -161,14 +201,14 @@
   function load(year) {
     const dec = (Math.floor(Number(year) / 10) * 10) + "s";
     return Promise.all([
-      fetch("./assets/slot-priors.json?v=77").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-      fetch("./assets/theory-packs/all.json?v=77").then(function (r) { return r.ok ? r.json() : null; }).then(function (all) {
+      fetch("./assets/slot-priors.json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      fetch("./assets/theory-packs/all.json?v=78").then(function (r) { return r.ok ? r.json() : null; }).then(function (all) {
         if (all && all[String(year)]) return all[String(year)];
-        return fetch("./assets/theory-packs/" + year + ".json?v=77").then(function (r) { return r.ok ? r.json() : null; });
+        return fetch("./assets/theory-packs/" + year + ".json?v=78").then(function (r) { return r.ok ? r.json() : null; });
       }).catch(function () { return null; }),
-      fetch("./assets/outcomes/" + dec + ".json?v=77").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-      fetch("./assets/outcomes-extra.json?v=77").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-      fetch("./assets/measurements-listed.json?v=80").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+      fetch("./assets/outcomes/" + dec + ".json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      fetch("./assets/outcomes-extra.json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      fetch("./assets/measurements-listed.json?v=81").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
     ]).then(function (parts) {
       const priors = parts[0] || (window.TANK_RANK && TANK_RANK.slotPriors) || {};
       if (priors && window.TANK_RANK) TANK_RANK.slotPriors = priors;

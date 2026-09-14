@@ -90,8 +90,19 @@
       const hof = extra.hof == null ? a : extra.hof;
       const yrs = extra.yrs == null ? 1 : extra.yrs;
       mAs *= a; mNba *= nba; mHof *= hof; mMvp *= v; mYrs *= yrs;
-      steps.push({ id: id, label: label, value: value, mAs: a, mNba: nba, mHof: hof, mMvp: v, mYrs: yrs, why: why });
+      steps.push({ id: id, label: label, value: value, mAs: a, mNba: nba, mHof: hof, mMvp: v, mYrs: yrs, why: why, href: extra.href || HREF[id] || "" });
     }
+    const HREF = {
+      slot: "./methodology.html",
+      age: "./age.html",
+      onedone: "./onedone.html",
+      intl: "./intl.html",
+      stash: "./stash.html",
+      size: "./size.html",
+      handle: "./handle.html",
+      wingspan: "./wingspan.html",
+      reach: "./reach.html"
+    };
     add("slot", "Draft slot", "Pk " + String(pk).padStart(2, "0") + " band " + key, 1, 1, "Historical rate for this pick. Every row below multiplies this.");
     const ak = ageKey(feat.age);
     const rawAs = AGE_AS[ak];
@@ -142,7 +153,32 @@
       add("intl", "Origin", "college", 1, 1, "College.");
       add("stash", "Stash", "-", 1, 1, "Stash is international only.");
     }
+    const SIZE_BINS = [
+      { lo: 0, hi: 73, label: "under 6-1", as: 1.09, nba: 1.08, hof: 1.25, mvp: 0.81,
+        why: "From /size. Under 6-1 is a small AS/HOF bump (n=132). Not a star prior." },
+      { lo: 73, hi: 79, label: "6-1 to 6-6", as: 0.99, nba: 1.04, hof: 0.97, mvp: 0.74,
+        why: "From /size. Middle of the listed-height sample; near the base rate." },
+      { lo: 79, hi: 84, label: "6-7 to 6-11", as: 1.00, nba: 0.92, hof: 0.93, mvp: 1.05,
+        why: "From /size. The common wing/big bin. Slightly below the HOF base." },
+      { lo: 84, hi: 87, label: "7-0 to 7-2", as: 0.97, nba: 1.05, hof: 1.11, mvp: 1.80,
+        why: "From /size. 7-0 to 7-2 is +1.0 HOF pp and the MVP cell (3.65% vs 1.17% base, n=192). Shrunk so size cannot outrank the pick." },
+      { lo: 87, hi: 120, label: "7-3 and up", as: 1.05, nba: 1.15, hof: 1.80, mvp: 0.60,
+        why: "From /size. 7-3+ is 17.6% HOF (n=17, +12.9 pp vs a 4.7% base — nearly 1 in 5). Raw lift is ~3.7×; we shrink to 1.80× so 17 players cannot outrank the pick." }
+    ];
     const htIn = inches(feat.ht);
+    let sizeRow = null;
+    if (htIn) {
+      for (let i = 0; i < SIZE_BINS.length; i++) {
+        if (htIn >= SIZE_BINS[i].lo && htIn < SIZE_BINS[i].hi) { sizeRow = SIZE_BINS[i]; break; }
+      }
+    }
+    if (!sizeRow) {
+      add("size", "Height", feat.ht ? String(feat.ht) : "missing", 1, 1,
+        "No listed or combine height, so /size does not move this pick.", { hof: 1, nba: 1, yrs: 1 });
+    } else {
+      add("size", "Height", (feat.ht || "") + " · " + sizeRow.label, sizeRow.as, sizeRow.mvp, sizeRow.why,
+        { nba: sizeRow.nba, hof: sizeRow.hof, yrs: 1 });
+    }
     if (feat.create && htIn >= 79) {
       add("handle", "Handle x size", (feat.ht || "6-7+") + " creation tag", 1.22, 1.05, "6-7+ creation on /handle.", { hof: 1 });
     } else if (feat.create && htIn >= 77) {
@@ -157,7 +193,7 @@
     if (ape == null) add("wingspan", "Wingspan", "missing", 1, 1, "No wingspan.");
     else if (htIn >= 82 && ape >= 6) add("wingspan", "Wingspan", feat.wsp + " long 6-10+", 1.28, 1.00, "/wingspan 6-10+ long.");
     else if (ape >= 6) add("wingspan", "Wingspan", feat.wsp + " +6 ape", 1.10, 1.05, "+6 ape.");
-    else if (ape < 4 && htIn >= 79) add("wingspan", "Wingspan", feat.wsp + " short for size", 0.90, 0.85, "Short arms at 6-7+.");
+    else if (ape < 4 && htIn >= 79 && htIn < 84) add("wingspan", "Wingspan", feat.wsp + " short for size", 0.90, 0.85, "Short arms at 6-7 to 6-11.");
     else add("wingspan", "Wingspan", feat.wsp || "mid", 1, 1, "Mid-pack length.");
     const reachIn = inches(feat.reach);
     if (!reachIn) add("reach", "Standing reach", "missing", 1, 1, "/reach needs a number.");

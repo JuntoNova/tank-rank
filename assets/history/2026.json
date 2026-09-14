@@ -8,8 +8,9 @@
     "c": "BYU (Fr.)",
     "pos": "SF",
     "yrs": 0,
-    "ht": "6-9",
-    "wt": 217
+    "ht": "6-8.5",
+    "wt": 217,
+    "age": 19.4
   },
   {
     "y": 2026,
@@ -19,7 +20,9 @@
     "t": "Utah Jazz",
     "c": "Kansas (Fr.)",
     "pos": "SG/PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-4.5",
+    "wt": 199
   },
   {
     "y": 2026,
@@ -29,7 +32,9 @@
     "t": "Memphis Grizzlies",
     "c": "Duke (Fr.)",
     "pos": "PF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-8.25",
+    "wt": 253
   },
   {
     "y": 2026,
@@ -39,7 +44,9 @@
     "t": "Chicago Bulls",
     "c": "North Carolina (Fr.)",
     "pos": "SF/PF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-9.25",
+    "wt": 211
   },
   {
     "y": 2026,
@@ -49,7 +56,9 @@
     "t": "Los Angeles Clippers (from Indiana)",
     "c": "Illinois (Fr.)",
     "pos": "SG/PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-5",
+    "wt": 188
   },
   {
     "y": 2026,
@@ -59,7 +68,9 @@
     "t": "Brooklyn Nets",
     "c": "Louisville (Fr.)",
     "pos": "PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-3.5",
+    "wt": 190
   },
   {
     "y": 2026,
@@ -69,7 +80,9 @@
     "t": "Sacramento Kings",
     "c": "Arkansas (Fr.)",
     "pos": "PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-2",
+    "wt": 186
   },
   {
     "y": 2026,
@@ -79,7 +92,9 @@
     "t": "Atlanta Hawks (from New Orleans)",
     "c": "Houston (Fr.)",
     "pos": "PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-2.5",
+    "wt": 183
   },
   {
     "y": 2026,
@@ -89,7 +104,9 @@
     "t": "Dallas Mavericks",
     "c": "Michigan (So.)",
     "pos": "PF/C",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-9",
+    "wt": 251
   },
   {
     "y": 2026,
@@ -99,7 +116,9 @@
     "t": "Milwaukee Bucks",
     "c": "Arizona (Fr.)",
     "pos": "SG/PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-3.75",
+    "wt": 215
   },
   {
     "y": 2026,
@@ -109,7 +128,9 @@
     "t": "Golden State Warriors",
     "c": "Michigan (Sr.)",
     "pos": "PF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-8.75",
+    "wt": 241
   },
   {
     "y": 2026,
@@ -119,7 +140,10 @@
     "t": "Oklahoma City Thunder (from L.A. Clippers)",
     "c": "Michigan (Jr.)",
     "pos": "C",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "7-3",
+    "wt": 260,
+    "age": 21.2
   },
   {
     "y": 2026,
@@ -129,7 +153,9 @@
     "t": "Miami Heat (traded to Milwaukee)",
     "c": "Tennessee (Fr.)",
     "pos": "SF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-9.5",
+    "wt": 211
   },
   {
     "y": 2026,
@@ -139,7 +165,9 @@
     "t": "Charlotte Hornets",
     "c": "Washington (Fr.)",
     "pos": "PF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-10.25",
+    "wt": 248
   },
   {
     "y": 2026,
@@ -149,7 +177,9 @@
     "t": "Chicago Bulls (from Portland)",
     "c": "Texas (Jr.)",
     "pos": "SG/SF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-6.5",
+    "wt": 211
   },
   {
     "y": 2026,
@@ -159,7 +189,9 @@
     "t": "Memphis Grizzlies",
     "c": "Iowa (Sr.)",
     "pos": "PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-2.5",
+    "wt": 186
   },
   {
     "y": 2026,
@@ -169,7 +201,9 @@
     "t": "Oklahoma City Thunder",
     "c": "Stanford (Fr.)",
     "pos": "PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-1.25",
+    "wt": 186
   },
   {
     "y": 2026,
@@ -179,7 +213,9 @@
     "t": "Charlotte Hornets (from Orlando via Phoenix)",
     "c": "Texas Tech (So.)",
     "pos": "PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-0.75",
+    "wt": 180
   },
   {
     "y": 2026,
@@ -189,7 +225,9 @@
     "t": "Toronto Raptors",
     "c": "Santa Clara (Fr.)",
     "pos": "PF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-7.75",
+    "wt": 226
   },
   {
     "y": 2026,
@@ -199,17 +237,21 @@
     "t": "San Antonio Spurs (from Atlanta)",
     "c": "Kentucky (So.)",
     "pos": "PF/C",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-9",
+    "wt": 253
   },
   {
     "y": 2026,
     "pk": 21,
-    "n": "Karim López",
+    "n": "Karim L\u00f3pez",
     "rd": 1,
     "t": "Detroit Pistons",
     "c": "New Zealand Breakers (New Zealand)",
     "pos": "SF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-8.25",
+    "wt": 222
   },
   {
     "y": 2026,
@@ -219,7 +261,9 @@
     "t": "Philadelphia 76ers (from Houston via Oklahoma City)",
     "c": "Alabama (So.)",
     "pos": "PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-2.5",
+    "wt": 176
   },
   {
     "y": 2026,
@@ -229,7 +273,9 @@
     "t": "Atlanta Hawks (from Cleveland)",
     "c": "St. John's (Sr.)",
     "pos": "PF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-7.5",
+    "wt": 245
   },
   {
     "y": 2026,
@@ -239,7 +285,9 @@
     "t": "New York Knicks (traded to the L.A. Lakers)",
     "c": "Baylor (So.)",
     "pos": "SG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-4.5",
+    "wt": 184
   },
   {
     "y": 2026,
@@ -259,7 +307,9 @@
     "t": "Denver Nuggets (traded to San Antonio)",
     "c": "UConn (Sr.)",
     "pos": "C",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-9.75",
+    "wt": 263
   },
   {
     "y": 2026,
@@ -269,7 +319,9 @@
     "t": "Boston Celtics",
     "c": "Houston (Fr.)",
     "pos": "PF/C",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-10.25",
+    "wt": 240
   },
   {
     "y": 2026,
@@ -279,7 +331,9 @@
     "t": "Minnesota Timberwolves (from Detroit, traded to Brooklyn)",
     "c": "Iowa State (Sr.)",
     "pos": "PF/SF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-7.75",
+    "wt": 246
   },
   {
     "y": 2026,
@@ -289,7 +343,9 @@
     "t": "Cleveland Cavaliers (from San Antonio via Atlanta, traded to",
     "c": "UConn (Sr.)",
     "pos": "SF/PF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-6.75",
+    "wt": 225
   },
   {
     "y": 2026,
@@ -299,7 +355,9 @@
     "t": "Dallas Mavericks",
     "c": "Arizona (Fr.)",
     "pos": "PF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-7",
+    "wt": 245
   },
   {
     "y": 2026,
@@ -309,7 +367,9 @@
     "t": "New York Knicks",
     "c": "Ohio State (Sr.)",
     "pos": "PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-0",
+    "wt": 223
   },
   {
     "y": 2026,
@@ -319,7 +379,9 @@
     "t": "Memphis Grizzlies (from Indiana via Milwaukee)",
     "c": "BYU (Sr.)",
     "pos": "SG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-5",
+    "wt": 204
   },
   {
     "y": 2026,
@@ -329,7 +391,9 @@
     "t": "Brooklyn Nets (traded to Minnesota)",
     "c": "Duke (So.)",
     "pos": "SF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-5.5",
+    "wt": 186
   },
   {
     "y": 2026,
@@ -339,7 +403,9 @@
     "t": "Sacramento Kings (traded to Cleveland)",
     "c": "Arkansas (Fr.)",
     "pos": "SG/PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-3",
+    "wt": 189
   },
   {
     "y": 2026,
@@ -349,7 +415,9 @@
     "t": "San Antonio Spurs",
     "c": "Arkansas (Sr.)",
     "pos": "PF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-9.5",
+    "wt": 225
   },
   {
     "y": 2026,
@@ -359,7 +427,9 @@
     "t": "Los Angeles Clippers (from Memphis via Utah and Atlanta)",
     "c": "Cincinnati (Sr.)",
     "pos": "SF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-10.5",
+    "wt": 208
   },
   {
     "y": 2026,
@@ -369,7 +439,9 @@
     "t": "Oklahoma City Thunder",
     "c": "Louisville (Sr.)",
     "pos": "SG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-2",
+    "wt": 214
   },
   {
     "y": 2026,
@@ -379,7 +451,9 @@
     "t": "Chicago Bulls",
     "c": "Purdue (Sr.)",
     "pos": "PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "5-10.25",
+    "wt": 166
   },
   {
     "y": 2026,
@@ -399,7 +473,9 @@
     "t": "Boston Celtics (from Milwaukee via Orlando)",
     "c": "St. John's (Sr.)",
     "pos": "SF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-6.75",
+    "wt": 202
   },
   {
     "y": 2026,
@@ -409,7 +485,9 @@
     "t": "Miami Heat",
     "c": "Kentucky (Sr.)",
     "pos": "SG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-4.25",
+    "wt": 216
   },
   {
     "y": 2026,
@@ -419,7 +497,9 @@
     "t": "San Antonio Spurs (from Portland via New Orleans)",
     "c": "Tennessee (Sr.)",
     "pos": "PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "5-11.75",
+    "wt": 181
   },
   {
     "y": 2026,
@@ -429,7 +509,9 @@
     "t": "Brooklyn Nets (from LA Clippers via Houston)",
     "c": "UCLA (Sr.)",
     "pos": "PF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-7.25",
+    "wt": 228
   },
   {
     "y": 2026,
@@ -439,7 +521,9 @@
     "t": "San Antonio Spurs (from Miami via Indiana)",
     "c": "Duke (Sr.)",
     "pos": "PF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-8",
+    "wt": 216
   },
   {
     "y": 2026,
@@ -449,7 +533,9 @@
     "t": "Sacramento Kings",
     "c": "Houston (Sr.)",
     "pos": "SG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-2.75",
+    "wt": 208
   },
   {
     "y": 2026,
@@ -459,7 +545,9 @@
     "t": "Orlando Magic",
     "c": "Tennessee (Sr.)",
     "pos": "C",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-10",
+    "wt": 237
   },
   {
     "y": 2026,
@@ -469,7 +557,9 @@
     "t": "Phoenix Suns",
     "c": "Vanderbilt (Sr.)",
     "pos": "SG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-6",
+    "wt": 217
   },
   {
     "y": 2026,
@@ -479,7 +569,9 @@
     "t": "Dallas Mavericks (from Phoenix via Washington)",
     "c": "Virginia Tech (Sr.)",
     "pos": "PF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-7.25",
+    "wt": 214
   },
   {
     "y": 2026,
@@ -499,7 +591,9 @@
     "t": "Toronto Raptors",
     "c": "Arizona (Sr.)",
     "pos": "PG",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-2.5",
+    "wt": 205
   },
   {
     "y": 2026,
@@ -509,7 +603,9 @@
     "t": "Washington Wizards",
     "c": "South Florida (Sr.)",
     "pos": "PF/C",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-8.25",
+    "wt": 219
   },
   {
     "y": 2026,
@@ -519,7 +615,9 @@
     "t": "Los Angeles Clippers",
     "c": "North Carolina (Jr.)",
     "pos": "C",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-11.25",
+    "wt": 227
   },
   {
     "y": 2026,
@@ -529,7 +627,9 @@
     "t": "Houston Rockets (traded to Detroit)",
     "c": "Virginia (Sr.)",
     "pos": "C",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-11",
+    "wt": 236
   },
   {
     "y": 2026,
@@ -549,7 +649,9 @@
     "t": "New York Knicks (traded to L.A. Clippers)",
     "c": "Northwestern (Sr.)",
     "pos": "SF",
-    "yrs": 0
+    "yrs": 0,
+    "ht": "6-6.5",
+    "wt": 223
   },
   {
     "y": 2026,

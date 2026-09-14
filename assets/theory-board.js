@@ -103,7 +103,7 @@
       const ape = wspIn - htIn;
       if (htIn >= 82 && ape >= 6) mul(1.28, 1.00, 1.15);
       else if (ape >= 6) mul(1.10, 1.05, 1.08);
-      else if (ape < 4 && htIn >= 79) mul(0.90, 0.85, 0.92);
+      else if (ape < 4 && htIn >= 79 && htIn < 84) mul(0.90, 0.85, 0.92);
     }
     mAs = clamp(mAs, 0.20, 2.20); mNba = clamp(mNba, 0.20, 2.20);
     mHof = clamp(mHof, 0.20, 1.80); mMvp = clamp(mMvp, 0.15, 3.20); mYrs = clamp(mYrs, 0.55, 1.35);
@@ -124,9 +124,12 @@
   }
   function viewOf() {
     const y = Number(new URLSearchParams(location.search).get("year")) || (window.TANK_RANK && TANK_RANK.currentYear);
-    if (y >= ((window.TANK_RANK && TANK_RANK.currentYear) || 2027)) return "drafted";
+    const cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
     const v = new URLSearchParams(location.search).get("view");
-    return (v === "then" || v === "drafted") ? "drafted" : "now";
+    if (v === "then" || v === "drafted") return "drafted";
+    if (v === "now") return "now";
+    if (y >= cur - 1) return "drafted";
+    return "now";
   }
   function filtered(draft) {
     const q = ((document.querySelector("#q") || {}).value || "").toLowerCase();
@@ -195,7 +198,16 @@
       }).join("");
     }
     const sub = document.querySelector(".section-head .sub");
-    if (sub) { sub.textContent = ""; sub.style.display = "none"; }
+    const cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+    if (sub) {
+      if (view === "drafted" && year === cur - 1) {
+        sub.textContent = "No NBA season yet. These are draft-night projections, not career totals.";
+        sub.style.display = "";
+      } else {
+        sub.textContent = "";
+        sub.style.display = "none";
+      }
+    }
     const headEl = document.querySelector(".section-head");
     if (headEl && year < ((window.TANK_RANK && TANK_RANK.currentYear) || 2027)) {
       if (!headEl.querySelector(".back-historic")) {
@@ -234,6 +246,12 @@
         (draft.players || []).forEach(function (p) {
           const derived = (window.TR && TR.deriveFeat) ? TR.deriveFeat(p) : {};
           p.theoryFeat = Object.assign({}, derived, byPk[p.rank] || {});
+          const f = p.theoryFeat;
+          if (f.ht && !p.ht) p.ht = f.ht;
+          if (f.wt && (p.wt == null || p.wt === "")) p.wt = f.wt;
+          if (f.wsp && !p.wsp) p.wsp = f.wsp;
+          if (f.reach && !p.reach) p.reach = f.reach;
+          if (f.age && (p.age === "" || p.age == null)) p.age = f.age;
         });
       }
       (draft.players || []).forEach(function (p) {

@@ -21,7 +21,7 @@
     "theories",
     "You can't teach size",
     "",
-    `<p class=\"size-note\">Height / weight tables: listed size, picks 1\u201360, 1947\u20132018, n = 3,074. Wingspan / reach / lbs-per-inch: combine drafted players, 2000\u20132018, n = 716. Listed vs combine weight is a first-round subset (n = 175) until the full listed file lands. Base is the average draftee in that sample. \u0394 is percentage points versus that base. n &lt; 20 in grey.</p>\n    <div class=\"acc size-acc\">${rows}</div>`
+    `<p class=\"size-note\">Height / weight tables: listed size, picks 1\u201360, 1947\u20132018, n = 3,074. Wingspan / reach / lbs-per-inch: combine drafted players, 2000\u20132018, n = 716. Listed vs combine weight is a first-round subset (n = 175) until the full listed file lands. Base is the average draftee in that sample. \u0394 is percentage points versus that base. n &lt; 20 in grey. These bins now multiply the slot prior on player cards and When-drafted boards. 7-3+ is 17.6% HOF raw (n=17); the model shrinks that ~3.7\u00d7 lift to 1.80\u00d7 so 17 players cannot outrank the pick.</p>\n    <div class=\"acc size-acc\">${rows}</div>`
   );
   document.querySelectorAll("[data-acc]").forEach((btn) => {
     btn.addEventListener("click", (e) => {
