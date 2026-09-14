@@ -80,6 +80,12 @@
     });
   }
 
+  function fixDraftsNames() {
+    document.querySelectorAll(".year-row span").forEach(function (el) {
+      if ((el.textContent || "").trim() === "Akeem Olajuwon") el.textContent = "Hakeem Olajuwon";
+    });
+  }
+
   function hideHistoricBanner() {
     var y = Number(new URLSearchParams(location.search).get("year")) || (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
     var cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
@@ -97,6 +103,7 @@
     }
     orderDoors();
     hideHistoricBanner();
+    fixDraftsNames();
   }
 
   function swapNav() {

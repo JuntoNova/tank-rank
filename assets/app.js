@@ -6,6 +6,7 @@
     return x.responseText;
   }
   var src = load("https://cdn.jsdelivr.net/gh/JuntoNova/tank-rank@4d2b1729cda9b9a40965b36e5c5f5ce51b72951a/assets/app.js");
+  src = src.replace('loadJSON("./assets/history-index.json")', 'loadJSON("./assets/history-index.json?v=84")');
 
   src = src.replace(
     '<a class="${active === \"upcoming\" ? \"active\" : \"\"}" href="./upcoming.html">Upcoming</a>\n          <a class="${active === \"drafts\" ? \"active\" : \"\"}" href="./drafts.html">Historic</a>\n          <a class="${active === \"board\" ? \"active\" : \"\"}" href="./board.html">Big Board</a>\n          <a class="${active === \"method\" ? \"active\" : \"\"}" href="./methodology.html">Methodology</a>\n          <a class="${active === \"about\" ? \"active\" : \"\"}" href="./about.html">About</a>',
