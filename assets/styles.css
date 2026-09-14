@@ -29,7 +29,7 @@ button { cursor: pointer; }
   background: color-mix(in srgb, var(--bg) 82%, transparent);
   border-bottom: 1px solid var(--line);
 }
-.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 24px; }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; min-height: 64px; height: 64px; gap: 12px; }
 .logo { display: flex; align-items: center; gap: 10px; letter-spacing: 0.04em; }
 .logo .mark { width: 28px; height: 28px; flex: none; display: block; }
 .logo strong { font-family: var(--serif); font-weight: 600; font-size: 22px; line-height: 1; }
@@ -214,16 +214,34 @@ footer .icon-link svg { display: block; }
   .hero, .player-hero, .grid-3, .doors { grid-template-columns: 1fr; }
   .home { padding: 36px 0 64px; min-height: auto; }
   .search { margin-left: 0; width: 100%; }
-  .nav-toggle { display: inline-flex; }
+  .nav-inner {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 64px;
+    align-items: center;
+  }
+  .logo span { display: none; }
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    min-width: 64px;
+    cursor: pointer;
+    background: color-mix(in srgb, var(--text) 6%, transparent);
+  }
   .badge { display: none; }
   .nav-links {
     display: none;
+    flex-basis: 100%;
     width: 100%;
     flex-direction: column;
-    gap: 4px;
-    padding: 4px 0 8px;
+    gap: 0;
+    padding: 8px 0 16px;
+    border-top: 1px solid var(--line);
+    background: var(--bg);
   }
-  .nav-links a { padding: 10px 0; }
+  .nav-links a { padding: 12px 0; font-size: 16px; }
   .nav.open .nav-links { display: flex; }
 }
 

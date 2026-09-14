@@ -101,6 +101,17 @@
     }
   }
 
+  function bindMenu() {
+    var header = document.querySelector(".nav");
+    var toggle = document.querySelector(".nav-toggle");
+    if (!header || !toggle) return;
+    toggle.onclick = function () {
+      var open = header.classList.toggle("open");
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.textContent = open ? "Close" : "Menu";
+    };
+  }
+
   function lockIA() {
     const nav = document.querySelector(".nav-links");
     if (nav) {
@@ -109,6 +120,7 @@
       ensureTheories(nav);
       orderNav(nav);
     }
+    bindMenu();
     orderDoors();
     hideHistoricBanner();
     fixDraftsNames();
