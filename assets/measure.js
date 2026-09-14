@@ -1,10 +1,10 @@
 (function () {
   const FILES = [];
-  for (let y = 2000; y <= 2026; y++) FILES.push("./assets/mc-y-" + y + ".json?v=69");
+  for (let y = 2000; y <= 2026; y++) FILES.push("./assets/mc-y-" + y + ".json?v=71");
   FILES.push("./assets/mc-2000.json?v=40");
   FILES.push("./assets/mc-17.json?v=40");
   FILES.push("./assets/measurements-combine.json?v=40");
-  FILES.push("./assets/measurements-listed.json?v=70");
+  FILES.push("./assets/measurements-listed.json?v=71");
   function dash(v) { return (v === 0 || v) ? String(v) : "\u2014"; }
   function toInches(ht) {
     const m = String(ht || "").trim().match(/^(\d+)-(\d+(?:\.\d+)?)$/);

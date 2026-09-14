@@ -1,0 +1,36 @@
+{
+  "year": 2024,
+  "src": "LNB / EuroCup reporting",
+  "players": {
+    "1": {
+      "rows": [
+        {
+          "lvl": "France",
+          "team": "JL Bourg",
+          "season": "2023-24",
+          "cls": "Intl",
+          "g": 32,
+          "mp": 22.0,
+          "pts": 10.1,
+          "trb": 3.8,
+          "ast": 0.9,
+          "stl": 0.8,
+          "fg": 0.439,
+          "tp": 0.352,
+          "ft": 0.74
+        },
+        {
+          "lvl": "EuroCup",
+          "team": "JL Bourg",
+          "season": "2023-24",
+          "cls": "Intl",
+          "mp": 23.0,
+          "pts": 11.3,
+          "trb": 3.3,
+          "fg": 0.503,
+          "tp": 0.45
+        }
+      ]
+    }
+  }
+}
