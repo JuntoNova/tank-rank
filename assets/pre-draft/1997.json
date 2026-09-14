@@ -1,0 +1,57 @@
+{
+  "year": 1997,
+  "src": "Sports-Reference / NCAA box",
+  "players": {
+    "5": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Texas Tech",
+          "season": "1996-97",
+          "cls": "Jr",
+          "g": 28,
+          "mp": 34.9,
+          "pts": 18.8,
+          "trb": 11.8,
+          "ast": 0.8,
+          "stl": 0.9,
+          "blk": 2.5,
+          "fg": 0.579,
+          "tp": 0.375,
+          "ft": 0.656
+        },
+        {
+          "lvl": "College",
+          "team": "Texas Tech",
+          "season": "1995-96",
+          "cls": "So",
+          "g": 30,
+          "mp": 26.9,
+          "pts": 9.7,
+          "trb": 8.9,
+          "ast": 1.1,
+          "stl": 0.7,
+          "blk": 2.3,
+          "fg": 0.516,
+          "tp": 0.286,
+          "ft": 0.632
+        },
+        {
+          "lvl": "College",
+          "team": "Texas Tech",
+          "season": "1994-95",
+          "cls": "Fr",
+          "g": 29,
+          "mp": 12.7,
+          "pts": 3.9,
+          "trb": 4.4,
+          "ast": 0.6,
+          "stl": 0.3,
+          "blk": 0.8,
+          "fg": 0.49,
+          "ft": 0.667
+        }
+      ]
+    }
+  }
+}
