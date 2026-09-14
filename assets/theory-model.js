@@ -27,11 +27,12 @@
   function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
   function shrink(raw, keep) { return 1 + (raw - 1) * keep; }
   function keepAs(pk)  { return pk <= 5 ? 0.42 : pk <= 14 ? 0.50 : pk <= 30 ? 0.60 : 0.72; }
-  // All-time Springfield slot rates imply ~2.4 HOFers per 60-pick draft. That Hall
-  // is easier than the bar people mean, and youth already lives in the slot. Scale
-  // pHof so a class is about one expected Hall of Famer, not a 40% lottery.
-  const HOF_SLOT = 0.40;
-  const HOF_CAP = 0.20;
+  // ~4,700 draftees in the file, ~111 NBA players in Springfield. HOF is ~2% of
+  // people who played and far rarer among all picks. All-time slot rates (~2.4
+  // expected per draft, 34% at #1) overstate that. Scale so a class is ~0.5
+  // expected HOFers and no prospect prints as a near-lock.
+  const HOF_SLOT = 0.20;
+  const HOF_CAP = 0.10;
   function ageKey(age) {
     if (age == null || isNaN(age)) return "a21";
     if (age < 19.5) return "u19";
