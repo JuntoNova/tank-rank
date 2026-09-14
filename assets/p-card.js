@@ -20,7 +20,7 @@
     if (document.getElementById("th-card-css")) return;
     const s = document.createElement("style");
     s.id = "th-card-css";
-    s.textContent = ".player-hero .lede,.player-hero .metrics{display:none!important}.player-hero + .section .grid-3{display:none!important}.th-math{margin:8px 0 28px}.th-mul.up{color:var(--lime)}.th-mul.down{color:var(--coral)}.th-mul.flat{color:var(--muted)}";
+    s.textContent = ".player-hero .lede{display:none!important}.player-hero + .section .grid-3{display:none!important}.th-math{margin:8px 0 28px}.th-mul.up{color:var(--lime)}.th-mul.down{color:var(--coral)}.th-mul.flat{color:var(--muted)}";
     document.head.appendChild(s);
   }
   function mulClass(m) {
@@ -34,7 +34,7 @@
     const lede = root.querySelector(".lede");
     if (lede) lede.remove();
     const metrics = root.querySelector(".metrics");
-    if (metrics) metrics.remove();
+    if (metrics) { /* theory-card replaces these */ }
     const h1 = root.querySelector(".player-hero h1");
     if (h1 && p.name) h1.textContent = p.name;
     const kick = root.querySelector(".player-hero .kicker");
