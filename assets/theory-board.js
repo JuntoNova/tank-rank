@@ -106,10 +106,10 @@
       else if (ape < 4 && htIn >= 79 && htIn < 84) mul(0.90, 0.85, 0.92);
     }
     mAs = clamp(mAs, 0.20, 2.20); mNba = clamp(mNba, 0.20, 2.20);
-    mHof = clamp(mHof, 0.20, 1.80); mMvp = clamp(mMvp, 0.15, 3.20); mYrs = clamp(mYrs, 0.55, 1.35);
+    mHof = clamp(mHof, 0.35, 1.80); mMvp = clamp(mMvp, 0.15, 3.20); mYrs = clamp(mYrs, 0.55, 1.35);
     const pAs = clamp((slot.pAs || 0) * mAs, 0.002, 0.92);
     const pNba = clamp((slot.pNba || 0) * mNba, 0.001, 0.80);
-    const pHof = clamp((slot.pHof || 0) * mHof, 0.0005, 0.72);
+    const pHof = clamp((slot.pHof || 0) * 0.40 * mHof, 0.0005, 0.20);
     return {
       expAs: pAs * inten.as, expNba: pNba * inten.nba, expNba1: pNba * inten.nba1,
       expYrs: inten.yrs * mYrs, expCh: inten.ch * clamp((mAs + mHof) / 2, 0.50, 1.40),

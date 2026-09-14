@@ -27,6 +27,11 @@
   function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
   function shrink(raw, keep) { return 1 + (raw - 1) * keep; }
   function keepAs(pk)  { return pk <= 5 ? 0.42 : pk <= 14 ? 0.50 : pk <= 30 ? 0.60 : 0.72; }
+  // All-time Springfield slot rates imply ~2.4 HOFers per 60-pick draft. That Hall
+  // is easier than the bar people mean, and youth already lives in the slot. Scale
+  // pHof so a class is about one expected Hall of Famer, not a 40% lottery.
+  const HOF_SLOT = 0.40;
+  const HOF_CAP = 0.20;
   function ageKey(age) {
     if (age == null || isNaN(age)) return "a21";
     if (age < 19.5) return "u19";
@@ -123,8 +128,8 @@
     else if (ageNum < 22) ageYrs = 0.96;
     else ageYrs = 0.80;
     add("age", "Age", feat.age != null ? feat.age + " " + ageLabel(ak) : "unknown",
-      ageAs, ageMvp, "From /age. Youth moves a #1 off the all-era 34% HOF prior.",
-      { nba: ageAs, hof: clamp(shrink(rawAs, keepAs(pk) * 0.85), 0.72, 1.45), yrs: clamp(ageYrs, 0.70, 1.25) });
+      ageAs, ageMvp, "From /age. Youth moves All-Star odds more than Hall of Fame.",
+      { nba: ageAs, hof: clamp(shrink(rawAs, keepAs(pk) * 0.40), 0.82, 1.18), yrs: clamp(ageYrs, 0.70, 1.25) });
     const cls = feat.cls || "";
     if (feat.origin === "college") {
       let cAs = 1, cMvp = 1, note = "Sophomore / junior is the middle of /onedone.";
@@ -134,9 +139,9 @@
       } else if (cls === "Sr" || cls === "RS-Sr") {
         if (ak !== "a22") { cAs = 0.88; cMvp = 0.70; note = "Senior, not yet in the old-age bin."; }
       } else if (cls === "Jr" || cls === "RS-Jr") { cAs = 0.96; cMvp = 0.90; note = "Junior."; }
-      add("onedone", "Class year", cls || "-", cAs, cMvp, note, { yrs: 1 });
+      add("onedone", "Class year", cls || "-", cAs, cMvp, note, { yrs: 1, hof: 1 });
     } else {
-      add("onedone", "Class year", cls || feat.origin || "-", 1, 1, "No extra class-year market.", { yrs: 1 });
+      add("onedone", "Class year", cls || feat.origin || "-", 1, 1, "No extra class-year market.", { yrs: 1, hof: 1 });
     }
     if (feat.origin === "intl") {
       let iAs = 1, iMvp = 1;
@@ -190,21 +195,21 @@
     }
     const wspIn = inches(feat.wsp);
     const ape = (wspIn && htIn) ? (wspIn - htIn) : null;
-    if (ape == null) add("wingspan", "Wingspan", "missing", 1, 1, "No wingspan.");
-    else if (htIn >= 82 && ape >= 6) add("wingspan", "Wingspan", feat.wsp + " long 6-10+", 1.28, 1.00, "/wingspan 6-10+ long.");
-    else if (ape >= 6) add("wingspan", "Wingspan", feat.wsp + " +6 ape", 1.10, 1.05, "+6 ape.");
-    else if (ape < 4 && htIn >= 79 && htIn < 84) add("wingspan", "Wingspan", feat.wsp + " short for size", 0.90, 0.85, "Short arms at 6-7 to 6-11.");
-    else add("wingspan", "Wingspan", feat.wsp || "mid", 1, 1, "Mid-pack length.");
+    if (ape == null) add("wingspan", "Wingspan", "missing", 1, 1, "No wingspan.", { hof: 1 });
+    else if (htIn >= 82 && ape >= 6) add("wingspan", "Wingspan", feat.wsp + " long 6-10+", 1.28, 1.00, "/wingspan 6-10+ long.", { hof: 1 });
+    else if (ape >= 6) add("wingspan", "Wingspan", feat.wsp + " +6 ape", 1.10, 1.05, "+6 ape.", { hof: 1 });
+    else if (ape < 4 && htIn >= 79 && htIn < 84) add("wingspan", "Wingspan", feat.wsp + " short for size", 0.90, 0.85, "Short arms at 6-7 to 6-11.", { hof: 1 });
+    else add("wingspan", "Wingspan", feat.wsp || "mid", 1, 1, "Mid-pack length.", { hof: 1 });
     const reachIn = inches(feat.reach);
-    if (!reachIn) add("reach", "Standing reach", "missing", 1, 1, "/reach needs a number.");
-    else if (htIn >= 82) add("reach", "Standing reach", feat.reach + " 6-10+", 1.06, 1.00, "Lean true only at 6-10+.");
-    else add("reach", "Standing reach", feat.reach, 1, 1, "False as a general rule.");
+    if (!reachIn) add("reach", "Standing reach", "missing", 1, 1, "/reach needs a number.", { hof: 1 });
+    else if (htIn >= 82) add("reach", "Standing reach", feat.reach + " 6-10+", 1.06, 1.00, "Lean true only at 6-10+.", { hof: 1 });
+    else add("reach", "Standing reach", feat.reach, 1, 1, "False as a general rule.", { hof: 1 });
     mAs = clamp(mAs, 0.20, 2.20); mNba = clamp(mNba, 0.20, 2.20);
-    mHof = clamp(mHof, 0.20, 1.80); mMvp = clamp(mMvp, 0.15, 3.20); mYrs = clamp(mYrs, 0.55, 1.35);
-    const slotAs = slot.pAs || 0, slotNba = slot.pNba || 0, slotHof = slot.pHof || 0;
+    mHof = clamp(mHof, 0.35, 1.80); mMvp = clamp(mMvp, 0.15, 3.20); mYrs = clamp(mYrs, 0.55, 1.35);
+    const slotAs = slot.pAs || 0, slotNba = slot.pNba || 0, slotHof = (slot.pHof || 0) * HOF_SLOT;
     const pAs = clamp(slotAs * mAs, 0.002, 0.92);
     const pNba = clamp(slotNba * mNba, 0.001, 0.80);
-    const pHof = clamp(slotHof * mHof, 0.0005, 0.72);
+    const pHof = clamp(slotHof * mHof, 0.0005, HOF_CAP);
     return {
       slot: key, slotAs: slotAs, slotNba: slotNba, slotHof: slotHof, slotMvp: inten.mvp,
       pAs: pAs, pNba: pNba, pHof: pHof,
