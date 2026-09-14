@@ -29,6 +29,14 @@
   );
   src = src.replace(/<div>The Draft Model is a DBA of Junto Nova\.<\/div>/g, "");
   src = src.replace(/<div>Not affiliated with, endorsed by, or sponsored by the NBA, the NBA Draft, or any NBA team\.<\/div>/g, "");
+  src = src.replace(
+    '<p>Every completed class, 1947–2026. Every round.</p>',
+    '<p>1947–2026.</p>'
+  );
+  src = src.replace(
+    '<p>Living 2027 board, plus 2028 and 2029.</p>',
+    '<p>2027 board, plus 2028 and 2029.</p>'
+  );
   // Honesty: null/NaN probabilities render blank, never 0% or em dash.
   src = src.replace(
     "const fmtPct = (n) => `${Math.round(n * 100)}%`;",
