@@ -68,3 +68,4 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 - 2026-09-13 (Grok chat): 1977 Greg Ballard player card was empty. Oregon 1973-77 lines (Sr 21.7/9.8/2.5), listed 6-7 / 215, age 22.4 Sr, NBA yrs 11, 1978 title.
 - 2026-09-13 (Grok chat): 1984 board was empty (no Yrs, honors only in a 9-player overlay). Joined Basketball-Reference seasons (Jordan 15, Olajuwon 18, Stockton 19) and stamped HOF/AS/All-NBA/titles onto the class. Oscar Schmidt HOF kept at pick 131.
 - 2026-09-13 (Grok chat): Drafts index showed “Akeem Olajuwon” for 1984. Display name is Hakeem. history-index.json + nav-swap lock.
+- 2026-09-13 (Grok chat): 1980 Yrs column empty except McHale. Joined Basketball-Reference seasons (Carroll 10, McHale 13). Honors kept. Do not overwrite 1984 in outcomes/1980s.json.
