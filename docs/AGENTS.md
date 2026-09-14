@@ -62,3 +62,4 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 - 2026-09-13 (Grok chat): 2019 Yrs column empty. Joined Basketball-Reference seasons (Zion 6, Ja 7). Honors kept.
 - 2026-09-13 (Grok chat): Andrew asked Theories back in the top nav (central to the projections). Order is Historic → Upcoming → Big Board → Theories → Methodology. nav-swap injects the link if the CDN blob omits it. About stays off.
 - 2026-09-13 (Grok chat): 2024 Zaccharie Risacher player card was empty. Combine 6-8.5 / 195 / 6-9.5 / 8-11. JL Bourg 2023-24 10.1/3.8, EuroCup 11.3. Age 19.2 intl, NBA yrs 2.
+- 2026-09-13 (Grok chat): 1967 Mel Daniels player card was empty. NBA table had yrs=1 (11 Nets games); career is 9 ABA/NBA seasons, 18.4 ppg, HOF. New Mexico 1964-67 lines, listed 6-9 / 220, age 22.8 Sr.
