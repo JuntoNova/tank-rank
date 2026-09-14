@@ -4,15 +4,15 @@ Public site for [The Draft Model](https://thedraftmodel.com) — data-first NBA 
 
 Live: https://thedraftmodel.com
 
+**Agents (Grok chat + Grok bot): read [docs/AGENTS.md](docs/AGENTS.md) before changing nav, homepage doors, or About.**
+
 ## Pages
-- `index.html` — two doors: upcoming drafts and historic drafts
+- `index.html` — two doors: historic drafts first, upcoming drafts second
 - `board.html` — filterable big board
 - `player.html` — probability card
 - `methodology.html` — ranking philosophy
 - `rankings.html` — expansion map
-- `about.html` — project status
-
-Numbers on the board are **illustrative placeholders** until the ranking engine is connected.
+- `about.html` — project status (not in the top nav)
 
 ## Local
 Open `index.html` in a browser, or:
