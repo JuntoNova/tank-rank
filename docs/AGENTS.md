@@ -66,3 +66,4 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 - 2026-09-13 (Grok chat): 1997 Yrs column empty except Duncan. Joined Basketball-Reference seasons (Duncan 19). Honors unchanged.
 - 2026-09-13 (Grok chat): 1997 Tony Battie player card was empty. Texas Tech 1994-97 lines (Jr 18.8/11.8/2.5), listed 6-11 / 230, age 21.4 Jr, NBA yrs 14.
 - 2026-09-13 (Grok chat): 1977 Greg Ballard player card was empty. Oregon 1973-77 lines (Sr 21.7/9.8/2.5), listed 6-7 / 215, age 22.4 Sr, NBA yrs 11, 1978 title.
+- 2026-09-13 (Grok chat): 1984 board was empty (no Yrs, honors only in a 9-player overlay). Joined Basketball-Reference seasons (Jordan 15, Olajuwon 18, Stockton 19) and stamped HOF/AS/All-NBA/titles onto the class. Oscar Schmidt HOF kept at pick 131.
