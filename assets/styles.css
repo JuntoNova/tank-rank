@@ -166,6 +166,7 @@ tr:hover td { background: color-mix(in srgb, var(--lime) 4%, transparent); }
 .player-hero { padding: 48px 0 20px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; }
 .pills { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
 .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.metrics .kicker { grid-column: 1 / -1; margin-bottom: 4px; }
 .metric { background: var(--bg-2); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
 .metric label { display: block; color: var(--muted); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
 .metric b { font-family: var(--mono); font-size: 24px; }

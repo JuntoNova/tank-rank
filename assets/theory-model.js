@@ -229,8 +229,67 @@
   }
   function fmtPct(n) { return (n == null || !isFinite(Number(n))) ? "" : Math.round(n * 100) + "%"; }
   function fmtMul(m) { return "x" + Number(m == null ? 1 : m).toFixed(2); }
+  // Remaining Hall odds from the career so far. Draft-night pHof is a different
+  // number (slot × theories, capped at 10%). This one is: given the resume and
+  // whether they are still playing, will Springfield take them?
+  //   already in → 100%
+  //   retired ~20+ years and not in → 0%
+  //   LeBron-tier (MVP + huge All-NBA) → 100% even before induction
+  //   no NBA season yet (2026 class) → null, caller uses draft-night pHof
+  function careerHofP(p, draftYear, nowYear) {
+    if (!p) return null;
+    if (Number(p.hof)) return 1;
+    const yrs = Number(p.yrs) || 0;
+    const g = Number(p.g) || 0;
+    const y = Number(draftYear) || 0;
+    const now = Number(nowYear) || 2027;
+    const last = y + Math.max(yrs, 0);
+    const retiredFor = now - last;
+    if (yrs === 0 && g === 0 && y >= now - 1) return null;
+    if (retiredFor >= 20) return 0;
+    if (yrs === 0 && g === 0) return 0;
+    const as = Number(p.allStar != null ? p.allStar : p.as) || 0;
+    const nba = Number(p.allNba != null ? p.allNba : p.nba) || 0;
+    const nba1 = Number(p.nba1) || 0;
+    const mvp = Number(p.mvp) || 0;
+    const ch = Number(p.champs != null ? p.champs : p.ch) || 0;
+    const pts = Number(p.pts) || 0;
+    const ws = Number(p.ws) || 0;
+    const vorp = Number(p.vorp) || 0;
+    const totpts = pts * g;
+    let s = mvp * 4.2 + nba1 * 0.55 + nba * 0.50 + as * 0.22 + ch * 0.28
+      + Math.max(0, ws) * 0.010 + totpts / 14000 + Math.max(0, vorp) * 0.008;
+    const draftAge = Number(p.age != null && p.age !== "" ? p.age : p.draftAge) || 20;
+    const ageNow = draftAge + (now - y);
+    if (retiredFor <= 1) {
+      const runway = clamp(33 - ageNow, 0, 12);
+      const denom = Math.max(yrs, 1);
+      let extra = (as / denom * 0.22 + nba / denom * 0.50 + mvp / denom * 4.2) * runway * 0.45;
+      if (ageNow <= 27 && nba >= 1) extra += 1.6;
+      if (ageNow <= 26 && mvp >= 1) extra += 2.5;
+      if (ageNow <= 25 && as >= 1 && nba === 0) extra += 0.7;
+      s += extra;
+    }
+    let pr = 1 / (1 + Math.exp(-(s - 4.0)));
+    if (mvp >= 1 && (as >= 6 || nba >= 5)) pr = Math.max(pr, 0.97);
+    if (mvp >= 2) pr = Math.max(pr, 0.995);
+    if (as >= 12 || nba >= 10) pr = Math.max(pr, 0.97);
+    if (as >= 15 || (mvp >= 1 && as >= 8)) pr = Math.max(pr, 0.995);
+    if (mvp >= 3 || (mvp >= 1 && nba >= 10) || as >= 18) pr = 1;
+    if (retiredFor >= 8 && retiredFor < 20) pr *= Math.max(0, 1 - (retiredFor - 8) / 12);
+    return clamp(pr, 0, 1);
+  }
+  function fmtHofRemain(n) {
+    if (n == null || !isFinite(Number(n))) return "";
+    const p = Number(n);
+    if (p <= 0) return "0%";
+    if (p >= 0.995) return "100%";
+    const pct = Math.round(p * 100);
+    return pct === 0 ? "<1%" : pct + "%";
+  }
   window.TR = window.TR || {};
-  TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, INTENSITY: INTENSITY, fmtExp: fmtExp, fmtPct: fmtPct, fmtMul: fmtMul };
+  TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, INTENSITY: INTENSITY, HOF_CAP: HOF_CAP, HOF_SLOT: HOF_SLOT, fmtExp: fmtExp, fmtPct: fmtPct, fmtMul: fmtMul, careerHofP: careerHofP, fmtHofRemain: fmtHofRemain };
   TR.deriveFeat = deriveFeat;
   TR.projectPlayer = project;
+  TR.careerHofP = careerHofP;
 })();

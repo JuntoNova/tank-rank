@@ -30,7 +30,7 @@
     if (document.getElementById("th-card-css")) return;
     const s = document.createElement("style");
     s.id = "th-card-css";
-    s.textContent = ".player-hero .lede{display:none!important}.player-hero + .section .grid-3{display:none!important}.th-math{margin:8px 0 28px}.th-ledger table{min-width:640px}.th-ledger .name{font-weight:500}.th-ledger .meta{color:var(--muted);font-size:12px;margin-top:2px}.th-mul.up{color:var(--lime)}.th-mul.down{color:var(--coral)}.th-mul.flat{color:inherit}.size-grid .tile.th-empty{display:none}";
+    s.textContent = ".player-hero .lede{display:none!important}.player-hero + .section .grid-3{display:none!important}.th-math{margin:8px 0 28px}.th-ledger table{min-width:640px}.th-ledger .name{font-weight:500}.th-ledger .meta{color:var(--muted);font-size:12px;margin-top:2px}.th-mul.up{color:var(--lime)}.th-mul.down{color:var(--coral)}.th-mul.flat{color:inherit}.size-grid .tile.th-empty{display:none}.metrics .kicker{grid-column:1/-1;margin-bottom:4px}";
     document.head.appendChild(s);
   }
   function hideEmptySize() {
@@ -89,7 +89,8 @@
     mYrs = clamp(mYrs, 0.55, 1.35);
     var pAs = clamp((full.slotAs || 0) * mAs, 0.002, 0.92);
     var pNba = clamp((full.slotNba || 0) * mNba, 0.001, 0.80);
-    var pHof = clamp((full.slotHof || 0) * mHof, 0.0005, 0.72);
+    var cap = (TR.Model && TR.Model.HOF_CAP) || 0.10;
+    var pHof = clamp((full.slotHof || 0) * mHof, 0.0005, cap);
     return {
       expAs: pAs * (inten.as || 0),
       expNba1: pNba * (inten.nba1 || 0),
@@ -154,32 +155,30 @@
     const cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
     const yNum = Number(year);
     const historic = yNum < cur;
-    const projectionHero = yNum >= cur || yNum === cur - 1;
     scrubPills(root, p, feat, year);
     const metrics = root.querySelector(".metrics");
     if (metrics) {
-      if (projectionHero) {
-        metrics.innerHTML =
-          cell("AS", fmtExp(full.expAs)) +
-          cell("All-NBA", fmtExp(full.expNba)) +
-          cell("Yrs", fmtExp(full.expYrs)) +
-          cell("MVP", fmtExp(full.expMvp)) +
-          cell("HOF", fmtPct(full.pHof));
-      } else {
-        var g = (p.g != null && p.g !== "") ? Number(p.g).toLocaleString("en-US") : "";
-        var pts = (p.pts != null && p.pts !== "") ? Number(p.pts).toFixed(1) : "";
-        var ws = (p.ws != null && p.ws !== "") ? Number(p.ws).toFixed(1) : "";
-        metrics.innerHTML =
-          cell("Yrs", p.yrs != null && p.yrs !== "" ? p.yrs : "") +
-          cell("G", g) +
-          cell("PTS", pts) +
-          cell("WS", ws) +
-          cell("AS", p.allStar != null && p.allStar !== "" ? p.allStar : (historic ? 0 : "")) +
-          cell("All-NBA", p.allNba != null && p.allNba !== "" ? p.allNba : (historic ? 0 : "")) +
-          cell("MVP", p.mvp != null && p.mvp !== "" ? p.mvp : (historic ? 0 : "")) +
-          cell("Titles", p.champs != null && p.champs !== "" ? p.champs : (historic ? 0 : "")) +
-          cell("HOF", p.hof ? "Yes" : (historic ? "No" : ""));
-      }
+      var hofFn = (TR.careerHofP || (TR.Model && TR.Model.careerHofP));
+      var hofP = hofFn ? hofFn(p, yNum, cur) : null;
+      if (hofP == null) hofP = full.pHof;
+      var fmtHof = (TR.Model && TR.Model.fmtHofRemain)
+        ? TR.Model.fmtHofRemain
+        : function (n) { return n == null ? "" : Math.round(n * 100) + "%"; };
+      var g = (p.g != null && p.g !== "") ? Number(p.g).toLocaleString("en-US") : "0";
+      var pts = (p.pts != null && p.pts !== "") ? Number(p.pts).toFixed(1) : "0.0";
+      var ws = (p.ws != null && p.ws !== "") ? Number(p.ws).toFixed(1) : "0.0";
+      var yrs = (p.yrs != null && p.yrs !== "") ? p.yrs : 0;
+      metrics.innerHTML =
+        '<div class="kicker">Career</div>' +
+        cell("Yrs", yrs) +
+        cell("G", g) +
+        cell("PTS", pts) +
+        cell("WS", ws) +
+        cell("AS", p.allStar != null && p.allStar !== "" ? p.allStar : 0) +
+        cell("All-NBA", p.allNba != null && p.allNba !== "" ? p.allNba : 0) +
+        cell("MVP", p.mvp != null && p.mvp !== "" ? p.mvp : 0) +
+        cell("Titles", p.champs != null && p.champs !== "" ? p.champs : 0) +
+        cell("HOF", fmtHof(hofP));
     }
     const h1 = root.querySelector(".player-hero h1");
     if (h1 && p.name) h1.textContent = p.name;
@@ -194,7 +193,7 @@
     box.className = "section th-player th-math";
     if (body) {
       box.innerHTML =
-        '<div class="kicker">' + (projectionHero ? "Theories" : "When drafted") + "</div>"
+        '<div class="kicker">Theories</div>'
         + '<div class="table-wrap th-ledger"><table><thead><tr><th>Theory</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th><th>HOF</th></tr></thead><tbody>'
         + body + "</tbody></table></div>";
     }
