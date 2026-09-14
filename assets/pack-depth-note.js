@@ -12,7 +12,6 @@
     if (!host || !host.parentNode) return;
     var el = document.createElement("p");
     el.className = "pack-depth-note";
-    el.setAttribute("style", "color:var(--muted);font-size:13px;line-height:1.5;max-width:68ch;margin:-4px 0 16px;");
     el.textContent = text;
     host.parentNode.insertBefore(el, host.nextSibling);
   }
