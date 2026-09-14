@@ -150,6 +150,9 @@
     const body = document.querySelector("#rows");
     if (!draft || !head || !body) return;
     css();
+    if (year < ((window.TANK_RANK && TANK_RANK.currentYear) || 2027)) {
+      document.querySelectorAll(".banner").forEach(function (el) { el.remove(); });
+    }
     (draft.players || []).forEach(function (p) {
       p.theoryFeat = Object.assign({}, featOf(p), p.theoryFeat || {});
       p.proj = project(p, p.theoryFeat, priors);
@@ -223,14 +226,17 @@
       }
       (draft.players || []).forEach(function (p) {
         const o = extra[String(p.rank)];
-        if (!o) return;
-        if (o.hof) p.hof = 1;
-        if (o.as != null) p.allStar = o.as;
-        if (o.nba1 != null) p.nba1 = o.nba1;
-        if (o.nba != null) p.allNba = o.nba;
-        if (o.yrs != null) p.yrs = o.yrs;
-        if (o.ch != null) p.champs = o.ch;
-        if (o.mvp != null) p.mvp = o.mvp;
+        if (o) {
+          if (o.hof) p.hof = 1;
+          if (o.as != null) p.allStar = o.as;
+          if (o.nba1 != null) p.nba1 = o.nba1;
+          if (o.nba != null) p.allNba = o.nba;
+          if (o.yrs != null) p.yrs = o.yrs;
+          if (o.ch != null) p.champs = o.ch;
+          if (o.mvp != null) p.mvp = o.mvp;
+        }
+        var cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+        if ((p.yrs == null || p.yrs === "") && year === cur - 1) p.yrs = 0;
       });
       return { pack: pack, priors: priors, draft: draft };
     });

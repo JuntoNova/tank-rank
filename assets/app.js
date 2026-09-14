@@ -37,6 +37,10 @@
     '<p>Living 2027 board, plus 2028 and 2029.</p>',
     '<p>2027 board, plus 2028 and 2029.</p>'
   );
+  src = src.replace(
+    '<div class="banner">${TANK_RANK.disclaimer} ${draft.note || ""}</div>',
+    '${historic ? "" : `<div class="banner">${TANK_RANK.disclaimer}</div>`}'
+  );
   // Honesty: null/NaN probabilities render blank, never 0% or em dash.
   src = src.replace(
     "const fmtPct = (n) => `${Math.round(n * 100)}%`;",

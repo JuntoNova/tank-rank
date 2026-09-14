@@ -61,6 +61,14 @@
     });
   }
 
+  function hideHistoricBanner() {
+    var y = Number(new URLSearchParams(location.search).get("year")) || (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+    var cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+    if (y < cur) {
+      document.querySelectorAll(".banner").forEach(function (el) { el.remove(); });
+    }
+  }
+
   function lockIA() {
     const nav = document.querySelector(".nav-links");
     if (nav) {
@@ -68,6 +76,7 @@
       orderNav(nav);
     }
     orderDoors();
+    hideHistoricBanner();
   }
 
   function swapNav() {

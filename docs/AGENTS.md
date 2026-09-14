@@ -11,6 +11,7 @@ Repo: https://github.com/JuntoNova/tank-rank
 - **Menu order:** Historic → Upcoming → Big Board → Methodology
 - **Homepage doors:** Historic (Past) on the left / first. Upcoming (Future) on the right / second.
 - **Homepage door blurbs:** Historic `1947–2026.` Upcoming `2027 board, plus 2028 and 2029.` Do not use “living”, “every completed class”, or “every round” on the home doors.
+- **Historic board banner:** none. Do not restore “Theory-adjusted estimates…” on completed classes.
 - **About is off the menu.** `about.html` may stay as a direct URL. Do not add About back to `.nav-links`.
 - Theories pages stay linked from Methodology / Theories, not from the top nav, unless Andrew asks.
 
@@ -46,3 +47,4 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 - 2026-09-13 (Grok chat): 2028 board to 100 via `assets/board-2028-depth.js` (ESPN 2027 SC Next remainder after existing 1–20).
 - 2026-09-13 (Grok chat): 2029 board to 100 via `assets/board-2029-depth.js` (keep 1–14; ESPN 2029 SC Next + On3/Rivals 2029; then ESPN 2028 SC Next names not already on the 2028 board).
 - 2026-09-13 (Grok chat): Homepage doors no longer say “every completed class”, “every round”, or “living”. Historic blurb is `1947–2026.` Upcoming blurb is `2027 board, plus 2028 and 2029.`
+- 2026-09-13 (Grok chat): Historic board pages (year < currentYear) have no methodology banner. 2026 Yrs is 0 (class has not played an NBA season).
