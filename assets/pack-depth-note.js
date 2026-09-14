@@ -1,4 +1,4 @@
-/* F2a: pack vs depth disclose on living boards deeper than theory pack. Hitch voice. */
+/* F2a: pack vs depth disclose on living boards deeper than theory pack. Hitch Exact. Sara mute chrome. */
 (function () {
   function note() {
     var y = Number(new URLSearchParams(location.search).get("year")) || (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
@@ -6,15 +6,15 @@
     if (y < cur) return;
     var draft = window.TANK_RANK && TANK_RANK.drafts && TANK_RANK.drafts[y];
     if (!draft || !draft.players || draft.players.length <= 62) return;
-    if (document.querySelector(".banner.pack-depth")) return;
-    var text = "Theory-pack features cover picks 1–62. Picks 63–100 use slot×origin fallback only.";
-    var host = document.querySelector(".banner") || document.querySelector(".section-head");
-    if (!host) return;
-    var el = document.createElement("div");
-    el.className = "banner pack-depth";
+    if (document.querySelector(".pack-depth-note")) return;
+    var text = "Theory-pack features cover picks 1–62. Picks 63–100 are depth fills with thinner inputs. Method is on Methodology.";
+    var host = document.querySelector(".section-head");
+    if (!host || !host.parentNode) return;
+    var el = document.createElement("p");
+    el.className = "pack-depth-note";
+    el.setAttribute("style", "color:var(--muted);font-size:13px;line-height:1.5;max-width:68ch;margin:-4px 0 16px;");
     el.textContent = text;
-    if (host.classList.contains("banner") && host.parentNode) host.parentNode.insertBefore(el, host.nextSibling);
-    else host.appendChild(el);
+    host.parentNode.insertBefore(el, host.nextSibling);
   }
   note();
   setInterval(note, 500);
