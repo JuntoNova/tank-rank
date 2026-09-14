@@ -49,13 +49,13 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 - 2026-09-13 (Grok chat): 2028 board to 100 via `assets/board-2028-depth.js` (ESPN 2027 SC Next remainder after existing 1–20).
 - 2026-09-13 (Grok chat): 2029 board to 100 via `assets/board-2029-depth.js` (keep 1–14; ESPN 2029 SC Next + On3/Rivals 2029; then ESPN 2028 SC Next names not already on the 2028 board).
 - 2026-09-13 (Grok chat): Homepage doors no longer say “every completed class”, “every round”, or “living”. Historic blurb is `1947–2026.` Upcoming blurb is `2027 board, plus 2028 and 2029.`
-- 2026-09-13 (Grok chat): Historic board pages (year &lt; currentYear) have no methodology banner. 2026 Yrs is 0 (class has not played an NBA season).
+- 2026-09-13 (Grok chat): Historic board pages (year < currentYear) have no methodology banner. 2026 Yrs is 0 (class has not played an NBA season).
 - 2026-09-13 (Grok chat): Historic year boards (incl. 2026) show a ← Historic drafts button back to /drafts.
 - 2026-09-13 (Grok chat): 2026 player pages load theory-card + combine/listed/pre-draft. Dybantsa (1) has combine 6-8.5 / 217 / 7-0.5 / 8-10 and BYU 2025-26 line. Player.html was missing theory-card.js.
 - 2026-09-13 (Grok chat): 2024 board career yrs/g/ws/vorp joined from Basketball-Reference; outcomes/2020s.json 2024 filled (0 AS / All-NBA). 58 picks is correct (two 2nds forfeited).
 - 2026-09-13 (Grok chat): 2021 Yrs column was stuck at 1 for the whole class. Replaced with Basketball-Reference seasons (Cade 5). Kept AS/All-NBA counts.
 - 2026-09-13 (Grok chat): 2023 Yrs column was empty. Joined Basketball-Reference seasons (Wemby 3). Kept his AS/All-NBA.
-- 2026-09-13 (Grok chat): When-drafted Yrs was a slot constant (every #1 rounded to 17). featOf forced every college player to Fr/19.5; class AS multipliers leaked into years; fmtExp rounded &gt;=10 to an integer. Years now slot prior x age/origin/stash only, one decimal. 2022 lottery has draft-night ages so Paolo != Murray != Agbaji.
+- 2026-09-13 (Grok chat): When-drafted Yrs was a slot constant (every #1 rounded to 17). featOf forced every college player to Fr/19.5; class AS multipliers leaked into years; fmtExp rounded >=10 to an integer. Years now slot prior x age/origin/stash only, one decimal. 2022 lottery has draft-night ages so Paolo != Murray != Agbaji.
 - 2026-09-13 (Grok chat): 2022 player cards were empty (no yrs/size/pre-draft). Joined BR career yrs for the class. Keegan Murray (4) has Iowa 2020-22 lines, listed 6-8 / 225 / 6-11, NBA yrs 4.
 - 2026-09-13 (Grok chat): 1977 Marques Johnson player card was empty. Joined BR career yrs for the 1977 class (Marques 11). UCLA 1973-77 lines, listed 6-7 / 218, draft age 21.3 Sr. Honors kept (5 AS, 3 All-NBA).
 - 2026-09-13 (Grok chat): 1979 Yrs column empty except Magic. Joined Basketball-Reference seasons (Magic 13). Honors unchanged.
@@ -77,4 +77,4 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 - 2026-09-14 (Grok chat): 1948 Andy Tonkovich player card was empty. Marshall 1944-48 lines (Sr 13.0, 1947 NAIB champ), listed 6-1 / 185, age 25.5 Sr, BAA 17 games / 2.6 ppg.
 - 2026-09-14 (Grok chat): 1996 board was empty (no Yrs, honors only in a 9-player overlay). Joined Basketball-Reference seasons (Iverson 14, Kobe 20, Ray Allen 18) and stamped HOF/AS/All-NBA/MVP/titles. Do not overwrite 1997 in outcomes/1990s.json.
 - 2026-09-14 (Grok chat): 2008 board was empty (no Yrs; Patrick Ewing Jr. had his father's honors). Joined Basketball-Reference seasons (Rose 15, Westbrook 18, Love 18). Stamped real AS/All-NBA/MVP/titles. Stripped Ewing Jr. HOF/AS. Do not overwrite 2003/2007 in outcomes/2000s.json.
-- 2026-09-14 (Grok bot): PR-F — honor pct honesty (`&lt;1%` / blank, never `0%`); pack vs depth disclose for 2027 (features 1–62; 63–100 slot×origin only). No read-2027 SEO page. Stokes create/HOF and Daniels SE Melbourne Phoenix untouched.
+- 2026-09-14 (Grok bot): PR-F — honor pct honesty (`<1%` / blank, never `0%`); pack vs depth disclose for 2027 (features 1–62; 63–100 slot×origin only). No read-2027 SEO page. Stokes create/HOF and Daniels SE Melbourne Phoenix untouched.
