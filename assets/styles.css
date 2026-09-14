@@ -214,7 +214,6 @@ footer .icon-link svg { display: block; }
   .hero, .player-hero, .grid-3, .doors { grid-template-columns: 1fr; }
   .home { padding: 36px 0 64px; min-height: auto; }
   .search { margin-left: 0; width: 100%; }
-  .nav-inner { flex-wrap: wrap; height: auto; min-height: 64px; padding: 12px 0; }
   .nav-toggle { display: inline-flex; }
   .badge { display: none; }
   .nav-links {
@@ -294,4 +293,12 @@ footer .icon-link svg { display: block; }
 }
 @media (max-width: 860px) {
   .theory-grid { grid-template-columns: 1fr; }
+}
+
+.pack-depth-note {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 68ch;
+  margin: -4px 0 16px;
 }

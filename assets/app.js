@@ -50,7 +50,7 @@
   // Honesty: null/NaN probabilities render blank, never 0% or em dash.
   src = src.replace(
     "const fmtPct = (n) => `${Math.round(n * 100)}%`;",
-    "const fmtPct = (n) => (n == null || !Number.isFinite(Number(n))) ? \"\" : `${Math.round(n * 100)}%`;"
+    "const fmtPct = (n) => { if (n == null || !Number.isFinite(Number(n))) return \"\"; const p = Math.round(Number(n) * 100); return p === 0 ? \"<1%\" : p + \"%\"; };"
   );
   // Honesty: living board heading uses actual count in plain words, not Top 300 / (n).
   src = src.replace(

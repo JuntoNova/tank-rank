@@ -1,7 +1,10 @@
-/* Honesty: null/NaN probs and Exp WS render blank, never 0% / 0 / em dash. Blank is not 0%. */
+/* Honesty: null/NaN probs and Exp WS render blank, never 0% / 0 / em dash.
+   Finite probs that round to 0% display <1% — never paint honor cells as 0%. */
 (function () {
   function blankPct(n) {
-    return (n == null || !isFinite(Number(n))) ? "" : Math.round(Number(n) * 100) + "%";
+    if (n == null || !isFinite(Number(n))) return "";
+    var p = Math.round(Number(n) * 100);
+    return p === 0 ? "<1%" : p + "%";
   }
   function blankExp(n) {
     if (n == null || isNaN(n)) return "";
