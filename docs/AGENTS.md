@@ -8,13 +8,13 @@ Repo: https://github.com/JuntoNova/tank-rank
 
 ## Locked IA (do not “fix” back)
 
-- **Menu order:** Historic → Upcoming → Big Board → Methodology
+- **Menu order:** Historic → Upcoming → Big Board → Theories → Methodology
 - **Homepage doors:** Historic (Past) on the left / first. Upcoming (Future) on the right / second.
 - **Homepage door blurbs:** Historic `1947–2026.` Upcoming `2027 board, plus 2028 and 2029.` Do not use “living”, “every completed class”, or “every round” on the home doors.
 - **Historic board banner:** none. Do not restore “Theory-adjusted estimates…” on completed classes.
 - **Historic year boards:** keep a `← Historic drafts` button to `drafts.html` in `.section-head`.
 - **About is off the menu.** `about.html` may stay as a direct URL. Do not add About back to `.nav-links`.
-- Theories pages stay linked from Methodology / Theories, not from the top nav, unless Andrew asks.
+- **Theories is on the menu.** Hub is `theories.html`. Do not drop it. Individual theory pages (`size.html`, `age.html`, …) stay off the top nav and highlight Theories. About stays off the menu.
 
 ## Living boards
 
@@ -60,3 +60,4 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 - 2026-09-13 (Grok chat): 1979 Yrs column empty except Magic. Joined Basketball-Reference seasons (Magic 13). Honors unchanged.
 - 2026-09-13 (Grok chat): 1979 James Bailey player card was empty. Rutgers 1975-79 lines, listed 6-9 / 220, draft age 22.1 Sr, NBA yrs 9.
 - 2026-09-13 (Grok chat): 2019 Yrs column empty. Joined Basketball-Reference seasons (Zion 6, Ja 7). Honors kept.
+- 2026-09-13 (Grok chat): Andrew asked Theories back in the top nav (central to the projections). Order is Historic → Upcoming → Big Board → Theories → Methodology. nav-swap injects the link if the CDN blob omits it. About stays off.

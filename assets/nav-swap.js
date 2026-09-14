@@ -3,8 +3,10 @@
     { match: /drafts\.html/i, label: /^historic$/i },
     { match: /upcoming\.html/i, label: /^upcoming$/i },
     { match: /board\.html/i, label: /^big board$/i },
+    { match: /theories\.html/i, label: /^theories$/i },
     { match: /methodology\.html/i, label: /^methodology$/i }
   ];
+  var THEORY_PATH = /(theories|size|wingspan|handle|reach|combine|age|late|onedone|jump|stash|prod|ftrate|three|astu|defense|rim|schools|intl|develop|switch|march|scheme|medical|character)\.html/i;
 
   function stripFooterLine() {
     document.querySelectorAll(".foot .copy div").forEach((el) => {
@@ -34,6 +36,23 @@
       const text = (a.textContent || "").replace(/\s+/g, " ").trim();
       if (/about\.html/i.test(href) || /^about$/i.test(text)) a.remove();
     });
+  }
+
+  function ensureTheories(nav) {
+    var has = Array.from(nav.querySelectorAll("a")).some(function (a) {
+      return /theories\.html/i.test(a.getAttribute("href") || "") || /^theories$/i.test((a.textContent || "").trim());
+    });
+    if (!has) {
+      var a = document.createElement("a");
+      a.href = "./theories.html";
+      a.textContent = "Theories";
+      nav.appendChild(a);
+    }
+    if (THEORY_PATH.test(location.pathname || "") || THEORY_PATH.test(location.href || "")) {
+      nav.querySelectorAll("a").forEach(function (a) {
+        a.classList.toggle("active", /theories\.html/i.test(a.getAttribute("href") || "") || /^theories$/i.test((a.textContent || "").trim()));
+      });
+    }
   }
 
   function orderNav(nav) {
@@ -73,6 +92,7 @@
     const nav = document.querySelector(".nav-links");
     if (nav) {
       stripAbout(nav);
+      ensureTheories(nav);
       orderNav(nav);
     }
     orderDoors();
