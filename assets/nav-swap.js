@@ -1,4 +1,11 @@
 (function () {
+  var NAV_ORDER = [
+    { match: /drafts\.html/i, label: /^historic$/i },
+    { match: /upcoming\.html/i, label: /^upcoming$/i },
+    { match: /board\.html/i, label: /^big board$/i },
+    { match: /methodology\.html/i, label: /^methodology$/i }
+  ];
+
   function stripFooterLine() {
     document.querySelectorAll(".foot .copy div").forEach((el) => {
       if (/Probabilities, not opinions|v0\.5\.0-prototype|Updated 2026-09-02/.test(el.textContent || "")) {
@@ -6,6 +13,7 @@
       }
     });
   }
+
   function closeFreshAccordionOnce() {
     if (window.__tdmAccClosed) return;
     const root = document.getElementById("acc-root");
@@ -19,14 +27,53 @@
     });
     window.__tdmAccClosed = true;
   }
+
+  function stripAbout(nav) {
+    nav.querySelectorAll("a").forEach((a) => {
+      const href = a.getAttribute("href") || "";
+      const text = (a.textContent || "").replace(/\s+/g, " ").trim();
+      if (/about\.html/i.test(href) || /^about$/i.test(text)) a.remove();
+    });
+  }
+
+  function orderNav(nav) {
+    const links = Array.from(nav.querySelectorAll("a"));
+    NAV_ORDER.forEach((rule) => {
+      const el = links.find((a) => rule.match.test(a.getAttribute("href") || "") || rule.label.test((a.textContent || "").trim()));
+      if (el) nav.appendChild(el);
+    });
+  }
+
+  function orderDoors() {
+    const doors = document.querySelector(".doors");
+    if (!doors) return;
+    const historic = Array.from(doors.querySelectorAll("a")).find((a) => /drafts\.html/i.test(a.getAttribute("href") || ""));
+    const upcoming = Array.from(doors.querySelectorAll("a")).find((a) => /upcoming\.html/i.test(a.getAttribute("href") || ""));
+    if (historic && upcoming && doors.children[0] !== historic) {
+      doors.insertBefore(historic, upcoming);
+    }
+  }
+
+  function lockIA() {
+    const nav = document.querySelector(".nav-links");
+    if (nav) {
+      stripAbout(nav);
+      orderNav(nav);
+    }
+    orderDoors();
+  }
+
   function swapNav() {
     // Keep Big Board → board.html. Do not strip .logo span.
     stripFooterLine();
+    lockIA();
   }
+
   function swap() {
     swapNav();
     closeFreshAccordionOnce();
   }
+
   function watch() {
     const root = document.getElementById("app");
     if (!root || window.__tdmNavObs) return;
@@ -35,6 +82,7 @@
     });
     window.__tdmNavObs.observe(root, { childList: true, subtree: false });
   }
+
   ["renderHome", "renderBoard", "renderDrafts", "renderUpcoming", "renderSimple", "renderPlayer"].forEach((name) => {
     const fn = window.TR && TR[name];
     if (typeof fn !== "function") return;
