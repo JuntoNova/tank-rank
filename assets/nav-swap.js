@@ -52,6 +52,13 @@
     if (historic && upcoming && doors.children[0] !== historic) {
       doors.insertBefore(historic, upcoming);
     }
+    doors.querySelectorAll("a").forEach(function (a) {
+      var href = a.getAttribute("href") || "";
+      var p = a.querySelector("p");
+      if (!p) return;
+      if (/drafts\.html/i.test(href)) p.textContent = "1947\u20132026.";
+      if (/upcoming\.html/i.test(href)) p.textContent = "2027 board, plus 2028 and 2029.";
+    });
   }
 
   function lockIA() {
