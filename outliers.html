@@ -4,29 +4,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Outliers | The Draft Model</title>
-  <meta name="description" content="Ten who most overachieved versus The Draft Model, ten who most underachieved, and ten the model was most wrong about." />
+  <meta name="description" content="Career vs the draft-night model on the same board columns. Ranked by Δ = 1×AS + 2×All-NBA + 3×1st + 4×Chips + 10×MVP + 20×HOF + 0.25×Yrs − model." />
   <link rel="canonical" href="https://thedraftmodel.com/outliers.html" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#090a0c" />
-  <link rel="stylesheet" href="./assets/styles.css?v=85" />
+  <link rel="stylesheet" href="./assets/styles.css?v=86" />
 </head>
 <body>
   <div id="app"></div>
   <script src="./assets/data.js?v=67"></script>
   <script src="./assets/app.js?v=83"></script>
   <script src="./assets/nav-swap.js?v=86"></script>
-  <script src="./assets/outliers.js?v=1"></script>
+  <script src="./assets/outliers.js?v=2"></script>
   <script>
-    TR.renderSimple(document.getElementById("app"), "outliers", "Outliers", "Versus the model",
+    TR.renderSimple(document.getElementById("app"), "outliers", "Outliers",
+      "Δ = 1×AS + 2×All-NBA + 3×1st + 4×Chips + 10×MVP + 20×HOF + 0.25×Yrs − model",
       `<div class="ol-page">
-        <p>Ten who beat the slot, ten who missed it, and ten the model was most wrong about. Career honors, years, and win shares versus the theory-adjusted projection on draft night.</p>
         <div class="toolbar ol-pills" role="tablist" aria-label="Outlier lists">
           <button type="button" class="chip on" data-ol="over" role="tab" aria-selected="true">Overachieved</button>
           <button type="button" class="chip" data-ol="under" role="tab" aria-selected="false">Underachieved</button>
           <button type="button" class="chip" data-ol="diff" role="tab" aria-selected="false">Most different</button>
         </div>
-        <p class="ol-blurb" id="ol-blurb"></p>
-        <ol class="ol-list" id="ol-list"></ol>
+        <div class="table-wrap">
+          <table>
+            <thead><tr id="ol-head"></tr></thead>
+            <tbody id="ol-rows"></tbody>
+          </table>
+        </div>
       </div>`
     );
     if (window.TR && typeof TR.mountOutliers === "function") TR.mountOutliers();

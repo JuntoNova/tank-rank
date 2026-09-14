@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
-"""Score drafted careers vs theory-adjusted slot projections. Writes assets/outliers.json."""
+"""Score drafted careers vs theory-adjusted slot projections. Writes assets/outliers.json.
+
+Δ is career minus the draft-night model on the same columns the boards use:
+
+    1×AS + 2×All-NBA + 3×1st + 4×Chips + 10×MVP + 20×HOF + 0.25×Yrs
+
+No hidden win-share term. HOF is 0/1 vs the same scaled Hall rate the boards paint
+(slot × 0.20, cap 10%). Over = largest Δ, 1947–2016. Under = smallest Δ among
+picks 1–8, 1989–2017. Diff = largest |Δ| / max(model, 4) so late picks can outrank #1s.
+"""
 from __future__ import annotations
 
 import json
 import math
-import os
 import re
 from pathlib import Path
 
@@ -44,6 +52,13 @@ CLS_AGE = {
     "Jr": 21, "RS-Jr": 21, "Sr": 22, "RS-Sr": 23, "Intl": 20,
 }
 CLS_RE = re.compile(r"\((RS-Fr|RS-So|RS-Jr|RS-Sr|Fr|So|Jr|Sr|HS[^)]*)\.?\)\s*$", re.I)
+
+# Same Hall scale the boards paint. ~4,700 draftees vs ~111 NBA Springfield members.
+HOF_SLOT = 0.20
+HOF_CAP = 0.10
+
+# Integer weights on the board columns. 1 All-Star = 1.
+W_AS, W_NBA, W_NBA1, W_CH, W_MVP, W_HOF, W_YRS = 1, 2, 3, 4, 10, 20, 0.25
 
 
 def clamp(n, lo, hi):
@@ -182,7 +197,11 @@ def project(p, priors):
         age_yrs = 0.96
     else:
         age_yrs = 0.80
-    add(age_as, age_mvp, nba=age_as, hof=clamp(shrink(raw_as, keep_as(pk) * 0.85), 0.72, 1.45), yrs=clamp(age_yrs, 0.70, 1.25))
+    add(
+        age_as, age_mvp, nba=age_as,
+        hof=clamp(shrink(raw_as, keep_as(pk) * 0.40), 0.82, 1.18),
+        yrs=clamp(age_yrs, 0.70, 1.25),
+    )
 
     cls = feat["cls"] or ""
     if feat["origin"] == "college":
@@ -197,9 +216,9 @@ def project(p, priors):
                 c_as, c_mvp = 0.88, 0.70
         elif cls in ("Jr", "RS-Jr"):
             c_as, c_mvp = 0.96, 0.90
-        add(c_as, c_mvp, yrs=1)
+        add(c_as, c_mvp, yrs=1, hof=1)
     else:
-        add(1, 1, yrs=1)
+        add(1, 1, yrs=1, hof=1)
 
     if feat["origin"] == "intl":
         if pk <= 5:
@@ -219,15 +238,15 @@ def project(p, priors):
 
     m_as = clamp(m_as, 0.20, 2.20)
     m_nba = clamp(m_nba, 0.20, 2.20)
-    m_hof = clamp(m_hof, 0.20, 1.80)
+    m_hof = clamp(m_hof, 0.35, 1.80)
     m_mvp = clamp(m_mvp, 0.15, 3.20)
     m_yrs = clamp(m_yrs, 0.55, 1.35)
     slot_as = float(slot.get("pAs") or 0)
     slot_nba = float(slot.get("pNba") or 0)
-    slot_hof = float(slot.get("pHof") or 0)
+    slot_hof = float(slot.get("pHof") or 0) * HOF_SLOT
     p_as = clamp(slot_as * m_as, 0.002, 0.92)
     p_nba = clamp(slot_nba * m_nba, 0.001, 0.80)
-    p_hof = clamp(slot_hof * m_hof, 0.0005, 0.72)
+    p_hof = clamp(slot_hof * m_hof, 0.0005, HOF_CAP)
     return {
         "pAs": p_as, "pNba": p_nba, "pHof": p_hof,
         "expAs": p_as * inten["as"],
@@ -239,17 +258,17 @@ def project(p, priors):
     }
 
 
-def career_value(hof, mvp, ch, nba1, nba, ast, yrs, ws):
+def honor_score(hof, mvp, ch, nba1, nba, ast, yrs):
     return (
-        30 * hof + 12 * mvp + 4 * ch + 3.5 * nba1 + 2 * nba + 1.2 * ast
-        + 0.30 * yrs + 0.025 * (ws or 0)
+        W_HOF * hof + W_MVP * mvp + W_CH * ch + W_NBA1 * nba1
+        + W_NBA * nba + W_AS * ast + W_YRS * yrs
     )
 
 
-def expected_value(proj):
-    return career_value(
+def expected_score(proj):
+    return honor_score(
         proj["pHof"], proj["expMvp"], proj["expCh"], proj["expNba1"],
-        proj["expNba"], proj["expAs"], proj["expYrs"], 0,
+        proj["expNba"], proj["expAs"], proj["expYrs"],
     )
 
 
@@ -303,38 +322,30 @@ def load_history():
     return rows
 
 
-def note_of(h):
-    bits = []
-    if h["hof"]:
-        bits.append("HOF")
-    if h["mvp"]:
-        bits.append(f"{int(h['mvp'])} MVP" if h["mvp"] != 1 else "1 MVP")
-    if h["ch"]:
-        bits.append(f"{int(h['ch'])} titles" if h["ch"] != 1 else "1 title")
-    if h["as"]:
-        bits.append(f"{int(h['as'])} AS")
-    if h["nba"]:
-        bits.append(f"{int(h['nba'])} All-NBA")
-    yrs = int(h["yrs"] or 0)
-    bits.append(f"{yrs} yr" if yrs == 1 else f"{yrs} yrs")
-    return " · ".join(bits)
-
-
-def model_of(proj):
-    hof = round(proj["pHof"] * 100)
-    return f"model {proj['expYrs']:.1f} yrs · {proj['expAs']:.1f} AS · {hof}% HOF"
-
-
 def row_out(r):
     return {
         "n": r["n"],
         "y": r["y"],
         "pk": r["pk"],
         "id": r["id"],
+        "t": r["t"],
+        "pos": r["pos"],
+        "c": r["c"],
+        "as": r["as"],
+        "nba1": r["nba1"],
+        "nba": r["nba"],
+        "yrs": r["yrs"],
+        "ch": r["ch"],
+        "mvp": r["mvp"],
+        "hof": r["hof"],
+        "eAs": round(r["eAs"], 2),
+        "eNba1": round(r["eNba1"], 2),
+        "eNba": round(r["eNba"], 2),
+        "eYrs": round(r["eYrs"], 2),
+        "eCh": round(r["eCh"], 2),
+        "eMvp": round(r["eMvp"], 2),
+        "eHof": round(r["eHof"], 4),
         "delta": round(r["delta"], 1),
-        "rel": round(r["rel"], 2),
-        "note": r["note"],
-        "model": r["model"],
     }
 
 
@@ -351,25 +362,31 @@ def main():
         name = DISPLAY.get(raw, raw)
         ov = honors.get(str(y), {}).get(str(pk), {}) or {}
         h = {
-            "hof": max(num(r.get("hof")), num(ov.get("hof"))),
+            "hof": 1.0 if max(num(r.get("hof")), num(ov.get("hof"))) else 0.0,
             "mvp": max(num(r.get("mvp")), num(ov.get("mvp"))),
             "ch": max(num(r.get("ch")), num(ov.get("ch"))),
             "nba1": max(num(r.get("nba1")), num(ov.get("nba1"))),
             "nba": max(num(r.get("nba")), num(ov.get("nba"))),
             "as": max(num(r.get("as")), num(ov.get("as"))),
             "yrs": max(num(r.get("yrs")), num(ov.get("yrs"))),
-            "ws": max(num(r.get("ws")), num(ov.get("ws"))),
         }
         proj = project(r, priors)
-        act = career_value(h["hof"], h["mvp"], h["ch"], h["nba1"], h["nba"], h["as"], h["yrs"], h["ws"])
-        exp = expected_value(proj)
+        act = honor_score(h["hof"], h["mvp"], h["ch"], h["nba1"], h["nba"], h["as"], h["yrs"])
+        exp = expected_score(proj)
         delta = act - exp
         scored.append({
             "n": name, "y": y, "pk": pk, "id": slug(name, y, pk),
+            "t": str(r.get("t") or r.get("team") or ""),
+            "pos": str(r.get("pos") or ""),
+            "c": str(r.get("c") or r.get("school") or ""),
             "delta": delta, "act": act, "exp": exp,
             "rel": abs(delta) / max(exp, 4.0),
-            "note": note_of(h), "model": model_of(proj),
-            "hof": h["hof"], "as": h["as"], "yrs": h["yrs"],
+            "as": int(h["as"]), "nba1": int(h["nba1"]), "nba": int(h["nba"]),
+            "yrs": int(h["yrs"]), "ch": int(h["ch"]), "mvp": int(h["mvp"]),
+            "hof": int(h["hof"]),
+            "eAs": proj["expAs"], "eNba1": proj["expNba1"], "eNba": proj["expNba"],
+            "eYrs": proj["expYrs"], "eCh": proj["expCh"], "eMvp": proj["expMvp"],
+            "eHof": proj["pHof"],
         })
 
     over_pool = [s for s in scored if s["y"] <= 2016]
@@ -382,8 +399,7 @@ def main():
 
     out = {
         "updated": "2026-09-14",
-        "universe": "Over/different: drafted 1947–2016. Under: lottery picks 1–8, 1989–2017 (career had time to exist).",
-        "score": "Career honors, years, and WS versus the theory-adjusted slot projection. Over = biggest surplus. Under = biggest deficit among modern lottery picks. Different = largest |surplus| relative to what the slot expected.",
+        "score": "Δ = 1×AS + 2×All-NBA + 3×1st + 4×Chips + 10×MVP + 20×HOF + 0.25×Yrs − the draft-night model on those same columns.",
         "over": [row_out(s) for s in over],
         "under": [row_out(s) for s in under],
         "diff": [row_out(s) for s in diff],
@@ -392,13 +408,13 @@ def main():
     dest.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")))
     print("OVER")
     for s in over:
-        print(f"  {s['n']:24} {s['y']} #{s['pk']:<3} Δ{s['delta']:+7.1f}  {s['note']}")
+        print(f"  {s['n']:24} {s['y']} #{s['pk']:<3} Δ{s['delta']:+7.1f}  AS {s['as']} NBA {s['nba']} MVP {s['mvp']} HOF {s['hof']}")
     print("UNDER")
     for s in under:
-        print(f"  {s['n']:24} {s['y']} #{s['pk']:<3} Δ{s['delta']:+7.1f}  {s['note']}")
+        print(f"  {s['n']:24} {s['y']} #{s['pk']:<3} Δ{s['delta']:+7.1f}  AS {s['as']} NBA {s['nba']} yrs {s['yrs']}")
     print("DIFF")
     for s in diff:
-        print(f"  {s['n']:24} {s['y']} #{s['pk']:<3} rel {s['rel']:5.2f} Δ{s['delta']:+7.1f}  {s['note']}")
+        print(f"  {s['n']:24} {s['y']} #{s['pk']:<3} rel {s['rel']:5.2f} Δ{s['delta']:+7.1f}  AS {s['as']} HOF {s['hof']}")
     print("wrote", dest)
 
 
