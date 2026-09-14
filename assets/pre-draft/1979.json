@@ -1,0 +1,70 @@
+{
+  "year": 1979,
+  "src": "Sports-Reference CBB",
+  "players": {
+    "6": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Rutgers",
+          "season": "1978-79",
+          "cls": "Sr",
+          "g": 30,
+          "mp": 34.3,
+          "pts": 18.5,
+          "trb": 8.2,
+          "ast": 0.9,
+          "stl": 0.9,
+          "blk": 2.2,
+          "fg": 0.521,
+          "ft": 0.657
+        },
+        {
+          "lvl": "College",
+          "team": "Rutgers",
+          "season": "1977-78",
+          "cls": "Jr",
+          "g": 31,
+          "mp": 34.2,
+          "pts": 23.5,
+          "trb": 9.4,
+          "ast": 0.6,
+          "stl": 1.8,
+          "blk": 2.3,
+          "fg": 0.585,
+          "ft": 0.646
+        },
+        {
+          "lvl": "College",
+          "team": "Rutgers",
+          "season": "1976-77",
+          "cls": "So",
+          "g": 28,
+          "mp": 33.1,
+          "pts": 16.7,
+          "trb": 10.9,
+          "ast": 1.0,
+          "stl": 1.8,
+          "blk": 2.6,
+          "fg": 0.541,
+          "ft": 0.695
+        },
+        {
+          "lvl": "College",
+          "team": "Rutgers",
+          "season": "1975-76",
+          "cls": "Fr",
+          "g": 33,
+          "mp": 23.9,
+          "pts": 8.5,
+          "trb": 7.1,
+          "ast": 0.6,
+          "stl": 1.2,
+          "blk": 3.0,
+          "fg": 0.504,
+          "ft": 0.588
+        }
+      ]
+    }
+  }
+}
