@@ -1,0 +1,42 @@
+{
+  "year": 1948,
+  "src": "The Draft Review / Marshall",
+  "players": {
+    "1": {
+      "rows": [
+        {
+          "lvl": "College",
+          "team": "Marshall",
+          "season": "1947-48",
+          "cls": "Sr",
+          "g": 33,
+          "pts": 13.0
+        },
+        {
+          "lvl": "College",
+          "team": "Marshall",
+          "season": "1946-47",
+          "cls": "Jr",
+          "g": 37,
+          "pts": 11.0
+        },
+        {
+          "lvl": "College",
+          "team": "Marshall",
+          "season": "1945-46",
+          "cls": "So",
+          "g": 34,
+          "pts": 14.5
+        },
+        {
+          "lvl": "College",
+          "team": "Marshall",
+          "season": "1944-45",
+          "cls": "Fr",
+          "g": 26,
+          "pts": 9.5
+        }
+      ]
+    }
+  }
+}
