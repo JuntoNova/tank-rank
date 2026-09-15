@@ -161,4 +161,21 @@
   hookModel();
   window.TR = window.TR || {};
   TR.paintSize = paintSize;
+
+  const origRender = window.TR && TR.renderPlayer;
+  if (typeof origRender === "function" && !origRender.__sizePainted) {
+    TR.renderPlayer = function (root) {
+      const y = Number(new URLSearchParams(location.search).get("year")) || (window.TANK_RANK && TANK_RANK.currentYear);
+      const id = new URLSearchParams(location.search).get("id");
+      return Promise.resolve(origRender(root)).then(function () {
+        const draft = window.TANK_RANK && TANK_RANK.drafts[y];
+        if (!draft || !root) return;
+        const list = draft.players || [];
+        let p = list.find(function (x) { return x.id === id; }) || list[0];
+        const feat = Object.assign({}, (p && p.theoryFeat) || {}, p || {});
+        paintSize(root, feat);
+      });
+    };
+    TR.renderPlayer.__sizePainted = true;
+  }
 })();
