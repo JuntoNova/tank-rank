@@ -1,37 +1,57 @@
 (function () {
-  const items = [
-    { title: "Do taller guys turn out better?", hint: "the actual claim", src: "./assets/size-t-bins.html?v=39" },
-    { title: "Does every extra inch help?", hint: "5-9 through 7-7", src: "./assets/size-t-inch.html?v=39" },
-    { title: "Do heavier guys turn out better?", hint: "listed weight", src: "./assets/size-t-wt.html?v=39" },
-    { title: "Did the listed number match the scale?", hint: "weight only so far", src: "./assets/size-t-lvw.html?v=40" },
-    { title: "Listed height vs combine height", hint: "not yet", note: "We do not have listed height and combine height on the same players yet. That is not the same thing as shoes versus no shoes." },
-    { title: "Long arms", hint: "different argument", src: "./assets/size-t-wsp.html?v=39" },
-    { title: "Arms minus height", hint: "different argument", src: "./assets/size-t-ape.html?v=39" },
-    { title: "How high he can reach", hint: "different argument", src: "./assets/size-t-reach.html?v=39" },
-    { title: "Pounds per inch", hint: "different argument", src: "./assets/size-t-wpi.html?v=39" }
+  const groups = [
+    {
+      label: "Height",
+      items: [
+        { title: "Taller guys perform better", src: "./assets/size-t-bins.html?v=43" },
+        { title: "Every extra inch helps", src: "./assets/size-t-inch.html?v=43" }
+      ]
+    },
+    {
+      label: "Weight",
+      items: [
+        { title: "Heavier guys perform better", src: "./assets/size-t-wt.html?v=43" },
+        { title: "Listed weight matches the scale", src: "./assets/size-t-lvw.html?v=43" },
+        { title: "More pounds per inch helps", src: "./assets/size-t-wpi.html?v=39" }
+      ]
+    },
+    {
+      label: "Length",
+      items: [
+        { title: "Longer arms help", src: "./assets/size-t-wsp.html?v=43" },
+        { title: "Arms longer than height help", src: "./assets/size-t-ape.html?v=43" },
+        { title: "Higher standing reach helps", src: "./assets/size-t-reach.html?v=39" }
+      ]
+    }
   ];
-  function row(it, i) {
-    var body = it.src
-      ? '<div class="acc-panel" data-src="' + it.src + '"></div>'
-      : '<div class="acc-panel"><p class="size-note">' + it.note + "</p></div>";
-    return '<section class="acc-item"><button class="acc-btn size-acc-btn" type="button" data-acc="' + i + '"><b>' +
-      it.title + "</b><em>" + it.hint + " <i>+</i></em></button>" + body + "</section>";
+  function row(it) {
+    return '<div class="acc-item theory-acc"><div class="theory-row">' +
+      '<button class="theory-plus" data-acc type="button" aria-label="Toggle">+</button>' +
+      '<span class="theory-name">' + it.title + '</span></div>' +
+      '<div class="acc-panel" data-src="' + it.src + '"></div></div>';
   }
-  var lede = '<p class="size-note">The claim is simple. Taller guys should have better careers than shorter guys. Heavier guys should have better careers than lighter guys. We checked listed height and weight on 3,074 players drafted in the top 60 from 1947 to 2018. Taller is not a straight line up. Seven-footers get more MVPs and Hall of Famers. They are not clearly more likely to become All-Stars. An extra inch does not beat the pick.</p>';
-  TR.renderSimple(
-    document.getElementById("app"),
-    "theories",
-    "Bigger is better",
-    "",
-    lede + '<div class="acc size-acc">' + items.map(row).join("") + "</div>"
-  );
-  document.querySelectorAll("[data-acc]").forEach(function (btn) {
+  var html = '<div class="acc theory-families">' + groups.map(function (g, i) {
+    return '<section class="acc-item group-acc"><button class="acc-btn group-acc-btn" type="button" data-group="' + i + '"><b>' +
+      g.label + '</b><em><i>+</i></em></button><div class="acc-panel"><div class="acc theory-list">' +
+      g.items.map(row).join('') + '</div></div></section>';
+  }).join('') + '</div>';
+  TR.renderSimple(document.getElementById("app"), "theories", "Bigger is better", "", html);
+  document.querySelectorAll("[data-group]").forEach(function (btn) {
     btn.addEventListener("click", function (e) {
       e.preventDefault();
-      var item = btn.closest(".acc-item");
+      var item = btn.closest(".group-acc");
       item.classList.toggle("open");
       var icon = btn.querySelector("i");
       if (icon) icon.textContent = item.classList.contains("open") ? "\u2212" : "+";
+    });
+  });
+  document.querySelectorAll("[data-acc]").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var item = btn.closest(".theory-acc");
+      item.classList.toggle("open");
+      btn.textContent = item.classList.contains("open") ? "\u2212" : "+";
       var panel = item.querySelector(".acc-panel");
       if (item.classList.contains("open") && panel && panel.dataset.src && !panel.dataset.loaded) {
         fetch(panel.dataset.src).then(function (r) { return r.text(); }).then(function (html) {

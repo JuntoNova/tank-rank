@@ -84,8 +84,10 @@
 .inch-grid td.num, .size-bins td.num { font-family: var(--mono); }
 .pos { color: var(--lime); }
 .neg { color: var(--coral); }
-.thin { color: var(--muted); }
-.thin .pos, .thin .neg { color: var(--muted); }
+.thin { color: inherit; }
+.thin .pos { color: var(--lime); }
+.thin .neg { color: var(--coral); }
+.group-acc .theory-acc .acc-panel { padding: 8px 2px 16px 38px; }
 h2.size-h { font-family: var(--serif); font-size: 24px; font-weight: 500; margin: 8px 0 6px; }
 @media (max-width: 640px) {
   .theory-name { font-size: 18px; }
