@@ -228,7 +228,7 @@
       fetch("./assets/slot-priors.json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/theory-packs/all.json?v=80").then(function (r) { return r.ok ? r.json() : null; }).then(function (all) {
         if (all && all[String(year)]) return all[String(year)];
-        return fetch("./assets/theory-packs/" + year + ".json?v=86").then(function (r) { return r.ok ? r.json() : null; });
+        return fetch("./assets/theory-packs/" + year + ".json?v=90").then(function (r) { return r.ok ? r.json() : null; });
       }).catch(function () { return null; }),
       fetch("./assets/outcomes/" + dec + ".json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/outcomes-extra.json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),

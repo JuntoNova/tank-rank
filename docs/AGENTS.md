@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): LaMelo. An 18-year-old who already played against men is not the overseas-stash cut. Skinny guard weight does not cut a 6-7 passer. 7 assists is 1.32.
 - 2026-09-16 (Grok chat): Nav is Historic / Upcoming / Theories. Methodology sits under Theories. Historic pills: Drafts / All-time / Outliers.
 - 2026-09-16 (Grok chat): AS / All-NBA / 1st team are star-tailed. 1st team is cubic in quality. Most of a class prints 0. LeBron 8.5 / 1.2 firsts. Joe Alexander <0.1.
 - 2026-09-16 (Grok chat): Robinson 1987. Navy line was missing (28.2/4.5 POY). Senior does not stack on age 21.9. Centers are not taxed for 1 assist. 7-1 at 235 is not a weight cut.

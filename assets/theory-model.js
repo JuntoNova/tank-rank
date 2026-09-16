@@ -173,10 +173,15 @@
       } else if (cls === "Jr" || cls === "RS-Jr") { cAs = 0.96; cMvp = 0.90; note = "Junior."; }
       add("onedone", "Class year", cls || "-", cAs, cMvp, note, { yrs: 1, hof: 1 });
     } else {
-      add("onedone", "Class year", cls || feat.origin || "-", 1, 1, "No extra class-year market.", { yrs: 1, hof: 1 });
+      if (feat.origin === "intl" && ageNum < 19.5 && !feat.stash && !(feat.delay >= 1)) {
+        add("onedone", "Class year", "young pro", 1.08, 1.12, "", { yrs: 1, hof: 1 });
+      } else {
+        add("onedone", "Class year", cls || feat.origin || "-", 1, 1, "No extra class-year market.", { yrs: 1, hof: 1 });
+      }
     }
     if (feat.origin === "intl") {
-      add("intl", "Origin", "international", 0.88, 0.92, "", { hof: 1.02, yrs: 0.94 });
+      var youngNow = ageNum < 19.5 && !feat.stash && !(feat.delay >= 1) && !feat.never;
+      add("intl", "Origin", youngNow ? "young pro" : "international", youngNow ? 1 : 0.88, youngNow ? 1 : 0.92, "", { hof: youngNow ? 1 : 1.02, yrs: youngNow ? 1 : 0.94, nba: youngNow ? 1 : 0.88 });
       if (feat.never) add("stash", "Stash", "never arrived", 0.05, 0.05, "Never arrived.", { yrs: 0.10 });
       else if (feat.stash || (feat.delay || 0) >= 2) add("stash", "Stash", "delayed", 0.59, 0.50, "Stash.", { yrs: 0.55 });
       else add("stash", "Stash", "immediate", 1, 1, "Immediate.", { yrs: 0.94 });
@@ -219,9 +224,12 @@
     if (wtFound && wtFound.weight) {
       var w = wtFound.weight;
       var wAs = w.mAs, wMvp = w.mMvp, wNba = w.mNba, wHof = w.mHof;
+      var guard = /(^|\b)(PG|SG|G)(\b|\/)/i.test(feat.pos || "");
       if (htIn >= 84 && feat.wt != null && Number(feat.wt) >= 225 && wAs < 1) wAs = 1;
+      if (guard && htIn && htIn < 81 && wAs < 1) { wAs = 1; wNba = Math.max(wNba, 1); }
+      if (guard && htIn && htIn < 81 && wMvp < 1) wMvp = 1;
       add("weight", "Weight", (wtFound.wt != null ? wtFound.wt : feat.wt) + " lbs · " + w.label,
-        wAs, wMvp, "", { nba: wNba < 1 && htIn >= 84 ? 1 : wNba, hof: wHof, yrs: 1 });
+        wAs, wMvp, "", { nba: wNba < 1 && (htIn >= 84 || (guard && htIn < 81)) ? 1 : wNba, hof: wHof, yrs: 1 });
     } else {
       add("weight", "Weight", (feat.wt != null && feat.wt !== "") ? (feat.wt + " lbs") : "missing",
         1, 1, "", { hof: 1, nba: 1, yrs: 1 });
@@ -267,6 +275,7 @@
     if (fga && fga > 0 && fta != null) {
       var ftr = fta / fga;
       var fAs = ftr >= 0.40 ? 1.22 : ftr >= 0.25 ? 1.06 : 0.88;
+      if (ast != null && ast >= 5 && fAs < 1) fAs = 1;
       add("ftrate", "Free-throw rate", ftr.toFixed(2) + " FTA/FGA", fAs, fAs, "", { nba: fAs, hof: 1 });
     }
     if (stl != null || blk != null) {
@@ -275,7 +284,7 @@
       add("defense", "Steals and blocks", stocks.toFixed(1) + " stocks", sAs, sAs, "", { nba: sAs, hof: 1 });
     }
     if (ast != null) {
-      var aAs = ast >= 6 ? 1.22 : ast >= 3.5 ? 1.14 : ast >= 2.0 ? 1.04 : 1;
+      var aAs = ast >= 7 ? 1.32 : ast >= 5 ? 1.22 : ast >= 3.5 ? 1.14 : ast >= 2.0 ? 1.04 : 1;
       add("astu", "Passing", ast + " ast", aAs, aAs, "", { nba: aAs, hof: 1 });
     }
     if (blk != null && /(C|PF)/i.test(feat.pos || "")) {
