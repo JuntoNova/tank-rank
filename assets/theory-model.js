@@ -31,8 +31,9 @@
   // people who played and far rarer among all picks. All-time slot rates (~2.4
   // expected per draft, 34% at #1) overstate that. Scale so a class is ~0.5
   // expected HOFers and no prospect prints as a near-lock.
-  const HOF_SLOT = 0.20;
-  const HOF_CAP = 0.10;
+  const PLAYER = { as: 2.8, nba: 1.35, nba1: 0.30, yrs: 8.5, ch: 0.18, mvp: 0.20 };
+  const PLAYER_HOF = 0.16;
+  const HOF_CAP = 0.45;
   function ageKey(age) {
     if (age == null || isNaN(age)) return "a21";
     if (age < 19.5) return "u19";
@@ -97,8 +98,7 @@
     feat = feat || deriveFeat(p);
     const pk = Number(p.rank) || 99;
     const key = slotBucket(pk);
-    const slot = (priors || {})[key] || {};
-    const inten = INTENSITY[key] || INTENSITY["31+"];
+    const inten = PLAYER;
     let mAs = 1, mNba = 1, mHof = 1, mMvp = 1, mYrs = 1;
     const steps = [];
     function add(id, label, value, mas, mmvp, why, extra) {
@@ -128,21 +128,21 @@
       rim: "./rim.html",
       three: "./three.html"
     };
-    add("slot", "Draft slot", "Pk " + String(pk).padStart(2, "0") + " band " + key, 1, 1, "Historical rate for this pick. Every row below multiplies this.");
+    add("slot", "Draft slot", "Pk " + String(pk).padStart(2, "0"), 1, 1, "", {});
     const ak = ageKey(feat.age);
     const rawAs = AGE_AS[ak];
     const ageNum = feat.age == null ? 21.5 : feat.age;
     let ageAsRaw;
-    if (ageNum <= 18.5) ageAsRaw = 1.85;
-    else if (ageNum <= 19.0) ageAsRaw = 1.70;
-    else if (ageNum <= 19.5) ageAsRaw = 1.55;
-    else if (ageNum <= 20.0) ageAsRaw = 1.38;
-    else if (ageNum <= 20.5) ageAsRaw = 1.22;
-    else if (ageNum <= 21.0) ageAsRaw = 1.08;
-    else if (ageNum <= 21.5) ageAsRaw = 0.96;
-    else if (ageNum <= 22.5) ageAsRaw = 0.82;
-    else ageAsRaw = 0.68;
-    const ageAs = clamp(1 + (ageAsRaw - 1) * (pk <= 5 ? 0.90 : 1), 0.55, 1.90);
+    if (ageNum <= 18.5) ageAsRaw = 2.05;
+    else if (ageNum <= 19.0) ageAsRaw = 1.75;
+    else if (ageNum <= 19.5) ageAsRaw = 1.45;
+    else if (ageNum <= 20.0) ageAsRaw = 1.12;
+    else if (ageNum <= 20.5) ageAsRaw = 0.92;
+    else if (ageNum <= 21.0) ageAsRaw = 0.80;
+    else if (ageNum <= 21.5) ageAsRaw = 0.70;
+    else if (ageNum <= 22.5) ageAsRaw = 0.58;
+    else ageAsRaw = 0.48;
+    const ageAs = clamp(ageAsRaw, 0.48, 2.10);
     let ageMvpRaw;
     if (ageNum <= 18) ageMvpRaw = 2.10;
     else if (ageNum <= 19) ageMvpRaw = 1.85;
@@ -150,7 +150,7 @@
     else if (ageNum <= 21) ageMvpRaw = 1.10;
     else if (ageNum <= 22) ageMvpRaw = 0.75;
     else ageMvpRaw = 0.40;
-    const ageMvp = clamp(1 + (ageMvpRaw - 1) * (pk <= 5 ? 0.85 : pk <= 14 ? 0.95 : 1), 0.30, 2.20);
+    const ageMvp = clamp(ageMvpRaw, 0.30, 2.20);
     let ageYrs = 1;
     if (ageNum < 19) ageYrs = 1.18;
     else if (ageNum < 20) ageYrs = 1.12;
@@ -159,13 +159,14 @@
     else ageYrs = 0.80;
     add("age", "Age", feat.age != null ? feat.age + " " + ageLabel(ak) : "unknown",
       ageAs, ageMvp, "From /age. Youth moves All-Star odds more than Hall of Fame.",
-      { nba: ageAs, hof: clamp(shrink(rawAs, keepAs(pk) * 0.40), 0.82, 1.18), yrs: clamp(ageYrs, 0.70, 1.25) });
+      { nba: ageAs, hof: clamp(ageAsRaw, 0.85, 1.25), yrs: clamp(ageYrs, 0.70, 1.25) });
     const cls = feat.cls || "";
     if (feat.origin === "college") {
       let cAs = 1, cMvp = 1, note = "Sophomore / junior is the middle of /onedone.";
       if (cls === "Fr" || cls === "RS-Fr") {
-        if (ak === "u19" || ak === "a19") { cAs = 1.04; cMvp = 1.10; note = "Freshman already in the young-age bin."; }
-        else { cAs = 1.12; cMvp = 1.25; note = "Freshman outside the youngest bins."; }
+        if (ageNum >= 20) { cAs = 0.72; cMvp = 0.70; note = "Old freshman."; }
+        else if (ak === "u19" || ak === "a19") { cAs = 1.08; cMvp = 1.12; note = "Young freshman."; }
+        else { cAs = 1.04; cMvp = 1.10; note = "Freshman."; }
       } else if (cls === "Sr" || cls === "RS-Sr") {
         if (ak !== "a22") { cAs = 0.88; cMvp = 0.70; note = "Senior, not yet in the old-age bin."; }
       } else if (cls === "Jr" || cls === "RS-Jr") { cAs = 0.96; cMvp = 0.90; note = "Junior."; }
@@ -174,18 +175,12 @@
       add("onedone", "Class year", cls || feat.origin || "-", 1, 1, "No extra class-year market.", { yrs: 1, hof: 1 });
     }
     if (feat.origin === "intl") {
-      let iAs = 1, iMvp = 1;
-      if (pk <= 5) { iAs = 0.69; iMvp = 0.85; }
-      else if (pk <= 14) { iAs = 0.59; iMvp = 0.90; }
-      add("intl", "Origin", "international pick " + pk, iAs, iMvp, "From /intl.", { hof: pk <= 5 ? 1.05 : 1, yrs: pk <= 5 ? 0.92 : 0.88 });
+      add("intl", "Origin", "international", 0.88, 0.92, "", { hof: 1.02, yrs: 0.94 });
       if (feat.never) add("stash", "Stash", "never arrived", 0.05, 0.05, "Never arrived.", { yrs: 0.10 });
       else if (feat.stash || (feat.delay || 0) >= 2) add("stash", "Stash", "delayed", 0.59, 0.50, "Stash.", { yrs: 0.55 });
       else add("stash", "Stash", "immediate", 1, 1, "Immediate.", { yrs: 0.94 });
     } else if (feat.origin === "hs") {
-      const hsAs = pk <= 5 ? 1.22 : pk <= 14 ? 1.12 : 1.15;
-      const hsNba = pk <= 5 ? 1.18 : 1.10;
-      add("intl", "Origin", "high school pick " + pk, hsAs, pk <= 5 ? 1.55 : 1.35, "HS cell.",
-        { nba: hsNba, hof: pk <= 5 ? 1.20 : 1.10 });
+      add("intl", "Origin", "high school", 1.28, 1.45, "", { nba: 1.22, hof: 1.18 });
       add("stash", "Stash", "-", 1, 1, "Stash is international only.");
     } else {
       add("intl", "Origin", "college", 1, 1, "College.");
@@ -229,13 +224,15 @@
         1, 1, "", { hof: 1, nba: 1, yrs: 1 });
     }
     if (feat.create && htIn >= 79) {
-      add("handle", "Handle x size", (feat.ht || "6-7+") + " creation tag", 1.22, 1.05, "6-7+ creation on /handle.", { hof: 1 });
+      add("handle", "Handle x size", (feat.ht || "6-7+") + " creation tag", 1.35, 1.12, "", { hof: 1.05 });
     } else if (feat.create && htIn >= 77) {
-      add("handle", "Handle x size", (feat.ht || "6-5") + " creation tag", 1.16, 1.18, "6-5/6-6 creator. Below the 6-7 /handle cut; two-thirds of that bump.", { hof: 1 });
+      add("handle", "Handle x size", (feat.ht || "6-5") + " creation tag", 1.22, 1.18, "", { hof: 1 });
     } else if (htIn && htIn < 77 && /(PG|SG|G)/i.test(feat.pos || "")) {
-      add("handle", "Handle x size", (feat.ht || "short") + " guard", 1.08, 1.20, "Short-guard cell.", { hof: 1 });
+      add("handle", "Handle x size", (feat.ht || "short") + " guard", 1.08, 1.20, "", { hof: 1 });
+    } else if (/(C|PF)/i.test(feat.pos || "") && !feat.create) {
+      add("handle", "Handle x size", (feat.ht || "big") + " no creation", 0.88, 0.90, "", { hof: 1 });
     } else {
-      add("handle", "Handle x size", feat.ht ? feat.ht : "missing", 1, 1, "No creation tag at a scored height.", { hof: 1 });
+      add("handle", "Handle x size", feat.ht ? feat.ht : "missing", 1, 1, "", { hof: 1 });
     }
     const wspIn = inches(feat.wsp);
     const ape = (wspIn && htIn) ? (wspIn - htIn) : null;
@@ -261,7 +258,7 @@
     var fta = num(feat.fta);
     var fg3a = num(feat.fg3a);
     if (pts != null) {
-      var pAsP = pts >= 16 ? 1.10 : pts >= 10 ? 1.02 : 0.94;
+      var pAsP = pts >= 18 ? 1.18 : pts >= 16 ? 1.12 : pts >= 10 ? 1.00 : 0.86;
       add("prod", "College scoring", pts + " pts", pAsP, pAsP, "", { nba: pAsP, hof: 1 });
     }
     if (fga && fga > 0 && fta != null) {
@@ -275,7 +272,7 @@
       add("defense", "Steals and blocks", stocks.toFixed(1) + " stocks", sAs, sAs, "", { nba: sAs, hof: 1 });
     }
     if (ast != null) {
-      var aAs = ast >= 6 ? 1.22 : ast >= 3.5 ? 1.14 : ast >= 2.0 ? 1.04 : 0.92;
+      var aAs = ast >= 6 ? 1.22 : ast >= 3.5 ? 1.14 : ast >= 2.0 ? 1.04 : 0.78;
       add("astu", "Passing", ast + " ast", aAs, aAs, "", { nba: aAs, hof: 1 });
     }
     if (blk != null && /(C|PF)/i.test(feat.pos || "")) {
@@ -287,20 +284,19 @@
       var tAs = vol >= 0.40 ? 1.02 : 1;
       add("three", "Three-point volume", vol.toFixed(2) + " 3PA/FGA", tAs, 1, "", { nba: tAs, hof: 1 });
     }
-    mAs = clamp(mAs, 0.20, 2.80); mNba = clamp(mNba, 0.20, 2.80);
-    mHof = clamp(mHof, 0.35, 1.80); mMvp = clamp(mMvp, 0.15, 3.20); mYrs = clamp(mYrs, 0.55, 1.35);
-    const slotAs = slot.pAs || 0, slotNba = slot.pNba || 0, slotHof = (slot.pHof || 0) * HOF_SLOT;
-    const pAs = clamp(slotAs * mAs, 0.002, 0.97);
-    const pNba = clamp(slotNba * mNba, 0.001, 0.90);
-    const pHof = clamp(slotHof * mHof, 0.0005, HOF_CAP);
+    mAs = clamp(mAs, 0.18, 5.00); mNba = clamp(mNba, 0.18, 5.00);
+    mHof = clamp(mHof, 0.35, 2.40); mMvp = clamp(mMvp, 0.12, 4.00); mYrs = clamp(mYrs, 0.55, 1.35);
+    const pAs = clamp(0.22 * mAs, 0.01, 0.97);
+    const pNba = clamp(0.12 * mNba, 0.005, 0.90);
+    const pHof = clamp(PLAYER_HOF * mHof, 0.0005, HOF_CAP);
     return {
-      slot: key, slotAs: slotAs, slotNba: slotNba, slotHof: slotHof, slotMvp: inten.mvp,
+      slot: "player", slotAs: 1, slotNba: 1, slotHof: PLAYER_HOF, slotMvp: inten.mvp,
       pAs: pAs, pNba: pNba, pHof: pHof,
-      expAs: clamp((slotAs || 0.20) * inten.as * mAs, 0.05, 14),
-      expNba: clamp((slotNba || 0.08) * inten.nba * mNba, 0.02, 12),
-      expNba1: clamp((slotNba || 0.08) * inten.nba1 * mNba, 0.01, 8),
-      expYrs: inten.yrs * mYrs, expCh: inten.ch * clamp((mAs + mHof) / 2, 0.50, 1.40),
-      expMvp: inten.mvp * mMvp, mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
+      expAs: clamp(inten.as * mAs, 0.05, 16),
+      expNba: clamp(inten.nba * mNba, 0.02, 14),
+      expNba1: clamp(inten.nba1 * mNba, 0.01, 10),
+      expYrs: inten.yrs * mYrs, expCh: inten.ch * clamp((mAs + mHof) / 2, 0.50, 1.80),
+      expMvp: clamp(inten.mvp * mMvp, 0.01, 4), mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
       scale: mAs, steps: steps, feat: feat
     };
   }
@@ -372,7 +368,7 @@
     return pct === 0 ? "<1%" : pct + "%";
   }
   window.TR = window.TR || {};
-  TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, INTENSITY: INTENSITY, HOF_CAP: HOF_CAP, HOF_SLOT: HOF_SLOT, fmtExp: fmtExp, fmtPct: fmtPct, fmtMul: fmtMul, careerHofP: careerHofP, fmtHofRemain: fmtHofRemain };
+  TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, INTENSITY: INTENSITY, PLAYER: PLAYER, HOF_CAP: HOF_CAP, fmtExp: fmtExp, fmtPct: fmtPct, fmtMul: fmtMul, careerHofP: careerHofP, fmtHofRemain: fmtHofRemain };
   TR.deriveFeat = deriveFeat;
   TR.projectPlayer = project;
   TR.careerHofP = careerHofP;

@@ -44,6 +44,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Projections are the player file, not the pick. Slot is ×1. Old freshman (Bennett) is a cut. LeBron 10 AS / Brand 3.4 / Bennett 2.2.
 - 2026-09-16 (Grok chat): LeBron vs Brand. Age uses the actual year (18.5 ≠ 20.3). Prep-to-pro #1 is a boost, not a 0.95 haircut. 7-0 wingspan is not short. Expected All-Stars are slot × player, not pinned at 5.1 for every #1.
 - 2026-09-16 (Grok chat): Wemby draft-night MVP. 7-3+ uses the seven-footer MVP bump (not 0-for-17). Intl #1 is not a Darko veto on MVP. Long 6-10+ wingspan moves MVP. #1 slot prior 0.25 MVPs.
 - 2026-09-16 (Grok chat): Upcoming boards (2027–2029) show expected counts for AS / 1st / All-NBA / Yrs / Chips / MVP, same as historic. Only HOF is a percent.
