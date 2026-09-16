@@ -11,7 +11,6 @@
       label: "Weight",
       items: [
         { title: "Heavier guys perform better", src: "./assets/size-t-wt.html?v=43" },
-        { title: "Listed weight matches the scale", src: "./assets/size-t-lvw.html?v=43" },
         { title: "More pounds per inch helps", src: "./assets/size-t-wpi.html?v=39" }
       ]
     },
