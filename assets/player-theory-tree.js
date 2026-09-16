@@ -122,7 +122,11 @@
       ".th-bin td.num,.th-bin th.num{text-align:right}" +
       ".th-bin .pos{color:var(--lime)}.th-bin .neg{color:var(--coral)}" +
       ".th-bin .empty{color:var(--muted);font-size:13px;margin:0}" +
-      ".th-bin .who{color:var(--muted);font-size:13px;margin:0 0 10px}";
+      ".th-bin .who{color:var(--muted);font-size:13px;margin:0 0 10px}" +
+      ".th-dn{margin:0 0 22px}.th-dn table{width:100%;max-width:560px;border-collapse:collapse;font-size:13px}" +
+      ".th-dn th{text-align:left;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:4px 12px 8px 0}" +
+      ".th-dn td{padding:6px 12px 6px 0;border-top:1px solid var(--line)}" +
+      ".th-dn td.num{text-align:right;font-family:var(--mono)}";
     document.head.appendChild(s);
   }
   function inches(ht) {
@@ -238,6 +242,27 @@
       return plusRow(node.name || node.label, list);
     }
     return plusRow(node.name, applied(resolve(node.id, p)));
+  }
+  function draftNight(p, y) {
+    var full = p.proj;
+    if (!full) return "";
+    var fmtPct = (window.TR && TR.Model && TR.Model.fmtPct) ? TR.Model.fmtPct : function (n) { return Math.round((n || 0) * 100) + "%"; };
+    var fmtExp = (window.TR && TR.Model && TR.Model.fmtExp) ? TR.Model.fmtExp : function (n) { return String(n); };
+    var fmtHof = (window.TR && TR.Model && TR.Model.fmtHofRemain) ? TR.Model.fmtHofRemain : fmtPct;
+    var cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+    var now = "";
+    if (y < cur) {
+      var hofFn = window.TR && (TR.careerHofP || (TR.Model && TR.Model.careerHofP));
+      var hofNow = hofFn ? hofFn(p, y, cur) : null;
+      if (hofNow != null) now = "<tr><td>Hall of Fame now</td><td class=\"num\">" + fmtHof(hofNow) + "</td></tr>";
+    }
+    return '<div class="th-dn"><div class="kicker">Draft night</div><table><tbody>' +
+      "<tr><td>All-Star</td><td class=\"num\">" + fmtPct(full.pAs) + "</td></tr>" +
+      "<tr><td>All-NBA</td><td class=\"num\">" + fmtPct(full.pNba) + "</td></tr>" +
+      "<tr><td>Years</td><td class=\"num\">" + fmtExp(full.expYrs) + "</td></tr>" +
+      "<tr><td>MVP</td><td class=\"num\">" + fmtExp(full.expMvp) + "</td></tr>" +
+      "<tr><td>Hall of Fame then</td><td class=\"num\">" + fmtPct(full.pHof) + "</td></tr>" +
+      now + "</tbody></table></div>";
   }
   function restyle(root) {
     css();

@@ -159,26 +159,37 @@
     const metrics = root.querySelector(".metrics");
     if (metrics) {
       var hofFn = (TR.careerHofP || (TR.Model && TR.Model.careerHofP));
-      var hofP = hofFn ? hofFn(p, yNum, cur) : null;
-      if (hofP == null) hofP = full.pHof;
+      var hofNow = hofFn ? hofFn(p, yNum, cur) : null;
+      if (hofNow == null) hofNow = full.pHof;
       var fmtHof = (TR.Model && TR.Model.fmtHofRemain)
         ? TR.Model.fmtHofRemain
         : function (n) { return n == null ? "" : Math.round(n * 100) + "%"; };
-      var g = (p.g != null && p.g !== "") ? Number(p.g).toLocaleString("en-US") : "0";
-      var pts = (p.pts != null && p.pts !== "") ? Number(p.pts).toFixed(1) : "0.0";
-      var ws = (p.ws != null && p.ws !== "") ? Number(p.ws).toFixed(1) : "0.0";
-      var yrs = (p.yrs != null && p.yrs !== "") ? p.yrs : 0;
-      metrics.innerHTML =
-        '<div class="kicker">Career</div>' +
-        cell("Yrs", yrs) +
-        cell("G", g) +
-        cell("PTS", pts) +
-        cell("WS", ws) +
-        cell("AS", p.allStar != null && p.allStar !== "" ? p.allStar : 0) +
-        cell("All-NBA", p.allNba != null && p.allNba !== "" ? p.allNba : 0) +
-        cell("MVP", p.mvp != null && p.mvp !== "" ? p.mvp : 0) +
-        cell("Titles", p.champs != null && p.champs !== "" ? p.champs : 0) +
-        cell("HOF", fmtHof(hofP));
+      var html = "";
+      if (historic) {
+        var g = (p.g != null && p.g !== "") ? Number(p.g).toLocaleString("en-US") : "0";
+        var pts = (p.pts != null && p.pts !== "") ? Number(p.pts).toFixed(1) : "0.0";
+        var ws = (p.ws != null && p.ws !== "") ? Number(p.ws).toFixed(1) : "0.0";
+        var yrs = (p.yrs != null && p.yrs !== "") ? p.yrs : 0;
+        html +=
+          '<div class="kicker">Career</div>' +
+          cell("Yrs", yrs) +
+          cell("G", g) +
+          cell("PTS", pts) +
+          cell("WS", ws) +
+          cell("AS", p.allStar != null && p.allStar !== "" ? p.allStar : 0) +
+          cell("All-NBA", p.allNba != null && p.allNba !== "" ? p.allNba : 0) +
+          cell("MVP", p.mvp != null && p.mvp !== "" ? p.mvp : 0) +
+          cell("Titles", p.champs != null && p.champs !== "" ? p.champs : 0);
+      }
+      html +=
+        '<div class="kicker">Draft night</div>' +
+        cell("AS", fmtPct(full.pAs)) +
+        cell("All-NBA", fmtPct(full.pNba)) +
+        cell("Yrs", fmtExp(full.expYrs)) +
+        cell("MVP", fmtExp(full.expMvp)) +
+        cell("HOF then", fmtPct(full.pHof));
+      if (historic) html += cell("HOF now", fmtHof(hofNow));
+      metrics.innerHTML = html;
     }
     const h1 = root.querySelector(".player-hero h1");
     if (h1 && p.name) h1.textContent = p.name;
@@ -217,9 +228,9 @@
     const dec = (Math.floor(Number(year) / 10) * 10) + "s";
     return Promise.all([
       fetch("./assets/slot-priors.json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-      fetch("./assets/theory-packs/all.json?v=78").then(function (r) { return r.ok ? r.json() : null; }).then(function (all) {
+      fetch("./assets/theory-packs/all.json?v=80").then(function (r) { return r.ok ? r.json() : null; }).then(function (all) {
         if (all && all[String(year)]) return all[String(year)];
-        return fetch("./assets/theory-packs/" + year + ".json?v=78").then(function (r) { return r.ok ? r.json() : null; });
+        return fetch("./assets/theory-packs/" + year + ".json?v=80").then(function (r) { return r.ok ? r.json() : null; });
       }).catch(function () { return null; }),
       fetch("./assets/outcomes/" + dec + ".json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/outcomes-extra.json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
