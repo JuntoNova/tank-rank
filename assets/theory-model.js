@@ -131,8 +131,18 @@
     add("slot", "Draft slot", "Pk " + String(pk).padStart(2, "0") + " band " + key, 1, 1, "Historical rate for this pick. Every row below multiplies this.");
     const ak = ageKey(feat.age);
     const rawAs = AGE_AS[ak];
-    const ageAs = clamp(shrink(rawAs, keepAs(pk)), 0.55, 1.45);
     const ageNum = feat.age == null ? 21.5 : feat.age;
+    let ageAsRaw;
+    if (ageNum <= 18.5) ageAsRaw = 1.85;
+    else if (ageNum <= 19.0) ageAsRaw = 1.70;
+    else if (ageNum <= 19.5) ageAsRaw = 1.55;
+    else if (ageNum <= 20.0) ageAsRaw = 1.38;
+    else if (ageNum <= 20.5) ageAsRaw = 1.22;
+    else if (ageNum <= 21.0) ageAsRaw = 1.08;
+    else if (ageNum <= 21.5) ageAsRaw = 0.96;
+    else if (ageNum <= 22.5) ageAsRaw = 0.82;
+    else ageAsRaw = 0.68;
+    const ageAs = clamp(1 + (ageAsRaw - 1) * (pk <= 5 ? 0.90 : 1), 0.55, 1.90);
     let ageMvpRaw;
     if (ageNum <= 18) ageMvpRaw = 2.10;
     else if (ageNum <= 19) ageMvpRaw = 1.85;
@@ -172,7 +182,10 @@
       else if (feat.stash || (feat.delay || 0) >= 2) add("stash", "Stash", "delayed", 0.59, 0.50, "Stash.", { yrs: 0.55 });
       else add("stash", "Stash", "immediate", 1, 1, "Immediate.", { yrs: 0.94 });
     } else if (feat.origin === "hs") {
-      add("intl", "Origin", "high school pick " + pk, pk <= 14 ? 0.95 : 1.15, pk <= 5 ? 1.55 : 1.35, "HS cell.");
+      const hsAs = pk <= 5 ? 1.22 : pk <= 14 ? 1.12 : 1.15;
+      const hsNba = pk <= 5 ? 1.18 : 1.10;
+      add("intl", "Origin", "high school pick " + pk, hsAs, pk <= 5 ? 1.55 : 1.35, "HS cell.",
+        { nba: hsNba, hof: pk <= 5 ? 1.20 : 1.10 });
       add("stash", "Stash", "-", 1, 1, "Stash is international only.");
     } else {
       add("intl", "Origin", "college", 1, 1, "College.");
@@ -229,7 +242,7 @@
     if (ape == null) add("wingspan", "Wingspan", "missing", 1, 1, "No wingspan.", { hof: 1 });
     else if (htIn >= 82 && ape >= 6) add("wingspan", "Wingspan", feat.wsp + " long 6-10+", 1.28, 1.20, "/wingspan 6-10+ long.", { hof: 1 });
     else if (ape >= 6) add("wingspan", "Wingspan", feat.wsp + " +6 ape", 1.10, 1.05, "+6 ape.", { hof: 1 });
-    else if (ape < 4 && htIn >= 79 && htIn < 84) add("wingspan", "Wingspan", feat.wsp + " short for size", 0.90, 0.85, "Short arms at 6-7 to 6-11.", { hof: 1 });
+    else if (ape < 2 && htIn >= 79 && htIn < 84) add("wingspan", "Wingspan", feat.wsp + " short for size", 0.90, 0.85, "Short arms at 6-7 to 6-11.", { hof: 1 });
     else add("wingspan", "Wingspan", feat.wsp || "mid", 1, 1, "Mid-pack length.", { hof: 1 });
     const reachIn = inches(feat.reach);
     if (!reachIn) add("reach", "Standing reach", "missing", 1, 1, "/reach needs a number.", { hof: 1 });
@@ -274,16 +287,18 @@
       var tAs = vol >= 0.40 ? 1.02 : 1;
       add("three", "Three-point volume", vol.toFixed(2) + " 3PA/FGA", tAs, 1, "", { nba: tAs, hof: 1 });
     }
-    mAs = clamp(mAs, 0.20, 2.20); mNba = clamp(mNba, 0.20, 2.20);
+    mAs = clamp(mAs, 0.20, 2.80); mNba = clamp(mNba, 0.20, 2.80);
     mHof = clamp(mHof, 0.35, 1.80); mMvp = clamp(mMvp, 0.15, 3.20); mYrs = clamp(mYrs, 0.55, 1.35);
     const slotAs = slot.pAs || 0, slotNba = slot.pNba || 0, slotHof = (slot.pHof || 0) * HOF_SLOT;
-    const pAs = clamp(slotAs * mAs, 0.002, 0.92);
-    const pNba = clamp(slotNba * mNba, 0.001, 0.80);
+    const pAs = clamp(slotAs * mAs, 0.002, 0.97);
+    const pNba = clamp(slotNba * mNba, 0.001, 0.90);
     const pHof = clamp(slotHof * mHof, 0.0005, HOF_CAP);
     return {
       slot: key, slotAs: slotAs, slotNba: slotNba, slotHof: slotHof, slotMvp: inten.mvp,
       pAs: pAs, pNba: pNba, pHof: pHof,
-      expAs: pAs * inten.as, expNba: pNba * inten.nba, expNba1: pNba * inten.nba1,
+      expAs: clamp((slotAs || 0.20) * inten.as * mAs, 0.05, 14),
+      expNba: clamp((slotNba || 0.08) * inten.nba * mNba, 0.02, 12),
+      expNba1: clamp((slotNba || 0.08) * inten.nba1 * mNba, 0.01, 8),
       expYrs: inten.yrs * mYrs, expCh: inten.ch * clamp((mAs + mHof) / 2, 0.50, 1.40),
       expMvp: inten.mvp * mMvp, mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
       scale: mAs, steps: steps, feat: feat

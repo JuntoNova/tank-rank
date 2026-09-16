@@ -82,19 +82,19 @@
   }
   function scoreOf(full, mAs, mNba, mHof, mMvp, mYrs) {
     var inten = (TR.Model && TR.Model.INTENSITY && TR.Model.INTENSITY[full.slot]) || {};
-    mAs = clamp(mAs, 0.20, 2.20);
-    mNba = clamp(mNba, 0.20, 2.20);
+    mAs = clamp(mAs, 0.20, 2.80);
+    mNba = clamp(mNba, 0.20, 2.80);
     mHof = clamp(mHof, 0.20, 1.80);
     mMvp = clamp(mMvp, 0.15, 3.20);
     mYrs = clamp(mYrs, 0.55, 1.35);
-    var pAs = clamp((full.slotAs || 0) * mAs, 0.002, 0.92);
-    var pNba = clamp((full.slotNba || 0) * mNba, 0.001, 0.80);
+    var pAs = clamp((full.slotAs || 0) * mAs, 0.002, 0.97);
+    var pNba = clamp((full.slotNba || 0) * mNba, 0.001, 0.90);
     var cap = (TR.Model && TR.Model.HOF_CAP) || 0.10;
     var pHof = clamp((full.slotHof || 0) * mHof, 0.0005, cap);
     return {
-      expAs: pAs * (inten.as || 0),
-      expNba1: pNba * (inten.nba1 || 0),
-      expNba: pNba * (inten.nba || 0),
+      expAs: clamp((full.slotAs || 0.20) * (inten.as || 0) * mAs, 0.05, 14),
+      expNba1: clamp((full.slotNba || 0.08) * (inten.nba1 || 0) * mNba, 0.01, 8),
+      expNba: clamp((full.slotNba || 0.08) * (inten.nba || 0) * mNba, 0.02, 12),
       expYrs: (inten.yrs || 0) * mYrs,
       expCh: (inten.ch || 0) * clamp((mAs + mHof) / 2, 0.50, 1.40),
       expMvp: (inten.mvp || 0) * mMvp,
@@ -230,7 +230,7 @@
       fetch("./assets/slot-priors.json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/theory-packs/all.json?v=80").then(function (r) { return r.ok ? r.json() : null; }).then(function (all) {
         if (all && all[String(year)]) return all[String(year)];
-        return fetch("./assets/theory-packs/" + year + ".json?v=82").then(function (r) { return r.ok ? r.json() : null; });
+        return fetch("./assets/theory-packs/" + year + ".json?v=84").then(function (r) { return r.ok ? r.json() : null; });
       }).catch(function () { return null; }),
       fetch("./assets/outcomes/" + dec + ".json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/outcomes-extra.json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
