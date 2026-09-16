@@ -1,38 +1,40 @@
 (function () {
   const items = [
-    { title: "Height bins", hint: "5 groups", src: "./assets/size-t-bins.html?v=39" },
-    { title: "Height, inch by inch", hint: "5-9 to 7-7", src: "./assets/size-t-inch.html?v=39" },
-    { title: "Weight, 10 lb", hint: "16 buckets", src: "./assets/size-t-wt.html?v=39" },
-    { title: "Wingspan", hint: "n = 716", src: "./assets/size-t-wsp.html?v=39" },
-    { title: "Wingspan \u2212 height", hint: "n = 716", src: "./assets/size-t-ape.html?v=39" },
-    { title: "Standing reach", hint: "n = 715", src: "./assets/size-t-reach.html?v=39" },
-    { title: "Listed vs combine height", hint: "N/A", note: "Needs the listed-height series on the same players. Not the same as shoes vs no shoes." },
-    { title: "Listed vs combine weight", hint: "n = 175", src: "./assets/size-t-lvw.html?v=40" },
-    { title: "Weight per inch", hint: "n = 715", src: "./assets/size-t-wpi.html?v=39" }
+    { title: "Do taller guys turn out better?", hint: "the actual claim", src: "./assets/size-t-bins.html?v=39" },
+    { title: "Does every extra inch help?", hint: "5-9 through 7-7", src: "./assets/size-t-inch.html?v=39" },
+    { title: "Do heavier guys turn out better?", hint: "listed weight", src: "./assets/size-t-wt.html?v=39" },
+    { title: "Did the listed number match the scale?", hint: "weight only so far", src: "./assets/size-t-lvw.html?v=40" },
+    { title: "Listed height vs combine height", hint: "not yet", note: "We do not have listed height and combine height on the same players yet. That is not the same thing as shoes versus no shoes." },
+    { title: "Long arms", hint: "different argument", src: "./assets/size-t-wsp.html?v=39" },
+    { title: "Arms minus height", hint: "different argument", src: "./assets/size-t-ape.html?v=39" },
+    { title: "How high he can reach", hint: "different argument", src: "./assets/size-t-reach.html?v=39" },
+    { title: "Pounds per inch", hint: "different argument", src: "./assets/size-t-wpi.html?v=39" }
   ];
-  const rows = items.map((it, i) => {
-    const body = it.src
-      ? `<div class=\"acc-panel\" data-src=\"${it.src}\"></div>`
-      : `<div class=\"acc-panel\"><p class=\"size-note\">${it.note}</p></div>`;
-    return `<section class=\"acc-item\">\n      <button class=\"acc-btn size-acc-btn\" type=\"button\" data-acc=\"${i}\">\n        <b>${it.title}</b>\n        <em>${it.hint} <i>+</i></em>\n      </button>\n      ${body}\n    </section>`;
-  }).join("");
+  function row(it, i) {
+    var body = it.src
+      ? '<div class="acc-panel" data-src="' + it.src + '"></div>'
+      : '<div class="acc-panel"><p class="size-note">' + it.note + "</p></div>";
+    return '<section class="acc-item"><button class="acc-btn size-acc-btn" type="button" data-acc="' + i + '"><b>' +
+      it.title + "</b><em>" + it.hint + " <i>+</i></em></button>" + body + "</section>";
+  }
+  var lede = '<p class="size-note">The claim is simple. Taller guys should have better careers than shorter guys. Heavier guys should have better careers than lighter guys. We checked listed height and weight on 3,074 players drafted in the top 60 from 1947 to 2018. Taller is not a straight line up. Seven-footers get more MVPs and Hall of Famers. They are not clearly more likely to become All-Stars. An extra inch does not beat the pick.</p>';
   TR.renderSimple(
     document.getElementById("app"),
     "theories",
-    "You can't teach size",
+    "Bigger is better",
     "",
-    `<p class=\"size-note\">Height / weight tables: listed size, picks 1\u201360, 1947\u20132018, n = 3,074. Wingspan / reach / lbs-per-inch: combine drafted players, 2000\u20132018, n = 716. Listed vs combine weight is a first-round subset (n = 175) until the full listed file lands. Base is the average draftee in that sample. \u0394 is percentage points versus that base. n &lt; 20 in grey. These bins now multiply the slot prior on player cards and When-drafted boards. 7-3+ is 17.6% HOF raw (n=17); the model shrinks that ~3.7\u00d7 lift to 1.80\u00d7 so 17 players cannot outrank the pick.</p>\n    <div class=\"acc size-acc\">${rows}</div>`
+    lede + '<div class="acc size-acc">' + items.map(row).join("") + "</div>"
   );
-  document.querySelectorAll("[data-acc]").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
+  document.querySelectorAll("[data-acc]").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
       e.preventDefault();
-      const item = btn.closest(".acc-item");
+      var item = btn.closest(".acc-item");
       item.classList.toggle("open");
-      const icon = btn.querySelector("i");
+      var icon = btn.querySelector("i");
       if (icon) icon.textContent = item.classList.contains("open") ? "\u2212" : "+";
-      const panel = item.querySelector(".acc-panel");
+      var panel = item.querySelector(".acc-panel");
       if (item.classList.contains("open") && panel && panel.dataset.src && !panel.dataset.loaded) {
-        fetch(panel.dataset.src).then((r) => r.text()).then((html) => {
+        fetch(panel.dataset.src).then(function (r) { return r.text(); }).then(function (html) {
           panel.innerHTML = html;
           panel.dataset.loaded = "1";
         });
