@@ -97,7 +97,6 @@
   function project(p, feat, priors) {
     feat = feat || deriveFeat(p);
     const pk = Number(p.rank) || 99;
-    const key = slotBucket(pk);
     const inten = PLAYER;
     let mAs = 1, mNba = 1, mHof = 1, mMvp = 1, mYrs = 1;
     const steps = [];
@@ -130,7 +129,6 @@
       rim: "./rim.html",
       three: "./three.html"
     };
-    add("slot", "Draft slot", "Pk " + String(pk).padStart(2, "0"), 1, 1, "", {});
     const year = Number(p.year || p.y || feat.year) || 0;
     const ak = ageKey(feat.age);
     const rawAs = AGE_AS[ak];
@@ -215,7 +213,7 @@
       { lo: 79, hi: 84, label: "6-7 to 6-11", as: 1.00, nba: 0.92, hof: 0.93, mvp: 1.05,
         why: "From /size. The common wing/big bin. Slightly below the HOF base." },
       { lo: 84, hi: 87, label: "7-0 to 7-2", as: 1.08, nba: 1.05, hof: 1.11, mvp: 1.22,
-        why: "From /size. 7-0 to 7-2 is +1.0 HOF pp and the MVP cell (3.65% vs 1.17% base, n=192). Shrunk so size cannot outrank the pick." },
+        why: "From /size. 7-0 to 7-2 is +1.0 HOF pp and the MVP cell (3.65% vs 1.17% base, n=192)." },
       { lo: 87, hi: 120, label: "7-3 and up", as: 1.15, nba: 1.15, hof: 1.20, mvp: 1.25,
         why: "From /size. 7-3+ is a tiny sample. Seven-footers get more MVPs; 7-4 is not a downgrade from 7-1." }
     ];
@@ -373,11 +371,6 @@
       var vol = fg3a / fga;
       var tAs = vol >= 0.40 ? 1.02 : 1;
       add("three", "Three-point volume", vol.toFixed(2) + " 3PA/FGA", tAs, 1, "", { nba: tAs, hof: 1 });
-    }
-    if (feat.pts == null && feat.ast == null) {
-      mAs = Math.min(mAs, 1.70);
-      mNba = Math.min(mNba, 1.70);
-      mMvp = Math.min(mMvp, 1.80);
     }
     mAs = clamp(mAs, 0.18, 5.00); mNba = clamp(mNba, 0.18, 5.00);
     mHof = clamp(mHof, 0.35, 2.40); mMvp = clamp(mMvp, 0.12, 5.00); mYrs = clamp(mYrs, 0.45, 1.50);

@@ -81,7 +81,7 @@
     return '<div class="name">' + name + "</div>" + (meta ? '<div class="meta">' + meta + "</div>" : "");
   }
   function scoreOf(full, mAs, mNba, mHof, mMvp, mYrs) {
-    var inten = (TR.Model && TR.Model.PLAYER) || (TR.Model && TR.Model.INTENSITY && TR.Model.INTENSITY[full.slot]) || {};
+    var inten = (TR.Model && TR.Model.PLAYER) || {};
     mAs = clamp(mAs, 0.18, 5.00);
     mNba = clamp(mNba, 0.18, 5.00);
     mHof = clamp(mHof, 0.20, 2.40);
