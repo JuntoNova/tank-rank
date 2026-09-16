@@ -273,23 +273,39 @@
     else if (/\bG\b/.test(pU) || pU[0] === "G") prim = "G";
     else if (/\bF\b/.test(pU) || pU[0] === "F") prim = "F";
     var POS_MED = { PG: 74, SG: 77, SF: 80, PF: 81, C: 82, G: 75, F: 79 };
-    if (prim && htIn && POS_MED[prim]) {
-      var dPos = Math.round(htIn - POS_MED[prim]);
-      var phAs = 1, phNba = 1, phHof = 1, phMvp = 1, pLab = "typical " + prim;
-      if (dPos >= 3) { phAs = 1.10; phNba = 1.12; phHof = 1.14; phMvp = 1.25; pLab = "+" + dPos + " in vs " + prim; }
-      else if (dPos >= 1) { phAs = 1.04; phNba = 1.05; phHof = 1.00; phMvp = 1.05; pLab = "+" + dPos + " in vs " + prim; }
-      else if (dPos <= -3) { phAs = 1.00; phNba = 0.96; phHof = 1.05; phMvp = 0.85; pLab = dPos + " in vs " + prim; }
-      else if (dPos <= -1) { phAs = 0.97; phNba = 0.96; phHof = 0.96; phMvp = 0.95; pLab = dPos + " in vs " + prim; }
-      add("posht", "Size at position", (feat.ht || "") + " · " + pLab, phAs, phMvp, "", { nba: phNba, hof: phHof });
+    var POS_WT = { PG: 185, SG: 205, SF: 220, PF: 240, C: 250, G: 195, F: 225 };
+    var dPos = (prim && htIn && POS_MED[prim]) ? Math.round(htIn - POS_MED[prim]) : null;
+    var dWt = (prim && feat.wt != null && feat.wt !== "" && POS_WT[prim]) ? Math.round(Number(feat.wt) - POS_WT[prim]) : null;
+    if (prim && (dPos != null || dWt != null)) {
+      var phAs = 1, phNba = 1, phHof = 1, phMvp = 1;
+      var bits = [];
+      if (dPos != null) bits.push((dPos >= 0 ? "+" : "") + dPos + " in vs " + prim);
+      if (dWt != null) bits.push((dWt >= 0 ? "+" : "") + dWt + " lbs vs " + prim);
+      if (dPos != null && dPos >= 3) { phAs = 1.10; phNba = 1.12; phHof = 1.14; phMvp = 1.25; }
+      else if (dPos != null && dPos >= 1) { phAs = 1.04; phNba = 1.05; phHof = 1.00; phMvp = 1.05; }
+      else if (dPos != null && dPos <= -3) { phAs = 1.00; phNba = 0.96; phHof = 1.05; phMvp = 0.85; }
+      else if (dPos != null && dPos <= -1) { phAs = 0.97; phNba = 0.96; phHof = 0.96; phMvp = 0.95; }
+      if (dWt != null && dWt >= 20 && (dPos == null || dPos >= 0)) {
+        phAs = +(phAs * 1.06).toFixed(3);
+        phNba = +(phNba * 1.05).toFixed(3);
+        phMvp = +(phMvp * 1.08).toFixed(3);
+      } else if (dWt != null && dWt <= -25 && (dPos == null || dPos <= 0)) {
+        phAs = +(phAs * 0.96).toFixed(3);
+        phNba = +(phNba * 0.96).toFixed(3);
+        phMvp = +(phMvp * 0.94).toFixed(3);
+      }
+      add("posht", "Size at position", (feat.ht || "") + (feat.wt != null ? " / " + feat.wt : "") + " · " + bits.join(", "),
+        phAs, phMvp, "", { nba: phNba, hof: phHof });
     } else {
       add("posht", "Size at position", feat.ht ? String(feat.ht) : "missing", 1, 1, "", { nba: 1, hof: 1 });
     }
-    if (/[\/]/.test(feat.pos || "")) {
+    var listedSwing = /[\/]/.test(feat.pos || "") || /(G.+F|F.+G|F.+C|C.+F|SF.+PF|PF.+SF|PG.+SG|SG.+PG)/i.test(feat.pos || "");
+    if (listedSwing) {
       add("swing", "Swing", (feat.pos || "") + " two spots", 1.10, 1.12, "", { nba: 1.10, hof: 1.08 });
     } else if (htIn && (htIn < 73 || htIn >= 84)) {
-      add("swing", "Swing", (feat.ht || "") + " one-spot size", 1, htIn >= 84 ? 1.18 : 0.90, "", { nba: 1, hof: htIn >= 84 ? 1.10 : 1.08 });
+      add("swing", "Swing", (feat.ht || "") + " locked to one spot", 1, htIn >= 84 ? 1.18 : 0.90, "", { nba: 1, hof: htIn >= 84 ? 1.10 : 1.08 });
     } else {
-      add("swing", "Swing", feat.pos || "one spot", 1, 1, "", { nba: 1, hof: 1 });
+      add("swing", "Swing", feat.pos ? (feat.pos + " one spot") : "one spot", 1, 1, "", { nba: 1, hof: 1 });
     }
     function num(x) {
       if (x == null || x === "") return null;

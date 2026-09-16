@@ -27,16 +27,11 @@
                 { id: "ape", name: "Arms longer than height help" },
                 { id: "reach", name: "Higher standing reach helps" }
               ]
-            },
-            {
-              name: "Position",
-              kids: [
-                { id: "posht", name: "Bigger than the position helps" },
-                { id: "swing", name: "Guys who can play more than one position do better" }
-              ]
             }
           ]
         },
+        { id: "posht", name: "Bigger than the position helps" },
+        { id: "swing", name: "Guys who can play more than one position do better" },
         { id: "wingspan", name: "Long arms help on defense" },
         { id: "handle", name: "Tall guys who can dribble are rare" },
         { id: "reach", name: "How high he can reach beats how high he jumps" },
@@ -233,6 +228,19 @@
       if (!inches(feat.reach)) return fromStep(steps, "reach");
       return fromStep(steps, "reach") || { fact: feat.reach, mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
     }
+    if (id === "posht") {
+      var ph = fromStep(steps, "posht");
+      if (ph) return ph;
+      var pos = String(feat.pos || p.pos || "");
+      if (!ht && !pos) return { fact: "No listed size or position", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
+      return { fact: (ht || "") + (pos ? " · " + pos : ""), mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
+    }
+    if (id === "swing") {
+      var sw = fromStep(steps, "swing");
+      if (sw) return sw;
+      var sp = String(feat.pos || p.pos || "");
+      return { fact: sp ? sp : "No listed position", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
+    }
     return fromStep(steps, id);
   }
   function plusRow(name, inner) {
@@ -280,6 +288,9 @@
     var list = draft.players || [];
     var p = list.find(function (x) { return x.id === id; }) || list[0];
     if (!p) return;
+    if (!p.proj && window.TR && typeof TR.projectPlayer === "function") {
+      p.proj = TR.projectPlayer(p, Object.assign({}, TR.deriveFeat ? TR.deriveFeat(p) : {}, p.theoryFeat || {}), {});
+    }
     var box = root.querySelector(".th-player");
     if (!box) return;
     var html = '<div class="kicker">Theories</div><div class="acc theory-families">';

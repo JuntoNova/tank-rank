@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Size-at-position and swing sit under Body on the player page, same as Theories. Projection uses height and weight vs the position, and a listed two-spot vs locked-to-one-spot.
 - 2026-09-16 (Grok chat): Years. 10 was the ceiling because it only moved with age off 8.5. Stars scale with the rest of the projection now. LeBron 19, Wemby 18, Olowokandi 5. Cap 19.
 - 2026-09-16 (Grok chat): Outliers ranked on career ÷ model, not raw career size. Nash / Manu / Jokic rise. Kareem is not #1 just for being Kareem. Δ paints as ×fold.
 
