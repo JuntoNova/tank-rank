@@ -225,8 +225,8 @@
     }
     if (feat.create && htIn >= 79) {
       add("handle", "Handle x size", (feat.ht || "6-7+") + " creation tag", 1.35, 1.12, "", { hof: 1.05 });
-    } else if (feat.create && htIn >= 77) {
-      add("handle", "Handle x size", (feat.ht || "6-5") + " creation tag", 1.22, 1.18, "", { hof: 1 });
+    } else if (feat.create) {
+      add("handle", "Handle x size", (feat.ht || "guard") + " creation tag", 1.22, 1.18, "", { hof: 1 });
     } else if (htIn && htIn < 77 && /(PG|SG|G)/i.test(feat.pos || "")) {
       add("handle", "Handle x size", (feat.ht || "short") + " guard", 1.08, 1.20, "", { hof: 1 });
     } else if (/(C|PF)/i.test(feat.pos || "") && !feat.create) {
