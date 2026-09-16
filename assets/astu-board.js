@@ -1,1 +1,8 @@
-(function(){const items=[{title:"Ast/FGA",hint:"ratio proxy",src:"/assets/asu-t-ratio.html?v=48"},{title:"Ast/g",hint:"raw assists",src:"/assets/asu-t-raw.html?v=48"}];const rows=items.map((it,i)=>'<section class="acc-item"><button class="acc-btn size-acc-btn" type="button" data-acc="'+i+'"><b>'+it.title+'</b><em>'+it.hint+' <i>+</i></em></button><div class="acc-panel" data-src="'+it.src+'"></div></section>').join('');TR.renderSimple(document.getElementById("app"),"theories","Assist-to-usage beats raw assists","",'<p class="size-note"><strong>Score: unproven that the ratio beats raw assists. Lean true that creation matters.</strong> High college Ast/FGA is 15.6% All-Star vs 8.0% for low. High Ast/g is 14.9% vs 8.7%. The two sorts are almost the same list. No usage-rate series.</p><div class="acc size-acc">'+rows+'</div>');document.querySelectorAll("[data-acc]").forEach(btn=>{btn.addEventListener("click",e=>{e.preventDefault();const item=btn.closest(".acc-item");item.classList.toggle("open");const icon=btn.querySelector("i");if(icon)icon.textContent=item.classList.contains("open")?"\u2212":"+";const panel=item.querySelector(".acc-panel");if(item.classList.contains("open")&&panel&&panel.dataset.src&&!panel.dataset.loaded){fetch(panel.dataset.src).then(r=>r.text()).then(html=>{panel.innerHTML=html;panel.dataset.loaded="1";});}});});})();
+(function () {
+  TR.renderTheoryPage("Passing travels better than scoring", [
+    { items: [
+      { title: "Passers perform better", src: "/assets/asu-t-raw.html?v=50" },
+      { title: "Passing relative to scoring helps more", src: "/assets/asu-t-ratio.html?v=50" }
+    ]}
+  ]);
+})();

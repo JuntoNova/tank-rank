@@ -8,8 +8,14 @@
   <link rel="canonical" href="https://thedraftmodel.com/theories.html" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#090a0c" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="The Draft Model" />
+  <meta property="og:title" content="Draft Theories | The Draft Model" />
+  <meta property="og:description" content="The arguments NBA teams actually have on draft night, written plainly." />
+  <meta property="og:url" content="https://thedraftmodel.com/theories.html" />
+  <meta property="og:image" content="https://thedraftmodel.com/assets/og.jpg" />
   <link rel="stylesheet" href="./assets/styles.css?v=85" />
-  <link rel="stylesheet" href="./assets/theories.css?v=52" />
+  <link rel="stylesheet" href="./assets/theories.css?v=53" />
 </head>
 <body>
   <div id="app"></div>
@@ -124,9 +130,7 @@
       return g.items.length + " checked";
     }
 
-    var lede = '<p class="size-note">NBA teams argue about the same things every June. Take the bigger guy or the skilled guy. Take the 19-year-old or the one who already produces. Trust the stats or trust the film. Each row is one of those arguments, in ordinary language.</p>';
-
-    var html = lede + '<div class="acc theory-families">' + groups.map(function (g, i) {
+    var html = '<div class="acc theory-families">' + groups.map(function (g, i) {
       return '<section class="acc-item group-acc"><button class="acc-btn group-acc-btn" type="button" data-group="' + i + '"><b>' +
         g.label + '</b><em>' + groupHint(g) + ' <i>+</i></em></button><div class="acc-panel"><div class="acc theory-list">' +
         g.items.map(row).join('') + '</div></div></section>';

@@ -1,1 +1,8 @@
-(function(){const items=[{title:"Bigs",hint:"the claim",src:"/assets/rim-t-bigs.html?v=48"},{title:"All positions",hint:"general rule",src:"/assets/rim-t-all.html?v=48"}];const rows=items.map((it,i)=>'<section class="acc-item"><button class="acc-btn size-acc-btn" type="button" data-acc="'+i+'"><b>'+it.title+'</b><em>'+it.hint+' <i>+</i></em></button><div class="acc-panel" data-src="'+it.src+'"></div></section>').join('');TR.renderSimple(document.getElementById("app"),"theories","You still need a shot-blocker","",'<p class="size-note"><strong>Score: lean true for bigs. False as a general rule across positions.</strong> Among drafted C/PF, high college blocks are 14.5% All-Star vs 8.2% for the low tertile, n = 204. Across all positions the block tertiles are flat at 11.8 / 12.0 / 11.8.</p><div class="acc size-acc">'+rows+'</div>');document.querySelectorAll("[data-acc]").forEach(btn=>{btn.addEventListener("click",e=>{e.preventDefault();const item=btn.closest(".acc-item");item.classList.toggle("open");const icon=btn.querySelector("i");if(icon)icon.textContent=item.classList.contains("open")?"\u2212":"+";const panel=item.querySelector(".acc-panel");if(item.classList.contains("open")&&panel&&panel.dataset.src&&!panel.dataset.loaded){fetch(panel.dataset.src).then(r=>r.text()).then(html=>{panel.innerHTML=html;panel.dataset.loaded="1";});}});});})();
+(function () {
+  TR.renderTheoryPage("You still need a big who can block shots", [
+    { items: [
+      { title: "Shot-blocking bigs perform better", src: "/assets/rim-t-bigs.html?v=50" },
+      { title: "Shot-blockers perform better at every position", src: "/assets/rim-t-all.html?v=50" }
+    ]}
+  ]);
+})();

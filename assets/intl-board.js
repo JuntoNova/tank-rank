@@ -1,1 +1,8 @@
-(function(){const items=[{title:"Same slot",hint:"the claim",src:"/assets/int-t-slot.html?v=48"},{title:"All slots",hint:"raw",src:"/assets/int-t-all.html?v=48"}];const rows=items.map((it,i)=>'<section class="acc-item"><button class="acc-btn size-acc-btn" type="button" data-acc="'+i+'"><b>'+it.title+'</b><em>'+it.hint+' <i>+</i></em></button><div class="acc-panel" data-src="'+it.src+'"></div></section>').join('');TR.renderSimple(document.getElementById("app"),"theories","International is a different market","",'<p class="size-note"><strong>Score: lean true they are a different market, not a steal market.</strong> Picks 1-5: international 33.3% All-Star vs college 48.3%. Picks 6-14: 10.5% vs 17.9%. From pick 15 the rates converge.</p><div class="acc size-acc">'+rows+'</div>');document.querySelectorAll("[data-acc]").forEach(btn=>{btn.addEventListener("click",e=>{e.preventDefault();const item=btn.closest(".acc-item");item.classList.toggle("open");const icon=btn.querySelector("i");if(icon)icon.textContent=item.classList.contains("open")?"\u2212":"+";const panel=item.querySelector(".acc-panel");if(item.classList.contains("open")&&panel&&panel.dataset.src&&!panel.dataset.loaded){fetch(panel.dataset.src).then(r=>r.text()).then(html=>{panel.innerHTML=html;panel.dataset.loaded="1";});}});});})();
+(function () {
+  TR.renderTheoryPage("Foreign players are a different kind of bet", [
+    { items: [
+      { title: "Foreign players perform differently at the same pick", src: "/assets/int-t-slot.html?v=50" },
+      { title: "Foreign players perform differently overall", src: "/assets/int-t-all.html?v=50" }
+    ]}
+  ]);
+})();
