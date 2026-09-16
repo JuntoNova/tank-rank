@@ -9,13 +9,15 @@
             {
               name: "Height",
               kids: [
-                { id: "size", name: "Taller guys perform better" }
+                { id: "size", name: "Taller guys perform better" },
+                { id: "inch", name: "Every extra inch helps" }
               ]
             },
             {
               name: "Weight",
               kids: [
-                { id: "weight", name: "Heavier guys perform better" }
+                { id: "weight", name: "Heavier guys perform better" },
+                { id: "wpi", name: "More pounds per inch helps" }
               ]
             },
             {
@@ -81,6 +83,28 @@
     }
   ];
 
+  var INCH = {
+    "5-9":{mAs:2.75,mNba:3.33,mHof:3.04,mMvp:0},"5-10":{mAs:0.92,mNba:1.66,mHof:1.51,mMvp:0},
+    "5-11":{mAs:1.28,mNba:0,mHof:1.06,mMvp:0},"6-0":{mAs:0.96,mNba:1.2,mHof:1.47,mMvp:0.98},
+    "6-1":{mAs:1.21,mNba:1.09,mHof:1.51,mMvp:0.68},"6-2":{mAs:0.98,mNba:1.14,mHof:0.34,mMvp:0.47},
+    "6-3":{mAs:0.90,mNba:0.91,mHof:0.64,mMvp:0.63},"6-4":{mAs:1.15,mNba:1.24,mHof:1.43,mMvp:0.38},
+    "6-5":{mAs:0.74,mNba:0.84,mHof:0.85,mMvp:0.62},"6-6":{mAs:1.15,mNba:1.15,mHof:1.13,mMvp:1.21},
+    "6-7":{mAs:1.13,mNba:0.85,mHof:1.17,mMvp:0.52},"6-8":{mAs:0.79,mNba:0.85,mHof:0.81,mMvp:0},
+    "6-9":{mAs:1.07,mNba:0.99,mHof:0.81,mMvp:1.88},"6-10":{mAs:0.96,mNba:0.90,mHof:0.81,mMvp:0.73},
+    "6-11":{mAs:1.02,mNba:0.99,mHof:1.09,mMvp:2.91},"7-0":{mAs:0.70,mNba:0.93,mHof:0.62,mMvp:1.87},
+    "7-1":{mAs:1.48,mNba:1.49,mHof:2.72,mMvp:6.57},"7-2":{mAs:1.60,mNba:1.45,mHof:2.66,mMvp:5.34},
+    "7-3":{mAs:0,mNba:0,mHof:2.66,mMvp:0},"7-4":{mAs:4.28,mNba:3.87,mHof:7.09,mMvp:0},
+    "7-5":{mAs:0,mNba:0,mHof:0,mMvp:0},"7-6":{mAs:3.21,mNba:5.81,mHof:10.64,mMvp:0},
+    "7-7":{mAs:0,mNba:0,mHof:0,mMvp:0}
+  };
+  var WPI = [
+    { lo: 0, hi: 2.40, label: "Under 2.40", mAs: 0.71, mNba: 0.65, mHof: 0, mMvp: 2.38 },
+    { lo: 2.40, hi: 2.60, label: "2.40\u20132.59", mAs: 0.51, mNba: 0.58, mHof: 0, mMvp: 1.23 },
+    { lo: 2.60, hi: 2.80, label: "2.60\u20132.79", mAs: 0.84, mNba: 1.08, mHof: 0.36, mMvp: 0.72 },
+    { lo: 2.80, hi: 3.00, label: "2.80\u20132.99", mAs: 0.78, mNba: 0.92, mHof: 0.45, mMvp: 0.45 },
+    { lo: 3.00, hi: 9, label: "3.00+", mAs: 0.85, mNba: 1.22, mHof: 0, mMvp: 0.75 }
+  ];
+
   function css() {
     if (document.getElementById("player-theory-tree-css")) return;
     var s = document.createElement("style");
@@ -104,6 +128,11 @@
   function inches(ht) {
     var m = String(ht || "").match(/(\d+)\s*-\s*(\d+(?:\.\d+)?)/);
     return m ? Number(m[1]) * 12 + Number(m[2]) : 0;
+  }
+  function pick(list, x) {
+    if (x == null || isNaN(x)) return null;
+    for (var i = 0; i < list.length; i++) if (x >= list[i].lo && x < list[i].hi) return list[i];
+    return list[list.length - 1];
   }
   function mul(m) { return "\u00d7" + Number(m == null ? 1 : m).toFixed(2); }
   function tone(m) {
@@ -160,10 +189,23 @@
       if (band) return { fact: (ht || "") + " \u00b7 " + band.label, mAs: band.mAs, mNba: band.mNba, mHof: band.mHof, mMvp: band.mMvp };
       return fromStep(steps, "size");
     }
+    if (id === "inch") {
+      var key = String(ht || "").replace(/\s+/g, "");
+      var inch = INCH[key];
+      if (inch && ht) return { fact: ht, mAs: inch.mAs, mNba: inch.mNba, mHof: inch.mHof, mMvp: inch.mMvp };
+      return null;
+    }
     if (id === "weight") {
       var wband = found && found.weight;
       if (wband && !isNaN(wt)) return { fact: wt + " lbs \u00b7 " + wband.label, mAs: wband.mAs, mNba: wband.mNba, mHof: wband.mHof, mMvp: wband.mMvp };
       return fromStep(steps, "weight");
+    }
+    if (id === "wpi") {
+      if (!htIn || isNaN(wt)) return null;
+      var ratio = wt / htIn;
+      var rowW = pick(WPI, ratio);
+      if (!rowW) return null;
+      return { fact: ratio.toFixed(2) + " \u00b7 " + rowW.label, mAs: rowW.mAs, mNba: rowW.mNba, mHof: rowW.mHof, mMvp: rowW.mMvp };
     }
     if (id === "wingspan") {
       var wspIn = inches(feat.wsp);
