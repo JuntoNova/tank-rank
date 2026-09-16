@@ -34,21 +34,33 @@
       ".hist-pills{margin:0 0 18px}",
       ".hist-pills a.chip{text-decoration:none}",
       "#hist-alltime .table-wrap,#hist-outliers .table-wrap{margin-top:0}",
+      "#hist-alltime table{table-layout:fixed;width:100%}",
       "#hist-alltime td.pct,#hist-alltime td.rank,#hist-alltime th.num{text-align:right;font-variant-numeric:tabular-nums}",
+      "#hist-alltime td.pct,#hist-alltime th.num{min-width:4.75rem;white-space:nowrap}",
+      "#hist-alltime th:nth-child(1),#hist-alltime td:nth-child(1){width:3rem}",
+      "#hist-alltime th:nth-child(2),#hist-alltime td:nth-child(2){width:3.4rem}",
+      "#hist-alltime th:nth-child(3),#hist-alltime td:nth-child(3){width:3rem}",
+      "#hist-alltime th:nth-child(5),#hist-alltime td:nth-child(5){width:7.5rem;overflow:hidden;text-overflow:ellipsis}",
       "#hist-alltime tr{cursor:pointer}",
-      "#hist-alltime th[data-k]{cursor:pointer;user-select:none}",
-      "#hist-alltime th[data-k].on:after{content:' \\25be';font-size:10px}",
-      "#hist-alltime th[data-k].asc:after{content:' \\25b4';font-size:10px}",
+      "#hist-alltime th[data-k]{cursor:pointer;user-select:none;padding-right:16px}",
+      "#hist-alltime th[data-k]:after{content:' \\25be';font-size:10px;visibility:hidden;display:inline-block;width:10px}",
+      "#hist-alltime th[data-k].on:after{visibility:visible}",
+      "#hist-alltime th[data-k].asc:after{content:' \\25b4';visibility:visible}",
       ".hist-pager{display:flex;gap:8px;align-items:center;margin:14px 0 0;flex-wrap:wrap}",
       ".hist-pager .chip{cursor:pointer}",
       ".hist-pager .count{color:var(--muted);font-size:13px;margin-left:auto}",
       ".at-tools{align-items:center}",
-      ".at-tools .search{margin-left:auto;min-width:220px}",
+      ".at-tools .at-right{margin-left:auto;display:flex;gap:8px;align-items:center}",
+      ".at-tools .search{margin-left:0;min-width:200px}",
       ".at-filters{display:flex;flex-wrap:wrap;gap:8px;margin:-4px 0 14px}",
       ".at-filters[hidden]{display:none !important}",
       ".at-filters .lab{color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase;align-self:center;margin:0 4px 0 8px}",
       ".at-filters .lab:first-child{margin-left:0}",
-      "button.chip[disabled]{opacity:.35;cursor:default}"
+      "button.chip[disabled]{opacity:.35;cursor:default}",
+      "#hist-alltime .vs{display:inline-block;margin-left:6px;font-size:11px;color:var(--muted)}",
+      "#hist-alltime .vs.up{color:var(--lime)}",
+      "#hist-alltime .vs.down{color:var(--coral)}",
+      "#hist-alltime .vs.even{color:var(--gold)}"
     ].join("");
     document.head.appendChild(s);
   }
@@ -69,6 +81,47 @@
   function fmtInt(n) {
     n = Number(n) || 0;
     return n ? String(n) : "0";
+  }
+  function fmtSigned(n) {
+    if (n == null || isNaN(n) || Math.abs(n) < 0.25) return "0";
+    return (n > 0 ? "+" : "\u2212") + Math.abs(n).toFixed(1);
+  }
+  function vsCell(got, exp) {
+    var n = Number(got) || 0;
+    var d = n - (Number(exp) || 0);
+    var cls = Math.abs(d) < 0.25 ? "even" : d > 0 ? "up" : "down";
+    return n + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
+  }
+  function hofNowOf(r) {
+    if (Number(r.hof)) return 1;
+    var now = 2027;
+    var yrs = Number(r.yrs) || 0;
+    if (yrs === 0 && r.y >= now - 1) return Number(r.pHof) || 0;
+    var last = r.y + yrs;
+    var retiredFor = now - last;
+    if (retiredFor >= 20 || yrs === 0) return 0;
+    var as = Number(r.as) || 0, nba = Number(r.nba) || 0, nba1 = Number(r.nba1) || 0;
+    var mvp = Number(r.mvp) || 0, ch = Number(r.ch) || 0;
+    var s = mvp * 4.2 + nba1 * 0.55 + nba * 0.50 + as * 0.22 + ch * 0.28;
+    var pr = 1 / (1 + Math.exp(-(s - 4.0)));
+    if (mvp >= 1 && (as >= 6 || nba >= 5)) pr = Math.max(pr, 0.97);
+    if (mvp >= 2) pr = Math.max(pr, 0.995);
+    if (as >= 12 || nba >= 10) pr = Math.max(pr, 0.97);
+    if (as >= 15 || (mvp >= 1 && as >= 8)) pr = Math.max(pr, 0.995);
+    if (mvp >= 3 || (mvp >= 1 && nba >= 10) || as >= 18) pr = 1;
+    if (retiredFor >= 8 && retiredFor < 20) pr *= Math.max(0, 1 - (retiredFor - 8) / 12);
+    if (pr < 0) pr = 0;
+    if (pr > 1) pr = 1;
+    return pr;
+  }
+  function hofVs(r) {
+    var nowP = r.hofNow != null ? r.hofNow : hofNowOf(r);
+    var draftP = Number(r.pHof) || 0;
+    var d = (nowP - draftP) * 100;
+    var cls = Math.abs(d) < 1 ? "even" : d > 0 ? "up" : "down";
+    var signed = Math.abs(d) < 1 ? "0" : ((d > 0 ? "+" : "\u2212") + String(Math.round(Math.abs(d))));
+    var label = nowP >= 0.995 ? "100%" : nowP <= 0 ? "0%" : fmtPct(nowP);
+    return label + ' <span class="vs ' + cls + '">' + signed + "</span>";
   }
 
   function injectPills(main, view) {
@@ -99,8 +152,10 @@
         '<div class="toolbar at-tools" role="tablist">' +
           '<button type="button" class="chip" data-when="now">Now</button>' +
           '<button type="button" class="chip" data-when="drafted">When drafted</button>' +
-          '<button type="button" class="chip" id="at-filter-btn">Filters</button>' +
-          '<input class="search" id="at-q" type="search" placeholder="Search a player, team, or year" autocomplete="off">' +
+          '<div class="at-right">' +
+            '<button type="button" class="chip" id="at-filter-btn">Filters</button>' +
+            '<input class="search" id="at-q" type="search" placeholder="Search a player, team, or year" autocomplete="off">' +
+          "</div>" +
         "</div>" +
         '<div class="at-filters" id="at-filters" hidden>' +
           '<span class="lab">Decade</span>' +
@@ -203,21 +258,23 @@
       ];
     }
     return [
-      { k: "as", label: "AS" },
-      { k: "nba1", label: "1st" },
-      { k: "nba", label: "All-NBA" },
-      { k: "yrs", label: "Yrs" },
-      { k: "ch", label: "Chips" },
-      { k: "mvp", label: "MVP" },
-      { k: "hof", label: "HOF" }
+      { k: "as", e: "eAs", label: "AS" },
+      { k: "nba1", e: "eNba1", label: "1st" },
+      { k: "nba", e: "eNba", label: "All-NBA" },
+      { k: "yrs", e: "eYrs", label: "Yrs" },
+      { k: "ch", e: "eCh", label: "Chips" },
+      { k: "mvp", e: "eMvp", label: "MVP" },
+      { k: "hofNow", e: "pHof", label: "HOF", hof: true }
     ];
   }
 
-  function cell(r, k) {
-    if (k === "pHof") return fmtPct(r.pHof);
-    if (k === "hof") return r.hof ? "Yes" : "";
-    if (k.indexOf("e") === 0) return fmt(r[k]);
-    return fmtInt(r[k]);
+  function cell(r, c) {
+    if (at.when === "drafted") {
+      if (c.k === "pHof") return fmtPct(r.pHof);
+      return fmt(r[c.k]);
+    }
+    if (c.hof) return hofVs(r);
+    return vsCell(r[c.k], r[c.e]);
   }
 
   function syncWhenUrl() {
@@ -268,7 +325,7 @@
         + '<td class="rank">' + String(r.pk).padStart(2, "0") + "</td>"
         + '<td><div class="name">' + r.n + "</div>" + (meta ? '<div class="meta">' + meta + "</div>" : "") + "</td>"
         + "<td>" + (r.t || "\u2014") + "</td>"
-        + honor.map(function (c) { return '<td class="pct">' + cell(r, c.k) + "</td>"; }).join("")
+        + honor.map(function (c) { return '<td class="pct">' + cell(r, c) + "</td>"; }).join("")
         + "</tr>";
     }).join("") : '<tr><td colspan="12" style="color:var(--muted);padding:24px">No players match.</td></tr>';
     if (pager) {
@@ -296,14 +353,13 @@
   function setWhen(when) {
     at.when = when === "drafted" ? "drafted" : "now";
     if (at.when === "drafted") {
-      var map = { as: "eAs", nba1: "eNba1", nba: "eNba", yrs: "eYrs", ch: "eCh", mvp: "eMvp", hof: "pHof" };
+      var map = { as: "eAs", nba1: "eNba1", nba: "eNba", yrs: "eYrs", ch: "eCh", mvp: "eMvp", hofNow: "pHof", hof: "pHof" };
       if (map[at.sort]) at.sort = map[at.sort];
-      if (at.sort === "as") at.sort = "eAs";
     } else {
-      var back = { eAs: "as", eNba1: "nba1", eNba: "nba", eYrs: "yrs", eCh: "ch", eMvp: "mvp", pHof: "hof" };
+      var back = { eAs: "as", eNba1: "nba1", eNba: "nba", eYrs: "yrs", eCh: "ch", eMvp: "mvp", pHof: "hofNow" };
       if (back[at.sort]) at.sort = back[at.sort];
     }
-    if (at.sort === "eAs" || at.sort === "as") at.dir = -1;
+    at.dir = -1;
     syncWhenUrl();
     paintAllTime(0);
   }
@@ -361,6 +417,7 @@
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         allTime = data || { players: [] };
+        (allTime.players || []).forEach(function (r) { r.hofNow = hofNowOf(r); });
         paintAllTime(0);
       })
       .catch(function () {
