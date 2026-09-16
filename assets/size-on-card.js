@@ -67,7 +67,7 @@
     }
     return '<div class="th-bin">' +
       '<div class="who"><b>' + kind + " " + measured + "</b>" +
-      "<span>his bin: " + bin.label + " \u00b7 n = " + bin.n.toLocaleString("en-US") + "</span></div>" +
+      "<span>players " + bin.label + " \u00b7 n = " + bin.n.toLocaleString("en-US") + "</span></div>" +
       '<p class="apply">' + applyCopy(kind, measured, bin) + "</p>" +
       '<div class="table-wrap"><table><thead><tr>' +
       "<th></th><th>This player</th><th class=\"num\">Applied</th>" +
@@ -92,9 +92,9 @@
     const htLabel = (feat && feat.ht) ? feat.ht : "\u2014";
     const wtLabel = (feat && feat.wt != null && feat.wt !== "") ? (feat.wt + " lbs") : "\u2014";
     sec.innerHTML =
-      '<div class="th-size-head"><h2>You can\'t teach size</h2>' +
+      '<div class="th-size-head"><h2>Bigger is better</h2>' +
       '<div class="kicker"><a href="./size.html">/size</a></div></div>' +
-      '<p class="th-size-note">Only this player\u2019s height and weight. The other bins live on the size page.</p>' +
+      '<p class="th-size-note">Only this player\u2019s height and weight. The full height and weight tables live on the size page.</p>' +
       binCard("Height", htLabel, found.height) +
       binCard("Weight", wtLabel, found.weight);
     const theories = root.querySelector(".th-player");
