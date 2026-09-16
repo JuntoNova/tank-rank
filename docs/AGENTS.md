@@ -44,6 +44,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): AS / All-NBA / 1st team are star-tailed. 1st team is cubic in quality. Most of a class prints 0. LeBron 8.5 / 1.2 firsts. Joe Alexander <0.1.
 - 2026-09-16 (Grok chat): Robinson 1987. Navy line was missing (28.2/4.5 POY). Senior does not stack on age 21.9. Centers are not taxed for 1 assist. 7-1 at 235 is not a weight cut.
 - 2026-09-16 (Grok chat): Draft-night HOF is 1% × quality², cap 28%. A class is ~1 expected Hall of Famer, not 16% for every lottery pick.
 - 2026-09-16 (Grok chat): Rubio 2009. File was empty except age + international. ACB 10.0/6.1/2.2, 6-4, creation tag. Passing counts under 6-5.

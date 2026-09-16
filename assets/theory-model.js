@@ -295,11 +295,11 @@
     return {
       slot: "player", slotAs: 1, slotNba: 1, slotHof: PLAYER_HOF, slotMvp: inten.mvp,
       pAs: pAs, pNba: pNba, pHof: pHof,
-      expAs: clamp(inten.as * mAs, 0.05, 16),
-      expNba: clamp(inten.nba * mNba, 0.02, 14),
-      expNba1: clamp(inten.nba1 * mNba, 0.01, 10),
+      expAs: clamp(0.70 * mAs * mAs, 0.02, 16),
+      expNba: clamp(0.20 * mNba * mNba, 0.01, 12),
+      expNba1: clamp(0.028 * mNba * mNba * mNba, 0.005, 6),
       expYrs: inten.yrs * mYrs, expCh: inten.ch * clamp((mAs + mHof) / 2, 0.50, 1.80),
-      expMvp: clamp(inten.mvp * mMvp, 0.01, 4), mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
+      expMvp: clamp(0.018 * mMvp * mMvp, 0.005, 2.5), mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
       scale: mAs, steps: steps, feat: feat
     };
   }

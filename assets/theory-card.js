@@ -90,12 +90,12 @@
     var cap = (TR.Model && TR.Model.HOF_CAP) || 0.28;
     var pHof = clamp(0.010 * mAs * mAs * mHof, 0.002, cap);
     return {
-      expAs: clamp((inten.as || 2.8) * mAs, 0.05, 16),
-      expNba1: clamp((inten.nba1 || 0.30) * mNba, 0.01, 10),
-      expNba: clamp((inten.nba || 1.35) * mNba, 0.02, 14),
+      expAs: clamp(0.70 * mAs * mAs, 0.02, 16),
+      expNba1: clamp(0.028 * mNba * mNba * mNba, 0.005, 6),
+      expNba: clamp(0.20 * mNba * mNba, 0.01, 12),
       expYrs: (inten.yrs || 8.5) * mYrs,
       expCh: (inten.ch || 0.18) * clamp((mAs + mHof) / 2, 0.50, 1.80),
-      expMvp: clamp((inten.mvp || 0.20) * mMvp, 0.01, 4),
+      expMvp: clamp(0.018 * mMvp * mMvp, 0.005, 2.5),
       pHof: pHof
     };
   }
