@@ -188,7 +188,7 @@
       else if (feat.stash || (feat.delay || 0) >= 2) add("stash", "Stash", "delayed", 0.59, 0.50, "Stash.", { yrs: 0.55 });
       else add("stash", "Stash", "immediate", 1, 1, "Immediate.", { yrs: 0.94 });
     } else if (feat.origin === "hs") {
-      add("intl", "Origin", "high school", 1.28, 1.45, "", { nba: 1.22, hof: 1.18 });
+      add("intl", "Origin", "high school", 1.10, 1.15, "", { nba: 1.08, hof: 1.08 });
       add("stash", "Stash", "-", 1, 1, "Stash is international only.");
     } else {
       add("intl", "Origin", "college", 1, 1, "College.");
@@ -236,9 +236,10 @@
       add("weight", "Weight", (feat.wt != null && feat.wt !== "") ? (feat.wt + " lbs") : "missing",
         1, 1, "", { hof: 1, nba: 1, yrs: 1 });
     }
-    if (feat.create && htIn >= 79) {
+    var madeCreate = feat.create && (feat.ast != null || feat.pts != null);
+    if (madeCreate && htIn >= 79) {
       add("handle", "Handle x size", (feat.ht || "6-7+") + " creation tag", 1.35, 1.12, "", { hof: 1.05 });
-    } else if (feat.create) {
+    } else if (madeCreate) {
       add("handle", "Handle x size", (feat.ht || "guard") + " creation tag", 1.22, 1.18, "", { hof: 1 });
     } else if (htIn && htIn < 77 && /(PG|SG|G)/i.test(feat.pos || "")) {
       add("handle", "Handle x size", (feat.ht || "short") + " guard", 1.08, 1.20, "", { hof: 1 });
@@ -325,6 +326,11 @@
       var vol = fg3a / fga;
       var tAs = vol >= 0.40 ? 1.02 : 1;
       add("three", "Three-point volume", vol.toFixed(2) + " 3PA/FGA", tAs, 1, "", { nba: tAs, hof: 1 });
+    }
+    if (feat.pts == null && feat.ast == null) {
+      mAs = Math.min(mAs, 1.70);
+      mNba = Math.min(mNba, 1.70);
+      mMvp = Math.min(mMvp, 1.80);
     }
     mAs = clamp(mAs, 0.18, 5.00); mNba = clamp(mNba, 0.18, 5.00);
     mHof = clamp(mHof, 0.35, 2.40); mMvp = clamp(mMvp, 0.12, 4.00); mYrs = clamp(mYrs, 0.55, 1.35);
