@@ -176,7 +176,7 @@
       add("onedone", "Class year", cls || "-", cAs, cMvp, note, { yrs: 1, hof: 1 });
     } else {
       if (feat.origin === "intl" && ageNum < 19.5 && !feat.stash && !(feat.delay >= 1)) {
-        add("onedone", "Class year", "young pro", 1.08, 1.12, "", { yrs: 1, hof: 1 });
+        add("onedone", "Class year", "young pro", 1, 1, "", { yrs: 1, hof: 1 });
       } else {
         add("onedone", "Class year", cls || feat.origin || "-", 1, 1, "No extra class-year market.", { yrs: 1, hof: 1 });
       }
@@ -237,10 +237,14 @@
         1, 1, "", { hof: 1, nba: 1, yrs: 1 });
     }
     var madeCreate = feat.create && (feat.ast != null || feat.pts != null);
+    var astN = feat.ast != null ? Number(feat.ast) : null;
+    var passCreate = astN != null && astN >= 5;
     if (madeCreate && htIn >= 79) {
-      add("handle", "Handle x size", (feat.ht || "6-7+") + " creation tag", 1.35, 1.12, "", { hof: 1.05 });
+      add("handle", "Handle x size", (feat.ht || "6-7+") + (passCreate ? " passer" : " creation tag"),
+        passCreate ? 1.10 : 1.35, passCreate ? 1.06 : 1.12, "", { hof: passCreate ? 1 : 1.05 });
     } else if (madeCreate) {
-      add("handle", "Handle x size", (feat.ht || "guard") + " creation tag", 1.22, 1.18, "", { hof: 1 });
+      add("handle", "Handle x size", (feat.ht || "guard") + (passCreate ? " passer" : " creation tag"),
+        passCreate ? 1.06 : 1.22, passCreate ? 1.08 : 1.18, "", { hof: 1 });
     } else if (htIn && htIn < 77 && /(PG|SG|G)/i.test(feat.pos || "")) {
       add("handle", "Handle x size", (feat.ht || "short") + " guard", 1.08, 1.20, "", { hof: 1 });
     } else if (/(C|PF)/i.test(feat.pos || "") && !feat.create) {
@@ -340,7 +344,7 @@
     return {
       slot: "player", slotAs: 1, slotNba: 1, slotHof: PLAYER_HOF, slotMvp: inten.mvp,
       pAs: pAs, pNba: pNba, pHof: pHof,
-      expAs: clamp(0.70 * mAs * mAs, 0.02, 16),
+      expAs: clamp(0.50 * mAs * mAs, 0.02, 12),
       expNba: clamp(0.20 * mNba * mNba, 0.01, 12),
       expNba1: clamp(0.028 * mNba * mNba * mNba, 0.005, 6),
       expYrs: inten.yrs * mYrs, expCh: inten.ch * clamp((mAs + mHof) / 2, 0.50, 1.80),

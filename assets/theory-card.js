@@ -90,7 +90,7 @@
     var cap = (TR.Model && TR.Model.HOF_CAP) || 0.28;
     var pHof = clamp(0.010 * mAs * mAs * mHof, 0.002, cap);
     return {
-      expAs: clamp(0.70 * mAs * mAs, 0.02, 16),
+      expAs: clamp(0.50 * mAs * mAs, 0.02, 12),
       expNba1: clamp(0.028 * mNba * mNba * mNba, 0.005, 6),
       expNba: clamp(0.20 * mNba * mNba, 0.01, 12),
       expYrs: (inten.yrs || 8.5) * mYrs,

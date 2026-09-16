@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): LaMelo 14 All-Stars was age × passing × 6-7 handle × tall-PG, then squared. Passing already owns creation. Young pro does not stack on age 18. All-Star is 0.50 × mAs², cap 12. He is ~5.6 now. LeBron 12.
 - 2026-09-16 (Grok chat): All-time. Filters next to search. First sort is high to low. Headers keep their width. Now is career vs the draft-night number, same as the boards.
 - 2026-09-16 (Grok chat): Josh Jackson. Age 20.4 plus old-freshman ×0.72 was the same birthday twice. Freshman 20–21 is 1.00 now. He is ~3.1 AS. Tatum is 19.3.
 - 2026-09-16 (Grok chat): Amir Johnson 19% HOF was age ×2 * fake HS handle * extra HS bump, then squared. Handle now needs a box score. HS origin is 1.10. No stats caps the multiplier. Amir is ~3.5% now.
