@@ -154,9 +154,9 @@
     else ageMvpRaw = 0.70;
     const ageMvp = clamp(ageMvpRaw, 0.30, 2.20);
     let ageYrs = 1;
-    if (ageNum < 19) ageYrs = 1.18;
-    else if (ageNum < 20) ageYrs = 1.12;
-    else if (ageNum < 21) ageYrs = 1.04;
+    if (ageNum < 19) ageYrs = 1.28;
+    else if (ageNum < 20) ageYrs = 1.18;
+    else if (ageNum < 21) ageYrs = 1.08;
     else if (ageNum < 22) ageYrs = 0.96;
     else ageYrs = 0.80;
     add("age", "Age", feat.age != null ? feat.age + " " + ageLabel(ak) : "unknown",
@@ -337,7 +337,7 @@
       mMvp = Math.min(mMvp, 1.80);
     }
     mAs = clamp(mAs, 0.18, 5.00); mNba = clamp(mNba, 0.18, 5.00);
-    mHof = clamp(mHof, 0.35, 2.40); mMvp = clamp(mMvp, 0.12, 4.00); mYrs = clamp(mYrs, 0.55, 1.35);
+    mHof = clamp(mHof, 0.35, 2.40); mMvp = clamp(mMvp, 0.12, 4.00); mYrs = clamp(mYrs, 0.45, 1.50);
     const pAs = clamp(0.22 * mAs, 0.01, 0.97);
     const pNba = clamp(0.12 * mNba, 0.005, 0.90);
     const pHof = clamp(PLAYER_HOF * mAs * mAs * mHof, 0.002, HOF_CAP);
@@ -347,7 +347,8 @@
       expAs: clamp(0.50 * mAs * mAs, 0.02, 12),
       expNba: clamp(0.20 * mNba * mNba, 0.01, 12),
       expNba1: clamp(0.028 * mNba * mNba * mNba, 0.005, 6),
-      expYrs: inten.yrs * mYrs, expCh: inten.ch * clamp((mAs + mHof) / 2, 0.50, 1.80),
+      expYrs: clamp(4.5 * mYrs + 2.8 * mAs, 1.5, 19),
+      expCh: inten.ch * clamp((mAs + mHof) / 2, 0.50, 1.80),
       expMvp: clamp(0.018 * mMvp * mMvp, 0.005, 2.5), mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
       scale: mAs, steps: steps, feat: feat
     };
