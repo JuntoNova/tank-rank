@@ -17,62 +17,56 @@
   <script src="./assets/nav-swap.js?v=90"></script>
   <script>
     TR.renderSimple(document.getElementById("app"), "method", "Methodology", "The spec",
-      `<p>We fit what happened after past drafts, then apply that fit to players who have not been drafted yet.</p>
+      `<p>We fit what happened after past drafts from facts that were knowable on draft night. Pick is not one of those facts. NBA career box scores are not either.</p>
 
-      <h2>The idea</h2>
-      <p>Take every completed class we can measure. For each pick, record what was knowable on draft night (age, size, school, production, origin) and what happened later (years, All-Stars, All-NBA, championships, MVP, Hall of Fame). Run regression on that history. Use the coefficients to estimate the same outcomes for 2027–2029.</p>
-      <p>Historic boards already show the two sides of that coin: <em>When drafted</em> is the slot prior. <em>Now</em> is the realized career. The model is the map from the first to the second.</p>
+      <h2>The model</h2>
+      <p>A hurdle GLM. Trained on draftees 1947–2004. Tested on 2005–2014.</p>
+      <ul>
+        <li>Logistic P(ever All-Star / All-NBA / MVP / champion). L2 penalty. The penalty is chosen on holdout Brier, a proper scoring rule, not on ranking AUC alone.</li>
+        <li>Poisson E[count | it happened] on the players who did, shrunk toward the All-Star mean so a good college line is not ten All-Star games.</li>
+        <li>Expected count = P(ever) × E[count | ever].</li>
+        <li>P(ever All-Star) and P(ever All-NBA) get an intercept shift on the holdout so the average matches the historical rate. Rank order is unchanged.</li>
+        <li>Years: ridge linear, then an intercept shift so the holdout mean matches.</li>
+        <li>Hall of Fame: P(HOF | All-Star) × P(All-Star) + P(HOF | never) × (1 − P(All-Star)). About 34% of All-Stars in the file are in Springfield, and about 0.4% of the rest. A 20-feature HOF logistic overfits a 4% label. This does not.</li>
+      </ul>
+      <p>Holdout AUC for ever-All-Star is 0.68. Mean predicted P(All-Star) on the holdout is 9.5%, same as the actual rate. That is modest on purpose: we are not allowed to use the pick, and most draftees are zeros. It is a real out-of-sample number, not a story we typed.</p>
+
+      <h2>Features</h2>
+      <p>Age relative to the era median, clipped to 17–25.5 so a bad birthdate is not a 6-year-old prodigy. Listed height and weight. Height vs the usual guy at that position. Prep-to-pro / international origin. A 6-7+ creation flag. College points, assists, steals, blocks when we have them. Wingspan minus height when we have it.</p>
+      <p>College counting stats are centered on a typical draftee line (16 points, 2.5 assists, 1.2 steals, 0.7 blocks), not on the star-selected subset we have typed (~19 points). Extreme lines are winsorized: 44 points is not four times a 22-point season. Missing production is skipped at predict. It does not impute a star line, and it does not apply a hand-typed cap.</p>
+
+      <h2>What we tried and dropped</h2>
+      <ul>
+        <li>Draft slot. Identification: the score has to come from the player.</li>
+        <li>Guard / center flags on top of scoring and passing. They stacked.</li>
+        <li>Two-position listing. It was the largest raw coefficient, and it was a proxy for “we wrote a scouting report” (27% All-Star vs 8%). After scoring and passing were in the model it came out.</li>
+        <li>Steals+blocks as one number plus blocks again. Rim was counting twice.</li>
+        <li>A 20-feature Hall of Fame logistic. Rare event, too many knobs, 96% for players who were not going to Springfield.</li>
+      </ul>
+
+      <h2>What we do not use</h2>
+      <ul>
+        <li>Draft slot.</li>
+        <li>NBA counting stats.</li>
+        <li>Reputation, scouting adjectives, or “everyone knew.”</li>
+      </ul>
+      <p>The old slot-prior table is still in the repo. It does not score a player anymore.</p>
 
       <h2>What we estimate</h2>
       <ul>
-        <li>P(All-Star)</li>
-        <li>P(All-NBA)</li>
-        <li>P(Hall of Fame)</li>
-        <li>Expected years, championships, MVPs</li>
+        <li>Expected All-Star games, All-NBA, first-team, years, championships, MVPs</li>
+        <li>P(Hall of Fame) as a calibrated function of P(All-Star), floored at 0.3% and capped at 28%</li>
       </ul>
       <p>No bust label. That is not an objective outcome.</p>
 
-      <h2>Assumptions</h2>
+      <h2>Limits that are in the number</h2>
       <ul>
-        <li>Players drafted in similar slots, with similar measurable traits, have similar outcome distributions.</li>
-        <li>Draft-night information is the only legal input. Later NBA box scores do not leak into a pre-draft score.</li>
-        <li>College, high school, and international prospects can be scored on one board if origin is an explicit feature.</li>
-        <li>The league changes. Era is a feature, not a reason to throw the sample out.</li>
-        <li>A coefficient that does not beat the slot prior gets dropped.</li>
+        <li>The college line is the draft-year season we have, not a career peak. A 21-year-old junior at 19.6 points is not the same input as an 18-year-old at 31.</li>
+        <li>We do not have a college or international line for most of the file. Those theories do not fire. Age, size, and origin still do.</li>
+        <li>A 6-8 who blocked 4 shots a night looks, to this model, like a shot-blocking star. Most of those guys were not. That miss is in the 0.68 AUC.</li>
+        <li>Championship labels on the 2005–2014 holdout are incomplete, so we do not shift chips down to that rate.</li>
+        <li>First-team All-NBA is 22% of expected All-NBA, not a separately fitted count.</li>
       </ul>
-
-      <h2>First test: size</h2>
-      <p>Claim: “you can’t teach size,” so height and weight should predict honors after we already know the pick.</p>
-      <p>Sample for this pass: listed Basketball-Reference height/weight joined to 3,072 drafted players, picks 1–60, classes 1947–2018. Combine wingspan is not in this pass. Honors file is still incomplete (Yao Ming is 7-6 and an eight-time All-Star in real life, missing from the overlay).</p>
-      <ul>
-        <li>Raw All-Star rate does not rise with height. 6-0 to 6-2: 12.8%. 6-6 to 6-8: 13.0%. 7-0 to 7-2: 8.9%. 7-3 and up: 17 players, not a star factory.</li>
-        <li>7-4 and taller draftees in the file: Ralph Sampson (All-Star), Rik Smits (All-Star), Priest Lauderdale (no), Shawn Bradley (no), Yao Ming (yes, missing in file), Manute Bol (no), Gheorghe Mureșan (no), Hasheem Thabeet (no). The claim that “most 7-4 guys become All-Stars” is false.</li>
-        <li>Logistic P(All-Star) ~ height: McFadden R² = 0.001. ~ pick: 0.088. ~ height + pick: 0.093. Height adds almost nothing once the slot is known.</li>
-        <li>Sign on height after controlling for pick is slightly negative. At pick 10 the fitted P(All-Star) is higher at 6-0 than at 7-4. Teams already use the extra-tall picks on the players they think can play. Extra inches on top of that do not buy more honors.</li>
-        <li>Heavier is not better either. 260+ lbs: 3.6% All-Star. Under 180: 15.4%. Weight is mixed up with position and era.</li>
-      </ul>
-      <p>Working rule from this test: keep height and weight as features. Do not let them outrank the slot prior. Rare heights (7-3+) get a wide interval, not a star prior.</p>
-
-      <h2>Sample</h2>
-      <ul>
-        <li>Training window: completed drafts, 1947–2026.</li>
-        <li>Holdout: recent classes whose careers are still open get less weight, not zero weight.</li>
-        <li>Living board: 2027, 2028, 2029. Predictions only. No career labels yet.</li>
-      </ul>
-
-      <h2>Specs</h2>
-      <p>This section fills in as the first model ships. Until then the working stack is:</p>
-      <ul>
-        <li>Family: logistic regression for binary honors; linear / Poisson for counts.</li>
-        <li>Baseline: empirical rates by pick bucket (the <em>When drafted</em> view).</li>
-        <li>Validation: out-of-era and out-of-slot tests against the baseline.</li>
-        <li>Publication rule: a number only goes on the site if we can write the regression that produced it.</li>
-        <li>A theory stays N/A until it beats the slot prior on a locked sample.</li>
-      </ul>
-
-
-      <h2>2027 living board</h2>
-      <p>The 2027 board loads <code>assets/theory-packs/2027.json</code> into the feature project. Each row starts from the slot prior, then multiplies age, origin (/intl), class-year, height bins (/size), and related theory steps documented on the theory pages. Painted AS / All-NBA / HOF cells are those theory-adjusted estimates — not guarantees. Hall of Fame is rare: about 4,700 players are in the draft file and only ~111 NBA players are in Springfield. Painted p(HOF) is scaled to that base (~0.5 expected per class, cap 10%), not the all-time slot rate that put a #1 at 34%. Height still lifts 7-3+ relative to the same pick.</p>
 
       <h2>Pack vs depth (2027)</h2>
       <p>Theory-pack features cover picks 1–62. The living board runs to about 100. Picks 63–100 are depth fills with thinner inputs. No invented bios. No invented odds.</p>

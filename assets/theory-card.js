@@ -114,27 +114,23 @@
     return '<td class="pct th-mul ' + cls + '">' + txt + "</td>";
   }
   function ledgerRows(full) {
-    var mAs = 1, mNba = 1, mHof = 1, mMvp = 1, mYrs = 1;
-    var prev = scoreOf(full, 1, 1, 1, 1, 1);
     var html = "";
+    var prev = null;
     (full.steps || []).forEach(function (s) {
-      mAs *= (s.mAs == null ? 1 : s.mAs);
-      mNba *= (s.mNba == null ? 1 : s.mNba);
-      mHof *= (s.mHof == null ? 1 : s.mHof);
-      mMvp *= (s.mMvp == null ? 1 : s.mMvp);
-      mYrs *= (s.mYrs == null ? 1 : s.mYrs);
       if (s.id === "slot") return;
       if (s.id === "stash" && (s.value === "-" || s.value === "")) return;
-      if (s.id !== "size" && !moved(s)) return;
-      var cur = scoreOf(full, mAs, mNba, mHof, mMvp, mYrs);
+      if (!s.snap) return;
+      if (!moved(s) && s.id !== "size" && s.id !== "age") return;
+      var cur = s.snap;
+      var was = prev || s.prev;
       html += "<tr><td>" + theoryName(s) + "</td>"
-        + td(cur.expAs, prev.expAs, false)
-        + td(cur.expNba1, prev.expNba1, false)
-        + td(cur.expNba, prev.expNba, false)
-        + td(cur.expYrs, prev.expYrs, false)
-        + td(cur.expCh, prev.expCh, false)
-        + td(cur.expMvp, prev.expMvp, false)
-        + td(cur.pHof, prev.pHof, true)
+        + td(cur.expAs, was && was.expAs, false)
+        + td(cur.expNba1, was && was.expNba1, false)
+        + td(cur.expNba, was && was.expNba, false)
+        + td(cur.expYrs, was && was.expYrs, false)
+        + td(cur.expCh, was && was.expCh, false)
+        + td(cur.expMvp, was && was.expMvp, false)
+        + td(cur.pHof, was && was.pHof, true)
         + "</tr>";
       prev = cur;
     });

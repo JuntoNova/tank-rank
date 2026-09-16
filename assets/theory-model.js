@@ -78,7 +78,7 @@
     const pos = String(p.pos || given.pos || "");
     const htIn = inches(ht);
     const guard = /(^|\b)(PG|SG|G)(\b|\/)/i.test(pos);
-    const astN = given.ast != null ? Number(given.ast) : (p.ast != null ? Number(p.ast) : NaN);
+    const astN = given.ast != null ? Number(given.ast) : NaN;
     let create = 0;
     if (given.create != null && given.create !== "") create = Number(given.create) ? 1 : 0;
     else if (isFinite(astN)) {
@@ -94,296 +94,202 @@
       fga: given.fga, fta: given.fta, fg3a: given.fg3a
     };
   }
+  function glm() { return (window.TR && TR.GLM) || null; }
+  function sigmoid(z) { return 1 / (1 + Math.exp(-clamp(z, -20, 20))); }
+  function eraMed(y) {
+    y = Number(y) || 0;
+    if (y <= 1975) return 21.7;
+    if (y <= 1988) return 21.4;
+    if (y <= 2005) return 21.0;
+    return 20.2;
+  }
+  function posGroup(pos) {
+    pos = String(pos || "").toUpperCase();
+    if (/C/.test(pos) && !/(PG|SG|SF|G)/.test(pos)) return "C";
+    if (/(PG|SG|\bG\b)/.test(pos) && !/(PF|C)/.test(pos)) return "G";
+    if (/(SF|PF|\bF\b)/.test(pos)) return "F";
+    if (/C/.test(pos)) return "C";
+    if (/G/.test(pos)) return "G";
+    return "";
+  }
+  function glmX(feat, year) {
+    const G = glm();
+    const x = {};
+    (G.features || []).forEach(function (k) { x[k] = 0; });
+    var age = feat.age;
+    if (age != null && !(age >= 17 && age <= 25.5)) age = null;
+    var htIn = inches(feat.ht);
+    if (htIn && (htIn < 68 || htIn > 94)) htIn = 0;
+    var wt = feat.wt != null && feat.wt !== "" ? Number(feat.wt) : null;
+    if (wt != null && !(wt >= 150 && wt <= 360)) wt = null;
+    var pg = posGroup(feat.pos);
+    var posHt = (G.pos_ht || { G: 75, F: 80, C: 83 })[pg];
+    var wsp = inches(feat.wsp);
+    var ape = (wsp && htIn) ? (wsp - htIn) : null;
+    var stl = feat.stl != null && feat.stl !== "" ? Number(feat.stl) : null;
+    var blk = feat.blk != null && feat.blk !== "" ? Number(feat.blk) : null;
+    var pts = feat.pts != null && feat.pts !== "" ? Number(feat.pts) : null;
+    var ast = feat.ast != null && feat.ast !== "" ? Number(feat.ast) : null;
+    var rel = (age != null) ? (age - eraMed(year)) : null;
+    var dHt = (htIn && posHt) ? (htIn - posHt) : null;
+    var raw = {
+      rel_age: rel, ht_in: htIn || null, wt: wt, d_ht: dHt, ape: ape,
+      pts: pts, ast: ast, stl: stl, blk: blk
+    };
+    (G.continuous || []).forEach(function (k) {
+      var v = raw[k];
+      if (v == null || (k === "ht_in" && !htIn)) { x[k] = 0; return; }
+      if (G.winsor && G.winsor[k]) {
+        v = Math.max(G.winsor[k][0], Math.min(G.winsor[k][1], v));
+      }
+      var sd = (G.sds && G.sds[k]) || 1;
+      x[k] = (v - G.means[k]) / sd;
+    });
+    if (!htIn) x.ht_in = 0;
+    x.origin_hs = feat.origin === "hs" ? 1 : 0;
+    x.origin_intl = feat.origin === "intl" ? 1 : 0;
+    x.create_tall = (feat.create && htIn >= 79) ? 1 : 0;
+    if (x.pos_g !== undefined) x.pos_g = 0;
+    if (x.pos_c !== undefined) x.pos_c = 0;
+    if (x.swing !== undefined) x.swing = 0;
+    (G.missing || []).forEach(function (k) { x[k] = 0; });
+    return { x: x, raw: raw, pg: pg, htIn: htIn, age: age };
+  }
+  function linpred(spec, x) {
+    if (!spec || spec.kind === "constant") return Math.log(spec && spec.mu ? spec.mu : 1);
+    var s = Number(spec.intercept) || 0;
+    var coef = spec.coef || {};
+    Object.keys(coef).forEach(function (k) { s += coef[k] * (x[k] || 0); });
+    return s;
+  }
+  function logit(p) {
+    p = clamp(p, 1e-6, 1 - 1e-6);
+    return Math.log(p / (1 - p));
+  }
+  function platt(p, spec) {
+    if (!spec) return p;
+    var sl = spec.slope == null ? 1 : Number(spec.slope);
+    var ic = Number(spec.intercept) || 0;
+    return sigmoid(ic + sl * logit(p));
+  }
+  function hurdle(key, x) {
+    const G = glm();
+    var p = sigmoid(linpred(G[key + "_ever"], x));
+    p = platt(p, G.platt && G.platt[key]);
+    var pos = G[key + "_pos"] || { kind: "constant", mu: 1 };
+    var lo = G.lam_min != null ? G.lam_min : 1;
+    var hi = G.lam_max != null ? G.lam_max : 8;
+    var lam;
+    if (pos.kind === "constant") lam = pos.mu;
+    else lam = clamp(Math.exp(linpred(pos, x)), lo, hi);
+    return { p: p, lam: lam, exp: p * lam };
+  }
+  function scoreX(x) {
+    const G = glm();
+    if (!G) {
+      return { expAs: 0.4, expNba: 0.2, expNba1: 0.05, expYrs: 7, expCh: 0.08, expMvp: 0.02, pHof: 0.03, pAs: 0.11, pNba: 0.06 };
+    }
+    var as = hurdle("as", x);
+    var nba = hurdle("nba", x);
+    var mvp = hurdle("mvp", x);
+    var ch = hurdle("ch", x);
+    var yrs = clamp(linpred(G.yrs, x) + (G.yrs_shift || 0), 1.5, 19);
+    var pHof;
+    var spec = G.hof_from_as || {};
+    if (spec.kind === "mixture") {
+      var yes = spec.p_given_as != null ? spec.p_given_as : 0.34;
+      var no = spec.p_given_no != null ? spec.p_given_no : 0.004;
+      pHof = no + (yes - no) * as.p;
+    } else if (spec.intercept != null) {
+      pHof = sigmoid(spec.intercept + spec.slope * logit(as.p));
+    } else {
+      pHof = 0.004 + 0.34 * as.p;
+    }
+    pHof = clamp(pHof, G.hof_floor != null ? G.hof_floor : 0.003, G.hof_cap != null ? G.hof_cap : 0.28);
+    return {
+      pAs: as.p, expAs: clamp(as.exp, 0.02, 14),
+      pNba: nba.p, expNba: clamp(nba.exp, 0.01, 12), expNba1: clamp(nba.exp * 0.22, 0.005, 6),
+      expYrs: yrs, expCh: clamp(ch.exp, 0.01, 4), expMvp: clamp(mvp.exp, 0.002, 2.5),
+      pHof: pHof
+    };
+  }
   function project(p, feat, priors) {
     feat = feat || deriveFeat(p);
-    const pk = Number(p.rank) || 99;
-    const inten = PLAYER;
-    let mAs = 1, mNba = 1, mHof = 1, mMvp = 1, mYrs = 1;
-    const steps = [];
-    function add(id, label, value, mas, mmvp, why, extra) {
-      extra = extra || {};
-      const a = mas == null ? 1 : mas;
-      const v = mmvp == null ? a : mmvp;
-      const nba = extra.nba == null ? a : extra.nba;
-      const hof = extra.hof == null ? a : extra.hof;
-      const yrs = extra.yrs == null ? 1 : extra.yrs;
-      mAs *= a; mNba *= nba; mHof *= hof; mMvp *= v; mYrs *= yrs;
-      steps.push({ id: id, label: label, value: value, mAs: a, mNba: nba, mHof: hof, mMvp: v, mYrs: yrs, why: why, href: extra.href || HREF[id] || "" });
-    }
-    const HREF = {
-      slot: "./methodology.html",
-      age: "./age.html",
-      onedone: "./onedone.html",
-      intl: "./intl.html",
-      stash: "./stash.html",
-      size: "./size.html",
-      posht: "./size.html",
-      swing: "./size.html",
-      handle: "./handle.html",
-      wingspan: "./wingspan.html",
-      reach: "./reach.html",
-      prod: "./prod.html",
-      ftrate: "./ftrate.html",
-      defense: "./defense.html",
-      astu: "./astu.html",
-      rim: "./rim.html",
-      three: "./three.html"
-    };
     const year = Number(p.year || p.y || feat.year) || 0;
-    const ak = ageKey(feat.age);
-    const rawAs = AGE_AS[ak];
-    const ageNum = feat.age == null ? 21.5 : feat.age;
-    function eraMed(y) {
-      y = Number(y) || 0;
-      if (y <= 1975) return 21.7;
-      if (y <= 1988) return 21.4;
-      if (y <= 2005) return 21.0;
-      return 20.2;
-    }
-    var rel = year ? (ageNum - eraMed(year)) : (ageNum - 20.2);
-    let ageAsRaw;
-    if (rel <= -2.0) ageAsRaw = 1.16;
-    else if (rel <= -1.0) ageAsRaw = 1.12;
-    else if (rel <= -0.3) ageAsRaw = 1.06;
-    else if (rel <= 0.5) ageAsRaw = 1.00;
-    else if (rel <= 1.2) ageAsRaw = 0.94;
-    else if (rel <= 2.0) ageAsRaw = 0.88;
-    else ageAsRaw = 0.82;
-    const ageAs = clamp(ageAsRaw, 0.80, 1.20);
-    let ageMvpRaw;
-    if (rel <= -2.0) ageMvpRaw = 1.18;
-    else if (rel <= -1.0) ageMvpRaw = 1.12;
-    else if (rel <= -0.3) ageMvpRaw = 1.06;
-    else if (rel <= 0.5) ageMvpRaw = 1.00;
-    else if (rel <= 1.2) ageMvpRaw = 0.94;
-    else ageMvpRaw = 0.86;
-    const ageMvp = clamp(ageMvpRaw, 0.80, 1.22);
-    let ageYrs = 1;
-    if (rel <= -2.0) ageYrs = 1.16;
-    else if (rel <= -1.0) ageYrs = 1.10;
-    else if (rel <= -0.3) ageYrs = 1.05;
-    else if (rel <= 0.5) ageYrs = 1.00;
-    else if (rel <= 1.2) ageYrs = 0.95;
-    else ageYrs = 0.88;
-    add("age", "Age", feat.age != null ? feat.age + " " + ageLabel(ak) : "unknown",
-      ageAs, ageMvp, "",
-      { nba: ageAs, hof: clamp(ageAsRaw, 0.90, 1.12), yrs: clamp(ageYrs, 0.85, 1.18) });
-    const cls = feat.cls || "";
-    if (feat.origin === "college") {
-      let cAs = 1, cMvp = 1, note = "Sophomore / junior is the middle of /onedone.";
-      if (cls === "Fr" || cls === "RS-Fr") {
-        if (ageNum >= 21) { cAs = 0.88; cMvp = 0.80; note = "Old freshman."; }
-        else { cAs = 1; cMvp = 1; note = "Freshman. Age already moved this."; }
-      } else if (cls === "Sr" || cls === "RS-Sr") {
-        if (year && year <= 2005) { cAs = 1; cMvp = 1; note = "Senior. Normal for the era."; }
-        else if (ak === "a21" || ak === "a22") { cAs = 1; cMvp = 1; note = "Senior. Age already moved this."; }
-        else { cAs = 0.88; cMvp = 0.70; note = "Young senior."; }
-      } else if (cls === "Jr" || cls === "RS-Jr") {
-        if (year && year <= 2005) { cAs = 1; cMvp = 1; note = "Junior. Normal for the era."; }
-        else { cAs = 0.96; cMvp = 0.90; note = "Junior."; }
-      }
-      add("onedone", "Class year", cls || "-", cAs, cMvp, note, { yrs: 1, hof: 1 });
-    } else {
-      if (feat.origin === "intl" && ageNum < 19.5 && !feat.stash && !(feat.delay >= 1)) {
-        add("onedone", "Class year", "young pro", 1, 1, "", { yrs: 1, hof: 1 });
-      } else {
-        add("onedone", "Class year", cls || feat.origin || "-", 1, 1, "No extra class-year market.", { yrs: 1, hof: 1 });
-      }
-    }
-    if (feat.origin === "intl") {
-      var youngNow = ageNum <= 19.5 && !feat.stash && !(feat.delay >= 1) && !feat.never;
-      add("intl", "Origin", youngNow ? "young pro" : "international", youngNow ? 1 : 0.88, youngNow ? 1 : 0.92, "", { hof: youngNow ? 1 : 1.02, yrs: youngNow ? 1 : 0.94, nba: youngNow ? 1 : 0.88 });
-      if (feat.never) add("stash", "Stash", "never arrived", 0.05, 0.05, "Never arrived.", { yrs: 0.10 });
-      else if (feat.stash || (feat.delay || 0) >= 2) add("stash", "Stash", "delayed", 0.59, 0.50, "Stash.", { yrs: 0.55 });
-      else add("stash", "Stash", "immediate", 1, 1, "Immediate.", { yrs: 0.94 });
-    } else if (feat.origin === "hs") {
-      add("intl", "Origin", "high school", 1.10, 1.15, "", { nba: 1.08, hof: 1.08 });
-      add("stash", "Stash", "-", 1, 1, "Stash is international only.");
-    } else {
-      add("intl", "Origin", "college", 1, 1, "College.");
-      add("stash", "Stash", "-", 1, 1, "Stash is international only.");
-    }
-    const SIZE_BINS = [
-      { lo: 0, hi: 73, label: "under 6-1", as: 1.09, nba: 1.08, hof: 1.25, mvp: 0.81,
-        why: "From /size. Under 6-1 is a small AS/HOF bump (n=132). Not a star prior." },
-      { lo: 73, hi: 79, label: "6-1 to 6-6", as: 0.99, nba: 1.04, hof: 0.97, mvp: 0.74,
-        why: "From /size. Middle of the listed-height sample; near the base rate." },
-      { lo: 79, hi: 84, label: "6-7 to 6-11", as: 1.00, nba: 0.92, hof: 0.93, mvp: 1.05,
-        why: "From /size. The common wing/big bin. Slightly below the HOF base." },
-      { lo: 84, hi: 87, label: "7-0 to 7-2", as: 1.08, nba: 1.05, hof: 1.11, mvp: 1.22,
-        why: "From /size. 7-0 to 7-2 is +1.0 HOF pp and the MVP cell (3.65% vs 1.17% base, n=192)." },
-      { lo: 87, hi: 120, label: "7-3 and up", as: 1.15, nba: 1.15, hof: 1.20, mvp: 1.25,
-        why: "From /size. 7-3+ is a tiny sample. Seven-footers get more MVPs; 7-4 is not a downgrade from 7-1." }
+    const G = glm();
+    const built = glmX(feat, year);
+    const xFull = built.x;
+    const raw = built.raw;
+    const HREF = {
+      age: "./age.html", intl: "./intl.html", size: "./size.html", posht: "./size.html",
+      swing: "./size.html", handle: "./handle.html", wingspan: "./wingspan.html",
+      prod: "./prod.html", defense: "./defense.html", astu: "./astu.html", rim: "./rim.html"
+    };
+    const groups = [
+      { id: "age", label: "Age", keys: ["rel_age"],
+        value: built.age != null ? (feat.age + " " + ageLabel(ageKey(feat.age))) : "unknown" },
+      { id: "intl", label: "Origin", keys: ["origin_hs", "origin_intl"],
+        value: feat.origin === "hs" ? "high school" : feat.origin === "intl" ? "international" : "college" },
+      { id: "size", label: "Height", keys: ["ht_in"],
+        value: feat.ht || "missing" },
+      { id: "weight", label: "Weight", keys: ["wt"],
+        value: feat.wt != null ? (feat.wt + " lbs") : "missing" },
+      { id: "posht", label: "Size at position", keys: ["d_ht"],
+        value: (feat.ht || "") + (feat.pos ? " / " + feat.pos : "") },
+      { id: "handle", label: "Handle x size", keys: ["create_tall"],
+        value: xFull.create_tall ? ((feat.ht || "6-7+") + " creator") : (feat.ht || "missing") },
+      { id: "prod", label: "College scoring", keys: ["pts"],
+        value: raw.pts != null ? (raw.pts + " pts") : "no box score" },
+      { id: "astu", label: "Passing", keys: ["ast"],
+        value: raw.ast != null ? (raw.ast + " ast") : "no box score" },
+      { id: "defense", label: "Steals", keys: ["stl"],
+        value: raw.stl != null ? (raw.stl + " stl") : "no box score" },
+      { id: "rim", label: "Shot blocking", keys: ["blk"],
+        value: raw.blk != null ? (raw.blk + " blk") : "no box score" },
+      { id: "wingspan", label: "Wingspan", keys: ["ape"],
+        value: feat.wsp || "missing" }
     ];
-    const htIn = inches(feat.ht);
-    let sizeRow = null;
-    if (htIn) {
-      for (let i = 0; i < SIZE_BINS.length; i++) {
-        if (htIn >= SIZE_BINS[i].lo && htIn < SIZE_BINS[i].hi) { sizeRow = SIZE_BINS[i]; break; }
+    const x = {};
+    (G && G.features || []).forEach(function (k) { x[k] = 0; });
+    var prev = scoreX(x);
+    const steps = [];
+    groups.forEach(function (g) {
+      g.keys.forEach(function (k) { x[k] = xFull[k] || 0; });
+      var cur = scoreX(x);
+      var dLog = 0;
+      if (G && G.as_ever) {
+        g.keys.forEach(function (k) { dLog += (G.as_ever.coef[k] || 0) * (xFull[k] || 0); });
       }
-    }
-    if (!sizeRow) {
-      add("size", "Height", feat.ht ? String(feat.ht) : "missing", 1, 1,
-        "No listed or combine height, so /size does not move this pick.", { hof: 1, nba: 1, yrs: 1 });
-    } else {
-      add("size", "Height", (feat.ht || "") + " · " + sizeRow.label, sizeRow.as, sizeRow.mvp, sizeRow.why,
-        { nba: sizeRow.nba, hof: sizeRow.hof, yrs: 1 });
-    }
-    var wtFound = (window.TR && TR.Size && TR.Size.lookup)
-      ? TR.Size.lookup({ ht: feat.ht, wt: feat.wt })
-      : { weight: null, wt: feat.wt };
-    if (wtFound && wtFound.weight) {
-      var w = wtFound.weight;
-      var wAs = w.mAs, wMvp = w.mMvp, wNba = w.mNba, wHof = w.mHof;
-      var guard = /(^|\b)(PG|SG|G)(\b|\/)/i.test(feat.pos || "");
-      if (htIn >= 84 && feat.wt != null && Number(feat.wt) >= 225 && wAs < 1) wAs = 1;
-      if (guard && htIn && htIn < 81 && wAs < 1) { wAs = 1; wNba = Math.max(wNba, 1); }
-      if (guard && htIn && htIn < 81 && wMvp < 1) wMvp = 1;
-      if (wMvp > 1) wMvp = 1 + (wMvp - 1) * 0.30;
-      add("weight", "Weight", (wtFound.wt != null ? wtFound.wt : feat.wt) + " lbs · " + w.label,
-        wAs, wMvp, "", { nba: wNba < 1 && (htIn >= 84 || (guard && htIn < 81)) ? 1 : wNba, hof: wHof, yrs: 1 });
-    } else {
-      add("weight", "Weight", (feat.wt != null && feat.wt !== "") ? (feat.wt + " lbs") : "missing",
-        1, 1, "", { hof: 1, nba: 1, yrs: 1 });
-    }
-    var madeCreate = feat.create && (feat.ast != null || feat.pts != null);
-    var astN = feat.ast != null ? Number(feat.ast) : null;
-    var passCreate = astN != null && astN >= 5;
-    var realCreate = astN != null && astN >= 3.5;
-    if (madeCreate && htIn >= 79) {
-      var hAs = passCreate ? 1.10 : realCreate ? 1.22 : 1.08;
-      var hMvp = passCreate ? 1.06 : realCreate ? 1.08 : 1.04;
-      add("handle", "Handle x size", (feat.ht || "6-7+") + (passCreate ? " passer" : realCreate ? " creator" : " creation tag"),
-        hAs, hMvp, "", { hof: passCreate ? 1 : realCreate ? 1.04 : 1 });
-    } else if (madeCreate) {
-      var gAs = passCreate ? 1.06 : realCreate ? 1.14 : 1.08;
-      add("handle", "Handle x size", (feat.ht || "guard") + (passCreate ? " passer" : " creation tag"),
-        gAs, passCreate ? 1.08 : 1.10, "", { hof: 1 });
-    } else if (htIn && htIn < 77 && /(PG|SG|G)/i.test(feat.pos || "")) {
-      add("handle", "Handle x size", (feat.ht || "short") + " guard", 1.08, 1.20, "", { hof: 1 });
-    } else if (/(C|PF)/i.test(feat.pos || "") && !feat.create) {
-      add("handle", "Handle x size", feat.ht || "big", 1, 0.68, "", { hof: 1 });
-    } else {
-      add("handle", "Handle x size", feat.ht ? feat.ht : "missing", 1, 1, "", { hof: 1 });
-    }
-    const wspIn = inches(feat.wsp);
-    const ape = (wspIn && htIn) ? (wspIn - htIn) : null;
-    if (ape == null) add("wingspan", "Wingspan", "missing", 1, 1, "No wingspan.", { hof: 1 });
-    else if (htIn >= 82 && ape >= 6) add("wingspan", "Wingspan", feat.wsp + " long 6-10+", 1.12, 1.06, "/wingspan 6-10+ long.", { hof: 1 });
-    else if (ape >= 6) add("wingspan", "Wingspan", feat.wsp + " +6 ape", 1.10, 1.05, "+6 ape.", { hof: 1 });
-    else if (ape < 2 && htIn >= 79 && htIn < 84) add("wingspan", "Wingspan", feat.wsp + " short for size", 0.90, 0.85, "Short arms at 6-7 to 6-11.", { hof: 1 });
-    else add("wingspan", "Wingspan", feat.wsp || "mid", 1, 1, "Mid-pack length.", { hof: 1 });
-    const reachIn = inches(feat.reach);
-    if (!reachIn) add("reach", "Standing reach", "missing", 1, 1, "/reach needs a number.", { hof: 1 });
-    else if (htIn >= 82) add("reach", "Standing reach", feat.reach + " 6-10+", 1.06, 1.00, "Lean true only at 6-10+.", { hof: 1 });
-    else add("reach", "Standing reach", feat.reach, 1, 1, "False as a general rule.", { hof: 1 });
-    var prim = "";
-    var pU = String(feat.pos || "").toUpperCase();
-    if (/PG/.test(pU)) prim = "PG";
-    else if (/SG/.test(pU)) prim = "SG";
-    else if (/SF/.test(pU)) prim = "SF";
-    else if (/PF/.test(pU)) prim = "PF";
-    else if (/\bC\b/.test(pU) || pU === "C" || /^C/.test(pU)) prim = "C";
-    else if (/\bG\b/.test(pU) || pU[0] === "G") prim = "G";
-    else if (/\bF\b/.test(pU) || pU[0] === "F") prim = "F";
-    var POS_MED = { PG: 74, SG: 77, SF: 80, PF: 81, C: 82, G: 75, F: 79 };
-    var POS_WT = { PG: 185, SG: 205, SF: 220, PF: 240, C: 250, G: 195, F: 225 };
-    var dPos = (prim && htIn && POS_MED[prim]) ? Math.round(htIn - POS_MED[prim]) : null;
-    var dWt = (prim && feat.wt != null && feat.wt !== "" && POS_WT[prim]) ? Math.round(Number(feat.wt) - POS_WT[prim]) : null;
-    if (prim && (dPos != null || dWt != null)) {
-      var phAs = 1, phNba = 1, phHof = 1, phMvp = 1;
-      var bits = [];
-      if (dPos != null) bits.push((dPos >= 0 ? "+" : "") + dPos + " in vs " + prim);
-      if (dWt != null) bits.push((dWt >= 0 ? "+" : "") + dWt + " lbs vs " + prim);
-      if (dPos != null && dPos >= 3) { phAs = 1.10; phNba = 1.12; phHof = 1.14; phMvp = 1.25; }
-      else if (dPos != null && dPos >= 1) { phAs = 1.04; phNba = 1.05; phHof = 1.00; phMvp = 1.05; }
-      else if (dPos != null && dPos <= -3) { phAs = 1.00; phNba = 0.96; phHof = 1.05; phMvp = 0.85; }
-      else if (dPos != null && dPos <= -1) { phAs = 0.97; phNba = 0.96; phHof = 0.96; phMvp = 0.95; }
-      if (dWt != null && dWt >= 20 && (dPos == null || dPos >= 0)) {
-        phAs = +(phAs * 1.06).toFixed(3);
-        phNba = +(phNba * 1.05).toFixed(3);
-        phMvp = +(phMvp * 1.08).toFixed(3);
-      } else if (dWt != null && dWt <= -25 && (dPos == null || dPos <= 0)) {
-        phAs = +(phAs * 0.96).toFixed(3);
-        phNba = +(phNba * 0.96).toFixed(3);
-        phMvp = +(phMvp * 0.94).toFixed(3);
+      var mAs = Math.exp(dLog);
+      var dNba = 0, dMvp = 0, dHof = 0, dYrs = 0;
+      if (G) {
+        g.keys.forEach(function (k) {
+          if (G.nba_ever) dNba += (G.nba_ever.coef[k] || 0) * (xFull[k] || 0);
+          if (G.mvp_ever) dMvp += (G.mvp_ever.coef[k] || 0) * (xFull[k] || 0);
+          if (G.hof) dHof += (G.hof.coef[k] || 0) * (xFull[k] || 0);
+          if (G.yrs) dYrs += (G.yrs.coef[k] || 0) * (xFull[k] || 0);
+        });
       }
-      add("posht", "Size at position", (feat.ht || "") + (feat.wt != null ? " / " + feat.wt : "") + " · " + bits.join(", "),
-        phAs, phMvp, "", { nba: phNba, hof: phHof });
-    } else {
-      add("posht", "Size at position", feat.ht ? String(feat.ht) : "missing", 1, 1, "", { nba: 1, hof: 1 });
-    }
-    var listedSwing = /[\/]/.test(feat.pos || "") || /(G.+F|F.+G|F.+C|C.+F|SF.+PF|PF.+SF|PG.+SG|SG.+PG)/i.test(feat.pos || "");
-    if (listedSwing) {
-      add("swing", "Swing", (feat.pos || "") + " two spots", 1.10, 1.12, "", { nba: 1.10, hof: 1.08 });
-    } else if (htIn && (htIn < 73 || htIn >= 84)) {
-      add("swing", "Swing", (feat.ht || "") + " locked to one spot", 1, 1, "", { nba: 1, hof: htIn >= 84 ? 1.10 : 1.08 });
-    } else {
-      add("swing", "Swing", feat.pos ? (feat.pos + " one spot") : "one spot", 1, 1, "", { nba: 1, hof: 1 });
-    }
-    function num(x) {
-      if (x == null || x === "") return null;
-      var n = Number(x);
-      return isFinite(n) ? n : null;
-    }
-    var pts = num(feat.pts);
-    var ast = num(feat.ast);
-    var stl = num(feat.stl);
-    var blk = num(feat.blk);
-    var fga = num(feat.fga);
-    var fta = num(feat.fta);
-    var fg3a = num(feat.fg3a);
-    if (pts != null) {
-      var pAsP = pts >= 28 ? 1.40 : pts >= 24 ? 1.28 : pts >= 18 ? 1.18 : pts >= 16 ? 1.12 : pts >= 10 ? 1.00 : 0.86;
-      var pMvp = pts >= 28 ? 1.32 : pts >= 24 ? 1.22 : pts >= 18 ? 1.12 : pts >= 16 ? 1.08 : pts >= 10 ? 1.00 : 0.42;
-      if (htIn >= 84 && pts >= 22) { pAsP = Math.max(pAsP, 1.35); pMvp = Math.max(pMvp, 1.25); }
-      add("prod", "College scoring", pts + " pts", pAsP, pMvp, "", { nba: pAsP, hof: 1 });
-    }
-    if (fga && fga > 0 && fta != null) {
-      var ftr = fta / fga;
-      var fAs = ftr >= 0.40 ? 1.22 : ftr >= 0.25 ? 1.06 : 0.88;
-      if (ast != null && ast >= 5 && fAs < 1) fAs = 1;
-      add("ftrate", "Free-throw rate", ftr.toFixed(2) + " FTA/FGA", fAs, fAs, "", { nba: fAs, hof: 1 });
-    }
-    var isBig = /(C|PF)/i.test(feat.pos || "") && !/(PG|SG|SF)/i.test(feat.pos || "");
-    if (stl != null || blk != null) {
-      var stocks = (stl || 0) + (blk || 0);
-      var rimWill = blk != null && isBig;
-      if (!(rimWill && stl == null)) {
-        var stockN = rimWill ? stl : stocks;
-        var sAs;
-        if (rimWill) sAs = stockN >= 1.2 ? 1.08 : stockN > 0 ? 1.00 : 0.88;
-        else sAs = stockN >= 3.5 ? 1.12 : stockN >= 2.2 ? 1.10 : stockN >= 1.2 ? 1.06 : stockN > 0 ? 1.00 : 0.88;
-        add("defense", "Steals and blocks", stocks.toFixed(1) + " stocks", sAs, sAs, "", { nba: sAs, hof: 1 });
-      }
-    }
-    if (ast != null) {
-      var aAs = ast >= 7 ? 1.32 : ast >= 5 ? 1.22 : ast >= 3.5 ? 1.14 : ast >= 2.0 ? 1.04 : 1;
-      add("astu", "Passing", ast + " ast", aAs, aAs, "", { nba: aAs, hof: 1 });
-    }
-    if (blk != null && isBig) {
-      var rAs = blk >= 3.0 ? 1.22 : blk >= 1.5 ? 1.16 : blk >= 0.8 ? 1.06 : 0.92;
-      add("rim", "Shot blocking", blk + " blk", rAs, rAs, "", { nba: rAs, hof: 1 });
-    }
-    if (fga && fga > 0 && fg3a != null) {
-      var vol = fg3a / fga;
-      var tAs = vol >= 0.40 ? 1.02 : 1;
-      add("three", "Three-point volume", vol.toFixed(2) + " 3PA/FGA", tAs, 1, "", { nba: tAs, hof: 1 });
-    }
-    mAs = clamp(mAs, 0.18, 5.00); mNba = clamp(mNba, 0.18, 5.00);
-    mHof = clamp(mHof, 0.35, 2.40); mMvp = clamp(mMvp, 0.12, 5.00); mYrs = clamp(mYrs, 0.45, 1.50);
-    const pAs = clamp(0.22 * mAs, 0.01, 0.97);
-    const pNba = clamp(0.12 * mNba, 0.005, 0.90);
-    const pHof = clamp(PLAYER_HOF * mAs * mAs * mHof, 0.002, HOF_CAP);
+      steps.push({
+        id: g.id, label: g.label, value: g.value,
+        mAs: mAs, mNba: Math.exp(dNba), mHof: Math.exp(dHof), mMvp: Math.exp(dMvp),
+        mYrs: Math.exp(dYrs / 8),
+        why: "", href: HREF[g.id] || "",
+        snap: cur, prev: prev
+      });
+      prev = cur;
+    });
+    const full = scoreX(xFull);
+    var mAs = 1, mNba = 1, mHof = 1, mMvp = 1, mYrs = 1;
+    steps.forEach(function (s) {
+      mAs *= s.mAs; mNba *= s.mNba; mHof *= s.mHof; mMvp *= s.mMvp; mYrs *= s.mYrs;
+    });
     return {
-      slot: "player", slotAs: 1, slotNba: 1, slotHof: PLAYER_HOF, slotMvp: inten.mvp,
-      pAs: pAs, pNba: pNba, pHof: pHof,
-      expAs: clamp(0.50 * mAs * mAs, 0.02, 12),
-      expNba: clamp(0.20 * mNba * mNba, 0.01, 12),
-      expNba1: clamp(0.028 * mNba * mNba * mNba, 0.005, 6),
-      expYrs: clamp(4.5 * mYrs + 2.8 * mAs, 1.5, 19),
-      expCh: clamp(0.033 * mAs * mAs, 0.01, 2.50),
-      expMvp: clamp(0.014 * mMvp * mMvp, 0.002, 1.20), mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
+      slot: "player", slotAs: 1, slotNba: 1, slotHof: full.pHof, slotMvp: full.expMvp,
+      pAs: full.pAs, pNba: full.pNba, pHof: full.pHof,
+      expAs: full.expAs, expNba: full.expNba, expNba1: full.expNba1,
+      expYrs: full.expYrs, expCh: full.expCh, expMvp: full.expMvp,
+      mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
       scale: mAs, steps: steps, feat: feat
     };
   }
