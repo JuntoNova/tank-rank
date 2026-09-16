@@ -107,7 +107,13 @@
       size: "./size.html",
       handle: "./handle.html",
       wingspan: "./wingspan.html",
-      reach: "./reach.html"
+      reach: "./reach.html",
+      prod: "./prod.html",
+      ftrate: "./ftrate.html",
+      defense: "./defense.html",
+      astu: "./astu.html",
+      rim: "./rim.html",
+      three: "./three.html"
     };
     add("slot", "Draft slot", "Pk " + String(pk).padStart(2, "0") + " band " + key, 1, 1, "Historical rate for this pick. Every row below multiplies this.");
     const ak = ageKey(feat.age);
@@ -185,6 +191,17 @@
       add("size", "Height", (feat.ht || "") + " · " + sizeRow.label, sizeRow.as, sizeRow.mvp, sizeRow.why,
         { nba: sizeRow.nba, hof: sizeRow.hof, yrs: 1 });
     }
+    var wtFound = (window.TR && TR.Size && TR.Size.lookup)
+      ? TR.Size.lookup({ ht: feat.ht, wt: feat.wt })
+      : { weight: null, wt: feat.wt };
+    if (wtFound && wtFound.weight) {
+      var w = wtFound.weight;
+      add("weight", "Weight", (wtFound.wt != null ? wtFound.wt : feat.wt) + " lbs · " + w.label,
+        w.mAs, w.mMvp, "", { nba: w.mNba, hof: w.mHof, yrs: 1 });
+    } else {
+      add("weight", "Weight", (feat.wt != null && feat.wt !== "") ? (feat.wt + " lbs") : "missing",
+        1, 1, "", { hof: 1, nba: 1, yrs: 1 });
+    }
     if (feat.create && htIn >= 79) {
       add("handle", "Handle x size", (feat.ht || "6-7+") + " creation tag", 1.22, 1.05, "6-7+ creation on /handle.", { hof: 1 });
     } else if (feat.create && htIn >= 77) {
@@ -205,6 +222,45 @@
     if (!reachIn) add("reach", "Standing reach", "missing", 1, 1, "/reach needs a number.", { hof: 1 });
     else if (htIn >= 82) add("reach", "Standing reach", feat.reach + " 6-10+", 1.06, 1.00, "Lean true only at 6-10+.", { hof: 1 });
     else add("reach", "Standing reach", feat.reach, 1, 1, "False as a general rule.", { hof: 1 });
+    function num(x) {
+      if (x == null || x === "") return null;
+      var n = Number(x);
+      return isFinite(n) ? n : null;
+    }
+    var pts = num(feat.pts);
+    var ast = num(feat.ast);
+    var stl = num(feat.stl);
+    var blk = num(feat.blk);
+    var fga = num(feat.fga);
+    var fta = num(feat.fta);
+    var fg3a = num(feat.fg3a);
+    if (pts != null) {
+      var pAsP = pts >= 16 ? 1.10 : pts >= 10 ? 1.02 : 0.94;
+      add("prod", "College scoring", pts + " pts", pAsP, pAsP, "", { nba: pAsP, hof: 1 });
+    }
+    if (fga && fga > 0 && fta != null) {
+      var ftr = fta / fga;
+      var fAs = ftr >= 0.40 ? 1.22 : ftr >= 0.25 ? 1.06 : 0.88;
+      add("ftrate", "Free-throw rate", ftr.toFixed(2) + " FTA/FGA", fAs, fAs, "", { nba: fAs, hof: 1 });
+    }
+    if (stl != null || blk != null) {
+      var stocks = (stl || 0) + (blk || 0);
+      var sAs = stocks >= 2.2 ? 1.22 : stocks >= 1.2 ? 1.08 : 0.88;
+      add("defense", "Steals and blocks", stocks.toFixed(1) + " stocks", sAs, sAs, "", { nba: sAs, hof: 1 });
+    }
+    if (ast != null) {
+      var aAs = ast >= 6 ? 1.22 : ast >= 3.5 ? 1.14 : ast >= 2.0 ? 1.04 : 0.92;
+      add("astu", "Passing", ast + " ast", aAs, aAs, "", { nba: aAs, hof: 1 });
+    }
+    if (blk != null && /(C|PF)/i.test(feat.pos || "")) {
+      var rAs = blk >= 1.5 ? 1.16 : blk >= 0.8 ? 1.06 : 0.92;
+      add("rim", "Shot blocking", blk + " blk", rAs, rAs, "", { nba: rAs, hof: 1 });
+    }
+    if (fga && fga > 0 && fg3a != null) {
+      var vol = fg3a / fga;
+      var tAs = vol >= 0.40 ? 1.02 : 1;
+      add("three", "Three-point volume", vol.toFixed(2) + " 3PA/FGA", tAs, 1, "", { nba: tAs, hof: 1 });
+    }
     mAs = clamp(mAs, 0.20, 2.20); mNba = clamp(mNba, 0.20, 2.20);
     mHof = clamp(mHof, 0.35, 1.80); mMvp = clamp(mMvp, 0.15, 3.20); mYrs = clamp(mYrs, 0.55, 1.35);
     const slotAs = slot.pAs || 0, slotNba = slot.pNba || 0, slotHof = (slot.pHof || 0) * HOF_SLOT;

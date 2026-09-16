@@ -187,18 +187,19 @@
     const view = viewOf();
     head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th><th>HOF</th>";
     if (view === "drafted") {
+      var future = year >= ((window.TANK_RANK && TANK_RANK.currentYear) || 2027);
       body.innerHTML = rows.map(function (p) {
         const proj = p.proj || project(p, p.theoryFeat, priors);
         return '<tr onclick="location.href=\'./player.html?year=' + year + "&id=" + p.id + '\'" style="cursor:pointer">'
           + '<td class="rank">' + String(p.rank).padStart(2, "0") + "</td>"
           + '<td><div class="name">' + p.name + '</div><div class="meta">' + [p.pos, p.school].filter(Boolean).join(" · ") + "</div></td>"
           + "<td>" + (p.team || "\u2014") + "</td>"
-          + '<td class="pct">' + fmtExp(proj.expAs) + "</td>"
-          + '<td class="pct">' + fmtExp(proj.expNba1) + "</td>"
-          + '<td class="pct">' + fmtExp(proj.expNba) + "</td>"
+          + '<td class="pct">' + (future ? fmtPct(proj.pAs) : fmtExp(proj.expAs)) + "</td>"
+          + '<td class="pct">' + (future ? fmtPct(Math.min(0.80, proj.expNba1)) : fmtExp(proj.expNba1)) + "</td>"
+          + '<td class="pct">' + (future ? fmtPct(proj.pNba) : fmtExp(proj.expNba)) + "</td>"
           + '<td class="pct">' + fmtExp(proj.expYrs) + "</td>"
-          + '<td class="pct">' + fmtExp(proj.expCh) + "</td>"
-          + '<td class="pct">' + fmtExp(proj.expMvp) + "</td>"
+          + '<td class="pct">' + (future ? fmtPct(Math.min(0.80, proj.expCh)) : fmtExp(proj.expCh)) + "</td>"
+          + '<td class="pct">' + (future ? fmtPct(Math.min(0.80, proj.expMvp)) : fmtExp(proj.expMvp)) + "</td>"
           + '<td class="pct">' + fmtPct(proj.pHof) + "</td></tr>";
       }).join("");
     } else {
@@ -244,7 +245,7 @@
     return Promise.all([
       fetch("./assets/theory-packs/all.json?v=80").then(function (r) { return r.ok ? r.json() : null; }).then(function (all) {
         if (all && all[String(year)]) return all[String(year)];
-        return fetch("./assets/theory-packs/" + year + ".json?v=80").then(function (r) { return r.ok ? r.json() : null; });
+        return fetch("./assets/theory-packs/" + year + ".json?v=81").then(function (r) { return r.ok ? r.json() : null; });
       }).catch(function () { return null; }),
       fetch("./assets/slot-priors.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/outcomes-legacy.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
