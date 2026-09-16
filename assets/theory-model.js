@@ -201,9 +201,9 @@
         why: "From /size. Middle of the listed-height sample; near the base rate." },
       { lo: 79, hi: 84, label: "6-7 to 6-11", as: 1.00, nba: 0.92, hof: 0.93, mvp: 1.05,
         why: "From /size. The common wing/big bin. Slightly below the HOF base." },
-      { lo: 84, hi: 87, label: "7-0 to 7-2", as: 0.97, nba: 1.05, hof: 1.11, mvp: 1.80,
+      { lo: 84, hi: 87, label: "7-0 to 7-2", as: 0.97, nba: 1.05, hof: 1.11, mvp: 1.22,
         why: "From /size. 7-0 to 7-2 is +1.0 HOF pp and the MVP cell (3.65% vs 1.17% base, n=192). Shrunk so size cannot outrank the pick." },
-      { lo: 87, hi: 120, label: "7-3 and up", as: 1.05, nba: 1.15, hof: 1.80, mvp: 1.80,
+      { lo: 87, hi: 120, label: "7-3 and up", as: 1.05, nba: 1.15, hof: 1.80, mvp: 1.25,
         why: "From /size. 7-3+ is a tiny sample. Seven-footers get more MVPs; 7-4 is not a downgrade from 7-1." }
     ];
     const htIn = inches(feat.ht);
@@ -230,6 +230,7 @@
       if (htIn >= 84 && feat.wt != null && Number(feat.wt) >= 225 && wAs < 1) wAs = 1;
       if (guard && htIn && htIn < 81 && wAs < 1) { wAs = 1; wNba = Math.max(wNba, 1); }
       if (guard && htIn && htIn < 81 && wMvp < 1) wMvp = 1;
+      if (wMvp > 1) wMvp = 1 + (wMvp - 1) * 0.30;
       add("weight", "Weight", (wtFound.wt != null ? wtFound.wt : feat.wt) + " lbs · " + w.label,
         wAs, wMvp, "", { nba: wNba < 1 && (htIn >= 84 || (guard && htIn < 81)) ? 1 : wNba, hof: wHof, yrs: 1 });
     } else {
@@ -303,7 +304,7 @@
     if (listedSwing) {
       add("swing", "Swing", (feat.pos || "") + " two spots", 1.10, 1.12, "", { nba: 1.10, hof: 1.08 });
     } else if (htIn && (htIn < 73 || htIn >= 84)) {
-      add("swing", "Swing", (feat.ht || "") + " locked to one spot", 1, htIn >= 84 ? 1.18 : 0.90, "", { nba: 1, hof: htIn >= 84 ? 1.10 : 1.08 });
+      add("swing", "Swing", (feat.ht || "") + " locked to one spot", 1, 1, "", { nba: 1, hof: htIn >= 84 ? 1.10 : 1.08 });
     } else {
       add("swing", "Swing", feat.pos ? (feat.pos + " one spot") : "one spot", 1, 1, "", { nba: 1, hof: 1 });
     }
@@ -321,7 +322,8 @@
     var fg3a = num(feat.fg3a);
     if (pts != null) {
       var pAsP = pts >= 24 ? 1.22 : pts >= 18 ? 1.18 : pts >= 16 ? 1.12 : pts >= 10 ? 1.00 : 0.86;
-      add("prod", "College scoring", pts + " pts", pAsP, pAsP, "", { nba: pAsP, hof: 1 });
+      var pMvp = pts >= 24 ? 1.22 : pts >= 18 ? 1.18 : pts >= 16 ? 1.12 : pts >= 10 ? 1.00 : 0.42;
+      add("prod", "College scoring", pts + " pts", pAsP, pMvp, "", { nba: pAsP, hof: 1 });
     }
     if (fga && fga > 0 && fta != null) {
       var ftr = fta / fga;
@@ -353,7 +355,7 @@
       mMvp = Math.min(mMvp, 1.80);
     }
     mAs = clamp(mAs, 0.18, 5.00); mNba = clamp(mNba, 0.18, 5.00);
-    mHof = clamp(mHof, 0.35, 2.40); mMvp = clamp(mMvp, 0.12, 4.00); mYrs = clamp(mYrs, 0.45, 1.50);
+    mHof = clamp(mHof, 0.35, 2.40); mMvp = clamp(mMvp, 0.12, 5.00); mYrs = clamp(mYrs, 0.45, 1.50);
     const pAs = clamp(0.22 * mAs, 0.01, 0.97);
     const pNba = clamp(0.12 * mNba, 0.005, 0.90);
     const pHof = clamp(PLAYER_HOF * mAs * mAs * mHof, 0.002, HOF_CAP);
@@ -365,7 +367,7 @@
       expNba1: clamp(0.028 * mNba * mNba * mNba, 0.005, 6),
       expYrs: clamp(4.5 * mYrs + 2.8 * mAs, 1.5, 19),
       expCh: inten.ch * clamp((mAs + mHof) / 2, 0.50, 1.80),
-      expMvp: clamp(0.018 * mMvp * mMvp, 0.005, 2.5), mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
+      expMvp: clamp(0.014 * mMvp * mMvp, 0.002, 1.20), mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
       scale: mAs, steps: steps, feat: feat
     };
   }

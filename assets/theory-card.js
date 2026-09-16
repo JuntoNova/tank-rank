@@ -85,7 +85,7 @@
     mAs = clamp(mAs, 0.18, 5.00);
     mNba = clamp(mNba, 0.18, 5.00);
     mHof = clamp(mHof, 0.20, 2.40);
-    mMvp = clamp(mMvp, 0.12, 4.00);
+    mMvp = clamp(mMvp, 0.12, 5.00);
     mYrs = clamp(mYrs, 0.45, 1.50);
     var cap = (TR.Model && TR.Model.HOF_CAP) || 0.28;
     var pHof = clamp(0.010 * mAs * mAs * mHof, 0.002, cap);
@@ -95,7 +95,7 @@
       expNba: clamp(0.20 * mNba * mNba, 0.01, 12),
       expYrs: clamp(4.5 * mYrs + 2.8 * mAs, 1.5, 19),
       expCh: (inten.ch || 0.18) * clamp((mAs + mHof) / 2, 0.50, 1.80),
-      expMvp: clamp(0.018 * mMvp * mMvp, 0.005, 2.5),
+      expMvp: clamp(0.014 * mMvp * mMvp, 0.002, 1.20),
       pHof: pHof
     };
   }
