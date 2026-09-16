@@ -94,7 +94,7 @@
       expNba1: clamp(0.028 * mNba * mNba * mNba, 0.005, 6),
       expNba: clamp(0.20 * mNba * mNba, 0.01, 12),
       expYrs: clamp(4.5 * mYrs + 2.8 * mAs, 1.5, 19),
-      expCh: (inten.ch || 0.18) * clamp((mAs + mHof) / 2, 0.50, 1.80),
+      expCh: clamp(0.033 * mAs * mAs, 0.01, 2.50),
       expMvp: clamp(0.014 * mMvp * mMvp, 0.002, 1.20),
       pHof: pHof
     };

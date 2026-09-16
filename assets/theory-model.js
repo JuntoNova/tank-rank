@@ -203,7 +203,7 @@
         why: "From /size. The common wing/big bin. Slightly below the HOF base." },
       { lo: 84, hi: 87, label: "7-0 to 7-2", as: 0.97, nba: 1.05, hof: 1.11, mvp: 1.22,
         why: "From /size. 7-0 to 7-2 is +1.0 HOF pp and the MVP cell (3.65% vs 1.17% base, n=192). Shrunk so size cannot outrank the pick." },
-      { lo: 87, hi: 120, label: "7-3 and up", as: 1.05, nba: 1.15, hof: 1.80, mvp: 1.25,
+      { lo: 87, hi: 120, label: "7-3 and up", as: 1.05, nba: 1.15, hof: 1.20, mvp: 1.25,
         why: "From /size. 7-3+ is a tiny sample. Seven-footers get more MVPs; 7-4 is not a downgrade from 7-1." }
     ];
     const htIn = inches(feat.ht);
@@ -368,7 +368,7 @@
       expNba: clamp(0.20 * mNba * mNba, 0.01, 12),
       expNba1: clamp(0.028 * mNba * mNba * mNba, 0.005, 6),
       expYrs: clamp(4.5 * mYrs + 2.8 * mAs, 1.5, 19),
-      expCh: inten.ch * clamp((mAs + mHof) / 2, 0.50, 1.80),
+      expCh: clamp(0.033 * mAs * mAs, 0.01, 2.50),
       expMvp: clamp(0.014 * mMvp * mMvp, 0.002, 1.20), mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
       scale: mAs, steps: steps, feat: feat
     };
