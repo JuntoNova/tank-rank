@@ -257,8 +257,8 @@
       if (hofNow != null) now = "<tr><td>Hall of Fame now</td><td class=\"num\">" + fmtHof(hofNow) + "</td></tr>";
     }
     return '<div class="th-dn"><div class="kicker">Draft night</div><table><tbody>' +
-      "<tr><td>All-Star</td><td class=\"num\">" + fmtPct(full.pAs) + "</td></tr>" +
-      "<tr><td>All-NBA</td><td class=\"num\">" + fmtPct(full.pNba) + "</td></tr>" +
+      "<tr><td>All-Star</td><td class=\"num\">" + fmtExp(full.expAs) + "</td></tr>" +
+      "<tr><td>All-NBA</td><td class=\"num\">" + fmtExp(full.expNba) + "</td></tr>" +
       "<tr><td>Years</td><td class=\"num\">" + fmtExp(full.expYrs) + "</td></tr>" +
       "<tr><td>MVP</td><td class=\"num\">" + fmtExp(full.expMvp) + "</td></tr>" +
       "<tr><td>Hall of Fame then</td><td class=\"num\">" + fmtPct(full.pHof) + "</td></tr>" +

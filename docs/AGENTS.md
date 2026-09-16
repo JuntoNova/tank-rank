@@ -44,6 +44,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Upcoming boards (2027–2029) show expected counts for AS / 1st / All-NBA / Yrs / Chips / MVP, same as historic. Only HOF is a percent.
 - 2026-09-16 (Grok chat): Historic theory packs for 1947–2026. Class year from the school suffix. Create tag from assists, not from being a 6-7 forward. Bennett UNLV line is 16.1/8.1 as a freshman.
 
 - 2026-09-16 (Grok chat): Player page Theories accordion now mirrors /theories: Body / Age / How he plays / School, country, and team / Arguments we cannot check yet. Body → five claims. Bigger is better → Height / Weight / Length. Height → Taller guys perform better (7-0 band: AS down, All-NBA / HOF / MVP up).

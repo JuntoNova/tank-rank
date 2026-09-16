@@ -183,8 +183,8 @@
       }
       html +=
         '<div class="kicker">Draft night</div>' +
-        cell("AS", fmtPct(full.pAs)) +
-        cell("All-NBA", fmtPct(full.pNba)) +
+        cell("AS", fmtExp(full.expAs)) +
+        cell("All-NBA", fmtExp(full.expNba)) +
         cell("Yrs", fmtExp(full.expYrs)) +
         cell("MVP", fmtExp(full.expMvp)) +
         cell("HOF then", fmtPct(full.pHof));
