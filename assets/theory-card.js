@@ -232,7 +232,7 @@
       }).catch(function () { return null; }),
       fetch("./assets/outcomes/" + dec + ".json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/outcomes-extra.json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-      fetch("./assets/measurements-listed.json?v=81").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+      fetch("./assets/measurements-listed.json?v=82").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
     ]).then(function (parts) {
       const priors = parts[0] || (window.TANK_RANK && TANK_RANK.slotPriors) || {};
       if (priors && window.TANK_RANK) TANK_RANK.slotPriors = priors;
