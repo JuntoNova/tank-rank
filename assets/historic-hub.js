@@ -42,9 +42,9 @@
   }
 
   function hrefFor(v) {
-    if (v === "drafts") return "./drafts.html";
-    if (v === "alltime") return "./drafts.html?view=alltime";
-    return "./drafts.html?view=outliers";
+    if (v === "drafts") return "./drafts";
+    if (v === "alltime") return "./drafts?view=alltime";
+    return "./drafts?view=outliers";
   }
 
   function injectPills(main, view) {
@@ -54,9 +54,9 @@
     bar.className = "toolbar hist-pills";
     bar.setAttribute("role", "tablist");
     bar.innerHTML =
-      '<a class="chip' + (view === "drafts" ? " on" : "") + '" href="./drafts.html">Drafts</a>' +
-      '<a class="chip' + (view === "alltime" ? " on" : "") + '" href="./drafts.html?view=alltime">All-time</a>' +
-      '<a class="chip' + (view === "outliers" ? " on" : "") + '" href="./drafts.html?view=outliers">Outliers</a>';
+      '<a class="chip' + (view === "drafts" ? " on" : "") + '" href="./drafts">Drafts</a>' +
+      '<a class="chip' + (view === "alltime" ? " on" : "") + '" href="./drafts?view=alltime">All-time</a>' +
+      '<a class="chip' + (view === "outliers" ? " on" : "") + '" href="./drafts?view=outliers">Outliers</a>';
     main.insertBefore(bar, main.firstChild);
   }
 
@@ -175,8 +175,14 @@
     document.title = (view === "alltime" ? "All-time" : view === "outliers" ? "Outliers" : "NBA Draft History 1947–2026") + " | The Draft Model";
   }
 
+  function isDraftsPage() {
+    var path = location.pathname || "";
+    var href = location.href || "";
+    return /\/drafts(\.html)?\/?$/i.test(path) || /\/drafts(\.html)?(\?|#|$)/i.test(href) || !!document.getElementById("archive-q") || !!document.getElementById("acc-root");
+  }
+
   function mount() {
-    if (!/drafts\.html/i.test(location.pathname || "") && !/drafts\.html/i.test(location.href || "")) return;
+    if (!isDraftsPage()) return;
     var main = document.querySelector("main.section") || document.querySelector("main.wrap.section") || document.querySelector("main.wrap");
     if (!main) return;
     css();
@@ -186,7 +192,22 @@
     apply(view);
   }
 
+  function wrapRender() {
+    var fn = window.TR && TR.renderDrafts;
+    if (typeof fn !== "function" || fn.__histHub) return;
+    TR.renderDrafts = function () {
+      var r = fn.apply(this, arguments);
+      if (r && typeof r.then === "function") return r.then(function (x) { mount(); return x; });
+      mount();
+      setTimeout(mount, 0);
+      setTimeout(mount, 200);
+      return r;
+    };
+    TR.renderDrafts.__histHub = true;
+  }
+
   function tryMount() {
+    wrapRender();
     if (document.querySelector("main")) mount();
   }
 
