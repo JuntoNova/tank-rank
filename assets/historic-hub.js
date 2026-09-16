@@ -33,14 +33,18 @@
     s.textContent = [
       ".hist-pills{margin:0 0 18px}",
       ".hist-pills a.chip{text-decoration:none}",
-      "#hist-alltime .table-wrap,#hist-outliers .table-wrap{margin-top:0}",
-      "#hist-alltime table{table-layout:fixed;width:100%}",
+      "#hist-alltime .table-wrap,#hist-outliers .table-wrap{margin-top:0;-webkit-overflow-scrolling:touch}",
+      "#hist-alltime table{table-layout:fixed;width:100%;min-width:1080px}",
       "#hist-alltime td.pct,#hist-alltime td.rank,#hist-alltime th.num{text-align:right;font-variant-numeric:tabular-nums}",
-      "#hist-alltime td.pct,#hist-alltime th.num{min-width:4.75rem;white-space:nowrap}",
+      "#hist-alltime td.pct,#hist-alltime th.num{white-space:nowrap}",
       "#hist-alltime th:nth-child(1),#hist-alltime td:nth-child(1){width:3rem}",
-      "#hist-alltime th:nth-child(2),#hist-alltime td:nth-child(2){width:3.4rem}",
+      "#hist-alltime th:nth-child(2),#hist-alltime td:nth-child(2){width:3.6rem}",
       "#hist-alltime th:nth-child(3),#hist-alltime td:nth-child(3){width:3rem}",
-      "#hist-alltime th:nth-child(5),#hist-alltime td:nth-child(5){width:7.5rem;overflow:hidden;text-overflow:ellipsis}",
+      "#hist-alltime th:nth-child(4),#hist-alltime td:nth-child(4){width:14rem;overflow:hidden}",
+      "#hist-alltime th:nth-child(5),#hist-alltime td:nth-child(5){width:8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+      "#hist-alltime td .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+      "#hist-alltime td .meta{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+      "#hist-alltime td .meta-full{display:none}",
       "#hist-alltime tr{cursor:pointer}",
       "#hist-alltime th[data-k]{cursor:pointer;user-select:none;padding-right:16px}",
       "#hist-alltime th[data-k]:after{content:' \\25be';font-size:10px;visibility:hidden;display:inline-block;width:10px}",
@@ -50,8 +54,8 @@
       ".hist-pager .chip{cursor:pointer}",
       ".hist-pager .count{color:var(--muted);font-size:13px;margin-left:auto}",
       ".at-tools{align-items:center}",
-      ".at-tools .at-right{margin-left:auto;display:flex;gap:8px;align-items:center}",
-      ".at-tools .search{margin-left:0;min-width:200px}",
+      ".at-tools .at-right{margin-left:auto;display:flex;gap:8px;align-items:center;flex:1;min-width:0;justify-content:flex-end}",
+      ".at-tools .search{margin-left:0;min-width:160px;flex:1;max-width:280px}",
       ".at-filters{display:flex;flex-wrap:wrap;gap:8px;margin:-4px 0 14px}",
       ".at-filters[hidden]{display:none !important}",
       ".at-filters .lab{color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase;align-self:center;margin:0 4px 0 8px}",
@@ -60,7 +64,23 @@
       "#hist-alltime .vs{display:inline-block;margin-left:6px;font-size:11px;color:var(--muted)}",
       "#hist-alltime .vs.up{color:var(--lime)}",
       "#hist-alltime .vs.down{color:var(--coral)}",
-      "#hist-alltime .vs.even{color:var(--gold)}"
+      "#hist-alltime .vs.even{color:var(--gold)}",
+      "@media (max-width:860px){",
+      "#hist-alltime .table-wrap{overflow-x:auto;max-height:none}",
+      "#hist-alltime table{min-width:720px}",
+      "#hist-alltime th:nth-child(2),#hist-alltime td:nth-child(2),#hist-alltime th:nth-child(3),#hist-alltime td:nth-child(3),#hist-alltime th:nth-child(5),#hist-alltime td:nth-child(5){display:none}",
+      "#hist-alltime td .meta-full{display:block}",
+      "#hist-alltime td .meta-desk{display:none}",
+      "#hist-alltime th:nth-child(1),#hist-alltime td:nth-child(1),#hist-alltime th:nth-child(4),#hist-alltime td:nth-child(4){position:sticky;background:var(--bg-2)}",
+      "#hist-alltime th:nth-child(1),#hist-alltime td:nth-child(1){left:0;z-index:4;width:2.6rem}",
+      "#hist-alltime th:nth-child(4),#hist-alltime td:nth-child(4){left:2.6rem;z-index:3;width:9.5rem;box-shadow:8px 0 12px -8px rgba(0,0,0,.55)}",
+      "#hist-alltime thead th:nth-child(1),#hist-alltime thead th:nth-child(4){z-index:9}",
+      "#hist-alltime td.pct{padding-left:8px;padding-right:10px}",
+      "#hist-alltime td.pct .vs{display:block;margin-left:0;font-size:10px}",
+      ".at-tools{align-items:stretch}",
+      ".at-tools .at-right{margin-left:0;flex-basis:100%;justify-content:stretch}",
+      ".at-tools .search{max-width:none;min-width:0;width:100%}",
+      "}"
     ].join("");
     document.head.appendChild(s);
   }
@@ -317,13 +337,17 @@
     }
     body.innerHTML = slice.length ? slice.map(function (r, i) {
       var rk = page * PAGE + i + 1;
+      var pad = String(r.pk).padStart(2, "0");
       var href = "./player.html?year=" + encodeURIComponent(r.y) + "&id=" + encodeURIComponent(r.id);
       var meta = [r.pos, r.c].filter(Boolean).join(" \u00b7 ");
+      var mobileMeta = r.y + " \u00b7 #" + pad + (meta ? " \u00b7 " + meta : "");
       return '<tr onclick="location.href=\'' + href + '\'">'
         + '<td class="rank">' + rk + "</td>"
         + '<td class="rank">' + r.y + "</td>"
-        + '<td class="rank">' + String(r.pk).padStart(2, "0") + "</td>"
-        + '<td><div class="name">' + r.n + "</div>" + (meta ? '<div class="meta">' + meta + "</div>" : "") + "</td>"
+        + '<td class="rank">' + pad + "</td>"
+        + '<td><div class="name">' + r.n + "</div>"
+        + '<div class="meta meta-full">' + mobileMeta + "</div>"
+        + (meta ? '<div class="meta meta-desk">' + meta + "</div>" : "") + "</td>"
         + "<td>" + (r.t || "\u2014") + "</td>"
         + honor.map(function (c) { return '<td class="pct">' + cell(r, c) + "</td>"; }).join("")
         + "</tr>";

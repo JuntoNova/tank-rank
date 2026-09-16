@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): All-time table on phones was table-layout:fixed at 100% width so names, teams, and stats painted on top of each other. Phone view now scrolls sideways, sticks the name, and puts year/pick under the player.
 - 2026-09-16 (Grok chat): Barrett 5th / Fultz 7th / Drummond 8th / Ariza 12th was youth × freshman × create × scoring × passing, then squared. Age and freshman no longer double. A 2.7-ast wing is not a 6-8 creator. Barrett 11th, Drummond 18th, Ariza 89th.
 - 2026-09-16 (Grok chat): Chips were a 0.32 cap so Cam Christie and Rocco Zikarsky tied LeBron. Titles follow All-Star quality. LeBron 0.83, Cam 0.18, Rocco 0.10.
 - 2026-09-16 (Grok chat): Drummond 3rd in MVP. Youth × wingspan × stocks × blocks, and blocks counted twice. Non-creating bigs do not get MVP credit. Stocks and rim no longer double-count. Drummond is 0.05, ~38th. LeBron 0.32.
