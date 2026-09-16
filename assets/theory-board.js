@@ -122,6 +122,27 @@
     const cls = Math.abs(d) < 0.25 ? "even" : d > 0 ? "up" : "down";
     return n + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
   }
+  function fmtHofNow(n) {
+    if (window.TR && TR.Model && TR.Model.fmtHofRemain) return TR.Model.fmtHofRemain(n);
+    if (n == null || !isFinite(Number(n))) return "\u2014";
+    const p = Number(n);
+    if (p <= 0) return "0%";
+    if (p >= 0.995) return "100%";
+    const pct = Math.round(p * 100);
+    return pct === 0 ? "<1%" : pct + "%";
+  }
+  function hofNowCell(p, proj, year) {
+    const cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+    const fn = window.TR && (TR.careerHofP || (TR.Model && TR.Model.careerHofP));
+    let nowP = fn ? fn(p, year, cur) : null;
+    const draftP = proj && proj.pHof != null ? Number(proj.pHof) : 0;
+    if (nowP == null) nowP = draftP;
+    if (nowP == null || !isFinite(nowP)) return "\u2014";
+    const d = (nowP - draftP) * 100;
+    const cls = Math.abs(d) < 1 ? "even" : d > 0 ? "up" : "down";
+    const signed = Math.abs(d) < 1 ? "0" : ((d > 0 ? "+" : "\u2212") + String(Math.round(Math.abs(d))));
+    return fmtHofNow(nowP) + ' <span class="vs ' + cls + '">' + signed + "</span>";
+  }
   function viewOf() {
     const y = Number(new URLSearchParams(location.search).get("year")) || (window.TANK_RANK && TANK_RANK.currentYear);
     const cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
@@ -194,7 +215,7 @@
           + '<td class="pct">' + (known ? vsCell(p.yrs, proj.expYrs) : "\u2014") + "</td>"
           + '<td class="pct">' + (known || p.champs ? vsCell(p.champs, proj.expCh) : "\u2014") + "</td>"
           + '<td class="pct">' + (known || p.mvp ? vsCell(p.mvp, proj.expMvp) : "\u2014") + "</td>"
-          + '<td class="pct">' + vsCell(p.hof ? 1 : 0, proj.pHof) + "</td></tr>";
+          + '<td class="pct">' + hofNowCell(p, proj, year) + "</td></tr>";
       }).join("");
     }
     const sub = document.querySelector(".section-head .sub");
@@ -214,7 +235,7 @@
         const a = document.createElement("a");
         a.className = "btn ghost back-historic";
         a.href = "./drafts.html";
-        a.textContent = "← Historic drafts";
+        a.textContent = "\u2190 Historic drafts";
         headEl.appendChild(a);
       }
     }
