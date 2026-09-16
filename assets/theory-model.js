@@ -135,10 +135,11 @@
     const rawAs = AGE_AS[ak];
     const ageNum = feat.age == null ? 21.5 : feat.age;
     let ageAsRaw;
-    if (ageNum <= 18.5) ageAsRaw = 2.00;
-    else if (ageNum <= 19.0) ageAsRaw = 1.70;
-    else if (ageNum <= 19.5) ageAsRaw = 1.42;
-    else if (ageNum <= 20.0) ageAsRaw = 1.18;
+    if (ageNum <= 18.0) ageAsRaw = 1.75;
+    else if (ageNum <= 18.5) ageAsRaw = 1.55;
+    else if (ageNum <= 19.0) ageAsRaw = 1.28;
+    else if (ageNum <= 19.5) ageAsRaw = 1.18;
+    else if (ageNum <= 20.0) ageAsRaw = 1.10;
     else if (ageNum <= 20.5) ageAsRaw = 1.02;
     else if (ageNum <= 21.0) ageAsRaw = 0.94;
     else if (ageNum <= 21.5) ageAsRaw = 0.88;
@@ -167,7 +168,6 @@
       let cAs = 1, cMvp = 1, note = "Sophomore / junior is the middle of /onedone.";
       if (cls === "Fr" || cls === "RS-Fr") {
         if (ageNum >= 21) { cAs = 0.88; cMvp = 0.80; note = "Old freshman."; }
-        else if (ageNum < 20) { cAs = 1.08; cMvp = 1.12; note = "Young freshman."; }
         else { cAs = 1; cMvp = 1; note = "Freshman. Age already moved this."; }
       } else if (cls === "Sr" || cls === "RS-Sr") {
         if (ak === "a21" || ak === "a22") { cAs = 1; cMvp = 1; note = "Senior. Age already moved this."; }
@@ -182,7 +182,7 @@
       }
     }
     if (feat.origin === "intl") {
-      var youngNow = ageNum < 19.5 && !feat.stash && !(feat.delay >= 1) && !feat.never;
+      var youngNow = ageNum <= 19.5 && !feat.stash && !(feat.delay >= 1) && !feat.never;
       add("intl", "Origin", youngNow ? "young pro" : "international", youngNow ? 1 : 0.88, youngNow ? 1 : 0.92, "", { hof: youngNow ? 1 : 1.02, yrs: youngNow ? 1 : 0.94, nba: youngNow ? 1 : 0.88 });
       if (feat.never) add("stash", "Stash", "never arrived", 0.05, 0.05, "Never arrived.", { yrs: 0.10 });
       else if (feat.stash || (feat.delay || 0) >= 2) add("stash", "Stash", "delayed", 0.59, 0.50, "Stash.", { yrs: 0.55 });
@@ -203,7 +203,7 @@
         why: "From /size. The common wing/big bin. Slightly below the HOF base." },
       { lo: 84, hi: 87, label: "7-0 to 7-2", as: 0.97, nba: 1.05, hof: 1.11, mvp: 1.22,
         why: "From /size. 7-0 to 7-2 is +1.0 HOF pp and the MVP cell (3.65% vs 1.17% base, n=192). Shrunk so size cannot outrank the pick." },
-      { lo: 87, hi: 120, label: "7-3 and up", as: 1.05, nba: 1.15, hof: 1.20, mvp: 1.25,
+      { lo: 87, hi: 120, label: "7-3 and up", as: 1.15, nba: 1.15, hof: 1.20, mvp: 1.25,
         why: "From /size. 7-3+ is a tiny sample. Seven-footers get more MVPs; 7-4 is not a downgrade from 7-1." }
     ];
     const htIn = inches(feat.ht);
@@ -240,12 +240,16 @@
     var madeCreate = feat.create && (feat.ast != null || feat.pts != null);
     var astN = feat.ast != null ? Number(feat.ast) : null;
     var passCreate = astN != null && astN >= 5;
+    var realCreate = astN != null && astN >= 3.5;
     if (madeCreate && htIn >= 79) {
-      add("handle", "Handle x size", (feat.ht || "6-7+") + (passCreate ? " passer" : " creation tag"),
-        passCreate ? 1.10 : 1.35, passCreate ? 1.06 : 1.12, "", { hof: passCreate ? 1 : 1.05 });
+      var hAs = passCreate ? 1.10 : realCreate ? 1.22 : 1.08;
+      var hMvp = passCreate ? 1.06 : realCreate ? 1.08 : 1.04;
+      add("handle", "Handle x size", (feat.ht || "6-7+") + (passCreate ? " passer" : realCreate ? " creator" : " creation tag"),
+        hAs, hMvp, "", { hof: passCreate ? 1 : realCreate ? 1.04 : 1 });
     } else if (madeCreate) {
+      var gAs = passCreate ? 1.06 : realCreate ? 1.14 : 1.08;
       add("handle", "Handle x size", (feat.ht || "guard") + (passCreate ? " passer" : " creation tag"),
-        passCreate ? 1.06 : 1.22, passCreate ? 1.08 : 1.18, "", { hof: 1 });
+        gAs, passCreate ? 1.08 : 1.10, "", { hof: 1 });
     } else if (htIn && htIn < 77 && /(PG|SG|G)/i.test(feat.pos || "")) {
       add("handle", "Handle x size", (feat.ht || "short") + " guard", 1.08, 1.20, "", { hof: 1 });
     } else if (/(C|PF)/i.test(feat.pos || "") && !feat.create) {
@@ -256,7 +260,7 @@
     const wspIn = inches(feat.wsp);
     const ape = (wspIn && htIn) ? (wspIn - htIn) : null;
     if (ape == null) add("wingspan", "Wingspan", "missing", 1, 1, "No wingspan.", { hof: 1 });
-    else if (htIn >= 82 && ape >= 6) add("wingspan", "Wingspan", feat.wsp + " long 6-10+", 1.28, 1.08, "/wingspan 6-10+ long.", { hof: 1 });
+    else if (htIn >= 82 && ape >= 6) add("wingspan", "Wingspan", feat.wsp + " long 6-10+", 1.12, 1.06, "/wingspan 6-10+ long.", { hof: 1 });
     else if (ape >= 6) add("wingspan", "Wingspan", feat.wsp + " +6 ape", 1.10, 1.05, "+6 ape.", { hof: 1 });
     else if (ape < 2 && htIn >= 79 && htIn < 84) add("wingspan", "Wingspan", feat.wsp + " short for size", 0.90, 0.85, "Short arms at 6-7 to 6-11.", { hof: 1 });
     else add("wingspan", "Wingspan", feat.wsp || "mid", 1, 1, "Mid-pack length.", { hof: 1 });
@@ -321,8 +325,8 @@
     var fta = num(feat.fta);
     var fg3a = num(feat.fg3a);
     if (pts != null) {
-      var pAsP = pts >= 24 ? 1.22 : pts >= 18 ? 1.18 : pts >= 16 ? 1.12 : pts >= 10 ? 1.00 : 0.86;
-      var pMvp = pts >= 24 ? 1.22 : pts >= 18 ? 1.18 : pts >= 16 ? 1.12 : pts >= 10 ? 1.00 : 0.42;
+      var pAsP = pts >= 28 ? 1.40 : pts >= 24 ? 1.28 : pts >= 18 ? 1.18 : pts >= 16 ? 1.12 : pts >= 10 ? 1.00 : 0.86;
+      var pMvp = pts >= 28 ? 1.32 : pts >= 24 ? 1.22 : pts >= 18 ? 1.12 : pts >= 16 ? 1.08 : pts >= 10 ? 1.00 : 0.42;
       add("prod", "College scoring", pts + " pts", pAsP, pMvp, "", { nba: pAsP, hof: 1 });
     }
     if (fga && fga > 0 && fta != null) {
@@ -331,18 +335,21 @@
       if (ast != null && ast >= 5 && fAs < 1) fAs = 1;
       add("ftrate", "Free-throw rate", ftr.toFixed(2) + " FTA/FGA", fAs, fAs, "", { nba: fAs, hof: 1 });
     }
+    var isBig = /(C|PF)/i.test(feat.pos || "") && !/(PG|SG|SF)/i.test(feat.pos || "");
     if (stl != null || blk != null) {
       var stocks = (stl || 0) + (blk || 0);
-      var rimWill = blk != null && /(C|PF)/i.test(feat.pos || "");
+      var rimWill = blk != null && isBig;
       var stockN = rimWill ? (stl || 0) : stocks;
-      var sAs = stockN >= 3.5 ? 1.28 : stockN >= 2.2 ? 1.22 : stockN >= 1.2 ? 1.08 : stockN > 0 ? 1.00 : 0.88;
+      var sAs;
+      if (rimWill) sAs = stockN >= 1.2 ? 1.08 : stockN > 0 ? 1.00 : 0.88;
+      else sAs = stockN >= 3.5 ? 1.12 : stockN >= 2.2 ? 1.10 : stockN >= 1.2 ? 1.06 : stockN > 0 ? 1.00 : 0.88;
       add("defense", "Steals and blocks", stocks.toFixed(1) + " stocks", sAs, sAs, "", { nba: sAs, hof: 1 });
     }
     if (ast != null) {
       var aAs = ast >= 7 ? 1.32 : ast >= 5 ? 1.22 : ast >= 3.5 ? 1.14 : ast >= 2.0 ? 1.04 : 1;
       add("astu", "Passing", ast + " ast", aAs, aAs, "", { nba: aAs, hof: 1 });
     }
-    if (blk != null && /(C|PF)/i.test(feat.pos || "")) {
+    if (blk != null && isBig) {
       var rAs = blk >= 3.0 ? 1.22 : blk >= 1.5 ? 1.16 : blk >= 0.8 ? 1.06 : 0.92;
       add("rim", "Shot blocking", blk + " blk", rAs, rAs, "", { nba: rAs, hof: 1 });
     }
