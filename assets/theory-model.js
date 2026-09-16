@@ -1,7 +1,7 @@
 (function () {
   const COUNTRY = ["spain","france","italy","germany","greece","serbia","croatia","slovenia","lithuania","latvia","russia","ukraine","turkey","israel","australia","brazil","argentina","china","senegal","nigeria","cameroon","congo","mali","montenegro","bosnia","poland","czech","sweden","finland","belgium","netherlands","japan","korea","venezuela","mexico","cuba","haiti","jamaica","bahamas","sudan","egypt","ghana","angola","portugal","hungary","romania","bulgaria","georgia","new zealand","dominican","puerto rico","ivory coast"];
   const INTENSITY = {
-    "1":     { as: 5.5, nba: 3.2, nba1: 0.90, yrs: 13.5, ch: 0.55, mvp: 0.12 },
+    "1":     { as: 5.5, nba: 3.2, nba1: 0.90, yrs: 13.5, ch: 0.55, mvp: 0.25 },
     "2-3":   { as: 4.2, nba: 2.4, nba1: 0.65, yrs: 11.5, ch: 0.40, mvp: 0.06 },
     "4-5":   { as: 3.8, nba: 2.2, nba1: 0.45, yrs: 10.5, ch: 0.32, mvp: 0.03 },
     "6-10":  { as: 3.2, nba: 1.8, nba1: 0.28, yrs:  9.0, ch: 0.25, mvp: 0.015 },
@@ -165,8 +165,8 @@
     }
     if (feat.origin === "intl") {
       let iAs = 1, iMvp = 1;
-      if (pk <= 5) { iAs = 0.69; iMvp = 0.45; }
-      else if (pk <= 14) { iAs = 0.59; iMvp = 0.80; }
+      if (pk <= 5) { iAs = 0.69; iMvp = 0.85; }
+      else if (pk <= 14) { iAs = 0.59; iMvp = 0.90; }
       add("intl", "Origin", "international pick " + pk, iAs, iMvp, "From /intl.", { hof: pk <= 5 ? 1.05 : 1, yrs: pk <= 5 ? 0.92 : 0.88 });
       if (feat.never) add("stash", "Stash", "never arrived", 0.05, 0.05, "Never arrived.", { yrs: 0.10 });
       else if (feat.stash || (feat.delay || 0) >= 2) add("stash", "Stash", "delayed", 0.59, 0.50, "Stash.", { yrs: 0.55 });
@@ -187,8 +187,8 @@
         why: "From /size. The common wing/big bin. Slightly below the HOF base." },
       { lo: 84, hi: 87, label: "7-0 to 7-2", as: 0.97, nba: 1.05, hof: 1.11, mvp: 1.80,
         why: "From /size. 7-0 to 7-2 is +1.0 HOF pp and the MVP cell (3.65% vs 1.17% base, n=192). Shrunk so size cannot outrank the pick." },
-      { lo: 87, hi: 120, label: "7-3 and up", as: 1.05, nba: 1.15, hof: 1.80, mvp: 0.60,
-        why: "From /size. 7-3+ is 17.6% HOF (n=17, +12.9 pp vs a 4.7% base — nearly 1 in 5). Raw lift is ~3.7×; we shrink to 1.80× so 17 players cannot outrank the pick." }
+      { lo: 87, hi: 120, label: "7-3 and up", as: 1.05, nba: 1.15, hof: 1.80, mvp: 1.80,
+        why: "From /size. 7-3+ is a tiny sample. Seven-footers get more MVPs; 7-4 is not a downgrade from 7-1." }
     ];
     const htIn = inches(feat.ht);
     let sizeRow = null;
@@ -227,7 +227,7 @@
     const wspIn = inches(feat.wsp);
     const ape = (wspIn && htIn) ? (wspIn - htIn) : null;
     if (ape == null) add("wingspan", "Wingspan", "missing", 1, 1, "No wingspan.", { hof: 1 });
-    else if (htIn >= 82 && ape >= 6) add("wingspan", "Wingspan", feat.wsp + " long 6-10+", 1.28, 1.00, "/wingspan 6-10+ long.", { hof: 1 });
+    else if (htIn >= 82 && ape >= 6) add("wingspan", "Wingspan", feat.wsp + " long 6-10+", 1.28, 1.20, "/wingspan 6-10+ long.", { hof: 1 });
     else if (ape >= 6) add("wingspan", "Wingspan", feat.wsp + " +6 ape", 1.10, 1.05, "+6 ape.", { hof: 1 });
     else if (ape < 4 && htIn >= 79 && htIn < 84) add("wingspan", "Wingspan", feat.wsp + " short for size", 0.90, 0.85, "Short arms at 6-7 to 6-11.", { hof: 1 });
     else add("wingspan", "Wingspan", feat.wsp || "mid", 1, 1, "Mid-pack length.", { hof: 1 });

@@ -12,7 +12,7 @@
     { lo: 84, hi: 87, label: "7-0 to 7-2", n: 192, as: 0.146, nba: 0.094, hof: 0.057, mvp: 0.0365,
       dAs: -1.1, dNba: 0.8, dHof: 1.0, dMvp: 2.47, mAs: 0.97, mNba: 1.05, mHof: 1.11, mMvp: 1.80 },
     { lo: 87, hi: 120, label: "7-3 and up", n: 17, as: 0.176, nba: 0.118, hof: 0.176, mvp: 0.000,
-      dAs: 2.0, dNba: 3.2, dHof: 12.9, dMvp: -1.17, mAs: 1.05, mNba: 1.15, mHof: 1.80, mMvp: 0.60 }
+      dAs: 2.0, dNba: 3.2, dHof: 12.9, dMvp: -1.17, mAs: 1.05, mNba: 1.15, mHof: 1.80, mMvp: 1.80 }
   ];
   const WT = [
     { lo: 0, hi: 160, label: "under 160", n: 8, as: 0.250, nba: 0.125, hof: 0.125, mvp: 0.000,

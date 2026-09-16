@@ -93,9 +93,9 @@
     "6-9":{mAs:1.07,mNba:0.99,mHof:0.81,mMvp:1.88},"6-10":{mAs:0.96,mNba:0.90,mHof:0.81,mMvp:0.73},
     "6-11":{mAs:1.02,mNba:0.99,mHof:1.09,mMvp:2.91},"7-0":{mAs:0.70,mNba:0.93,mHof:0.62,mMvp:1.87},
     "7-1":{mAs:1.48,mNba:1.49,mHof:2.72,mMvp:6.57},"7-2":{mAs:1.60,mNba:1.45,mHof:2.66,mMvp:5.34},
-    "7-3":{mAs:0,mNba:0,mHof:2.66,mMvp:0},"7-4":{mAs:4.28,mNba:3.87,mHof:7.09,mMvp:0},
-    "7-5":{mAs:0,mNba:0,mHof:0,mMvp:0},"7-6":{mAs:3.21,mNba:5.81,mHof:10.64,mMvp:0},
-    "7-7":{mAs:0,mNba:0,mHof:0,mMvp:0}
+    "7-3":{mAs:0,mNba:0,mHof:2.66,mMvp:1.80},"7-4":{mAs:4.28,mNba:3.87,mHof:7.09,mMvp:1.80},
+    "7-5":{mAs:0,mNba:0,mHof:0,mMvp:1.80},"7-6":{mAs:3.21,mNba:5.81,mHof:10.64,mMvp:1.80},
+    "7-7":{mAs:0,mNba:0,mHof:0,mMvp:1.80}
   };
   var WPI = [
     { lo: 0, hi: 2.40, label: "Under 2.40", mAs: 0.71, mNba: 0.65, mHof: 0, mMvp: 2.38 },
