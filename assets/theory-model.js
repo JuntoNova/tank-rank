@@ -166,9 +166,9 @@
     if (feat.origin === "college") {
       let cAs = 1, cMvp = 1, note = "Sophomore / junior is the middle of /onedone.";
       if (cls === "Fr" || cls === "RS-Fr") {
-        if (ageNum >= 20) { cAs = 0.72; cMvp = 0.70; note = "Old freshman."; }
-        else if (ak === "u19" || ak === "a19") { cAs = 1.08; cMvp = 1.12; note = "Young freshman."; }
-        else { cAs = 1.04; cMvp = 1.10; note = "Freshman."; }
+        if (ageNum >= 21) { cAs = 0.88; cMvp = 0.80; note = "Old freshman."; }
+        else if (ageNum < 20) { cAs = 1.08; cMvp = 1.12; note = "Young freshman."; }
+        else { cAs = 1; cMvp = 1; note = "Freshman. Age already moved this."; }
       } else if (cls === "Sr" || cls === "RS-Sr") {
         if (ak === "a21" || ak === "a22") { cAs = 1; cMvp = 1; note = "Senior. Age already moved this."; }
         else { cAs = 0.88; cMvp = 0.70; note = "Young senior."; }

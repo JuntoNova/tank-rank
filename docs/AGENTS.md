@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Josh Jackson. Age 20.4 plus old-freshman ×0.72 was the same birthday twice. Freshman 20–21 is 1.00 now. He is ~3.1 AS. Tatum is 19.3.
 - 2026-09-16 (Grok chat): Amir Johnson 19% HOF was age ×2 * fake HS handle * extra HS bump, then squared. Handle now needs a box score. HS origin is 1.10. No stats caps the multiplier. Amir is ~3.5% now.
 - 2026-09-16 (Grok chat): 2017 pack. Lonzo 14.6/7.6/1.8, create, 6-6 PG/SG. Fultz Tatum Fox and the rest of that lottery too. Passing actually fires now.
 - 2026-09-16 (Grok chat): Size at the position, and swing. +3 inches vs the usual guy at that spot shows up. Listed at two spots shows up. 6-5 to 6-9 by itself does not.
