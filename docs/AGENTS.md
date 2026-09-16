@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Size at the position, and swing. +3 inches vs the usual guy at that spot shows up. Listed at two spots shows up. 6-5 to 6-9 by itself does not.
 - 2026-09-16 (Grok chat): All-time has Now / When drafted, sortable columns, search, and filters (decade / pos / pick). 20 a page.
 - 2026-09-16 (Grok chat): LaMelo. An 18-year-old who already played against men is not the overseas-stash cut. Skinny guard weight does not cut a 6-7 passer. 7 assists is 1.32.
 - 2026-09-16 (Grok chat): Nav is Historic / Upcoming / Theories. Methodology sits under Theories. Historic pills: Drafts / All-time / Outliers.

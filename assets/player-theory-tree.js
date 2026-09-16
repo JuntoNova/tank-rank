@@ -27,6 +27,13 @@
                 { id: "ape", name: "Arms longer than height help" },
                 { id: "reach", name: "Higher standing reach helps" }
               ]
+            },
+            {
+              name: "Position",
+              kids: [
+                { id: "posht", name: "Bigger than the position helps" },
+                { id: "swing", name: "Guys who can play more than one position do better" }
+              ]
             }
           ]
         },

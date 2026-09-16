@@ -118,6 +118,8 @@
       intl: "./intl.html",
       stash: "./stash.html",
       size: "./size.html",
+      posht: "./size.html",
+      swing: "./size.html",
       handle: "./handle.html",
       wingspan: "./wingspan.html",
       reach: "./reach.html",
@@ -256,6 +258,34 @@
     if (!reachIn) add("reach", "Standing reach", "missing", 1, 1, "/reach needs a number.", { hof: 1 });
     else if (htIn >= 82) add("reach", "Standing reach", feat.reach + " 6-10+", 1.06, 1.00, "Lean true only at 6-10+.", { hof: 1 });
     else add("reach", "Standing reach", feat.reach, 1, 1, "False as a general rule.", { hof: 1 });
+    var prim = "";
+    var pU = String(feat.pos || "").toUpperCase();
+    if (/PG/.test(pU)) prim = "PG";
+    else if (/SG/.test(pU)) prim = "SG";
+    else if (/SF/.test(pU)) prim = "SF";
+    else if (/PF/.test(pU)) prim = "PF";
+    else if (/\bC\b/.test(pU) || pU === "C" || /^C/.test(pU)) prim = "C";
+    else if (/\bG\b/.test(pU) || pU[0] === "G") prim = "G";
+    else if (/\bF\b/.test(pU) || pU[0] === "F") prim = "F";
+    var POS_MED = { PG: 74, SG: 77, SF: 80, PF: 81, C: 82, G: 75, F: 79 };
+    if (prim && htIn && POS_MED[prim]) {
+      var dPos = Math.round(htIn - POS_MED[prim]);
+      var phAs = 1, phNba = 1, phHof = 1, phMvp = 1, pLab = "typical " + prim;
+      if (dPos >= 3) { phAs = 1.10; phNba = 1.12; phHof = 1.14; phMvp = 1.25; pLab = "+" + dPos + " in vs " + prim; }
+      else if (dPos >= 1) { phAs = 1.04; phNba = 1.05; phHof = 1.00; phMvp = 1.05; pLab = "+" + dPos + " in vs " + prim; }
+      else if (dPos <= -3) { phAs = 1.00; phNba = 0.96; phHof = 1.05; phMvp = 0.85; pLab = dPos + " in vs " + prim; }
+      else if (dPos <= -1) { phAs = 0.97; phNba = 0.96; phHof = 0.96; phMvp = 0.95; pLab = dPos + " in vs " + prim; }
+      add("posht", "Size at position", (feat.ht || "") + " · " + pLab, phAs, phMvp, "", { nba: phNba, hof: phHof });
+    } else {
+      add("posht", "Size at position", feat.ht ? String(feat.ht) : "missing", 1, 1, "", { nba: 1, hof: 1 });
+    }
+    if (/[\/]/.test(feat.pos || "")) {
+      add("swing", "Swing", (feat.pos || "") + " two spots", 1.10, 1.12, "", { nba: 1.10, hof: 1.08 });
+    } else if (htIn && (htIn < 73 || htIn >= 84)) {
+      add("swing", "Swing", (feat.ht || "") + " one-spot size", 1, htIn >= 84 ? 1.18 : 0.90, "", { nba: 1, hof: htIn >= 84 ? 1.10 : 1.08 });
+    } else {
+      add("swing", "Swing", feat.pos || "one spot", 1, 1, "", { nba: 1, hof: 1 });
+    }
     function num(x) {
       if (x == null || x === "") return null;
       var n = Number(x);
