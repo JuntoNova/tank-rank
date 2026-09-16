@@ -146,10 +146,10 @@
     else ageAsRaw = 0.68;
     const ageAs = clamp(ageAsRaw, 0.68, 2.10);
     let ageMvpRaw;
-    if (ageNum <= 18) ageMvpRaw = 2.10;
-    else if (ageNum <= 19) ageMvpRaw = 1.85;
-    else if (ageNum <= 20) ageMvpRaw = 1.45;
-    else if (ageNum <= 21) ageMvpRaw = 1.15;
+    if (ageNum <= 18) ageMvpRaw = 1.50;
+    else if (ageNum <= 19) ageMvpRaw = 1.40;
+    else if (ageNum <= 20) ageMvpRaw = 1.22;
+    else if (ageNum <= 21) ageMvpRaw = 1.08;
     else if (ageNum <= 22) ageMvpRaw = 1.00;
     else ageMvpRaw = 0.70;
     const ageMvp = clamp(ageMvpRaw, 0.30, 2.20);
@@ -249,14 +249,14 @@
     } else if (htIn && htIn < 77 && /(PG|SG|G)/i.test(feat.pos || "")) {
       add("handle", "Handle x size", (feat.ht || "short") + " guard", 1.08, 1.20, "", { hof: 1 });
     } else if (/(C|PF)/i.test(feat.pos || "") && !feat.create) {
-      add("handle", "Handle x size", feat.ht || "big", 1, 1, "", { hof: 1 });
+      add("handle", "Handle x size", feat.ht || "big", 1, 0.68, "", { hof: 1 });
     } else {
       add("handle", "Handle x size", feat.ht ? feat.ht : "missing", 1, 1, "", { hof: 1 });
     }
     const wspIn = inches(feat.wsp);
     const ape = (wspIn && htIn) ? (wspIn - htIn) : null;
     if (ape == null) add("wingspan", "Wingspan", "missing", 1, 1, "No wingspan.", { hof: 1 });
-    else if (htIn >= 82 && ape >= 6) add("wingspan", "Wingspan", feat.wsp + " long 6-10+", 1.28, 1.20, "/wingspan 6-10+ long.", { hof: 1 });
+    else if (htIn >= 82 && ape >= 6) add("wingspan", "Wingspan", feat.wsp + " long 6-10+", 1.28, 1.08, "/wingspan 6-10+ long.", { hof: 1 });
     else if (ape >= 6) add("wingspan", "Wingspan", feat.wsp + " +6 ape", 1.10, 1.05, "+6 ape.", { hof: 1 });
     else if (ape < 2 && htIn >= 79 && htIn < 84) add("wingspan", "Wingspan", feat.wsp + " short for size", 0.90, 0.85, "Short arms at 6-7 to 6-11.", { hof: 1 });
     else add("wingspan", "Wingspan", feat.wsp || "mid", 1, 1, "Mid-pack length.", { hof: 1 });
@@ -333,7 +333,9 @@
     }
     if (stl != null || blk != null) {
       var stocks = (stl || 0) + (blk || 0);
-      var sAs = stocks >= 3.5 ? 1.28 : stocks >= 2.2 ? 1.22 : stocks >= 1.2 ? 1.08 : 0.88;
+      var rimWill = blk != null && /(C|PF)/i.test(feat.pos || "");
+      var stockN = rimWill ? (stl || 0) : stocks;
+      var sAs = stockN >= 3.5 ? 1.28 : stockN >= 2.2 ? 1.22 : stockN >= 1.2 ? 1.08 : stockN > 0 ? 1.00 : 0.88;
       add("defense", "Steals and blocks", stocks.toFixed(1) + " stocks", sAs, sAs, "", { nba: sAs, hof: 1 });
     }
     if (ast != null) {
