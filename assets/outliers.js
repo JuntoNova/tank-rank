@@ -1,6 +1,6 @@
 (function () {
   var TITLE = { over: "Overachieved", under: "Underachieved", diff: "Most different" };
-  var DELTA_TH = "Δ = 1×AS + 2×All-NBA + 3×1st + 4×Chips + 10×MVP + 20×HOF + 0.25×Yrs − model";
+  var DELTA_TH = "Δ is career ÷ the draft-night model on 1×AS + 2×All-NBA + 3×1st + 4×Chips + 10×MVP + 20×HOF + 0.25×Yrs. Ranked on that fold, not raw career size.";
 
   function keyFromUrl() {
     var q = (new URLSearchParams(location.search).get("list") || "").toLowerCase();
@@ -25,9 +25,9 @@
   function fmtDelta(n) {
     if (n == null || !isFinite(Number(n))) return "";
     var v = Number(n);
-    var sign = v > 0 ? "+" : v < 0 ? "\u2212" : "";
-    var abs = Math.abs(v);
-    return sign + (abs >= 100 ? String(Math.round(abs)) : abs.toFixed(1));
+    if (v >= 10) return "×" + v.toFixed(0);
+    if (v >= 1) return "×" + v.toFixed(1);
+    return "×" + v.toFixed(2);
   }
 
   function teamOf(t) {
@@ -64,7 +64,7 @@
   function rowHtml(r) {
     var href = "./player.html?year=" + encodeURIComponent(r.y) + "&id=" + encodeURIComponent(r.id);
     var dlt = Number(r.delta) || 0;
-    var dcls = Math.abs(dlt) < 0.25 ? "" : dlt > 0 ? " up" : " down";
+    var dcls = dlt >= 1 ? " up" : dlt > 0 ? "" : " down";
     var team = teamOf(r.t);
     var meta = metaOf(r);
     return (
@@ -125,7 +125,7 @@
     if (!box || box.getAttribute("data-ready")) return;
     box.setAttribute("data-ready", "1");
     css();
-    fetch("./assets/outliers.json?v=2")
+    fetch("./assets/outliers.json?v=3")
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         if (!data) {

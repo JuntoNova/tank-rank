@@ -17,7 +17,7 @@ Repo: https://github.com/JuntoNova/tank-rank
 - **Historic year boards:** keep a `← Historic drafts` button to `drafts.html` in `.section-head`.
 - **About is off the menu.** `about.html` may stay as a direct URL. Do not add About back to `.nav-links`.
 - **Theories is on the menu.** Hub is `theories.html`. Do not drop it. Individual theory pages (`size.html`, `age.html`, …) stay off the top nav and highlight Theories.
-- **Outliers is a Historic pill, not a nav item.** Data lives in `assets/outliers.json`; rebuild with `pipeline/score-outliers.py`. Page is a board table (Year / Pk / Player / Team / AS / 1st / All-NBA / Yrs / Chips / MVP / HOF / Δ). No commentary blurbs. Δ = 1×AS + 2×All-NBA + 3×1st + 4×Chips + 10×MVP + 20×HOF + 0.25×Yrs − the draft-night model on those same columns. Over = largest Δ (1947–2016). Under = smallest Δ among picks 1–8, 1989–2017. Diff = largest |Δ| / model. Do not restore the ranked-list copy or the hidden win-share term.
+- **Outliers is a Historic pill, not a nav item.** Data lives in `assets/outliers.json`; rebuild with `pipeline/score-outliers.py` after `all-time.json`. Page is a board table (Year / Pk / Player / Team / AS / 1st / All-NBA / Yrs / Chips / MVP / HOF / Δ). Δ is career ÷ the draft-night model on 1×AS + 2×All-NBA + 3×1st + 4×Chips + 10×MVP + 20×HOF + 0.25×Yrs. Ranked on that fold, not raw career size. Over = largest fold, 1989–2018, 2+ All-Stars or an MVP. Under = smallest fold among lottery picks the model liked (eAs ≥ 3, pk ≤ 14). Diff = largest |log fold|. Do not restore the ranked-list copy or the hidden win-share term.
 - **Big Board is off the menu.** It duplicates Upcoming. `board.html?year=` stays as the board URL. Do not put Big Board back in `.nav-links`. About stays off the menu.
 
 ## Living boards
@@ -46,6 +46,8 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Outliers ranked on career ÷ model, not raw career size. Nash / Manu / Jokic rise. Kareem is not #1 just for being Kareem. Δ paints as ×fold.
+
 - 2026-09-16 (Grok chat): LaMelo 14 All-Stars was age × passing × 6-7 handle × tall-PG, then squared. Passing already owns creation. Young pro does not stack on age 18. All-Star is 0.50 × mAs², cap 12. He is ~5.6 now. LeBron 12.
 - 2026-09-16 (Grok chat): All-time. Filters next to search. First sort is high to low. Headers keep their width. Now is career vs the draft-night number, same as the boards.
 - 2026-09-16 (Grok chat): Josh Jackson. Age 20.4 plus old-freshman ×0.72 was the same birthday twice. Freshman 20–21 is 1.00 now. He is ~3.1 AS. Tatum is 19.3.
