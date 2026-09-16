@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Pre-2000 stars were invisible because 22 in 1969 was treated like 22 in 2015, and college stats were missing. Age is relative to the era. Kareem, Magic, Bird, Jordan, Shaq, Oscar, etc. have their draft-year lines. Magic 4th, Shaq 6th, Bird 15th.
 - 2026-09-16 (Grok chat): All-time table on phones was table-layout:fixed at 100% width so names, teams, and stats painted on top of each other. Phone view now scrolls sideways, sticks the name, and puts year/pick under the player.
 - 2026-09-16 (Grok chat): Barrett 5th / Fultz 7th / Drummond 8th / Ariza 12th was youth × freshman × create × scoring × passing, then squared. Age and freshman no longer double. A 2.7-ast wing is not a 6-8 creator. Barrett 11th, Drummond 18th, Ariza 89th.
 - 2026-09-16 (Grok chat): Chips were a 0.32 cap so Cam Christie and Rocco Zikarsky tied LeBron. Titles follow All-Star quality. LeBron 0.83, Cam 0.18, Rocco 0.10.

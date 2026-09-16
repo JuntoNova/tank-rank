@@ -145,6 +145,7 @@
     css();
     const feat = Object.assign({}, deriveFeat(p), p.theoryFeat || {});
     p.theoryFeat = feat;
+    p.year = p.year || Number(new URLSearchParams(location.search).get("year")) || 0;
     const full = project(p, feat, priors);
     p.proj = full;
     const lede = root.querySelector(".lede");

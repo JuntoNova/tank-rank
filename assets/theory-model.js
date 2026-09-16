@@ -131,27 +131,36 @@
       three: "./three.html"
     };
     add("slot", "Draft slot", "Pk " + String(pk).padStart(2, "0"), 1, 1, "", {});
+    const year = Number(p.year || p.y || feat.year) || 0;
     const ak = ageKey(feat.age);
     const rawAs = AGE_AS[ak];
     const ageNum = feat.age == null ? 21.5 : feat.age;
+    function eraMed(y) {
+      y = Number(y) || 0;
+      if (y <= 1975) return 21.7;
+      if (y <= 1988) return 21.4;
+      if (y <= 2005) return 21.0;
+      return 20.2;
+    }
+    var rel = year ? (ageNum - eraMed(year)) : (ageNum - 20.2);
     let ageAsRaw;
-    if (ageNum <= 18.0) ageAsRaw = 1.75;
-    else if (ageNum <= 18.5) ageAsRaw = 1.55;
-    else if (ageNum <= 19.0) ageAsRaw = 1.28;
-    else if (ageNum <= 19.5) ageAsRaw = 1.18;
-    else if (ageNum <= 20.0) ageAsRaw = 1.10;
-    else if (ageNum <= 20.5) ageAsRaw = 1.02;
-    else if (ageNum <= 21.0) ageAsRaw = 0.94;
-    else if (ageNum <= 21.5) ageAsRaw = 0.88;
-    else if (ageNum <= 22.5) ageAsRaw = 0.80;
+    if (rel <= -2.2) ageAsRaw = 1.75;
+    else if (rel <= -1.5) ageAsRaw = 1.55;
+    else if (rel <= -1.0) ageAsRaw = 1.28;
+    else if (rel <= -0.5) ageAsRaw = 1.18;
+    else if (rel <= 0.2) ageAsRaw = 1.10;
+    else if (rel <= 0.7) ageAsRaw = 1.02;
+    else if (rel <= 1.2) ageAsRaw = 0.94;
+    else if (rel <= 1.8) ageAsRaw = 0.88;
+    else if (rel <= 2.5) ageAsRaw = 0.80;
     else ageAsRaw = 0.68;
     const ageAs = clamp(ageAsRaw, 0.68, 2.10);
     let ageMvpRaw;
-    if (ageNum <= 18) ageMvpRaw = 1.50;
-    else if (ageNum <= 19) ageMvpRaw = 1.40;
-    else if (ageNum <= 20) ageMvpRaw = 1.22;
-    else if (ageNum <= 21) ageMvpRaw = 1.08;
-    else if (ageNum <= 22) ageMvpRaw = 1.00;
+    if (rel <= -2.2) ageMvpRaw = 1.50;
+    else if (rel <= -1.5) ageMvpRaw = 1.40;
+    else if (rel <= -0.7) ageMvpRaw = 1.22;
+    else if (rel <= 0.2) ageMvpRaw = 1.08;
+    else if (rel <= 1.0) ageMvpRaw = 1.00;
     else ageMvpRaw = 0.70;
     const ageMvp = clamp(ageMvpRaw, 0.30, 2.20);
     let ageYrs = 1;
@@ -170,9 +179,13 @@
         if (ageNum >= 21) { cAs = 0.88; cMvp = 0.80; note = "Old freshman."; }
         else { cAs = 1; cMvp = 1; note = "Freshman. Age already moved this."; }
       } else if (cls === "Sr" || cls === "RS-Sr") {
-        if (ak === "a21" || ak === "a22") { cAs = 1; cMvp = 1; note = "Senior. Age already moved this."; }
+        if (year && year <= 2005) { cAs = 1; cMvp = 1; note = "Senior. Normal for the era."; }
+        else if (ak === "a21" || ak === "a22") { cAs = 1; cMvp = 1; note = "Senior. Age already moved this."; }
         else { cAs = 0.88; cMvp = 0.70; note = "Young senior."; }
-      } else if (cls === "Jr" || cls === "RS-Jr") { cAs = 0.96; cMvp = 0.90; note = "Junior."; }
+      } else if (cls === "Jr" || cls === "RS-Jr") {
+        if (year && year <= 2005) { cAs = 1; cMvp = 1; note = "Junior. Normal for the era."; }
+        else { cAs = 0.96; cMvp = 0.90; note = "Junior."; }
+      }
       add("onedone", "Class year", cls || "-", cAs, cMvp, note, { yrs: 1, hof: 1 });
     } else {
       if (feat.origin === "intl" && ageNum < 19.5 && !feat.stash && !(feat.delay >= 1)) {
@@ -201,7 +214,7 @@
         why: "From /size. Middle of the listed-height sample; near the base rate." },
       { lo: 79, hi: 84, label: "6-7 to 6-11", as: 1.00, nba: 0.92, hof: 0.93, mvp: 1.05,
         why: "From /size. The common wing/big bin. Slightly below the HOF base." },
-      { lo: 84, hi: 87, label: "7-0 to 7-2", as: 0.97, nba: 1.05, hof: 1.11, mvp: 1.22,
+      { lo: 84, hi: 87, label: "7-0 to 7-2", as: 1.08, nba: 1.05, hof: 1.11, mvp: 1.22,
         why: "From /size. 7-0 to 7-2 is +1.0 HOF pp and the MVP cell (3.65% vs 1.17% base, n=192). Shrunk so size cannot outrank the pick." },
       { lo: 87, hi: 120, label: "7-3 and up", as: 1.15, nba: 1.15, hof: 1.20, mvp: 1.25,
         why: "From /size. 7-3+ is a tiny sample. Seven-footers get more MVPs; 7-4 is not a downgrade from 7-1." }
@@ -327,6 +340,7 @@
     if (pts != null) {
       var pAsP = pts >= 28 ? 1.40 : pts >= 24 ? 1.28 : pts >= 18 ? 1.18 : pts >= 16 ? 1.12 : pts >= 10 ? 1.00 : 0.86;
       var pMvp = pts >= 28 ? 1.32 : pts >= 24 ? 1.22 : pts >= 18 ? 1.12 : pts >= 16 ? 1.08 : pts >= 10 ? 1.00 : 0.42;
+      if (htIn >= 84 && pts >= 22) { pAsP = Math.max(pAsP, 1.35); pMvp = Math.max(pMvp, 1.25); }
       add("prod", "College scoring", pts + " pts", pAsP, pMvp, "", { nba: pAsP, hof: 1 });
     }
     if (fga && fga > 0 && fta != null) {
@@ -339,11 +353,13 @@
     if (stl != null || blk != null) {
       var stocks = (stl || 0) + (blk || 0);
       var rimWill = blk != null && isBig;
-      var stockN = rimWill ? (stl || 0) : stocks;
-      var sAs;
-      if (rimWill) sAs = stockN >= 1.2 ? 1.08 : stockN > 0 ? 1.00 : 0.88;
-      else sAs = stockN >= 3.5 ? 1.12 : stockN >= 2.2 ? 1.10 : stockN >= 1.2 ? 1.06 : stockN > 0 ? 1.00 : 0.88;
-      add("defense", "Steals and blocks", stocks.toFixed(1) + " stocks", sAs, sAs, "", { nba: sAs, hof: 1 });
+      if (!(rimWill && stl == null)) {
+        var stockN = rimWill ? stl : stocks;
+        var sAs;
+        if (rimWill) sAs = stockN >= 1.2 ? 1.08 : stockN > 0 ? 1.00 : 0.88;
+        else sAs = stockN >= 3.5 ? 1.12 : stockN >= 2.2 ? 1.10 : stockN >= 1.2 ? 1.06 : stockN > 0 ? 1.00 : 0.88;
+        add("defense", "Steals and blocks", stocks.toFixed(1) + " stocks", sAs, sAs, "", { nba: sAs, hof: 1 });
+      }
     }
     if (ast != null) {
       var aAs = ast >= 7 ? 1.32 : ast >= 5 ? 1.22 : ast >= 3.5 ? 1.14 : ast >= 2.0 ? 1.04 : 1;

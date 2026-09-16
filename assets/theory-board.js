@@ -183,6 +183,7 @@
       document.querySelectorAll(".banner").forEach(function (el) { el.remove(); });
     }
     (draft.players || []).forEach(function (p) {
+      p.year = year;
       p.theoryFeat = Object.assign({}, featOf(p), p.theoryFeat || {});
       p.proj = project(p, p.theoryFeat, priors);
     });
