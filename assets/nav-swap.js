@@ -2,9 +2,7 @@
   var NAV_ORDER = [
     { match: /drafts\.html/i, label: /^historic$/i },
     { match: /upcoming\.html/i, label: /^upcoming$/i },
-    { match: /theories\.html/i, label: /^theories$/i },
-    { match: /outliers\.html/i, label: /^outliers$/i },
-    { match: /methodology\.html/i, label: /^methodology$/i }
+    { match: /theories\.html/i, label: /^theories$/i }
   ];
   var THEORY_PATH = /(theories|size|wingspan|handle|reach|combine|age|late|onedone|jump|stash|prod|ftrate|three|astu|defense|rim|schools|intl|develop|switch|march|scheme|medical|character)\.html/i;
 
@@ -60,20 +58,20 @@
 
   function ensureTheories(nav) {
     ensureLink(nav, "./theories.html", "Theories", /theories\.html/i);
-    if (THEORY_PATH.test(location.pathname || "") || THEORY_PATH.test(location.href || "")) {
+    if (THEORY_PATH.test(location.pathname || "") || THEORY_PATH.test(location.href || "") || /methodology\.html/i.test(location.pathname || "") || /methodology\.html/i.test(location.href || "")) {
       nav.querySelectorAll("a").forEach(function (a) {
         a.classList.toggle("active", /theories\.html/i.test(a.getAttribute("href") || "") || /^theories$/i.test((a.textContent || "").trim()));
       });
     }
   }
 
-  function ensureOutliers(nav) {
-    ensureLink(nav, "./outliers.html", "Outliers", /outliers\.html/i);
-    if (/outliers\.html/i.test(location.pathname || "") || /outliers\.html/i.test(location.href || "")) {
-      nav.querySelectorAll("a").forEach(function (a) {
-        a.classList.toggle("active", /outliers\.html/i.test(a.getAttribute("href") || "") || /^outliers$/i.test((a.textContent || "").trim()));
-      });
-    }
+  function stripExtra(nav) {
+    nav.querySelectorAll("a").forEach((a) => {
+      const href = a.getAttribute("href") || "";
+      const text = (a.textContent || "").replace(/\s+/g, " ").trim();
+      if (/outliers\.html/i.test(href) || /^outliers$/i.test(text)) a.remove();
+      if (/methodology\.html/i.test(href) || /^methodology$/i.test(text)) a.remove();
+    });
   }
 
   function orderNav(nav) {
@@ -132,8 +130,8 @@
     if (nav) {
       stripAbout(nav);
       stripBigBoard(nav);
+      stripExtra(nav);
       ensureTheories(nav);
-      ensureOutliers(nav);
       orderNav(nav);
     }
     bindMenu();

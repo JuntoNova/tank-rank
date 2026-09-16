@@ -8,14 +8,16 @@ Repo: https://github.com/JuntoNova/tank-rank
 
 ## Locked IA (do not “fix” back)
 
-- **Menu order:** Historic → Upcoming → Theories → Outliers → Methodology
+- **Menu order:** Historic → Upcoming → Theories. Nothing else in `.nav-links`.
 - **Homepage doors:** Historic (Past) on the left / first. Upcoming (Future) on the right / second.
 - **Homepage door blurbs:** Historic `1947–2026.` Upcoming `2027 board, plus 2028 and 2029.` Do not use “living”, “every completed class”, or “every round” on the home doors.
+- **Historic hub** is `drafts.html` with three pills: Drafts (default, year accordion) / All-time (`?view=alltime`, top 100 by draft-night projection, 20 per page) / Outliers (`?view=outliers`). Do not put Outliers or Methodology back in the top nav.
+- **Methodology** lives as a link at the bottom of `theories.html` only. `methodology.html` stays as a URL.
 - **Historic board banner:** none. Do not restore “Theory-adjusted estimates…” on completed classes.
 - **Historic year boards:** keep a `← Historic drafts` button to `drafts.html` in `.section-head`.
 - **About is off the menu.** `about.html` may stay as a direct URL. Do not add About back to `.nav-links`.
 - **Theories is on the menu.** Hub is `theories.html`. Do not drop it. Individual theory pages (`size.html`, `age.html`, …) stay off the top nav and highlight Theories.
-- **Outliers is on the menu.** Hub is `outliers.html`. Three pills: Overachieved / Underachieved / Most different. Do not drop it. Data lives in `assets/outliers.json`; rebuild with `pipeline/score-outliers.py`. Page is a board table (Year / Pk / Player / Team / AS / 1st / All-NBA / Yrs / Chips / MVP / HOF / Δ). No commentary blurbs. Δ = 1×AS + 2×All-NBA + 3×1st + 4×Chips + 10×MVP + 20×HOF + 0.25×Yrs − the draft-night model on those same columns. Over = largest Δ (1947–2016). Under = smallest Δ among picks 1–8, 1989–2017. Diff = largest |Δ| / model. Do not restore the ranked-list copy or the hidden win-share term.
+- **Outliers is a Historic pill, not a nav item.** Data lives in `assets/outliers.json`; rebuild with `pipeline/score-outliers.py`. Page is a board table (Year / Pk / Player / Team / AS / 1st / All-NBA / Yrs / Chips / MVP / HOF / Δ). No commentary blurbs. Δ = 1×AS + 2×All-NBA + 3×1st + 4×Chips + 10×MVP + 20×HOF + 0.25×Yrs − the draft-night model on those same columns. Over = largest Δ (1947–2016). Under = smallest Δ among picks 1–8, 1989–2017. Diff = largest |Δ| / model. Do not restore the ranked-list copy or the hidden win-share term.
 - **Big Board is off the menu.** It duplicates Upcoming. `board.html?year=` stays as the board URL. Do not put Big Board back in `.nav-links`. About stays off the menu.
 
 ## Living boards
@@ -44,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Nav is Historic / Upcoming / Theories. Methodology sits under Theories. Historic pills: Drafts / All-time / Outliers.
 - 2026-09-16 (Grok chat): AS / All-NBA / 1st team are star-tailed. 1st team is cubic in quality. Most of a class prints 0. LeBron 8.5 / 1.2 firsts. Joe Alexander <0.1.
 - 2026-09-16 (Grok chat): Robinson 1987. Navy line was missing (28.2/4.5 POY). Senior does not stack on age 21.9. Centers are not taxed for 1 assist. 7-1 at 235 is not a weight cut.
 - 2026-09-16 (Grok chat): Draft-night HOF is 1% × quality², cap 28%. A class is ~1 expected Hall of Famer, not 16% for every lottery pick.

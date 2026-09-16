@@ -15,13 +15,13 @@
   <meta property="og:url" content="https://thedraftmodel.com/theories.html" />
   <meta property="og:image" content="https://thedraftmodel.com/assets/og.jpg" />
   <link rel="stylesheet" href="./assets/styles.css?v=85" />
-  <link rel="stylesheet" href="./assets/theories.css?v=53" />
+  <link rel="stylesheet" href="./assets/theories.css?v=54" />
 </head>
 <body>
   <div id="app"></div>
   <script src="./assets/data.js?v=42"></script>
-  <script src="./assets/app.js?v=83"></script>
-  <script src="./assets/nav-swap.js?v=86"></script>
+  <script src="./assets/app.js?v=84"></script>
+  <script src="./assets/nav-swap.js?v=90"></script>
   <script>
     const groups = [
       {
@@ -134,7 +134,7 @@
       return '<section class="acc-item group-acc"><button class="acc-btn group-acc-btn" type="button" data-group="' + i + '"><b>' +
         g.label + '</b><em>' + groupHint(g) + ' <i>+</i></em></button><div class="acc-panel"><div class="acc theory-list">' +
         g.items.map(row).join('') + '</div></div></section>';
-    }).join('') + '</div>';
+    }).join('') + '</div><p class="theory-method"><a href="./methodology.html">Methodology</a></p>';
 
     TR.renderSimple(
       document.getElementById("app"),

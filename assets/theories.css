@@ -130,3 +130,10 @@ h2.size-h { font-family: var(--serif); font-size: 24px; font-weight: 500; margin
 @media (max-width: 640px) {
   .group-acc > .acc-btn.group-acc-btn b { font-size: 22px; }
 }
+.theory-method {
+  margin: 28px 0 0;
+  font-size: 15px;
+}
+.theory-method a { color: var(--muted); }
+.theory-method a:hover { color: var(--text); }
+
