@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Age is one factor. Youngest +16%, oldest −18%, relative to the era. Not 1.75×. Pick, reputation, and NBA career still not used.
 - 2026-09-16 (Grok chat): Pick is out of the projection. Missing box scores no longer get a 1.70 cap, which was punishing everyone we hadn't typed stats for.
 - 2026-09-16 (Grok chat): Pre-2000 stars were invisible because 22 in 1969 was treated like 22 in 2015, and college stats were missing. Age is relative to the era. Kareem, Magic, Bird, Jordan, Shaq, Oscar, etc. have their draft-year lines. Magic 4th, Shaq 6th, Bird 15th.
 - 2026-09-16 (Grok chat): All-time table on phones was table-layout:fixed at 100% width so names, teams, and stats painted on top of each other. Phone view now scrolls sideways, sticks the name, and puts year/pick under the player.

@@ -437,7 +437,7 @@
       at.inited = true;
     }
     if (allTime) { paintAllTime(at.painted ? at.page : 0); return; }
-    fetch("./assets/all-time.json?v=11")
+    fetch("./assets/all-time.json?v=12")
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         allTime = data || { players: [] };

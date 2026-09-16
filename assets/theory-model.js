@@ -142,34 +142,32 @@
     }
     var rel = year ? (ageNum - eraMed(year)) : (ageNum - 20.2);
     let ageAsRaw;
-    if (rel <= -2.2) ageAsRaw = 1.75;
-    else if (rel <= -1.5) ageAsRaw = 1.55;
-    else if (rel <= -1.0) ageAsRaw = 1.28;
-    else if (rel <= -0.5) ageAsRaw = 1.18;
-    else if (rel <= 0.2) ageAsRaw = 1.10;
-    else if (rel <= 0.7) ageAsRaw = 1.02;
+    if (rel <= -2.0) ageAsRaw = 1.16;
+    else if (rel <= -1.0) ageAsRaw = 1.12;
+    else if (rel <= -0.3) ageAsRaw = 1.06;
+    else if (rel <= 0.5) ageAsRaw = 1.00;
     else if (rel <= 1.2) ageAsRaw = 0.94;
-    else if (rel <= 1.8) ageAsRaw = 0.88;
-    else if (rel <= 2.5) ageAsRaw = 0.80;
-    else ageAsRaw = 0.68;
-    const ageAs = clamp(ageAsRaw, 0.68, 2.10);
+    else if (rel <= 2.0) ageAsRaw = 0.88;
+    else ageAsRaw = 0.82;
+    const ageAs = clamp(ageAsRaw, 0.80, 1.20);
     let ageMvpRaw;
-    if (rel <= -2.2) ageMvpRaw = 1.50;
-    else if (rel <= -1.5) ageMvpRaw = 1.40;
-    else if (rel <= -0.7) ageMvpRaw = 1.22;
-    else if (rel <= 0.2) ageMvpRaw = 1.08;
-    else if (rel <= 1.0) ageMvpRaw = 1.00;
-    else ageMvpRaw = 0.70;
-    const ageMvp = clamp(ageMvpRaw, 0.30, 2.20);
+    if (rel <= -2.0) ageMvpRaw = 1.18;
+    else if (rel <= -1.0) ageMvpRaw = 1.12;
+    else if (rel <= -0.3) ageMvpRaw = 1.06;
+    else if (rel <= 0.5) ageMvpRaw = 1.00;
+    else if (rel <= 1.2) ageMvpRaw = 0.94;
+    else ageMvpRaw = 0.86;
+    const ageMvp = clamp(ageMvpRaw, 0.80, 1.22);
     let ageYrs = 1;
-    if (ageNum < 19) ageYrs = 1.28;
-    else if (ageNum < 20) ageYrs = 1.18;
-    else if (ageNum < 21) ageYrs = 1.08;
-    else if (ageNum < 22) ageYrs = 0.96;
-    else ageYrs = 0.80;
+    if (rel <= -2.0) ageYrs = 1.16;
+    else if (rel <= -1.0) ageYrs = 1.10;
+    else if (rel <= -0.3) ageYrs = 1.05;
+    else if (rel <= 0.5) ageYrs = 1.00;
+    else if (rel <= 1.2) ageYrs = 0.95;
+    else ageYrs = 0.88;
     add("age", "Age", feat.age != null ? feat.age + " " + ageLabel(ak) : "unknown",
-      ageAs, ageMvp, "From /age. Youth moves All-Star odds more than Hall of Fame.",
-      { nba: ageAs, hof: clamp(ageAsRaw, 0.85, 1.25), yrs: clamp(ageYrs, 0.70, 1.25) });
+      ageAs, ageMvp, "",
+      { nba: ageAs, hof: clamp(ageAsRaw, 0.90, 1.12), yrs: clamp(ageYrs, 0.85, 1.18) });
     const cls = feat.cls || "";
     if (feat.origin === "college") {
       let cAs = 1, cMvp = 1, note = "Sophomore / junior is the middle of /onedone.";
