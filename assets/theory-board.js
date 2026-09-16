@@ -57,9 +57,12 @@
     const ht = g.ht || p.ht || "";
     const pos = String(g.pos || p.pos || "");
     const htIn = inches(ht);
-    const guard = /(^|\b)(PG|SG|G|SF|F)(\b|\/)/i.test(pos);
-    const create = g.create != null ? +g.create : (htIn >= 79 && guard ? 1 : 0);
-    return { age: age, cls: cls, origin: origin, ht: ht, wsp: g.wsp || p.wsp || "", pos: pos, create: create, stash: g.stash || 0, delay: g.delay || 0, never: g.never || 0 };
+    const guard = /(^|\b)(PG|SG|G)(\b|\/)/i.test(pos);
+    const astN = g.ast != null ? Number(g.ast) : (p.ast != null ? Number(p.ast) : NaN);
+    let create = 0;
+    if (g.create != null && g.create !== "") create = Number(g.create) ? 1 : 0;
+    else if (isFinite(astN) && ((astN >= 2.5 && htIn >= 77) || (astN >= 2.0 && guard))) create = 1;
+    return { age: age, cls: cls, origin: origin, ht: ht, wsp: g.wsp || p.wsp || "", pos: pos, create: create, stash: g.stash || 0, delay: g.delay || 0, never: g.never || 0, pts: g.pts, ast: g.ast, stl: g.stl, blk: g.blk, fga: g.fga, fta: g.fta, fg3a: g.fg3a };
   }
   function project(p, feat, priors) {
     const fn = window.TR && (TR.projectPlayer || (TR.Model && TR.Model.project));
@@ -245,7 +248,7 @@
     return Promise.all([
       fetch("./assets/theory-packs/all.json?v=80").then(function (r) { return r.ok ? r.json() : null; }).then(function (all) {
         if (all && all[String(year)]) return all[String(year)];
-        return fetch("./assets/theory-packs/" + year + ".json?v=81").then(function (r) { return r.ok ? r.json() : null; });
+        return fetch("./assets/theory-packs/" + year + ".json?v=82").then(function (r) { return r.ok ? r.json() : null; });
       }).catch(function () { return null; }),
       fetch("./assets/slot-priors.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/outcomes-legacy.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),

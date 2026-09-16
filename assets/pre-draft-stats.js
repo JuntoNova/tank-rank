@@ -60,13 +60,18 @@
     p.theoryFeat = p.theoryFeat || {};
     if (row.ast != null) p.theoryFeat.ast = row.ast;
     if (row.pts != null) p.theoryFeat.pts = row.pts;
-    if (row.ast != null && Number(row.ast) >= 2.2) p.theoryFeat.create = 1;
+    if (row.stl != null) p.theoryFeat.stl = row.stl;
+    if (row.blk != null) p.theoryFeat.blk = row.blk;
+    if (row.fga != null) p.theoryFeat.fga = row.fga;
+    if (row.fta != null) p.theoryFeat.fta = row.fta;
+    if (row.fg3a != null) p.theoryFeat.fg3a = row.fg3a;
+    if (row.ast != null && Number(row.ast) >= 2.5) p.theoryFeat.create = 1;
   }
   function load(year) {
     if (window.TANK_RANK && TANK_RANK.preDraft && TANK_RANK.preDraft[String(year)]) {
       return Promise.resolve(TANK_RANK.preDraft[String(year)]);
     }
-    return fetch("./assets/pre-draft/" + year + ".json?v=92").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+    return fetch("./assets/pre-draft/" + year + ".json?v=93").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
       .then(function (pack) {
         window.TANK_RANK = window.TANK_RANK || {};
         TANK_RANK.preDraft = TANK_RANK.preDraft || {};

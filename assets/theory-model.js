@@ -48,15 +48,16 @@
     const given = p.theoryFeat || {};
     const school = String(p.school || given.school || "");
     const low = school.toLowerCase();
-    let cls = given.cls || p.cls || "";
+    let cls = "";
     let origin = given.origin || p.origin || "";
     let tier = given.tier || "other";
     const cm = school.match(/\((RS-Fr|RS-So|RS-Jr|RS-Sr|Fr|So|Jr|Sr|HS[^)]*)\.?\)\s*$/i);
-    if (cm && !cls) {
+    if (cm) {
       const raw = cm[1].replace(/\./g, "");
       if (/^hs/i.test(raw)) { cls = "HS"; origin = origin || "hs"; tier = "hs"; }
       else cls = raw.replace(/^rs-/i, "RS-");
     }
+    if (!cls) cls = given.cls || p.cls || "";
     if (!origin) {
       if (/\bhs\b|high school|academy/i.test(low)) { origin = "hs"; cls = cls || "HS"; tier = "hs"; }
       else if (COUNTRY.some(function (c) { return low.indexOf(c) >= 0; }) && !cm) {
@@ -76,9 +77,21 @@
     const pos = String(p.pos || given.pos || "");
     const htIn = inches(ht);
     const guard = /(^|\b)(PG|SG|G)(\b|\/)/i.test(pos);
-    const wing = /(^|\b)(SF|F)(\b|\/)/i.test(pos);
-    const create = !!(given.create) || (htIn >= 77 && (guard || wing));
-    return { age: isNaN(age) ? null : age, cls: cls || "", origin: origin || "", tier: tier, ht: ht, wt: wt, wsp: wsp, reach: reach, pos: pos, stash: given.stash || 0, delay: given.delay || 0, never: given.never || 0, create: create ? 1 : 0 };
+    const astN = given.ast != null ? Number(given.ast) : (p.ast != null ? Number(p.ast) : NaN);
+    let create = 0;
+    if (given.create != null && given.create !== "") create = Number(given.create) ? 1 : 0;
+    else if (isFinite(astN)) {
+      if (astN >= 2.5 && htIn >= 77) create = 1;
+      else if (astN >= 2.0 && guard) create = 1;
+    }
+    return {
+      age: isNaN(age) ? null : age, cls: cls || "", origin: origin || "", tier: tier,
+      ht: ht, wt: wt, wsp: wsp, reach: reach, pos: pos,
+      stash: given.stash || 0, delay: given.delay || 0, never: given.never || 0,
+      create: create,
+      pts: given.pts, ast: given.ast, stl: given.stl, blk: given.blk,
+      fga: given.fga, fta: given.fta, fg3a: given.fg3a
+    };
   }
   function project(p, feat, priors) {
     feat = feat || deriveFeat(p);
