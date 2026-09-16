@@ -11,7 +11,7 @@ Repo: https://github.com/JuntoNova/tank-rank
 - **Menu order:** Historic → Upcoming → Theories. Nothing else in `.nav-links`.
 - **Homepage doors:** Historic (Past) on the left / first. Upcoming (Future) on the right / second.
 - **Homepage door blurbs:** Historic `1947–2026.` Upcoming `2027 board, plus 2028 and 2029.` Do not use “living”, “every completed class”, or “every round” on the home doors.
-- **Historic hub** is `drafts.html` with three pills: Drafts (default, year accordion) / All-time (`?view=alltime`, top 100 by draft-night projection, 20 per page) / Outliers (`?view=outliers`). Do not put Outliers or Methodology back in the top nav.
+- **Historic hub** is `drafts.html` with three pills: Drafts (default, year accordion) / All-time (`?view=alltime`, Now / When drafted, sortable columns, search, decade/pos/pick filters, 20 per page) / Outliers (`?view=outliers`). Do not put Outliers or Methodology back in the top nav.
 - **Methodology** lives as a link at the bottom of `theories.html` only. `methodology.html` stays as a URL.
 - **Historic board banner:** none. Do not restore “Theory-adjusted estimates…” on completed classes.
 - **Historic year boards:** keep a `← Historic drafts` button to `drafts.html` in `.section-head`.
@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): All-time has Now / When drafted, sortable columns, search, and filters (decade / pos / pick). 20 a page.
 - 2026-09-16 (Grok chat): LaMelo. An 18-year-old who already played against men is not the overseas-stash cut. Skinny guard weight does not cut a 6-7 passer. 7 assists is 1.32.
 - 2026-09-16 (Grok chat): Nav is Historic / Upcoming / Theories. Methodology sits under Theories. Historic pills: Drafts / All-time / Outliers.
 - 2026-09-16 (Grok chat): AS / All-NBA / 1st team are star-tailed. 1st team is cubic in quality. Most of a class prints 0. LeBron 8.5 / 1.2 firsts. Joe Alexander <0.1.
