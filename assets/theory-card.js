@@ -87,8 +87,8 @@
     mHof = clamp(mHof, 0.20, 2.40);
     mMvp = clamp(mMvp, 0.12, 4.00);
     mYrs = clamp(mYrs, 0.55, 1.35);
-    var cap = (TR.Model && TR.Model.HOF_CAP) || 0.45;
-    var pHof = clamp((full.slotHof != null ? full.slotHof : 0.08) * mHof, 0.0005, cap);
+    var cap = (TR.Model && TR.Model.HOF_CAP) || 0.28;
+    var pHof = clamp(0.010 * mAs * mAs * mHof, 0.002, cap);
     return {
       expAs: clamp((inten.as || 2.8) * mAs, 0.05, 16),
       expNba1: clamp((inten.nba1 || 0.30) * mNba, 0.01, 10),

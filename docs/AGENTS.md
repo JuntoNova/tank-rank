@@ -44,6 +44,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Draft-night HOF is 1% × quality², cap 28%. A class is ~1 expected Hall of Famer, not 16% for every lottery pick.
 - 2026-09-16 (Grok chat): Rubio 2009. File was empty except age + international. ACB 10.0/6.1/2.2, 6-4, creation tag. Passing counts under 6-5.
 - 2026-09-16 (Grok chat): Projections are the player file, not the pick. Slot is ×1. Old freshman (Bennett) is a cut. LeBron 10 AS / Brand 3.4 / Bennett 2.2.
 - 2026-09-16 (Grok chat): LeBron vs Brand. Age uses the actual year (18.5 ≠ 20.3). Prep-to-pro #1 is a boost, not a 0.95 haircut. 7-0 wingspan is not short. Expected All-Stars are slot × player, not pinned at 5.1 for every #1.

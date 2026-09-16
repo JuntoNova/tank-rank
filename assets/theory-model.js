@@ -32,8 +32,8 @@
   // expected per draft, 34% at #1) overstate that. Scale so a class is ~0.5
   // expected HOFers and no prospect prints as a near-lock.
   const PLAYER = { as: 2.8, nba: 1.35, nba1: 0.30, yrs: 8.5, ch: 0.18, mvp: 0.20 };
-  const PLAYER_HOF = 0.16;
-  const HOF_CAP = 0.45;
+  const PLAYER_HOF = 0.010;
+  const HOF_CAP = 0.28;
   function ageKey(age) {
     if (age == null || isNaN(age)) return "a21";
     if (age < 19.5) return "u19";
@@ -288,7 +288,7 @@
     mHof = clamp(mHof, 0.35, 2.40); mMvp = clamp(mMvp, 0.12, 4.00); mYrs = clamp(mYrs, 0.55, 1.35);
     const pAs = clamp(0.22 * mAs, 0.01, 0.97);
     const pNba = clamp(0.12 * mNba, 0.005, 0.90);
-    const pHof = clamp(PLAYER_HOF * mHof, 0.0005, HOF_CAP);
+    const pHof = clamp(PLAYER_HOF * mAs * mAs * mHof, 0.002, HOF_CAP);
     return {
       slot: "player", slotAs: 1, slotNba: 1, slotHof: PLAYER_HOF, slotMvp: inten.mvp,
       pAs: pAs, pNba: pNba, pHof: pHof,
