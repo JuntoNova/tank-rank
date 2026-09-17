@@ -46,6 +46,8 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Hall of Fame is not a second All-Star column. Steals and blocks do not feed P(HOF). Mosley is not 25% Springfield for 4.3 blocks.
+- 2026-09-16 (Grok chat): All-time opens on When drafted. Now is career totals. MVP follows P(All-Star)×0.155 because 31 MVPs is not a 17-feature ranking. Nash’s Santa Clara senior line is in the pack; the old 14th was career MVPs on Now.
 - 2026-09-16 (Grok chat): All-time opens on When drafted. Now is career totals. MVP follows P(All-Star)×0.155 because 31 MVPs is not a 17-feature ranking. Nash’s Santa Clara senior line is in the pack; the old 14th was career MVPs on Now.
 - 2026-09-16 (Grok chat): Historic year boards were scoring age and size only. all.json has birthdates and no college line; the year pack has the line. Load both and let the year pack win, so Fultz is 3.2 on the 2017 board the same as on his page.
 - 2026-09-16 (Grok chat): Historic year boards were scoring age and size only. all.json has birthdates and no college line; the year pack has the line. Load both and let the year pack win, so Fultz is 3.2 on the 2017 board the same as on his page.

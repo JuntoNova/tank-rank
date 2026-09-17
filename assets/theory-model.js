@@ -186,6 +186,12 @@
     else lam = clamp(Math.exp(linpred(pos, x)), lo, hi);
     return { p: p, lam: lam, exp: p * lam };
   }
+  function xSkip(x, keys) {
+    var y = {};
+    Object.keys(x || {}).forEach(function (k) { y[k] = x[k]; });
+    (keys || []).forEach(function (k) { y[k] = 0; });
+    return y;
+  }
   function scoreX(x, P) {
     const G = glm();
     if (!G && !P) {
@@ -197,16 +203,18 @@
     var ch = hurdle("ch", x, P);
     var yrsSpec = (P && P.yrs) || (G && G.yrs);
     var yrs = clamp(linpred(yrsSpec, x) + ((G && G.yrs_shift) || 0), 1.5, 19);
+    var skip = (G && G.hof_skip) || ["stl", "blk"];
+    var asHof = skip.length ? hurdle("as", xSkip(x, skip), P) : as;
     var pHof;
     var spec = (G && G.hof_from_as) || {};
     if (spec.kind === "mixture") {
       var yes = spec.p_given_as != null ? spec.p_given_as : 0.34;
       var no = spec.p_given_no != null ? spec.p_given_no : 0.004;
-      pHof = no + (yes - no) * as.p;
+      pHof = no + (yes - no) * asHof.p;
     } else if (spec.intercept != null) {
-      pHof = sigmoid(spec.intercept + spec.slope * logit(as.p));
+      pHof = sigmoid(spec.intercept + spec.slope * logit(asHof.p));
     } else {
-      pHof = 0.004 + 0.34 * as.p;
+      pHof = 0.004 + 0.34 * asHof.p;
     }
     pHof = clamp(pHof, G && G.hof_floor != null ? G.hof_floor : 0.003, G && G.hof_cap != null ? G.hof_cap : 0.28);
     var expAs = clamp(as.exp, 0.02, 14);

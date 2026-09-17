@@ -26,7 +26,7 @@
         <li>The intercept shift that makes the average probability match the historical rate is fit by five-fold out-of-fold predictions on 1947–2004, with that penalty frozen. The holdout does not get a second chance to pick the shift.</li>
         <li>Then the model is refit on all of 1947–2004 and scored on 2005–2014.</li>
         <li>Expected count = P(ever) × E[count | ever]. The count model is a Poisson, shrunk toward the All-Star mean.</li>
-        <li>Hall of Fame: about 34% of All-Stars in the file are in Springfield, and about 0.4% of the rest. P(HOF) follows P(All-Star) that way. Cap 28%.</li>
+        <li>Hall of Fame: about 34% of All-Stars in the file are in Springfield, and about 0.4% of the rest. P(HOF) follows that rate, but the All-Star probability that feeds it does not get college steals or blocks. Springfield is not a shot-blocking contest. Cap 28%.</li>
         <li>MVP: 31 MVPs in 1947–2004, every one of them an All-Star. Expected MVPs follow P(All-Star) × 0.155, the All-Star mean. A 17-feature MVP logistic on 31 events ranked shot blockers as MVPs. That is not a ranking.</li>
       </ul>
       <p>Holdout AUC for ever-All-Star is 0.68. Mean predicted P(All-Star) on the holdout is 10.2%; the actual rate is 9.5%. Spearman on expected All-Star games is 0.15. That is modest on purpose: we are not allowed to use the pick, and most draftees are zeros.</p>
@@ -61,6 +61,7 @@
         <li>Steals+blocks as one number plus blocks again. Rim was counting twice.</li>
         <li>A 20-feature Hall of Fame logistic. Rare event, too many knobs.</li>
         <li>A 17-feature MVP logistic on 31 events. Colgate blocks were not an MVP theory.</li>
+        <li>Letting college blocks mint Hall odds. A 6-8 with 4 blocks is not 25% Springfield.</li>
         <li>Picking the penalty on the same slice we report. That inflated the old 0.68. This 0.68 is locked.</li>
       </ul>
 
@@ -83,7 +84,7 @@
       <ul>
         <li>The college line is the draft-year season we have, not a career peak. A 21-year-old junior at 19.6 points is not the same input as an 18-year-old at 31.</li>
         <li>We do not have a college or international line for most of the file. Those theories do not fire. Age, size, and origin still do.</li>
-        <li>A 6-8 who blocked 4 shots a night looks, to this model, like a shot-blocking star. Most of those guys were not. That miss is in the 0.68 AUC.</li>
+        <li>A 6-8 who blocked 4 shots a night looks, to the All-Star number, like a shot-blocking star. Most of those guys were not. That miss is in the 0.68 AUC. It does not get to mint Hall odds.</li>
         <li>Championship labels on the 2005–2014 holdout are incomplete, so we do not shift chips down to that rate.</li>
         <li>The interval is sampling uncertainty of the coefficients. It is not a prediction interval for the career, and it does not cover missing college stats or a wrong height.</li>
       </ul>

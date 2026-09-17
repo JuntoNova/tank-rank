@@ -694,6 +694,7 @@ def main():
         "pos_ht": POS_HT,
         "platt": platt,
         "hof_from_as": hof_from_as,
+        "hof_skip": ["stl", "blk"],
         "mvp_from_as": mvp_from_as,
         "yrs_shift": yrs_shift,
         "hof_floor": HOF_FLOOR,
