@@ -172,30 +172,33 @@
     var ic = Number(spec.intercept) || 0;
     return sigmoid(ic + sl * logit(p));
   }
-  function hurdle(key, x) {
+  function hurdle(key, x, P) {
     const G = glm();
-    var p = sigmoid(linpred(G[key + "_ever"], x));
-    p = platt(p, G.platt && G.platt[key]);
-    var pos = G[key + "_pos"] || { kind: "constant", mu: 1 };
-    var lo = G.lam_min != null ? G.lam_min : 1;
-    var hi = G.lam_max != null ? G.lam_max : 8;
+    P = P || G;
+    var ever = (P && P[key + "_ever"]) || (G && G[key + "_ever"]);
+    var p = sigmoid(linpred(ever, x));
+    p = platt(p, G && G.platt && G.platt[key]);
+    var pos = (P && P[key + "_pos"]) || (G && G[key + "_pos"]) || { kind: "constant", mu: 1 };
+    var lo = G && G.lam_min != null ? G.lam_min : 1;
+    var hi = G && G.lam_max != null ? G.lam_max : 8;
     var lam;
     if (pos.kind === "constant") lam = pos.mu;
     else lam = clamp(Math.exp(linpred(pos, x)), lo, hi);
     return { p: p, lam: lam, exp: p * lam };
   }
-  function scoreX(x) {
+  function scoreX(x, P) {
     const G = glm();
-    if (!G) {
+    if (!G && !P) {
       return { expAs: 0.4, expNba: 0.2, expNba1: 0.05, expYrs: 7, expCh: 0.08, expMvp: 0.02, pHof: 0.03, pAs: 0.11, pNba: 0.06 };
     }
-    var as = hurdle("as", x);
-    var nba = hurdle("nba", x);
-    var mvp = hurdle("mvp", x);
-    var ch = hurdle("ch", x);
-    var yrs = clamp(linpred(G.yrs, x) + (G.yrs_shift || 0), 1.5, 19);
+    var as = hurdle("as", x, P);
+    var nba = hurdle("nba", x, P);
+    var mvp = hurdle("mvp", x, P);
+    var ch = hurdle("ch", x, P);
+    var yrsSpec = (P && P.yrs) || (G && G.yrs);
+    var yrs = clamp(linpred(yrsSpec, x) + ((G && G.yrs_shift) || 0), 1.5, 19);
     var pHof;
-    var spec = G.hof_from_as || {};
+    var spec = (G && G.hof_from_as) || {};
     if (spec.kind === "mixture") {
       var yes = spec.p_given_as != null ? spec.p_given_as : 0.34;
       var no = spec.p_given_no != null ? spec.p_given_no : 0.004;
@@ -205,13 +208,44 @@
     } else {
       pHof = 0.004 + 0.34 * as.p;
     }
-    pHof = clamp(pHof, G.hof_floor != null ? G.hof_floor : 0.003, G.hof_cap != null ? G.hof_cap : 0.28);
+    pHof = clamp(pHof, G && G.hof_floor != null ? G.hof_floor : 0.003, G && G.hof_cap != null ? G.hof_cap : 0.28);
+    var expAs = clamp(as.exp, 0.02, 14);
+    var expNba = clamp(Math.min(nba.exp, expAs), 0.01, 12);
     return {
-      pAs: as.p, expAs: clamp(as.exp, 0.02, 14),
-      pNba: nba.p, expNba: clamp(nba.exp, 0.01, 12), expNba1: clamp(nba.exp * 0.22, 0.005, 6),
-      expYrs: yrs, expCh: clamp(ch.exp, 0.01, 4), expMvp: clamp(mvp.exp, 0.002, 2.5),
+      pAs: as.p, expAs: expAs,
+      pNba: nba.p, expNba: expNba, expNba1: clamp(expNba * 0.22, 0.005, 6),
+      expYrs: yrs, expCh: clamp(ch.exp, 0.01, 4), expMvp: clamp(Math.min(mvp.exp, expAs), 0.002, 2.5),
       pHof: pHof
     };
+  }
+  function quantile(arr, q) {
+    var a = arr.slice().sort(function (x, y) { return x - y; });
+    if (!a.length) return null;
+    var i = Math.min(a.length - 1, Math.max(0, Math.floor(q * (a.length - 1))));
+    return a[i];
+  }
+  function bandX(x) {
+    const G = glm();
+    var boots = (G && G.boot) || [];
+    if (boots.length < 10) return null;
+    var qs = (G.boot_q && G.boot_q.length === 2) ? G.boot_q : [0.1, 0.9];
+    var acc = { expAs: [], expNba: [], expNba1: [], expYrs: [], expCh: [], expMvp: [], pHof: [], pAs: [] };
+    for (var i = 0; i < boots.length; i++) {
+      var s = scoreX(x, boots[i]);
+      acc.expAs.push(s.expAs);
+      acc.expNba.push(s.expNba);
+      acc.expNba1.push(s.expNba1);
+      acc.expYrs.push(s.expYrs);
+      acc.expCh.push(s.expCh);
+      acc.expMvp.push(s.expMvp);
+      acc.pHof.push(s.pHof);
+      acc.pAs.push(s.pAs);
+    }
+    var out = {};
+    Object.keys(acc).forEach(function (k) {
+      out[k] = { lo: quantile(acc[k], qs[0]), hi: quantile(acc[k], qs[1]) };
+    });
+    return out;
   }
   function project(p, feat, priors) {
     feat = feat || deriveFeat(p);
@@ -280,6 +314,7 @@
       prev = cur;
     });
     const full = scoreX(xFull);
+    const band = bandX(xFull);
     var mAs = 1, mNba = 1, mHof = 1, mMvp = 1, mYrs = 1;
     steps.forEach(function (s) {
       mAs *= s.mAs; mNba *= s.mNba; mHof *= s.mHof; mMvp *= s.mMvp; mYrs *= s.mYrs;
@@ -289,6 +324,7 @@
       pAs: full.pAs, pNba: full.pNba, pHof: full.pHof,
       expAs: full.expAs, expNba: full.expNba, expNba1: full.expNba1,
       expYrs: full.expYrs, expCh: full.expCh, expMvp: full.expMvp,
+      band: band,
       mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
       scale: mAs, steps: steps, feat: feat
     };
@@ -302,6 +338,21 @@
   }
   function fmtPct(n) { return (n == null || !isFinite(Number(n))) ? "" : Math.round(n * 100) + "%"; }
   function fmtMul(m) { return "x" + Number(m == null ? 1 : m).toFixed(2); }
+  function fmtBand(lo, hi, pct) {
+    if (lo == null || hi == null || !isFinite(Number(lo)) || !isFinite(Number(hi))) return "";
+    if (pct) {
+      var a = Math.round(Number(lo) * 100), b = Math.round(Number(hi) * 100);
+      if (a === b) return "";
+      return a + "\u2013" + b + "%";
+    }
+    var a = fmtExp(lo), b = fmtExp(hi);
+    if (!a || !b || a === b) return "";
+    return a + "\u2013" + b;
+  }
+  function bandHtml(lo, hi, pct) {
+    var t = fmtBand(lo, hi, pct);
+    return t ? '<span class="band">' + t + "</span>" : "";
+  }
   // Remaining Hall odds from the career so far. Draft-night pHof is a different
   // number (slot × theories, capped at 10%). This one is: given the resume and
   // whether they are still playing, will Springfield take them?
@@ -361,8 +412,9 @@
     return pct === 0 ? "<1%" : pct + "%";
   }
   window.TR = window.TR || {};
-  TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, INTENSITY: INTENSITY, PLAYER: PLAYER, HOF_CAP: HOF_CAP, fmtExp: fmtExp, fmtPct: fmtPct, fmtMul: fmtMul, careerHofP: careerHofP, fmtHofRemain: fmtHofRemain };
+  TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, INTENSITY: INTENSITY, PLAYER: PLAYER, HOF_CAP: HOF_CAP, fmtExp: fmtExp, fmtPct: fmtPct, fmtMul: fmtMul, fmtBand: fmtBand, bandHtml: bandHtml, careerHofP: careerHofP, fmtHofRemain: fmtHofRemain };
   TR.deriveFeat = deriveFeat;
   TR.projectPlayer = project;
+  TR.bandX = bandX;
   TR.careerHofP = careerHofP;
 })();

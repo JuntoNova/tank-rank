@@ -59,6 +59,16 @@ for (let i = 0; i < players.length; i++) {
   r.eCh = round(proj.expCh, 3);
   r.eMvp = round(proj.expMvp, 3);
   r.pHof = round(proj.pHof, 4);
+  const band = proj.band;
+  if (band) {
+    r.asL = round(band.expAs.lo, 2); r.asH = round(band.expAs.hi, 2);
+    r.n1L = round(band.expNba1.lo, 2); r.n1H = round(band.expNba1.hi, 2);
+    r.nbaL = round(band.expNba.lo, 2); r.nbaH = round(band.expNba.hi, 2);
+    r.yL = round(band.expYrs.lo, 1); r.yH = round(band.expYrs.hi, 1);
+    r.chL = round(band.expCh.lo, 2); r.chH = round(band.expCh.hi, 2);
+    r.mL = round(band.expMvp.lo, 2); r.mH = round(band.expMvp.hi, 2);
+    r.hL = round(band.pHof.lo, 3); r.hH = round(band.pHof.hi, 3);
+  }
 }
 
 blob.n = players.length;

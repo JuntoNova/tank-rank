@@ -30,7 +30,8 @@
     if (document.getElementById("th-card-css")) return;
     const s = document.createElement("style");
     s.id = "th-card-css";
-    s.textContent = ".player-hero .lede{display:none!important}.player-hero + .section .grid-3{display:none!important}.th-math{margin:8px 0 28px}.th-ledger table{min-width:640px}.th-ledger .name{font-weight:500}.th-ledger .meta{color:var(--muted);font-size:12px;margin-top:2px}.th-mul.up{color:var(--lime)}.th-mul.down{color:var(--coral)}.th-mul.flat{color:inherit}.size-grid .tile.th-empty{display:none}.metrics .kicker{grid-column:1/-1;margin-bottom:4px}";
+    s.id = "th-card-css";
+    s.textContent = ".player-hero .lede{display:none!important}.player-hero + .section .grid-3{display:none!important}.th-math{margin:8px 0 28px}.th-ledger table{min-width:640px}.th-ledger .name{font-weight:500}.th-ledger .meta{color:var(--muted);font-size:12px;margin-top:2px}.th-mul.up{color:var(--lime)}.th-mul.down{color:var(--coral)}.th-mul.flat{color:inherit}.size-grid .tile.th-empty{display:none}.metrics .kicker{grid-column:1/-1;margin-bottom:4px}.metrics .metric .band{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px;line-height:1.2}";
     document.head.appendChild(s);
   }
   function hideEmptySize() {
@@ -70,9 +71,15 @@
     if (p.hof) tags.push("Hall of Fame");
     pills.innerHTML = tags.map(function (x) { return '<span class="tag">' + x + "</span>"; }).join("");
   }
-  function cell(label, val) {
+  function cell(label, val, extra) {
     if (val == null || val === "") return "";
-    return '<div class="metric"><label>' + label + "</label><b>" + val + "</b></div>";
+    return '<div class="metric"><label>' + label + "</label><b>" + val + "</b>" + (extra || "") + "</div>";
+  }
+  function bandOf(full, key, pct) {
+    var b = full && full.band && full.band[key];
+    if (!b) return "";
+    var fn = TR.Model && TR.Model.bandHtml;
+    return fn ? fn(b.lo, b.hi, pct) : "";
   }
   function theoryName(s) {
     var name = s.label || s.id;
@@ -178,11 +185,11 @@
       }
       html +=
         '<div class="kicker">Draft night</div>' +
-        cell("AS", fmtExp(full.expAs)) +
-        cell("All-NBA", fmtExp(full.expNba)) +
-        cell("Yrs", fmtExp(full.expYrs)) +
-        cell("MVP", fmtExp(full.expMvp)) +
-        cell("HOF then", fmtPct(full.pHof));
+        cell("AS", fmtExp(full.expAs), bandOf(full, "expAs")) +
+        cell("All-NBA", fmtExp(full.expNba), bandOf(full, "expNba")) +
+        cell("Yrs", fmtExp(full.expYrs), bandOf(full, "expYrs")) +
+        cell("MVP", fmtExp(full.expMvp), bandOf(full, "expMvp")) +
+        cell("HOF then", fmtPct(full.pHof), bandOf(full, "pHof", true));
       if (historic) html += cell("HOF now", fmtHof(hofNow));
       metrics.innerHTML = html;
     }

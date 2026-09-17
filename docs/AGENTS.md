@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Nested evaluation, baseline table, bootstrap intervals. C and the intercept shift are frozen before 2005–2014. Holdout AUC 0.68 vs pick-oracle 0.77. Grey 10–90 range on draft-night cells from 80 train resamples.
 - 2026-09-16 (Grok chat): Scoring is a fitted hurdle GLM, not typed multipliers. Train 1947–2004, holdout 2005–2014, AUC 0.68, mean P(All-Star) matches the holdout rate. HOF is logistic of P(All-Star), not a 20-feature logistic. Pick still out. Missing box scores skip. College lines centered on a typical draftee, not the packed-star mean. Swing and position flags dropped after they stacked with scoring.
 - 2026-09-16 (Grok chat): Pick is out of the projection. Missing box scores no longer get a 1.70 cap, which was punishing everyone we hadn't typed stats for.
 - 2026-09-16 (Grok chat): Pre-2000 stars were invisible because 22 in 1969 was treated like 22 in 2015, and college stats were missing. Age is relative to the era. Kareem, Magic, Bird, Jordan, Shaq, Oscar, etc. have their draft-year lines. Magic 4th, Shaq 6th, Bird 15th.

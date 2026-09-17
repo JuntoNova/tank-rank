@@ -58,7 +58,7 @@
     const pos = String(g.pos || p.pos || "");
     const htIn = inches(ht);
     const guard = /(^|\b)(PG|SG|G)(\b|\/)/i.test(pos);
-    const astN = g.ast != null ? Number(g.ast) : (p.ast != null ? Number(p.ast) : NaN);
+    const astN = g.ast != null ? Number(g.ast) : NaN;
     let create = 0;
     if (g.create != null && g.create !== "") create = Number(g.create) ? 1 : 0;
     else if (isFinite(astN) && ((astN >= 2.5 && htIn >= 77) || (astN >= 2.0 && guard))) create = 1;
@@ -119,6 +119,13 @@
       expMvp: inten.mvp * mMvp, pHof: pHof, pAs: pAs, mHof: mHof
     };
   }
+  function bandCell(proj, key, pct) {
+    var b = proj && proj.band && proj.band[key];
+    var head = pct ? fmtPct(proj.pHof) : fmtExp(proj[key]);
+    if (!b) return head;
+    var t = (window.TR && TR.Model && TR.Model.fmtBand) ? TR.Model.fmtBand(b.lo, b.hi, pct) : "";
+    return t ? head + '<span class="band">' + t + "</span>" : head;
+  }
   function vsCell(got, exp) {
     const n = Number(got) || 0;
     const d = n - exp;
@@ -170,7 +177,8 @@
     const s = document.createElement("style");
     s.id = "th-board-css";
     s.textContent = ".vs{display:inline-block;margin-left:6px;font-size:11px;color:var(--muted)}"
-      + ".vs.up{color:var(--lime)}.vs.down{color:var(--coral)}.vs.even{color:var(--gold)}";
+      + ".vs.up{color:var(--lime)}.vs.down{color:var(--coral)}.vs.even{color:var(--gold)}"
+      + ".pct .band{display:block;font-size:11px;color:var(--muted);font-weight:400;line-height:1.15;margin-top:1px}";
     document.head.appendChild(s);
   }
   function paint(year, priors) {
@@ -197,13 +205,13 @@
           + '<td class="rank">' + String(p.rank).padStart(2, "0") + "</td>"
           + '<td><div class="name">' + p.name + '</div><div class="meta">' + [p.pos, p.school].filter(Boolean).join(" · ") + "</div></td>"
           + "<td>" + (p.team || "\u2014") + "</td>"
-          + '<td class="pct">' + fmtExp(proj.expAs) + "</td>"
-          + '<td class="pct">' + fmtExp(proj.expNba1) + "</td>"
-          + '<td class="pct">' + fmtExp(proj.expNba) + "</td>"
-          + '<td class="pct">' + fmtExp(proj.expYrs) + "</td>"
-          + '<td class="pct">' + fmtExp(proj.expCh) + "</td>"
-          + '<td class="pct">' + fmtExp(proj.expMvp) + "</td>"
-          + '<td class="pct">' + fmtPct(proj.pHof) + "</td></tr>";
+          + '<td class="pct">' + bandCell(proj, "expAs") + "</td>"
+          + '<td class="pct">' + bandCell(proj, "expNba1") + "</td>"
+          + '<td class="pct">' + bandCell(proj, "expNba") + "</td>"
+          + '<td class="pct">' + bandCell(proj, "expYrs") + "</td>"
+          + '<td class="pct">' + bandCell(proj, "expCh") + "</td>"
+          + '<td class="pct">' + bandCell(proj, "expMvp") + "</td>"
+          + '<td class="pct">' + bandCell(proj, "pHof", true) + "</td></tr>";
       }).join("");
     } else {
       body.innerHTML = rows.map(function (p) {

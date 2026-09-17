@@ -6,33 +6,23 @@ Identification
   Age outside 17–25.5 is missing, not a prodigy.
   Packs join on pick number, not array index.
 
+Nested evaluation
+  Hyperparameters (L2 C, Poisson alpha, Ridge alpha, intercept shift)
+  are chosen on an inner slice 1995–2004. The model is then refit on
+  1947–2004. 2005–2014 is locked and only used to report.
+
 Missing production
   Coefficients for pts/ast/stl/blk/ape are estimated on observed rows
   (miss dummies in train). At predict those dummies are zero — the theory
   does not fire. Production is centered on a typical college draftee line
-  (16 / 2.5 / 1.2 / 0.7), not on the star-selected subset we have typed,
-  so "skip" does not impute a 19-point star season. Extreme college lines
-  are winsorized so 44 points is not 4× a 22-point season.
+  (16 / 2.5 / 1.2 / 0.7), not on the star-selected subset we have typed.
+  Extreme college lines are winsorized.
 
-What was tried and dropped
-  Guard/center flags: stacked with scoring and passing.
-  Two-position listing (swing): largest raw coefficient, but it is a proxy
-  for "we wrote a scouting report" (27% All-Star vs 8%). After scoring and
-  passing are in the model it does not belong in the projection.
-  stocks = stl+blk: double-counted blocks with the rim theory.
+Uncertainty
+  80 train-resamples, same frozen hyperparameters. Player intervals are
+  the 10th–90th percentile of those draws.
 
-Outcomes
-  Logistic P(ever honor), L2, C picked on holdout Brier.
-  Poisson E[count | ever] when the positive sample is large, heavily
-  shrunk toward the All-Star mean so a good college line is not 10 AS.
-  E[count] = P_cal(ever) × E[count | ever].
-  P(ever) for All-Star / All-NBA gets an intercept shift on the holdout
-  so the mean matches the rate (ranking preserved).
-  Years: ridge, then an intercept shift so holdout mean matches.
-  Hall of Fame: logistic of P(All-Star) only (rare-event, one feature).
-  Championships stay unshifted — holdout chip labels are incomplete.
-
-Train 1947–2004. Holdout 2005–2014. HOF train 1947–1998.
+Train 1947–2004. Inner 1995–2004. Holdout 2005–2014. HOF train 1947–1998.
 """
 from __future__ import annotations
 
@@ -44,6 +34,7 @@ import re
 import numpy as np
 from sklearn.linear_model import LogisticRegression, PoissonRegressor, Ridge
 from sklearn.metrics import log_loss, roc_auc_score
+from sklearn.model_selection import KFold, StratifiedKFold
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HIST = os.path.join(ROOT, "assets", "history")
@@ -65,6 +56,11 @@ HOF_FLOOR = 0.003
 HOF_CAP = 0.28
 LAM_MIN = 1.0
 LAM_MAX = 8.0
+BOOT_B = 80
+BOOT_SEED = 1
+C_GRID = [0.2, 0.4, 0.8, 1.5, 3.0]
+PO_GRID = [3.0, 10.0, 30.0]
+RIDGE_GRID = [0.3, 1.0, 3.0, 10.0]
 
 
 def inches(ht):
@@ -248,12 +244,16 @@ def design(rows, means, sds, predict=False):
     return np.asarray(X, dtype=float)
 
 
-def pack_linear(kind, intercept, coef, names):
+def pack_linear(kind, intercept, coef, names, nd=6):
     return {
         "kind": kind,
-        "intercept": float(intercept),
-        "coef": {k: float(v) for k, v in zip(names, coef)},
+        "intercept": round(float(intercept), nd),
+        "coef": {k: round(float(v), nd) for k, v in zip(names, coef)},
     }
+
+
+def pack_boot_spec(kind, intercept, coef, names):
+    return pack_linear(kind, intercept, coef, names, nd=4)
 
 
 def sigmoid(z):
@@ -279,7 +279,7 @@ def spearman(a, b):
 
 
 def intercept_shift(p_raw, rate, lo=-4.0, hi=4.0, steps=40):
-    """δ such that mean(sigmoid(logit(p)+δ)) ≈ holdout rate. Slope stays 1."""
+    """δ such that mean(sigmoid(logit(p)+δ)) ≈ rate. Slope stays 1."""
     p_raw = np.asarray(p_raw, float)
     target = float(rate)
     best = (abs(p_raw.mean() - target), 0.0)
@@ -303,100 +303,220 @@ def platt_apply(p_raw, spec):
     return sigmoid(spec["intercept"] + spec["slope"] * logit(p_raw))
 
 
+def y_of(rows, key):
+    return np.asarray([r[key] for r in rows], float)
+
+
+def auc_of(z, p):
+    z = np.asarray(z)
+    p = np.asarray(p)
+    if z.min() == z.max():
+        return 0.5
+    return float(roc_auc_score(z, p))
+
+
+def report(name, p, z, extra=None):
+    p = np.asarray(p, float)
+    z = np.asarray(z, float)
+    out = {
+        "name": name,
+        "auc": round(auc_of(z, p), 3),
+        "brier": round(float(np.mean((p - z) ** 2)), 4),
+        "logloss": round(float(log_loss(z, np.clip(p, 1e-6, 1 - 1e-6))), 3) if z.min() != z.max() else None,
+        "mean_p": round(float(p.mean()), 3),
+        "rate": round(float(z.mean()), 3),
+        "spearman": None if spearman(z, p) is None else round(spearman(z, p), 3),
+    }
+    if extra:
+        out.update(extra)
+    return out
+
+
+def oof_logit_shift(X, z, C, n_splits=5, seed=1):
+    """Intercept shift from out-of-fold train predictions. Holdout is not used."""
+    z = np.asarray(z, int)
+    oof = np.zeros(len(z), float)
+    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
+    for tr, va in skf.split(X, z):
+        lg = fit_logit(X[tr], z[tr], C)
+        oof[va] = lg.predict_proba(X[va])[:, 1]
+    return intercept_shift(oof, z.mean()), oof
+
+
+def oof_ridge_shift(X, y, alpha, n_splits=5, seed=1):
+    y = np.asarray(y, float)
+    oof = np.zeros(len(y), float)
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=seed)
+    for tr, va in kf.split(X):
+        rd = Ridge(alpha=alpha)
+        rd.fit(X[tr], y[tr])
+        oof[va] = np.clip(rd.predict(X[va]), 0, 22)
+    return float(y.mean() - oof.mean())
+
+
+def select_logit_C(Xfit, zfit, Xval, zval):
+    if zfit.min() == zfit.max() or len(Xfit) < 20:
+        return 1.0, 0.5, 0.0
+    best = None
+    for C in C_GRID:
+        lg = LogisticRegression(C=C, max_iter=900, solver="lbfgs")
+        lg.fit(Xfit, zfit)
+        p = lg.predict_proba(Xval)[:, 1]
+        brier = float(np.mean((p - zval) ** 2))
+        auc = auc_of(zval, p)
+        score = -brier + 0.01 * auc
+        if best is None or score > best[0]:
+            best = (score, C, auc, brier, lg)
+    return best[1], best[2], best[3]
+
+
+def select_poisson_alpha(Xfit, yfit, Xval, yval):
+    pos_fit = np.where(yfit > 0)[0]
+    pos_val = np.where(yval > 0)[0]
+    if len(pos_fit) < 40:
+        return None, float(yfit[pos_fit].mean()) if len(pos_fit) else 1.0, None
+    bestp = None
+    for a in PO_GRID:
+        po = PoissonRegressor(alpha=a, max_iter=900)
+        po.fit(Xfit[pos_fit], yfit[pos_fit])
+        if len(pos_val) >= 8:
+            pred = np.clip(po.predict(Xval[pos_val]), LAM_MIN, LAM_MAX)
+            mae = float(np.mean(np.abs(pred - yval[pos_val])))
+        else:
+            pred = np.clip(po.predict(Xfit[pos_fit]), LAM_MIN, LAM_MAX)
+            mae = float(np.mean(np.abs(pred - yfit[pos_fit])))
+        if bestp is None or mae < bestp[0]:
+            bestp = (mae, a, po)
+    mu = float(yfit[pos_fit].mean())
+    return bestp[1], mu, bestp[0]
+
+
+def select_ridge_alpha(Xfit, yfit, Xval, yval):
+    best = None
+    for a in RIDGE_GRID:
+        rd = Ridge(alpha=a)
+        rd.fit(Xfit, yfit)
+        pred = np.clip(rd.predict(Xval), 0, 22)
+        mae = float(np.mean(np.abs(pred - yval)))
+        if best is None or mae < best[0]:
+            best = (mae, a, rd)
+    return best[1], best[0]
+
+
+def fit_logit(X, z, C):
+    lg = LogisticRegression(C=C, max_iter=900, solver="lbfgs")
+    lg.fit(X, z)
+    return lg
+
+
+def subset_X(X, names, keep):
+    idx = [i for i, k in enumerate(names) if k in keep]
+    if not idx:
+        return np.zeros((len(X), 1))
+    return X[:, idx]
+
+
 def main():
     rows = load_rows()
     names = feature_names()
     train = [r for r in rows if r["y"] <= 2004]
+    inner_fit = [r for r in rows if r["y"] <= 1994]
+    inner_val = [r for r in rows if 1995 <= r["y"] <= 2004]
     test = [r for r in rows if 2005 <= r["y"] <= 2014]
     hof_train = [r for r in rows if r["y"] <= 1998]
     means, sds = moments(train)
+
     Xtr = design(train, means, sds, predict=False)
+    Xtr_p = design(train, means, sds, predict=True)
+    Xin = design(inner_fit, means, sds, predict=False)
+    Xval = design(inner_val, means, sds, predict=True)
     Xte = design(test, means, sds, predict=True)
     Xall = design(rows, means, sds, predict=True)
     Xhof = design(hof_train, means, sds, predict=True)
+
     metrics = {}
     models = {}
     platt = {}
+    inner_notes = {}
 
     def fit_hurdle(key, min_pos=40, do_shift=False):
-        ytr = np.asarray([r[key] for r in train], float)
-        yte = np.asarray([r[key] for r in test], float)
-        ztr = (ytr > 0).astype(int)
-        zte = (yte > 0).astype(int)
-        best = None
-        for C in [0.2, 0.4, 0.8, 1.5, 3.0]:
-            lg = LogisticRegression(C=C, max_iter=900, solver="lbfgs")
-            lg.fit(Xtr, ztr)
-            pte = lg.predict_proba(Xte)[:, 1]
-            auc = float(roc_auc_score(zte, pte)) if zte.min() != zte.max() else 0.5
-            ll = float(log_loss(zte, np.clip(pte, 1e-6, 1 - 1e-6)))
-            brier = float(np.mean((pte - zte) ** 2))
-            score = -brier + 0.01 * auc
-            if best is None or score > best[0]:
-                best = (score, C, lg, auc, ll, brier, pte)
-        _, C, lg, auc, ll, brier, pte = best
-        spec = intercept_shift(pte, zte.mean()) if do_shift else None
-        pte_cal = platt_apply(pte, spec)
-        brier_cal = float(np.mean((pte_cal - zte) ** 2))
+        yin = y_of(inner_fit, key)
+        yval = y_of(inner_val, key)
+        ytr = y_of(train, key)
+        yte = y_of(test, key)
+        zin, zval, ztr, zte = (yin > 0).astype(int), (yval > 0).astype(int), (ytr > 0).astype(int), (yte > 0).astype(int)
+
+        C, auc_inner, brier_inner = select_logit_C(Xin, zin, Xval, zval)
+        po_alpha, mu_pos, po_mae = select_poisson_alpha(Xin, yin, Xval, yval)
+        if len(np.where(ytr > 0)[0]) < min_pos:
+            po_alpha = None
+
+        lg = fit_logit(Xtr, ztr, C)
+        spec = None
+        if do_shift:
+            spec, _ = oof_logit_shift(Xtr, ztr, C)
         pos_idx = np.where(ytr > 0)[0]
         mu_pos = float(ytr[pos_idx].mean()) if len(pos_idx) else 1.0
         pos_model = None
-        pos_alpha = None
-        pos_mae = None
-        if len(pos_idx) >= min_pos:
-            yp = ytr[pos_idx]
-            Xp = Xtr[pos_idx]
-            bestp = None
-            for a in [3.0, 10.0, 30.0]:
-                po = PoissonRegressor(alpha=a, max_iter=900)
-                po.fit(Xp, yp)
-                te_pos = np.where(yte > 0)[0]
-                if len(te_pos) >= 10:
-                    pred = np.clip(po.predict(Xte[te_pos]), LAM_MIN, LAM_MAX)
-                    mae = float(np.mean(np.abs(pred - yte[te_pos])))
-                else:
-                    mae = float(np.mean(np.abs(np.clip(po.predict(Xp), LAM_MIN, LAM_MAX) - yp)))
-                if bestp is None or mae < bestp[0]:
-                    bestp = (mae, a, po)
-            pos_model, pos_alpha, pos_mae = bestp[2], bestp[1], bestp[0]
+        pos_mae_tr = None
+        if po_alpha is not None and len(pos_idx) >= min_pos:
+            po = PoissonRegressor(alpha=po_alpha, max_iter=900)
+            po.fit(Xtr[pos_idx], ytr[pos_idx])
+            pos_model = po
+            te_pos = np.where(yte > 0)[0]
+            if len(te_pos) >= 8:
+                pred = np.clip(po.predict(Xte[te_pos]), LAM_MIN, LAM_MAX)
+                pos_mae_tr = float(np.mean(np.abs(pred - yte[te_pos])))
+
+        p_te_raw = lg.predict_proba(Xte)[:, 1]
+        p_te = platt_apply(p_te_raw, spec)
         p_all = platt_apply(lg.predict_proba(Xall)[:, 1], spec)
         if pos_model is not None:
-            lam = np.clip(pos_model.predict(Xall), LAM_MIN, LAM_MAX)
+            lam_all = np.clip(pos_model.predict(Xall), LAM_MIN, LAM_MAX)
+            lam_te = np.clip(pos_model.predict(Xte), LAM_MIN, LAM_MAX)
         else:
-            lam = np.full(len(rows), mu_pos)
-        exp = p_all * lam
-        te_lam = (
-            np.clip(pos_model.predict(Xte), LAM_MIN, LAM_MAX)
-            if pos_model is not None else mu_pos
-        )
-        sp = spearman(yte, pte_cal * te_lam)
+            lam_all = np.full(len(rows), mu_pos)
+            lam_te = mu_pos
+        exp = p_all * lam_all
+        sp = spearman(yte, p_te * lam_te)
+
         metrics[key] = {
             "C": C,
-            "holdout_auc": round(auc, 3),
-            "holdout_logloss": round(ll, 3),
-            "holdout_brier": round(brier, 4),
-            "holdout_brier_cal": round(brier_cal, 4),
-            "holdout_mean_p": round(float(pte.mean()), 3),
-            "holdout_mean_p_cal": round(float(pte_cal.mean()), 3),
+            "C_source": "inner 1995–2004 Brier",
+            "inner_auc": round(auc_inner, 3),
+            "inner_brier": round(brier_inner, 4),
+            "holdout_auc": round(auc_of(zte, p_te), 3),
+            "holdout_logloss": round(float(log_loss(zte, np.clip(p_te, 1e-6, 1 - 1e-6))), 3),
+            "holdout_brier": round(float(np.mean((p_te_raw - zte) ** 2)), 4),
+            "holdout_brier_cal": round(float(np.mean((p_te - zte) ** 2)), 4),
+            "holdout_mean_p": round(float(p_te_raw.mean()), 3),
+            "holdout_mean_p_cal": round(float(p_te.mean()), 3),
             "holdout_rate": round(float(zte.mean()), 3),
             "holdout_spearman": None if sp is None else round(sp, 3),
             "mu_pos": round(mu_pos, 3),
-            "pos_alpha": pos_alpha,
-            "pos_mae": None if pos_mae is None else round(float(pos_mae), 3),
+            "pos_alpha": po_alpha,
+            "pos_mae": None if pos_mae_tr is None else round(float(pos_mae_tr), 3),
             "n_train": len(train),
+            "n_inner_fit": len(inner_fit),
+            "n_inner_val": len(inner_val),
+            "n_holdout": len(test),
             "n_pos": int(ztr.sum()),
             "platt": spec,
+            "platt_source": "5-fold OOF on 1947–2004, C frozen" if spec else None,
         }
+        inner_notes[key] = {"C": C, "inner_auc": round(auc_inner, 3)}
         if spec:
             platt[key] = spec
         lebron = next((i for i, r in enumerate(rows) if r["n"] == "LeBron James"), None)
-        print(key, "auc", round(auc, 3), "C", C, "brier", round(brier, 4),
-              "cal", round(brier_cal, 4), "mu_pos", round(mu_pos, 2),
-              "maxE", round(float(exp.max()), 2),
+        print(key, "C", C, "inner_auc", round(auc_inner, 3),
+              "holdout_auc", round(auc_of(zte, p_te), 3),
+              "mean_p", round(float(p_te.mean()), 3), "rate", round(float(zte.mean()), 3),
               "LeBron", None if lebron is None else round(float(exp[lebron]), 2))
         models[key + "_ever"] = lg
         models[key + "_pos"] = pos_model
         models[key + "_mu"] = mu_pos
+        models[key + "_C"] = C
+        models[key + "_po_alpha"] = po_alpha
         return exp, p_all
 
     e_as, p_as = fit_hurdle("as", do_shift=True)
@@ -404,41 +524,35 @@ def main():
     e_mvp, _ = fit_hurdle("mvp", min_pos=80, do_shift=False)
     e_ch, _ = fit_hurdle("ch", min_pos=80, do_shift=False)
 
-    ytr = np.asarray([r["yrs"] for r in train], float)
-    yte = np.asarray([r["yrs"] for r in test], float)
-    best = None
-    for a in [0.3, 1.0, 3.0, 10.0]:
-        rd = Ridge(alpha=a)
-        rd.fit(Xtr, ytr)
-        pred = np.clip(rd.predict(Xte), 0, 22)
-        mae = float(np.mean(np.abs(pred - yte)))
-        if best is None or mae < best[0]:
-            best = (mae, a, rd, pred)
-    mae, a, rd, pred = best
-    yrs_shift = float(yte.mean() - pred.mean())
+    y_in, y_val, ytr, yte = y_of(inner_fit, "yrs"), y_of(inner_val, "yrs"), y_of(train, "yrs"), y_of(test, "yrs")
+    yrs_alpha, yrs_inner_mae = select_ridge_alpha(Xin, y_in, Xval, y_val)
+    yrs_shift = oof_ridge_shift(Xtr, ytr, yrs_alpha)
+    rd = Ridge(alpha=yrs_alpha)
+    rd.fit(Xtr, ytr)
+    pred_te = np.clip(rd.predict(Xte), 0, 22)
+    mae_te = float(np.mean(np.abs(pred_te + yrs_shift - yte)))
     models["yrs"] = rd
+    models["yrs_alpha"] = yrs_alpha
     metrics["yrs"] = {
-        "alpha": a,
-        "holdout_mae": round(mae, 3),
+        "alpha": yrs_alpha,
+        "alpha_source": "inner 1995–2004 MAE",
+        "inner_mae": round(yrs_inner_mae, 3),
+        "holdout_mae": round(float(np.mean(np.abs(pred_te - yte))), 3),
+        "holdout_mae_cal": round(mae_te, 3),
         "holdout_mean_actual": round(float(yte.mean()), 3),
-        "holdout_mean_pred": round(float(pred.mean()), 3),
+        "holdout_mean_pred": round(float(pred_te.mean()), 3),
         "shift": round(yrs_shift, 3),
-        "holdout_mean_pred_cal": round(float(pred.mean() + yrs_shift), 3),
+        "shift_source": "5-fold OOF on 1947–2004, alpha frozen",
+        "holdout_mean_pred_cal": round(float(pred_te.mean() + yrs_shift), 3),
     }
-    print("yrs", "mae", round(mae, 3), "alpha", a, "shift", round(yrs_shift, 3))
+    print("yrs", "alpha", yrs_alpha, "shift", round(yrs_shift, 3), "holdout_mae_cal", round(mae_te, 3))
 
     p_as_hof = platt_apply(models["as_ever"].predict_proba(Xhof)[:, 1], platt.get("as"))
-    yhof = np.asarray([r["hof"] for r in hof_train], float)
+    yhof = y_of(hof_train, "hof")
     p_given_as = float(np.mean([r["hof"] for r in hof_train if r["as"] > 0]))
     p_given_no = float(np.mean([r["hof"] for r in hof_train if r["as"] == 0]))
-    # Law of total probability: P(HOF) = P(HOF|AS) P(AS) + P(HOF|no) (1-P(AS)).
-    # P(AS) is the model's calibrated probability, not the career label.
     p_hof = np.clip(p_given_no + (p_given_as - p_given_no) * p_as_hof, HOF_FLOOR, HOF_CAP)
-    hof_from_as = {
-        "kind": "mixture",
-        "p_given_as": p_given_as,
-        "p_given_no": p_given_no,
-    }
+    hof_from_as = {"kind": "mixture", "p_given_as": p_given_as, "p_given_no": p_given_no}
     metrics["hof"] = {
         "from": "P(HOF|AS) P(AS) + P(HOF|no) (1-P(AS))",
         "p_given_as": round(p_given_as, 4),
@@ -449,7 +563,38 @@ def main():
         "n_train": len(hof_train),
     }
     print("hof", "rate", metrics["hof"]["train_rate"], "mean_pred", metrics["hof"]["train_mean_pred"],
-          "brier", metrics["hof"]["train_brier"], "P(HOF|AS)", round(p_given_as, 3))
+          "P(HOF|AS)", round(p_given_as, 3))
+
+    # Locked-holdout baselines. None of these touch C or the product model.
+    zte_as = (y_of(test, "as") > 0).astype(int)
+    p_full = platt_apply(models["as_ever"].predict_proba(Xte)[:, 1], platt.get("as"))
+    baselines = []
+    rate = float(zte_as.mean())
+    baselines.append(report("intercept only", np.full(len(test), rate), zte_as))
+
+    body_keep = set(BODY)
+    Xb_in = subset_X(Xin, names, body_keep)
+    Xb_te = subset_X(Xte, names, body_keep)
+    lg_body = fit_logit(Xb_in, (y_of(inner_fit, "as") > 0).astype(int), 1.0)
+    baselines.append(report("age + size", lg_body.predict_proba(Xb_te)[:, 1], zte_as))
+
+    prod_keep = set(PROD + ["miss_" + k for k in PROD])
+    Xp_in = subset_X(Xin, names, prod_keep)
+    Xp_te = subset_X(Xte, names, prod_keep)
+    lg_prod = fit_logit(Xp_in, (y_of(inner_fit, "as") > 0).astype(int), 1.0)
+    baselines.append(report("college box score", lg_prod.predict_proba(Xp_te)[:, 1], zte_as))
+
+    baselines.append(report("full model (no pick)", p_full, zte_as))
+
+    pk_in = np.log(np.maximum([float(r.get("pk") or 60) for r in inner_fit], 1.0)).reshape(-1, 1)
+    pk_te = np.log(np.maximum([float(r.get("pk") or 60) for r in test], 1.0)).reshape(-1, 1)
+    lg_pk = fit_logit(pk_in, (y_of(inner_fit, "as") > 0).astype(int), 1.0)
+    baselines.append(report("pick (forbidden oracle)", lg_pk.predict_proba(pk_te)[:, 1], zte_as,
+                            extra={"note": "Not in the product. Identification cost."}))
+    metrics["baselines_holdout_as"] = baselines
+    print("baselines (holdout ever-AS)")
+    for b in baselines:
+        print(" ", b["name"], "auc", b["auc"], "brier", b["brier"], "mean_p", b["mean_p"])
 
     print("top E[AS]")
     top = sorted(zip(e_as, rows), key=lambda t: -t[0])[:20]
@@ -472,10 +617,52 @@ def main():
         e, p, r = by_name[n]
         print(f"  {n:24} E[AS] {e:.2f} p {p:.2f} act {r['as']:.0f} {r['y']} #{r['pk']}")
 
+    def boot_one(idx):
+        samp = [train[i] for i in idx]
+        Xs = design(samp, means, sds, predict=False)
+        draw = {}
+        for key in ("as", "nba", "mvp", "ch"):
+            ys = y_of(samp, key)
+            zs = (ys > 0).astype(int)
+            if zs.min() == zs.max():
+                return None
+            C = models[key + "_C"]
+            lg = fit_logit(Xs, zs, C)
+            draw[key + "_ever"] = pack_boot_spec("logistic", lg.intercept_[0], lg.coef_[0], names)
+            po_alpha = models[key + "_po_alpha"]
+            pos_idx = np.where(ys > 0)[0]
+            if po_alpha is not None and models[key + "_pos"] is not None and len(pos_idx) >= 40:
+                po = PoissonRegressor(alpha=po_alpha, max_iter=900)
+                po.fit(Xs[pos_idx], ys[pos_idx])
+                draw[key + "_pos"] = pack_boot_spec("poisson", po.intercept_, po.coef_, names)
+            else:
+                mu = float(ys[pos_idx].mean()) if len(pos_idx) else models[key + "_mu"]
+                draw[key + "_pos"] = {"kind": "constant", "mu": round(mu, 4)}
+        ys = y_of(samp, "yrs")
+        rd_b = Ridge(alpha=models["yrs_alpha"])
+        rd_b.fit(Xs, ys)
+        draw["yrs"] = pack_boot_spec("linear", rd_b.intercept_, rd_b.coef_, names)
+        return draw
+
+    rng = np.random.RandomState(BOOT_SEED)
+    boots = []
+    tries = 0
+    while len(boots) < BOOT_B and tries < BOOT_B * 4:
+        tries += 1
+        idx = rng.randint(0, len(train), size=len(train))
+        try:
+            draw = boot_one(idx)
+        except Exception:
+            draw = None
+        if draw:
+            boots.append(draw)
+    print("bootstrap", len(boots), "of", BOOT_B, "tries", tries)
+
     coefs = {
-        "method": "hurdle GLM: L2 logistic P(ever) × shrunk Poisson E[count|ever]; Ridge years; HOF = logistic of P(AS)",
-        "identification": "No draft pick. Draft-night traits only. Age clipped to 17–25.5. Missing production skipped at predict and centered on a typical college line, not the packed-star mean. Swing and position flags dropped after they stacked with scoring.",
+        "method": "hurdle GLM, nested: C/alpha/shift on 1995–2004, refit 1947–2004, report 2005–2014",
+        "identification": "No draft pick. Draft-night traits only. Age clipped to 17–25.5. Missing production skipped at predict and centered on a typical college line. Swing and position flags dropped after they stacked with scoring.",
         "train": [1947, 2004],
+        "inner": [1995, 2004],
         "holdout": [2005, 2014],
         "hof_train": [1947, 1998],
         "features": names,
@@ -497,6 +684,9 @@ def main():
         "yrs_shift": yrs_shift,
         "hof_floor": HOF_FLOOR,
         "hof_cap": HOF_CAP,
+        "boot_q": [0.1, 0.9],
+        "boot_B": len(boots),
+        "boot": boots,
     }
     for key in ("as", "nba", "mvp", "ch"):
         lg = models[key + "_ever"]
@@ -513,7 +703,7 @@ def main():
         f.write("window.TR=window.TR||{};TR.GLM=")
         json.dump(coefs, f)
         f.write(";\n")
-    print("wrote", OUT_JSON, OUT_JS)
+    print("wrote", OUT_JSON, OUT_JS, "js bytes", os.path.getsize(OUT_JS))
 
 
 if __name__ == "__main__":

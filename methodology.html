@@ -20,28 +20,46 @@
       `<p>We fit what happened after past drafts from facts that were knowable on draft night. Pick is not one of those facts. NBA career box scores are not either.</p>
 
       <h2>The model</h2>
-      <p>A hurdle GLM. Trained on draftees 1947–2004. Tested on 2005–2014.</p>
+      <p>A hurdle GLM. Coefficients are fit on draftees 1947–2004. The penalty, the Poisson shrink, the year shrink, and the intercept shift are chosen without looking at 2005–2014. That slice is locked and only used to report.</p>
       <ul>
-        <li>Logistic P(ever All-Star / All-NBA / MVP / champion). L2 penalty. The penalty is chosen on holdout Brier, a proper scoring rule, not on ranking AUC alone.</li>
-        <li>Poisson E[count | it happened] on the players who did, shrunk toward the All-Star mean so a good college line is not ten All-Star games.</li>
-        <li>Expected count = P(ever) × E[count | ever].</li>
-        <li>P(ever All-Star) and P(ever All-NBA) get an intercept shift on the holdout so the average matches the historical rate. Rank order is unchanged.</li>
-        <li>Years: ridge linear, then an intercept shift so the holdout mean matches.</li>
-        <li>Hall of Fame: P(HOF | All-Star) × P(All-Star) + P(HOF | never) × (1 − P(All-Star)). About 34% of All-Stars in the file are in Springfield, and about 0.4% of the rest. A 20-feature HOF logistic overfits a 4% label. This does not.</li>
+        <li>Inner slice for the knobs: 1995–2004. L2 penalty is chosen on Brier, a proper scoring rule.</li>
+        <li>The intercept shift that makes the average probability match the historical rate is fit by five-fold out-of-fold predictions on 1947–2004, with that penalty frozen. The holdout does not get a second chance to pick the shift.</li>
+        <li>Then the model is refit on all of 1947–2004 and scored on 2005–2014.</li>
+        <li>Expected count = P(ever) × E[count | ever]. The count model is a Poisson, shrunk toward the All-Star mean.</li>
+        <li>Hall of Fame: about 34% of All-Stars in the file are in Springfield, and about 0.4% of the rest. P(HOF) follows P(All-Star) that way. Cap 28%.</li>
       </ul>
-      <p>Holdout AUC for ever-All-Star is 0.68. Mean predicted P(All-Star) on the holdout is 9.5%, same as the actual rate. That is modest on purpose: we are not allowed to use the pick, and most draftees are zeros. It is a real out-of-sample number, not a story we typed.</p>
+      <p>Holdout AUC for ever-All-Star is 0.68. Mean predicted P(All-Star) on the holdout is 10.2%; the actual rate is 9.5%. Spearman on expected All-Star games is 0.15. That is modest on purpose: we are not allowed to use the pick, and most draftees are zeros.</p>
+
+      <h2>What the holdout says, against simpler models</h2>
+      <p>Same 2005–2014 players. None of these comparison fits were allowed to see that slice when the knobs were picked. The pick row is the thing we refuse to use.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Model</th><th>AUC</th><th>Brier</th><th>Mean P</th></tr></thead>
+        <tbody>
+          <tr><td>Coin flip / intercept only</td><td>0.50</td><td>0.086</td><td>9.5%</td></tr>
+          <tr><td>Age and size</td><td>0.67</td><td>0.085</td><td>11.8%</td></tr>
+          <tr><td>College box score only</td><td>0.60</td><td>0.162</td><td>33%</td></tr>
+          <tr><td>Full model, no pick</td><td>0.68</td><td>0.080</td><td>10.2%</td></tr>
+          <tr><td>Pick (not in the product)</td><td>0.77</td><td>0.076</td><td>11.8%</td></tr>
+        </tbody>
+      </table></div>
+      <p>Age and size already do most of the ranking. The college line helps a little and keeps the average honest. Using the pick would look better. That is the cost of the rule: the score has to come from the player.</p>
+      <p>College-box-score-only prints 33% because a missing line is not a line. That row is why skip has to sit on top of age and size, not by itself.</p>
+
+      <h2>The grey range on the board</h2>
+      <p>The big number is the fit on the whole training file. The small grey range is a 10th-to-90th interval from 80 refits on reshuffled training history, same frozen knobs. If the range is wide, the file does not know that player well. Fultz at about 3 All-Stars with a range around it is a 23-and-6 freshman line, not a promise.</p>
 
       <h2>Features</h2>
       <p>Age relative to the era median, clipped to 17–25.5 so a bad birthdate is not a 6-year-old prodigy. Listed height and weight. Height vs the usual guy at that position. Prep-to-pro / international origin. A 6-7+ creation flag. College points, assists, steals, blocks when we have them. Wingspan minus height when we have it.</p>
-      <p>College counting stats are centered on a typical draftee line (16 points, 2.5 assists, 1.2 steals, 0.7 blocks), not on the star-selected subset we have typed (~19 points). Extreme lines are winsorized: 44 points is not four times a 22-point season. Missing production is skipped at predict. It does not impute a star line, and it does not apply a hand-typed cap.</p>
+      <p>College counting stats are centered on a typical draftee line (16 points, 2.5 assists, 1.2 steals, 0.7 blocks), not on the star-selected subset we have typed (~19 points). Extreme lines are winsorized. Missing production is skipped at predict.</p>
 
       <h2>What we tried and dropped</h2>
       <ul>
         <li>Draft slot. Identification: the score has to come from the player.</li>
         <li>Guard / center flags on top of scoring and passing. They stacked.</li>
-        <li>Two-position listing. It was the largest raw coefficient, and it was a proxy for “we wrote a scouting report” (27% All-Star vs 8%). After scoring and passing were in the model it came out.</li>
+        <li>Two-position listing. It was a proxy for “we wrote a scouting report.”</li>
         <li>Steals+blocks as one number plus blocks again. Rim was counting twice.</li>
-        <li>A 20-feature Hall of Fame logistic. Rare event, too many knobs, 96% for players who were not going to Springfield.</li>
+        <li>A 20-feature Hall of Fame logistic. Rare event, too many knobs.</li>
+        <li>Picking the penalty on the same slice we report. That inflated the old 0.68. This 0.68 is locked.</li>
       </ul>
 
       <h2>What we do not use</h2>
@@ -55,9 +73,9 @@
       <h2>What we estimate</h2>
       <ul>
         <li>Expected All-Star games, All-NBA, first-team, years, championships, MVPs</li>
-        <li>P(Hall of Fame) as a calibrated function of P(All-Star), floored at 0.3% and capped at 28%</li>
+        <li>P(Hall of Fame) from P(All-Star), floored at 0.3% and capped at 28%</li>
       </ul>
-      <p>No bust label. That is not an objective outcome.</p>
+      <p>All-NBA is not allowed to exceed All-Star. MVP is not allowed to exceed All-Star. First-team is 22% of expected All-NBA, not a separately fitted count. No bust label. That is not an objective outcome.</p>
 
       <h2>Limits that are in the number</h2>
       <ul>
@@ -65,7 +83,7 @@
         <li>We do not have a college or international line for most of the file. Those theories do not fire. Age, size, and origin still do.</li>
         <li>A 6-8 who blocked 4 shots a night looks, to this model, like a shot-blocking star. Most of those guys were not. That miss is in the 0.68 AUC.</li>
         <li>Championship labels on the 2005–2014 holdout are incomplete, so we do not shift chips down to that rate.</li>
-        <li>First-team All-NBA is 22% of expected All-NBA, not a separately fitted count.</li>
+        <li>The interval is sampling uncertainty of the coefficients. It is not a prediction interval for the career, and it does not cover missing college stats or a wrong height.</li>
       </ul>
 
       <h2>Pack vs depth (2027)</h2>

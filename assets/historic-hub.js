@@ -36,7 +36,8 @@
       "#hist-alltime .table-wrap,#hist-outliers .table-wrap{margin-top:0;-webkit-overflow-scrolling:touch}",
       "#hist-alltime table{table-layout:fixed;width:100%;min-width:1080px}",
       "#hist-alltime td.pct,#hist-alltime td.rank,#hist-alltime th.num{text-align:right;font-variant-numeric:tabular-nums}",
-      "#hist-alltime td.pct,#hist-alltime th.num{white-space:nowrap}",
+      "#hist-alltime th.num{white-space:nowrap}",
+      "#hist-alltime td.pct{white-space:normal}",
       "#hist-alltime th:nth-child(1),#hist-alltime td:nth-child(1){width:3rem}",
       "#hist-alltime th:nth-child(2),#hist-alltime td:nth-child(2){width:3.6rem}",
       "#hist-alltime th:nth-child(3),#hist-alltime td:nth-child(3){width:3rem}",
@@ -61,6 +62,7 @@
       ".at-filters .lab{color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase;align-self:center;margin:0 4px 0 8px}",
       ".at-filters .lab:first-child{margin-left:0}",
       "button.chip[disabled]{opacity:.35;cursor:default}",
+      "#hist-alltime td.pct .band{display:block;font-size:11px;color:var(--muted);font-weight:400;line-height:1.15;margin-top:1px;white-space:nowrap}",
       "#hist-alltime .vs{display:inline-block;margin-left:6px;font-size:11px;color:var(--muted)}",
       "#hist-alltime .vs.up{color:var(--lime)}",
       "#hist-alltime .vs.down{color:var(--coral)}",
@@ -105,6 +107,21 @@
   function fmtSigned(n) {
     if (n == null || isNaN(n) || Math.abs(n) < 0.25) return "0";
     return (n > 0 ? "+" : "\u2212") + Math.abs(n).toFixed(1);
+  }
+  function bandCell(r, k, pct) {
+    var loKey = ({ eAs: "asL", eNba1: "n1L", eNba: "nbaL", eYrs: "yL", eCh: "chL", eMvp: "mL", pHof: "hL" })[k];
+    var hiKey = ({ eAs: "asH", eNba1: "n1H", eNba: "nbaH", eYrs: "yH", eCh: "chH", eMvp: "mH", pHof: "hH" })[k];
+    var head = pct ? fmtPct(r[k]) : fmt(r[k]);
+    if (loKey == null || r[loKey] == null || r[hiKey] == null) return head;
+    var t;
+    if (pct) {
+      var a = Math.round(Number(r[loKey]) * 100), b = Math.round(Number(r[hiKey]) * 100);
+      t = a === b ? "" : a + "\u2013" + b + "%";
+    } else {
+      var a = fmt(r[loKey]), b = fmt(r[hiKey]);
+      t = (!a || !b || a === b) ? "" : a + "\u2013" + b;
+    }
+    return t ? head + '<span class="band">' + t + "</span>" : head;
   }
   function vsCell(got, exp) {
     var n = Number(got) || 0;
@@ -290,8 +307,8 @@
 
   function cell(r, c) {
     if (at.when === "drafted") {
-      if (c.k === "pHof") return fmtPct(r.pHof);
-      return fmt(r[c.k]);
+      if (c.k === "pHof") return bandCell(r, "pHof", true);
+      return bandCell(r, c.k, false);
     }
     if (c.hof) return hofVs(r);
     return vsCell(r[c.k], r[c.e]);
@@ -437,7 +454,7 @@
       at.inited = true;
     }
     if (allTime) { paintAllTime(at.painted ? at.page : 0); return; }
-    fetch("./assets/all-time.json?v=13")
+    fetch("./assets/all-time.json?v=14")
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         allTime = data || { players: [] };
