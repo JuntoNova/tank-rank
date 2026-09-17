@@ -71,7 +71,7 @@
     if (window.TANK_RANK && TANK_RANK.preDraft && TANK_RANK.preDraft[String(year)]) {
       return Promise.resolve(TANK_RANK.preDraft[String(year)]);
     }
-    return fetch("./assets/pre-draft/" + year + ".json?v=97").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+    return fetch("./assets/pre-draft/" + year + ".json?v=98").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
       .then(function (pack) {
         window.TANK_RANK = window.TANK_RANK || {};
         TANK_RANK.preDraft = TANK_RANK.preDraft || {};
