@@ -221,27 +221,33 @@
     var pHof;
     var spec = (G && G.hof_from_as) || {};
     var pAsHof = asHof.p;
-    if (spec.kind === "as_count_mix") {
-      // One-time All-Stars make the Hall ~3.5% of the time. Multi-time ~49%.
-      // A 14% All-Star is almost certainly a 1-timer if he gets there.
-      // P(2+) ≈ P(AS)^2. Do not blend in the 34% ever-AS rate.
+    var eAsHof = asHof.exp;
+    if (spec.kind === "as_star_mix") {
+      // Hall is a 4+ All-Star career. 1–3 All-Stars are ~3% HOF (1980–1998).
+      // Never-All-Star is not a Hall path. A 14% All-Star is not 2% to be inner-circle.
+      var p13 = spec.p_given_1to3 != null ? spec.p_given_1to3 : 0.027;
+      var p4 = spec.p_given_4plus != null ? spec.p_given_4plus : 0.76;
+      var start = spec.eAs_4plus_start != null ? spec.eAs_4plus_start : 1.5;
+      var scale = spec.eAs_4plus_scale != null ? spec.eAs_4plus_scale : 6;
+      var p4plus = clamp((eAsHof - start) / scale, 0, 0.9);
+      pHof = p13 * pAsHof + p4 * p4plus;
+    } else if (spec.kind === "as_count_mix") {
       var p0 = 1 - pAsHof;
       var p1 = pAsHof * (1 - pAsHof);
       var p2 = pAsHof * pAsHof;
-      pHof = (spec.p_given_0 != null ? spec.p_given_0 : 0.002) * p0
-        + (spec.p_given_1 != null ? spec.p_given_1 : 0.035) * p1
-        + (spec.p_given_2plus != null ? spec.p_given_2plus : 0.49) * p2;
+      pHof = (spec.p_given_0 != null ? spec.p_given_0 : 0) * p0
+        + (spec.p_given_1 != null ? spec.p_given_1 : 0.027) * p1
+        + (spec.p_given_2plus != null ? spec.p_given_2plus : 0.04) * p2;
     } else if (spec.kind === "mixture") {
-      var yes = spec.p_given_as != null ? spec.p_given_as : 0.035;
-      var no = spec.p_given_no != null ? spec.p_given_no : 0.002;
+      var yes = spec.p_given_as != null ? spec.p_given_as : 0.027;
+      var no = spec.p_given_no != null ? spec.p_given_no : 0;
       pHof = no + (yes - no) * pAsHof;
     } else if (spec.intercept != null) {
       pHof = sigmoid(spec.intercept + spec.slope * logit(pAsHof));
     } else {
-      var p0 = 1 - pAsHof, p1 = pAsHof * (1 - pAsHof), p2 = pAsHof * pAsHof;
-      pHof = 0.002 * p0 + 0.035 * p1 + 0.49 * p2;
+      pHof = 0.027 * pAsHof + 0.76 * clamp((eAsHof - 1.5) / 6, 0, 0.9);
     }
-    pHof = clamp(pHof, G && G.hof_floor != null ? G.hof_floor : 0.0004, G && G.hof_cap != null ? G.hof_cap : 0.15);
+    pHof = clamp(pHof, G && G.hof_floor != null ? G.hof_floor : 0.0002, G && G.hof_cap != null ? G.hof_cap : 0.15);
     var expAs = clamp(as.exp, 0.02, 14);
     var expNba = clamp(Math.min(nba.exp, expAs), 0.01, 12);
     var expMvp;

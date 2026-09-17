@@ -46,7 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
-- 2026-09-17 (Grok chat): Underachievers is the whole index, sorted by career minus prorated draft-night. Not a 2-row lottery filter. Years not yet played are not a miss. Paged 20 at a time.
+- 2026-09-17 (Grok chat): HOF units: 2–3 All-Stars are ~3% Hall, not 49%. 4+ are ~76%. Never-All-Star is not a Hall path. LaRavia 1.8% → 0.4% (<1%).
 - 2026-09-17 (Grok chat): Empty intl files were minting fake overs (Jokić/Giannis/Luka/Parker/Manu). Last-season-against-men lines filled. Jokić Mega 11.4 and Giannis Greek A2 9.5 are real overs. Luka EuroLeague 16/4.3 and Parker Paris 14.7/5.6 move. Over ∩ top-20 HOF/MVP is still empty — those boards are Trae/Durant/Yao, not the Over names.
 - 2026-09-17 (Grok chat): Yao’s 2001-02 Shanghai line (32.4/19/2.9/1.5/4.8) was missing. Intl against men now scores. He is 4.3 expected All-Stars, off Over. Duncan’s Wake Forest line was already in; 14.7 reb is on the card but boards are not a live feature (refitting them cut points/blocks). Duncan stays 2.6 AS / ×7.5 because 21 points is not Robinson’s 28.
 - 2026-09-17 (Grok chat): High school box scores are not college box scores. Kobe 30.8 / KG 25 / LeBron 31.6 no longer fire the college scoring theory. Age, size, and the HS flag still fire. Kobe is 1.5 AS / 11% Hall, not the 28% cap. Iverson (Georgetown) stays ahead of him. Did not refit origin_hs on the leftover residual — that would mint every prep-to-pro.

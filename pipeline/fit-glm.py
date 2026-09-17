@@ -60,7 +60,7 @@ WINSOR = {
     "wsp_in": (72.0, 94.0),
     "reach_in": (94.0, 118.0),
 }
-HOF_FLOOR = 0.0004
+HOF_FLOOR = 0.0002
 HOF_CAP = 0.15
 LAM_MIN = 1.0
 LAM_MAX = 8.0
@@ -583,26 +583,25 @@ def main():
     }
     print("yrs", "alpha", yrs_alpha, "shift", round(yrs_shift, 3), "holdout_mae_cal", round(mae_te, 3))
 
-    p_as_hof = platt_apply(models["as_ever"].predict_proba(Xhof)[:, 1], platt.get("as"))
+    hof_e = np.array([e_as[i] for i, r in enumerate(rows) if r["y"] <= 1998])
+    hof_p = np.array([p_as[i] for i, r in enumerate(rows) if r["y"] <= 1998])
     yhof = y_of(hof_train, "hof")
-    none = [r for r in hof_train if r["as"] == 0]
-    one = [r for r in hof_train if r["as"] == 1]
-    multi = [r for r in hof_train if r["as"] >= 2]
-    p_given_0 = float(np.mean([r["hof"] for r in none])) if none else 0.002
-    p_given_1 = float(np.mean([r["hof"] for r in one])) if one else 0.035
-    p_given_2 = float(np.mean([r["hof"] for r in multi])) if multi else 0.49
-    # Draft-night P(2+ All-Star) is not P(ever AS). A 14% All-Star is almost
-    # always a 1-timer if he gets there. P(2+) ≈ P(AS)^2. P(HOF|1 AS) is 3.5%,
-    # not the 34% blended in by multi-time All-Stars.
-    p0 = 1.0 - p_as_hof
-    p1 = p_as_hof * (1.0 - p_as_hof)
-    p2 = p_as_hof * p_as_hof
-    p_hof = np.clip(p_given_0 * p0 + p_given_1 * p1 + p_given_2 * p2, HOF_FLOOR, HOF_CAP)
+    modern = [r for r in hof_train if r["y"] >= 1980]
+    one_three = [r for r in modern if 1 <= r["as"] <= 3]
+    four_plus = [r for r in modern if r["as"] >= 4]
+    p_given_1to3 = float(np.mean([r["hof"] for r in one_three])) if one_three else 0.027
+    p_given_4plus = float(np.mean([r["hof"] for r in four_plus])) if four_plus else 0.76
+    # P(4+ All-Star) only when expected count is in that range. Do not treat
+    # P(ever AS) as P(inner-circle). 2–3 All-Stars are ~3% HOF, not 49%.
+    start, scale = 1.5, 6.0
+    p4plus = np.clip((hof_e - start) / scale, 0, 0.9)
+    p_hof = np.clip(p_given_1to3 * hof_p + p_given_4plus * p4plus, HOF_FLOOR, HOF_CAP)
     hof_from_as = {
-        "kind": "as_count_mix",
-        "p_given_0": p_given_0,
-        "p_given_1": p_given_1,
-        "p_given_2plus": p_given_2,
+        "kind": "as_star_mix",
+        "p_given_1to3": p_given_1to3,
+        "p_given_4plus": p_given_4plus,
+        "eAs_4plus_start": start,
+        "eAs_4plus_scale": scale,
     }
     as_yes = y_of(train, "as") > 0
     mvp_y = y_of(train, "mvp")
@@ -618,20 +617,18 @@ def main():
     }
     print("mvp_from_as", "E[MVP|AS]", round(mu_mvp_as, 3), "n_mvp", int((mvp_y > 0).sum()))
     metrics["hof"] = {
-        "from": "P(HOF|0 AS)(1-p) + P(HOF|1 AS)p(1-p) + P(HOF|2+ AS)p^2. One-time All-Stars are 3.5% HOF, not 34%.",
-        "p_given_0": round(p_given_0, 4),
-        "p_given_1": round(p_given_1, 4),
-        "p_given_2plus": round(p_given_2, 4),
-        "n_0": len(none),
-        "n_1": len(one),
-        "n_2plus": len(multi),
+        "from": "P(HOF|1–3 AS)·P(AS) + P(HOF|4+ AS)·P(eAs in 4+ range). 1–3 All-Stars are ~3% HOF. Never-All-Star is not a Hall path.",
+        "p_given_1to3": round(p_given_1to3, 4),
+        "p_given_4plus": round(p_given_4plus, 4),
+        "n_1to3": len(one_three),
+        "n_4plus": len(four_plus),
         "train_rate": round(float(yhof.mean()), 4),
         "train_mean_pred": round(float(p_hof.mean()), 4),
         "train_brier": round(float(np.mean((p_hof - yhof) ** 2)), 4),
         "n_train": len(hof_train),
     }
     print("hof", "rate", metrics["hof"]["train_rate"], "mean_pred", metrics["hof"]["train_mean_pred"],
-          "P(HOF|0)", round(p_given_0, 3), "P(HOF|1)", round(p_given_1, 3), "P(HOF|2+)", round(p_given_2, 3))
+          "P(HOF|1-3)", round(p_given_1to3, 3), "P(HOF|4+)", round(p_given_4plus, 3))
 
     # Locked-holdout baselines. None of these touch C or the product model.
     zte_as = (y_of(test, "as") > 0).astype(int)
