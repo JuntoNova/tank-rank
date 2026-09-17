@@ -230,7 +230,10 @@
             '<button type="button" class="chip" data-ol="under" role="tab" aria-selected="false">Underachieved</button>' +
             '<button type="button" class="chip" data-ol="diff" role="tab" aria-selected="false">Most different</button>' +
           "</div>" +
+          '<div class="toolbar at-tools"><input class="search" id="ol-q" type="search" placeholder="Search a player, team, or year" autocomplete="off"></div>' +
+          '<p class="at-kicker" id="ol-kicker"></p>' +
           '<div class="table-wrap"><table><thead><tr id="ol-head"></tr></thead><tbody id="ol-rows"></tbody></table></div>' +
+          '<div class="hist-pager" id="ol-pager"></div>' +
         "</div>";
       main.appendChild(ol);
     }

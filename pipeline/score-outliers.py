@@ -9,7 +9,9 @@ becomes an MVP outranks a #1 who was supposed to be great.
     fold   = career / max(model, 0.6)
 
 Over: largest fold, 1989–2018, at least 2 All-Stars or an MVP.
-Under: smallest fold < 1 among lottery picks the model liked (eAs ≥ 3, pk ≤ 14).
+Under: every player, sorted by career minus prorated draft-night (years
+not yet played are not a miss). The live table scores this in outliers.js
+from all-time.json. This script is a check print.
 Diff: largest |log fold| in that same modern window.
 """
 from __future__ import annotations
