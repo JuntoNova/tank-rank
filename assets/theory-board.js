@@ -22,6 +22,10 @@
     "15-30":{ as: 2.2, nba: 1.4, nba1: 0.12, yrs: 6.5,  ch: 0.14, mvp: 0.003 },
     "31+":  { as: 1.8, nba: 1.3, nba1: 0.08, yrs: 3.5,  ch: 0.06, mvp: 0.001 }
   };
+  var sortKey = "rank";
+  var sortDir = 1;
+  var lastPriors = null;
+  var lastYear = null;
   function slotKey(pk) {
     pk = Number(pk) || 99;
     if (pk === 1) return "1";
@@ -192,13 +196,97 @@
         || (p.team || "").toLowerCase().indexOf(q) >= 0;
     });
   }
+  function onCls(k) {
+    if (sortKey !== k) return "";
+    return " on" + (sortDir > 0 ? " asc" : "");
+  }
+  function dispProj(p, year) {
+    var proj = p.proj || {};
+    var view = viewOf();
+    var yrs = Number(p.yrs) || 0;
+    var g = Number(p.g) || 0;
+    var curY = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+    var young = yrs <= 2 && year >= curY - 3 && (yrs > 0 || g > 0);
+    var nowFn = window.TR && (TR.projectNow || (TR.Model && TR.Model.projectNow));
+    if (view === "now" && young && typeof nowFn === "function") return nowFn(p, proj);
+    return proj;
+  }
+  function sortVal(p, year) {
+    var k = sortKey;
+    if (k === "rank") return Number(p.rank) || 99;
+    if (k === "name") return String(p.name || "").toLowerCase();
+    if (k === "team") return String(p.team || "").toLowerCase();
+    var view = viewOf();
+    var yrs = Number(p.yrs) || 0;
+    var g = Number(p.g) || 0;
+    var curY = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+    var young = yrs <= 2 && year >= curY - 3 && (yrs > 0 || g > 0);
+    if (view === "now" && !young) {
+      if (k === "as") return Number(p.allStar) || 0;
+      if (k === "nba1") return Number(p.nba1) || 0;
+      if (k === "nba") return Number(p.allNba) || 0;
+      if (k === "yrs") return Number(p.yrs) || 0;
+      if (k === "ch") return Number(p.champs) || 0;
+      if (k === "mvp") return Number(p.mvp) || 0;
+      if (k === "hof") {
+        var fn = window.TR && (TR.careerHofP || (TR.Model && TR.Model.careerHofP));
+        var v = fn ? fn(p, year, curY) : null;
+        if (v == null) v = (p.proj && p.proj.pHof) || 0;
+        return Number(v) || 0;
+      }
+    }
+    var proj = dispProj(p, year);
+    if (k === "as") return Number(proj.expAs) || 0;
+    if (k === "nba1") return Number(proj.expNba1) || 0;
+    if (k === "nba") return Number(proj.expNba) || 0;
+    if (k === "yrs") return Number(proj.expYrs) || 0;
+    if (k === "ch") return Number(proj.expCh) || 0;
+    if (k === "mvp") return Number(proj.expMvp) || 0;
+    if (k === "hof") return Number(proj.pHof) || 0;
+    return 0;
+  }
+  function sortedRows(rows, year) {
+    return rows.slice().sort(function (a, b) {
+      var av = sortVal(a, year), bv = sortVal(b, year);
+      var cmp;
+      if (typeof av === "string" || typeof bv === "string") {
+        cmp = String(av).localeCompare(String(bv), undefined, { sensitivity: "base" });
+      } else {
+        cmp = av - bv;
+      }
+      if (cmp === 0) return (Number(a.rank) || 0) - (Number(b.rank) || 0);
+      return cmp * sortDir;
+    });
+  }
+  function bindSort(year, priors) {
+    var head = document.querySelector("thead");
+    if (!head || head.dataset.thSortBound) return;
+    head.dataset.thSortBound = "1";
+    head.addEventListener("click", function (ev) {
+      var th = ev.target.closest("th[data-k]");
+      if (!th) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      var k = th.getAttribute("data-k");
+      if (sortKey === k) sortDir = -sortDir;
+      else {
+        sortKey = k;
+        sortDir = (k === "rank" || k === "name" || k === "team") ? 1 : -1;
+      }
+      paint(lastYear, lastPriors);
+    });
+  }
   function css() {
     if (document.getElementById("th-board-css")) return;
     const s = document.createElement("style");
     s.id = "th-board-css";
     s.textContent = ".vs{display:inline-block;margin-left:6px;font-size:11px;color:var(--muted)}"
       + ".vs.up{color:var(--lime)}.vs.down{color:var(--coral)}.vs.even{color:var(--gold)}"
-      + ".pct .band{display:block;font-size:11px;color:var(--muted);font-weight:400;line-height:1.15;margin-top:1px}";
+      + ".pct .band{display:block;font-size:11px;color:var(--muted);font-weight:400;line-height:1.15;margin-top:1px}"
+      + "thead th[data-k]{cursor:pointer;user-select:none;padding-right:16px}"
+      + "thead th[data-k]:after{content:' \\25be';font-size:10px;visibility:hidden;display:inline-block;width:10px}"
+      + "thead th[data-k].on:after{visibility:visible}"
+      + "thead th[data-k].asc:after{content:' \\25b4';visibility:visible}";
     document.head.appendChild(s);
   }
   function paint(year, priors) {
@@ -207,17 +295,27 @@
     const body = document.querySelector("#rows");
     if (!draft || !head || !body) return;
     css();
-    if (year < ((window.TANK_RANK && TANK_RANK.currentYear) || 2027)) {
-      document.querySelectorAll(".banner").forEach(function (el) { el.remove(); });
-    }
+    lastYear = year;
+    lastPriors = priors;
+    document.querySelectorAll(".banner").forEach(function (el) { el.remove(); });
     (draft.players || []).forEach(function (p) {
       p.year = year;
       p.theoryFeat = Object.assign({}, featOf(p), p.theoryFeat || {});
       p.proj = project(p, p.theoryFeat, priors);
     });
-    const rows = filtered(draft);
+    const rows = sortedRows(filtered(draft), year);
     const view = viewOf();
-    head.innerHTML = "<th>Pk</th><th>Player</th><th>Team</th><th>AS</th><th>1st</th><th>All-NBA</th><th>Yrs</th><th>Chips</th><th>MVP</th><th>HOF</th>";
+    head.innerHTML = '<th data-k="rank" class="num' + onCls("rank") + '">Pk</th>'
+      + '<th data-k="name"' + (onCls("name") ? ' class="' + onCls("name").trim() + '"' : "") + ">Player</th>"
+      + '<th data-k="team"' + (onCls("team") ? ' class="' + onCls("team").trim() + '"' : "") + ">Team</th>"
+      + '<th data-k="as" class="num' + onCls("as") + '">AS</th>'
+      + '<th data-k="nba1" class="num' + onCls("nba1") + '">1st</th>'
+      + '<th data-k="nba" class="num' + onCls("nba") + '">All-NBA</th>'
+      + '<th data-k="yrs" class="num' + onCls("yrs") + '">Yrs</th>'
+      + '<th data-k="ch" class="num' + onCls("ch") + '">Chips</th>'
+      + '<th data-k="mvp" class="num' + onCls("mvp") + '">MVP</th>'
+      + '<th data-k="hof" class="num' + onCls("hof") + '">HOF</th>';
+    bindSort(year, priors);
     if (view === "drafted") {
       body.innerHTML = rows.map(function (p) {
         const proj = p.proj || project(p, p.theoryFeat, priors);

@@ -45,7 +45,7 @@
   );
   src = src.replace(
     '<div class="banner">${TANK_RANK.disclaimer} ${draft.note || ""}</div>',
-    '${historic ? "" : `<div class="banner">${TANK_RANK.disclaimer}</div>`}'
+    ''
   );
   // Honesty: null/NaN probabilities render blank, never 0% or em dash.
   src = src.replace(

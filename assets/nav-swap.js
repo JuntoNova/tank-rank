@@ -106,11 +106,8 @@
   }
 
   function hideHistoricBanner() {
-    var y = Number(new URLSearchParams(location.search).get("year")) || (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
-    var cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
-    if (y < cur) {
-      document.querySelectorAll(".banner").forEach(function (el) { el.remove(); });
-    }
+    if (!/board(\.html)?$/i.test(location.pathname.replace(/\/$/, ""))) return;
+    document.querySelectorAll(".banner").forEach(function (el) { el.remove(); });
   }
 
   function bindMenu() {
