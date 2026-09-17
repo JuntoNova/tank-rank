@@ -23,7 +23,7 @@
     ]},
     { label: "School, country, and team", items: [
       { id: "schools", claim: "The best players come from the best colleges", href: "./schools.html" },
-      { id: "intl", claim: "Foreign players are a different kind of bet", href: "./intl.html" },
+      { id: "intl", claim: "A pro line is not a college line", href: "./intl.html" },
       { id: "develop", claim: "The team that drafts him matters as much as the player", href: "./develop.html" },
       { id: "stash", claim: "Leave a raw foreign player overseas until he is ready", href: "./stash.html" }
     ]}

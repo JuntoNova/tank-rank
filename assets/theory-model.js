@@ -142,21 +142,14 @@
       var n = Number(v);
       return isFinite(n) ? n : null;
     }
-    function collegeOrSkip(v, key) {
-      if (hs) return null;
-      if (v == null) return null;
-      if (intl) {
-        var mu = G && G.means && G.means[key];
-        if (mu != null && v < mu) return null;
-      }
-      return v;
-    }
-    var stl = collegeOrSkip(boxNum(feat.stl), "stl");
-    var blk = collegeOrSkip(boxNum(feat.blk), "blk");
-    var pts = collegeOrSkip(boxNum(feat.pts), "pts");
-    var ast = collegeOrSkip(boxNum(feat.ast), "ast");
+    // High school counting stats are not college counting stats.
+    // International lines are kept and scored against a typical pro line.
+    var stl = hs ? null : boxNum(feat.stl);
+    var blk = hs ? null : boxNum(feat.blk);
+    var pts = hs ? null : boxNum(feat.pts);
+    var ast = hs ? null : boxNum(feat.ast);
     var rebRaw = feat.reb != null && feat.reb !== "" ? feat.reb : feat.trb;
-    var reb = collegeOrSkip(boxNum(rebRaw), "reb");
+    var reb = hs ? null : boxNum(rebRaw);
     var rel = (age != null) ? (age - eraMed(year)) : null;
     var dHt = (htIn && posHt) ? (htIn - posHt) : null;
     var raw = {
@@ -171,7 +164,9 @@
         v = Math.max(G.winsor[k][0], Math.min(G.winsor[k][1], v));
       }
       var sd = (G.sds && G.sds[k]) || 1;
-      x[k] = (v - G.means[k]) / sd;
+      var mu = G.means[k];
+      if (intl && G.intl_center && G.intl_center[k] != null) mu = G.intl_center[k];
+      x[k] = (v - mu) / sd;
     });
     if (!htIn) x.ht_in = 0;
     x.origin_hs = hs ? 1 : 0;
@@ -337,8 +332,7 @@
       }
       if (feat.origin === "intl") {
         if (v == null || v === "") return "international";
-        if (raw[key] == null) return v + " intl " + unit + ", not a college line";
-        return v + " " + unit;
+        return v + " intl " + unit;
       }
       return raw[key] != null ? (raw[key] + " " + unit) : "no box score";
     }

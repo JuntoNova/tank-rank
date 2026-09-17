@@ -56,7 +56,7 @@
       label: "School, country, and team",
       kids: [
         { id: "schools", name: "The best players come from the best colleges" },
-        { id: "intl", name: "Foreign players are a different kind of bet" },
+        { id: "intl", name: "A pro line is not a college line" },
         { id: "develop", name: "The team that drafts him matters as much as the player" },
         { id: "stash", name: "Leave a raw foreign player overseas until he is ready" }
       ]
