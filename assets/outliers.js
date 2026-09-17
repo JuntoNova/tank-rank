@@ -248,7 +248,7 @@
     if (!box || box.getAttribute("data-ready")) return;
     box.setAttribute("data-ready", "1");
     css();
-    fetch("./assets/all-time.json?v=23")
+    fetch("./assets/all-time.json?v=24")
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         if (!data || !data.players) {

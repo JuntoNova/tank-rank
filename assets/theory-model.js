@@ -136,14 +136,27 @@
     var ape = (wsp && htIn) ? (wsp - htIn) : null;
     var wpi = (wt && htIn) ? (wt / htIn) : null;
     var hs = feat.origin === "hs";
-    // High school counting stats are not college counting stats.
-    // Age, size, and origin_hs still fire. 31 at Lower Merion is not 31 at Georgetown.
-    var stl = hs ? null : (feat.stl != null && feat.stl !== "" ? Number(feat.stl) : null);
-    var blk = hs ? null : (feat.blk != null && feat.blk !== "" ? Number(feat.blk) : null);
-    var pts = hs ? null : (feat.pts != null && feat.pts !== "" ? Number(feat.pts) : null);
-    var ast = hs ? null : (feat.ast != null && feat.ast !== "" ? Number(feat.ast) : null);
+    var intl = feat.origin === "intl";
+    function boxNum(v) {
+      if (v == null || v === "") return null;
+      var n = Number(v);
+      return isFinite(n) ? n : null;
+    }
+    function collegeOrSkip(v, key) {
+      if (hs) return null;
+      if (v == null) return null;
+      if (intl) {
+        var mu = G && G.means && G.means[key];
+        if (mu != null && v < mu) return null;
+      }
+      return v;
+    }
+    var stl = collegeOrSkip(boxNum(feat.stl), "stl");
+    var blk = collegeOrSkip(boxNum(feat.blk), "blk");
+    var pts = collegeOrSkip(boxNum(feat.pts), "pts");
+    var ast = collegeOrSkip(boxNum(feat.ast), "ast");
     var rebRaw = feat.reb != null && feat.reb !== "" ? feat.reb : feat.trb;
-    var reb = hs ? null : (rebRaw != null && rebRaw !== "" ? Number(rebRaw) : null);
+    var reb = collegeOrSkip(boxNum(rebRaw), "reb");
     var rel = (age != null) ? (age - eraMed(year)) : null;
     var dHt = (htIn && posHt) ? (htIn - posHt) : null;
     var raw = {
@@ -317,6 +330,18 @@
       if (raw.wpi == null) return "missing";
       return raw.wpi.toFixed(2) + " lb/in";
     }
+    function prodLabel(key, unit) {
+      var v = feat[key];
+      if (feat.origin === "hs") {
+        return (v != null && v !== "") ? (v + " HS " + unit + ", not college") : "high school";
+      }
+      if (feat.origin === "intl") {
+        if (v == null || v === "") return "international";
+        if (raw[key] == null) return v + " intl " + unit + ", not a college line";
+        return v + " " + unit;
+      }
+      return raw[key] != null ? (raw[key] + " " + unit) : "no box score";
+    }
     const groups = [
       { id: "age", label: "Drafting younger", keys: ["rel_age"],
         value: built.age != null ? (feat.age + " " + ageLabel(ageKey(feat.age))) : "unknown" },
@@ -341,21 +366,13 @@
       { id: "handle", label: "Handle x size", keys: ["create_tall"],
         value: xFull.create_tall ? ((feat.ht || "6-7+") + " creator") : (feat.origin === "hs" ? "high school (not college creation)" : (feat.ht || "missing")) },
       { id: "prod", label: "College scoring", keys: ["pts"],
-        value: feat.origin === "hs"
-          ? ((feat.pts != null && feat.pts !== "") ? (feat.pts + " HS pts, not college") : "high school")
-          : (raw.pts != null ? (raw.pts + " pts") : "no box score") },
+        value: prodLabel("pts", "pts") },
       { id: "astu", label: "Passing", keys: ["ast"],
-        value: feat.origin === "hs"
-          ? ((feat.ast != null && feat.ast !== "") ? (feat.ast + " HS ast, not college") : "high school")
-          : (raw.ast != null ? (raw.ast + " ast") : "no box score") },
+        value: prodLabel("ast", "ast") },
       { id: "defense", label: "Steals", keys: ["stl"],
-        value: feat.origin === "hs"
-          ? ((feat.stl != null && feat.stl !== "") ? (feat.stl + " HS stl, not college") : "high school")
-          : (raw.stl != null ? (raw.stl + " stl") : "no box score") },
+        value: prodLabel("stl", "stl") },
       { id: "rim", label: "Shot blocking", keys: ["blk"],
-        value: feat.origin === "hs"
-          ? ((feat.blk != null && feat.blk !== "") ? (feat.blk + " HS blk, not college") : "high school")
-          : (raw.blk != null ? (raw.blk + " blk") : "no box score") }
+        value: prodLabel("blk", "blk") }
     ];
     const x = {};
     (G && G.features || []).forEach(function (k) { x[k] = 0; });
