@@ -31,7 +31,13 @@
         },
         { id: "posht", name: "Bigger than the position helps" },
         { id: "swing", name: "Guys who can play more than one position do better" },
-        { id: "handle", name: "Tall guys who can dribble are rare" },
+        {
+          name: "Tall guys who can dribble are rare",
+          kids: [
+            { id: "astu", name: "Passers perform better" },
+            { id: "handle", name: "Tall passers perform better" }
+          ]
+        },
         { id: "combine", name: "Workout numbers do not mean much" }
       ]
     },
@@ -247,6 +253,16 @@
       if (sw) return sw;
       var sp = String(feat.pos || p.pos || "");
       return { fact: sp ? sp : "No listed position", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
+    }
+    if (id === "astu" || id === "passers") {
+      var astStep = fromStep(steps, "astu");
+      if (astStep) return astStep;
+      return { fact: "no assist line", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
+    }
+    if (id === "handle") {
+      var hStep = fromStep(steps, "handle");
+      if (hStep) return hStep;
+      return { fact: "no assist line", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
     }
     return fromStep(steps, id);
   }

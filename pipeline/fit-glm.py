@@ -196,7 +196,7 @@ def load_rows():
                 "wpi": wpi, "wsp_in": wsp, "reach_in": reach,
                 "origin_hs": 1.0 if origin == "hs" else 0.0,
                 "origin_intl": 1.0 if origin == "intl" else 0.0,
-                "create_tall": 1.0 if create and ht and ht >= 79 else 0.0,
+                "create_tall": 1.0 if origin != "hs" and ht and ht >= 79 and ast is not None and ast >= 2.2 else 0.0,
                 "swing": is_swing(pos),
                 "pts": pts, "ast": ast, "stl": stl, "blk": blk,
             })

@@ -171,7 +171,7 @@
     if (!htIn) x.ht_in = 0;
     x.origin_hs = hs ? 1 : 0;
     x.origin_intl = feat.origin === "intl" ? 1 : 0;
-    x.create_tall = (!hs && feat.create && htIn >= 79) ? 1 : 0;
+    x.create_tall = (!hs && htIn >= 79 && ast != null && ast >= 2.2) ? 1 : 0;
     x.swing = isSwing(feat.pos) ? 1 : 0;
     (G.missing || []).forEach(function (k) { x[k] = 0; });
     return { x: x, raw: raw, pg: pg, htIn: htIn, age: age };
@@ -331,10 +331,18 @@
         return (v != null && v !== "") ? (v + " HS " + unit + ", not college") : "high school";
       }
       if (feat.origin === "intl") {
-        if (v == null || v === "") return "international";
+        if (v == null || v === "") return "no " + unit + " line";
         return v + " intl " + unit;
       }
-      return raw[key] != null ? (raw[key] + " " + unit) : "no box score";
+      return raw[key] != null ? (raw[key] + " " + unit) : ("no " + unit + " line");
+    }
+    function tallPassLabel() {
+      if (feat.origin === "hs") return "high school (not college creation)";
+      if (raw.ast == null) return "no assist line";
+      var asts = feat.ast != null && feat.ast !== "" ? feat.ast : raw.ast;
+      if (xFull.create_tall) return (feat.ht || "6-7+") + ", " + asts + " ast, creator";
+      if (built.htIn >= 79) return (feat.ht || "6-7+") + ", " + asts + " ast, not a creator";
+      return (feat.ht || "under 6-7") + ", " + asts + " ast";
     }
     const groups = [
       { id: "age", label: "Drafting younger", keys: ["rel_age"],
@@ -357,11 +365,11 @@
         value: (feat.ht || "") + (feat.pos ? " / " + feat.pos : "") || "missing" },
       { id: "swing", label: "More than one position", keys: ["swing"],
         value: feat.pos ? (xFull.swing ? (feat.pos + " (swing)") : (feat.pos + " (one spot)")) : "missing" },
-      { id: "handle", label: "Handle x size", keys: ["create_tall"],
-        value: xFull.create_tall ? ((feat.ht || "6-7+") + " creator") : (feat.origin === "hs" ? "high school (not college creation)" : (feat.ht || "missing")) },
+      { id: "handle", label: "Tall passers perform better", keys: ["create_tall"],
+        value: tallPassLabel() },
       { id: "prod", label: "College scoring", keys: ["pts"],
         value: prodLabel("pts", "pts") },
-      { id: "astu", label: "Passing", keys: ["ast"],
+      { id: "astu", label: "Passers perform better", keys: ["ast"],
         value: prodLabel("ast", "ast") },
       { id: "defense", label: "Steals", keys: ["stl"],
         value: prodLabel("stl", "stl") },
