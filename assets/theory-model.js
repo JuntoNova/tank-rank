@@ -304,7 +304,7 @@
         value: built.age != null ? (feat.age + " " + ageLabel(ageKey(feat.age))) : "unknown" },
       { id: "intl", label: "Origin", keys: ["origin_hs", "origin_intl"],
         value: feat.origin === "hs" ? "high school" : feat.origin === "intl" ? "international" : "college" },
-      { id: "size", label: "Height", keys: ["ht_in"],
+      { id: "size", label: "Every extra inch", keys: ["ht_in"],
         value: feat.ht || "missing" },
       { id: "weight", label: "Weight", keys: ["wt"],
         value: feat.wt != null ? (feat.wt + " lbs") : "missing" },

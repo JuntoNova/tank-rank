@@ -1,7 +1,6 @@
 (function () {
   var GROUPS = [
     { label: "Body", items: [
-      { id: "size", claim: "Taller guys perform better", href: "./size.html" },
       { id: "inch", claim: "Every extra inch helps", href: "./size.html" },
       { id: "weight", claim: "Heavier guys perform better", href: "./size.html" },
       { id: "wpi", claim: "More pounds per inch helps", href: "./size.html" },

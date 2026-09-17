@@ -9,7 +9,6 @@
             {
               name: "Height",
               kids: [
-                { id: "size", name: "Taller guys perform better" },
                 { id: "inch", name: "Every extra inch helps" }
               ]
             },

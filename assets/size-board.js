@@ -1,7 +1,6 @@
 (function () {
   TR.renderTheoryPage("Bigger is better", [
     { label: "Height", items: [
-      { title: "Taller guys perform better", src: "/assets/size-t-bins.html?v=50" },
       { title: "Every extra inch helps", src: "/assets/size-t-inch.html?v=50" }
     ]},
     { label: "Weight", items: [
