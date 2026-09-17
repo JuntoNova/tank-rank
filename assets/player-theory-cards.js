@@ -8,14 +8,8 @@
       { id: "ape", claim: "Arms longer than height help", href: "./size.html" },
       { id: "reach", claim: "Higher standing reach helps", href: "./reach.html" },
       { id: "handle", claim: "Tall guys who can dribble are rare", href: "./handle.html" },
-      { id: "combine", claim: "Workout numbers do not mean much", href: "./combine.html" }
-    ]},
-    { label: "Age", items: [
-      { id: "age", claim: "How old he is on draft night", href: "./age.html" },
-      { id: "late", claim: "Some players get good late, and teams miss them", href: "./late.html" },
-      { id: "onedone", claim: "One year of college is enough if you are a star", href: "./onedone.html" },
-      { id: "jump", claim: "Getting better in year two means more than a huge freshman year", href: "./jump.html" },
-      { id: "stash", claim: "Leave a raw foreign player overseas until he is ready", href: "./stash.html" }
+      { id: "combine", claim: "Workout numbers do not mean much", href: "./combine.html" },
+      { id: "age", claim: "Drafting younger is better", href: "./age.html" }
     ]},
     { label: "How he plays", items: [
       { id: "prod", claim: "College stats tell you who will be good", href: "./prod.html" },
@@ -23,12 +17,16 @@
       { id: "three", claim: "Taking a lot of threes matters more than a hot percentage", href: "./three.html" },
       { id: "astu", claim: "Passing travels better than scoring", href: "./astu.html" },
       { id: "defense", claim: "College defense does not tell you anything", href: "./defense.html" },
-      { id: "rim", claim: "You still need a big who can block shots", href: "./rim.html" }
+      { id: "rim", claim: "You still need a big who can block shots", href: "./rim.html" },
+      { id: "late", claim: "Some players get good late, and teams miss them", href: "./late.html" },
+      { id: "onedone", claim: "One year of college is enough if you are a star", href: "./onedone.html" },
+      { id: "jump", claim: "Getting better in year two means more than a huge freshman year", href: "./jump.html" }
     ]},
     { label: "School, country, and team", items: [
       { id: "schools", claim: "The best players come from the best colleges", href: "./schools.html" },
       { id: "intl", claim: "Foreign players are a different kind of bet", href: "./intl.html" },
-      { id: "develop", claim: "The team that drafts him matters as much as the player", href: "./develop.html" }
+      { id: "develop", claim: "The team that drafts him matters as much as the player", href: "./develop.html" },
+      { id: "stash", claim: "Leave a raw foreign player overseas until he is ready", href: "./stash.html" }
     ]}
   ];
   var INCH = {

@@ -4,7 +4,7 @@
     { match: /upcoming\.html/i, label: /^upcoming$/i },
     { match: /theories\.html/i, label: /^theories$/i }
   ];
-  var THEORY_PATH = /(theories|size|wingspan|handle|reach|combine|age|late|onedone|jump|stash|prod|ftrate|three|astu|defense|rim|schools|intl|develop|switch|march|scheme|medical|character)\.html/i;
+  var THEORY_PATH = /(theories|size|wingspan|handle|reach|combine|age|late|onedone|jump|stash|prod|ftrate|three|astu|defense|rim|schools|intl|develop|switch|march|scheme|medical|character|disproven)\.html/i;
 
   function stripFooterLine() {
     document.querySelectorAll(".foot .copy div").forEach((el) => {

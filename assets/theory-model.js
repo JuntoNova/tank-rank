@@ -300,7 +300,7 @@
       return raw.wpi.toFixed(2) + " lb/in";
     }
     const groups = [
-      { id: "age", label: "Age", keys: ["rel_age"],
+      { id: "age", label: "Drafting younger", keys: ["rel_age"],
         value: built.age != null ? (feat.age + " " + ageLabel(ageKey(feat.age))) : "unknown" },
       { id: "intl", label: "Origin", keys: ["origin_hs", "origin_intl"],
         value: feat.origin === "hs" ? "high school" : feat.origin === "intl" ? "international" : "college" },

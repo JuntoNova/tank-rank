@@ -32,17 +32,18 @@
       });
     });
   }
-  TR.renderTheoryPage = function (title, groups) {
+  TR.renderTheoryPage = function (title, groups, lede) {
     groups = groups || [];
     var html = "";
+    if (lede) html += '<p class="theory-lede">' + lede + "</p>";
     if (groups.length > 1) {
-      html = '<div class="acc theory-families">' + groups.map(function (g, i) {
+      html += '<div class="acc theory-families">' + groups.map(function (g, i) {
         return '<section class="acc-item group-acc"><button class="acc-btn group-acc-btn" type="button" data-group="' + i + '"><b>' +
           g.label + "</b><em><i>+</i></em></button><div class=\"acc-panel\"><div class=\"acc theory-list\">" +
           g.items.map(row).join("") + "</div></div></section>";
       }).join("") + "</div>";
     } else if (groups.length === 1 && groups[0].items && groups[0].items.length) {
-      html = '<div class="acc theory-list theory-families">' + groups[0].items.map(row).join("") + "</div>";
+      html += '<div class="acc theory-list theory-families">' + groups[0].items.map(row).join("") + "</div>";
     }
     var back = '<p class="theory-back"><a class="btn" href="/theories.html">All theories</a></p>';
     TR.renderSimple(document.getElementById("app"), "theories", title, "", back + html + back);

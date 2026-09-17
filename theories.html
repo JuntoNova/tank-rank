@@ -15,18 +15,20 @@
   <meta property="og:url" content="https://thedraftmodel.com/theories.html" />
   <meta property="og:image" content="https://thedraftmodel.com/assets/og.jpg" />
   <link rel="stylesheet" href="./assets/styles.css?v=85" />
-  <link rel="stylesheet" href="./assets/theories.css?v=54" />
+  <link rel="stylesheet" href="./assets/theories.css?v=56" />
 </head>
 <body>
   <div id="app"></div>
   <script src="./assets/data.js?v=42"></script>
   <script src="./assets/app.js?v=84"></script>
-  <script src="./assets/nav-swap.js?v=90"></script>
+  <script src="./assets/nav-swap.js?v=91"></script>
   <script>
     const groups = [
       {
         label: "Body",
         items: [
+          { name: "Drafting younger is better", href: "./age.html", pill: "Checked", cls: "num",
+            cuts: ["What people say: A 19-year-old has more years to get good than a 22-year-old.", "What we found: True. Under 19 and a half lasts 10.4 years and becomes an All-Star 26% of the time. 22 and a half and older: 5.3 years, 12%. Draft slot is not in this check."] },
           { name: "Bigger is better", href: "./size.html", pill: "Checked", cls: "num",
             cuts: ["What people say: You cannot teach height or strength. Take the bigger guy.", "What we found: Size moves the odds a little. It does not beat the pick itself."] },
           { name: "Bigger than the position helps", href: "./size.html", pill: "Checked", cls: "num",
@@ -44,21 +46,6 @@
         ]
       },
       {
-        label: "Age",
-        items: [
-          { name: "How old he is on draft night", href: "./age.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Younger guys last longer and develop more. Older guys contribute faster and are safer to stick.", "What we found: Younger guys do last longer, and they become All-Stars more often. Older guys do not produce more per year, and they do not stick more often. Draft slot is not in this check."] },
-          { name: "Some players get good late, and teams miss them", href: "./late.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Older college stars are cheap because everyone is obsessed with freshmen.", "What we found: Not really. Older high scorers do not beat younger ones at the same pick."] },
-          { name: "One year of college is enough if you are a star", href: "./onedone.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Freshmen who leave early are better bets than four-year stars.", "What we found: Mostly true, and a lot of that is just age. Freshmen hit All-Star more often than seniors."] },
-          { name: "Getting better in year two means more than a huge freshman year", href: "./jump.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: A real leap as a sophomore is a better sign than one flashy freshman season.", "What we found: No. Freshman flashes still win. The big year-two jump is a weaker signal."] },
-          { name: "Leave a raw foreign player overseas until he is ready", href: "./stash.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Stashing a young big in Europe cuts the risk that he is not ready.", "What we found: It does cut the risk that he never arrives. It is not a proven way to find extra stars."] }
-        ]
-      },
-      {
         label: "How he plays",
         items: [
           { name: "College stats tell you who will be good", href: "./prod.html", pill: "Checked", cls: "num",
@@ -72,7 +59,13 @@
           { name: "College defense does not tell you anything", href: "./defense.html", pill: "Checked", cls: "num",
             cuts: ["What people say: You cannot see NBA defense in college stats. Scoring is what boards overweight.", "What we found: False. College steals-plus-blocks do show up. The high-stocks group becomes All-Stars about twice as often."] },
           { name: "You still need a big who can block shots", href: "./rim.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: A defense without a rim protector leaks at the basket.", "What we found: True for bigs. High-block centers and power forwards do better. It is flat if you mix in every position."] }
+            cuts: ["What people say: A defense without a rim protector leaks at the basket.", "What we found: True for bigs. High-block centers and power forwards do better. It is flat if you mix in every position."] },
+          { name: "Some players get good late, and teams miss them", href: "./late.html", pill: "Checked", cls: "num",
+            cuts: ["What people say: Older college stars are cheap because everyone is obsessed with freshmen.", "What we found: Not really. Older high scorers do not beat younger ones at the same pick."] },
+          { name: "One year of college is enough if you are a star", href: "./onedone.html", pill: "Checked", cls: "num",
+            cuts: ["What people say: Freshmen who leave early are better bets than four-year stars.", "What we found: Mostly true, and a lot of that is just age. Freshmen hit All-Star more often than seniors."] },
+          { name: "Getting better in year two means more than a huge freshman year", href: "./jump.html", pill: "Checked", cls: "num",
+            cuts: ["What people say: A real leap as a sophomore is a better sign than one flashy freshman season.", "What we found: No. Freshman flashes still win. The big year-two jump is a weaker signal."] }
         ]
       },
       {
@@ -83,7 +76,17 @@
           { name: "Foreign players are a different kind of bet", href: "./intl.html", pill: "Checked", cls: "num",
             cuts: ["What people say: Overseas prospects are priced wrong next to college players at the same pick.", "What we found: At the very top, college wins. Later in the draft it is a wash."] },
           { name: "The team that drafts him matters as much as the player", href: "./develop.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Put him in the right program and he becomes a star. Put him in the wrong one and he dies.", "What we found: We cannot prove a team bonus yet. Honors still follow the pick more than the logo."] }
+            cuts: ["What people say: Put him in the right program and he becomes a star. Put him in the wrong one and he dies.", "What we found: We cannot prove a team bonus yet. Honors still follow the pick more than the logo."] },
+          { name: "Leave a raw foreign player overseas until he is ready", href: "./stash.html", pill: "Checked", cls: "num",
+            cuts: ["What people say: Stashing a young big in Europe cuts the risk that he is not ready.", "What we found: It does cut the risk that he never arrives. It is not a proven way to find extra stars."] }
+        ]
+      },
+      {
+        label: "Disproven",
+        kind: "dead",
+        items: [
+          { name: "Older guys have a higher floor", href: "./disproven.html", pill: "Disproven", cls: "dead",
+            cuts: ["What people say: A 22-year-old is ready now. Safer. Higher floor. Fewer busts.", "What we found: They last fewer years (5.3 vs 10.4), stick 3+ years less often (63% vs 89%), play fewer games per year (43 vs 51), and put up fewer win shares per year (1.22 vs 2.99). Draft slot is not in this check. It is not in the player model."] }
         ]
       },
       {
@@ -131,6 +134,7 @@
 
     function groupHint(g) {
       if (g.kind === "qual") return g.items.length + " not yet";
+      if (g.kind === "dead") return g.items.length + " disproven";
       return g.items.length + " checked";
     }
 

@@ -51,6 +51,7 @@
 .theory-pill.true { color: #111; background: var(--lime); border-color: var(--lime); }
 .theory-pill.mid { color: #111; background: var(--gold); border-color: var(--gold); }
 .theory-pill.bull { color: #fff; background: var(--coral); border-color: var(--coral); }
+.theory-pill.dead { color: #fff; background: var(--coral); border-color: var(--coral); }
 .theory-acc .acc-panel { padding: 0 2px 18px 38px; }
 .factor-list { display: grid; gap: 8px; max-width: 40rem; }
 .factor {

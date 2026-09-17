@@ -34,17 +34,8 @@
         { id: "wingspan", name: "Long arms help on defense" },
         { id: "handle", name: "Tall guys who can dribble are rare" },
         { id: "reach", name: "How high he can reach beats how high he jumps" },
-        { id: "combine", name: "Workout numbers do not mean much" }
-      ]
-    },
-    {
-      label: "Age",
-      kids: [
-        { id: "age", name: "How old he is on draft night" },
-        { id: "late", name: "Some players get good late, and teams miss them" },
-        { id: "onedone", name: "One year of college is enough if you are a star" },
-        { id: "jump", name: "Getting better in year two means more than a huge freshman year" },
-        { id: "stash", name: "Leave a raw foreign player overseas until he is ready" }
+        { id: "combine", name: "Workout numbers do not mean much" },
+        { id: "age", name: "Drafting younger is better" }
       ]
     },
     {
@@ -55,7 +46,10 @@
         { id: "three", name: "Taking a lot of threes matters more than a hot percentage" },
         { id: "astu", name: "Passing travels better than scoring" },
         { id: "defense", name: "College defense does not tell you anything" },
-        { id: "rim", name: "You still need a big who can block shots" }
+        { id: "rim", name: "You still need a big who can block shots" },
+        { id: "late", name: "Some players get good late, and teams miss them" },
+        { id: "onedone", name: "One year of college is enough if you are a star" },
+        { id: "jump", name: "Getting better in year two means more than a huge freshman year" }
       ]
     },
     {
@@ -63,7 +57,8 @@
       kids: [
         { id: "schools", name: "The best players come from the best colleges" },
         { id: "intl", name: "Foreign players are a different kind of bet" },
-        { id: "develop", name: "The team that drafts him matters as much as the player" }
+        { id: "develop", name: "The team that drafts him matters as much as the player" },
+        { id: "stash", name: "Leave a raw foreign player overseas until he is ready" }
       ]
     },
     {
