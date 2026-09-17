@@ -11,7 +11,7 @@
       { id: "combine", claim: "Workout numbers do not mean much", href: "./combine.html" }
     ]},
     { label: "Age", items: [
-      { id: "age", claim: "The younger guy at the same pick is the better bet", href: "./age.html" },
+      { id: "age", claim: "How old he is on draft night", href: "./age.html" },
       { id: "late", claim: "Some players get good late, and teams miss them", href: "./late.html" },
       { id: "onedone", claim: "One year of college is enough if you are a star", href: "./onedone.html" },
       { id: "jump", claim: "Getting better in year two means more than a huge freshman year", href: "./jump.html" },

@@ -40,7 +40,7 @@
     {
       label: "Age",
       kids: [
-        { id: "age", name: "The younger guy at the same pick is the better bet" },
+        { id: "age", name: "How old he is on draft night" },
         { id: "late", name: "Some players get good late, and teams miss them" },
         { id: "onedone", name: "One year of college is enough if you are a star" },
         { id: "jump", name: "Getting better in year two means more than a huge freshman year" },
