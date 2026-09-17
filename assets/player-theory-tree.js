@@ -44,13 +44,8 @@
     {
       label: "Drafting younger is better",
       kids: [
-        {
-          name: "Drafting younger is better",
-          kids: [
-            { id: "age-yrs", name: "They last longer" },
-            { id: "age-stars", name: "They become stars more often" }
-          ]
-        }
+        { id: "age-yrs", name: "They last longer" },
+        { id: "age-stars", name: "They become stars more often" }
       ]
     },
     {

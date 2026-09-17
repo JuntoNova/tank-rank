@@ -15,7 +15,8 @@
       { id: "combine", claim: "Workout numbers do not mean much", href: "./combine.html" }
     ]},
     { label: "Drafting younger is better", items: [
-      { id: "age", claim: "Drafting younger is better", href: "./age.html" }
+      { id: "age-yrs", claim: "They last longer", href: "./age.html" },
+      { id: "age-stars", claim: "They become stars more often", href: "./age.html" }
     ]},
     { label: "Past performance predicts future performance", items: [
       { id: "prod", claim: "College stats tell you who will be good", href: "./prod.html" },
