@@ -92,7 +92,7 @@
     const htLabel = (feat && feat.ht) ? feat.ht : "\u2014";
     const wtLabel = (feat && feat.wt != null && feat.wt !== "") ? (feat.wt + " lbs") : "\u2014";
     sec.innerHTML =
-      '<div class="th-size-head"><h2>Bigger is better</h2>' +
+      '<div class="th-size-head"><h2>You can\'t teach size</h2>' +
       '<div class="kicker"><a href="./size.html">/size</a></div></div>' +
       '<p class="th-size-note">Only this player\u2019s height and weight. The full height and weight tables live on the size page.</p>' +
       binCard("Height", htLabel, found.height) +

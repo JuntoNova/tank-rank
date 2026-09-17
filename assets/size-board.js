@@ -1,5 +1,5 @@
 (function () {
-  TR.renderTheoryPage("Bigger is better", [
+  TR.renderTheoryPage("You can't teach size", [
     { label: "Height", items: [
       { title: "Every extra inch helps", src: "/assets/size-t-inch.html?v=50" }
     ]},

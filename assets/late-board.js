@@ -5,5 +5,5 @@
       { title: "Older scorers still perform better at the same pick", src: "/assets/late-t-slot.html?v=50" },
       { title: "Older guys perform better", src: "/assets/late-t-age.html?v=50" }
     ]}
-  ]);
+  ], "Disproven. This was a pick story. It is not in the player model.");
 })();

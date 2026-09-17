@@ -1,10 +1,10 @@
 (function () {
   var TREE = [
     {
-      label: "Body",
+      label: "You can't teach size",
       kids: [
         {
-          name: "Bigger is better",
+          name: "You can't teach size",
           kids: [
             {
               name: "Height",
@@ -31,10 +31,13 @@
         },
         { id: "posht", name: "Bigger than the position helps" },
         { id: "swing", name: "Guys who can play more than one position do better" },
-        { id: "wingspan", name: "Long arms help on defense" },
         { id: "handle", name: "Tall guys who can dribble are rare" },
-        { id: "reach", name: "How high he can reach beats how high he jumps" },
-        { id: "combine", name: "Workout numbers do not mean much" },
+        { id: "combine", name: "Workout numbers do not mean much" }
+      ]
+    },
+    {
+      label: "Drafting younger is better",
+      kids: [
         { id: "age", name: "Drafting younger is better" }
       ]
     },
@@ -46,10 +49,7 @@
         { id: "three", name: "Taking a lot of threes matters more than a hot percentage" },
         { id: "astu", name: "Passing travels better than scoring" },
         { id: "defense", name: "College defense does not tell you anything" },
-        { id: "rim", name: "You still need a big who can block shots" },
-        { id: "late", name: "Some players get good late, and teams miss them" },
-        { id: "onedone", name: "One year of college is enough if you are a star" },
-        { id: "jump", name: "Getting better in year two means more than a huge freshman year" }
+        { id: "rim", name: "You still need a big who can block shots" }
       ]
     },
     {

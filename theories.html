@@ -25,24 +25,21 @@
   <script>
     const groups = [
       {
-        label: "Body",
+        label: "You can't teach size",
         items: [
-          { name: "Drafting younger is better", href: "./age.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: A 19-year-old has more years to get good than a 22-year-old.", "What we found: True. Under 19 and a half lasts 10.4 years and becomes an All-Star 26% of the time. 22 and a half and older: 5.3 years, 12%. Draft slot is not in this check."] },
-          { name: "Bigger is better", href: "./size.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: You cannot teach height or strength. Take the bigger guy.", "What we found: Size moves the odds a little. It does not beat the pick itself."] },
-          { name: "Bigger than the position helps", href: "./size.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: It is not raw height. It is height at the position.", "What we found: Three extra inches vs the usual guy at that position shows up in All-Star, All-NBA, Hall of Fame, and MVP."] },
-          { name: "Guys who can play more than one position do better", href: "./size.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: A LeBron who can play all five beats a Shaq or a Muggsy locked to one spot.", "What we found: Players listed at two spots do better. Being 6-5 to 6-9 is not enough by itself."] },
-          { name: "Long arms help on defense", href: "./wingspan.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Wingspan matters more than listed height when you have to guard people.", "What we found: Longer arms do show up in All-Star and All-NBA rates. We do not have a clean defense award test yet."] },
+          { name: "You can't teach size", href: "./size.html", pill: "Checked", cls: "num",
+            cuts: ["What people say: You cannot teach height, length, or strength. Take the bigger guy.", "What we found: Height, weight, wingspan, reach, and size at the position all move the odds. Draft slot is not in this check."] },
           { name: "Tall guys who can dribble are rare", href: "./handle.html", pill: "Checked", cls: "num",
             cuts: ["What people say: A 6-foot-8 player who can pass and handle is the hardest thing to find.", "What we found: That is mostly true. Big creators become All-Stars more often than bigs who cannot create."] },
-          { name: "How high he can reach beats how high he jumps", href: "./reach.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Standing reach is the useful number. Max vertical is a combine trick.", "What we found: Not true for everyone. It only helps the very tall, 6-foot-10 and up."] },
           { name: "Workout numbers do not mean much", href: "./combine.html", pill: "Checked", cls: "num",
             cuts: ["What people say: The lane agility drill and the bench press do not tell you who can play.", "What we found: Half true. The clock and the bench move the odds a bit. Max vertical does not. Skipping the combine is mostly about pick slot, not talent."] }
+        ]
+      },
+      {
+        label: "Drafting younger is better",
+        items: [
+          { name: "Drafting younger is better", href: "./age.html", pill: "Checked", cls: "num",
+            cuts: ["What people say: A 19-year-old has more years to get good than a 22-year-old.", "What we found: True. Under 19 and a half lasts 10.4 years and becomes an All-Star 26% of the time. 22 and a half and older: 5.3 years, 12%. Class year is this theory, not a second lever. Draft slot is not in this check."] }
         ]
       },
       {
@@ -59,13 +56,7 @@
           { name: "College defense does not tell you anything", href: "./defense.html", pill: "Checked", cls: "num",
             cuts: ["What people say: You cannot see NBA defense in college stats. Scoring is what boards overweight.", "What we found: False. College steals-plus-blocks do show up. The high-stocks group becomes All-Stars about twice as often."] },
           { name: "You still need a big who can block shots", href: "./rim.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: A defense without a rim protector leaks at the basket.", "What we found: True for bigs. High-block centers and power forwards do better. It is flat if you mix in every position."] },
-          { name: "Some players get good late, and teams miss them", href: "./late.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Older college stars are cheap because everyone is obsessed with freshmen.", "What we found: Not really. Older high scorers do not beat younger ones at the same pick."] },
-          { name: "One year of college is enough if you are a star", href: "./onedone.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Freshmen who leave early are better bets than four-year stars.", "What we found: Mostly true, and a lot of that is just age. Freshmen hit All-Star more often than seniors."] },
-          { name: "Getting better in year two means more than a huge freshman year", href: "./jump.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: A real leap as a sophomore is a better sign than one flashy freshman season.", "What we found: No. Freshman flashes still win. The big year-two jump is a weaker signal."] }
+            cuts: ["What people say: A defense without a rim protector leaks at the basket.", "What we found: True for bigs. High-block centers and power forwards do better. It is flat if you mix in every position."] }
         ]
       },
       {
@@ -86,7 +77,11 @@
         kind: "dead",
         items: [
           { name: "Older guys have a higher floor", href: "./disproven.html", pill: "Disproven", cls: "dead",
-            cuts: ["What people say: A 22-year-old is ready now. Safer. Higher floor. Fewer busts.", "What we found: They last fewer years (5.3 vs 10.4), stick 3+ years less often (63% vs 89%), play fewer games per year (43 vs 51), and put up fewer win shares per year (1.22 vs 2.99). Draft slot is not in this check. It is not in the player model."] }
+            cuts: ["What people say: A 22-year-old is ready now. Safer. Higher floor. Fewer busts.", "What we found: They last fewer years (5.3 vs 10.4), stick 3+ years less often (63% vs 89%), play fewer games per year (43 vs 51), and put up fewer win shares per year (1.22 vs 2.99). Draft slot is not in this check. It is not in the player model."] },
+          { name: "Some players get good late, and teams miss them", href: "./late.html", pill: "Disproven", cls: "dead",
+            cuts: ["What people say: Older college stars are cheap because everyone is obsessed with freshmen.", "What we found: They do not. This was a pick story. It is not in the player model."] },
+          { name: "Getting better in year two means more than a huge freshman year", href: "./jump.html", pill: "Disproven", cls: "dead",
+            cuts: ["What people say: A real leap as a sophomore is a better sign than one flashy freshman season.", "What we found: No. Freshman flashes still win. It is not in the player model."] }
         ]
       },
       {

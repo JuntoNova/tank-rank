@@ -1,6 +1,6 @@
 (function () {
   var GROUPS = [
-    { label: "Body", items: [
+    { label: "You can't teach size", items: [
       { id: "inch", claim: "Every extra inch helps", href: "./size.html" },
       { id: "weight", claim: "Heavier guys perform better", href: "./size.html" },
       { id: "wpi", claim: "More pounds per inch helps", href: "./size.html" },
@@ -8,7 +8,9 @@
       { id: "ape", claim: "Arms longer than height help", href: "./size.html" },
       { id: "reach", claim: "Higher standing reach helps", href: "./reach.html" },
       { id: "handle", claim: "Tall guys who can dribble are rare", href: "./handle.html" },
-      { id: "combine", claim: "Workout numbers do not mean much", href: "./combine.html" },
+      { id: "combine", claim: "Workout numbers do not mean much", href: "./combine.html" }
+    ]},
+    { label: "Drafting younger is better", items: [
       { id: "age", claim: "Drafting younger is better", href: "./age.html" }
     ]},
     { label: "How he plays", items: [
@@ -17,10 +19,7 @@
       { id: "three", claim: "Taking a lot of threes matters more than a hot percentage", href: "./three.html" },
       { id: "astu", claim: "Passing travels better than scoring", href: "./astu.html" },
       { id: "defense", claim: "College defense does not tell you anything", href: "./defense.html" },
-      { id: "rim", claim: "You still need a big who can block shots", href: "./rim.html" },
-      { id: "late", claim: "Some players get good late, and teams miss them", href: "./late.html" },
-      { id: "onedone", claim: "One year of college is enough if you are a star", href: "./onedone.html" },
-      { id: "jump", claim: "Getting better in year two means more than a huge freshman year", href: "./jump.html" }
+      { id: "rim", claim: "You still need a big who can block shots", href: "./rim.html" }
     ]},
     { label: "School, country, and team", items: [
       { id: "schools", claim: "The best players come from the best colleges", href: "./schools.html" },
