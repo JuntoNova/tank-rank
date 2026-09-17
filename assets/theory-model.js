@@ -411,10 +411,37 @@
     const pct = Math.round(p * 100);
     return pct === 0 ? "<1%" : pct + "%";
   }
+  function fetchTheoryPack(year) {
+    year = Number(year);
+    function get(url) {
+      return fetch(url).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+    }
+    return Promise.all([
+      get("./assets/theory-packs/all.json?v=81").then(function (all) {
+        return (all && all[String(year)]) || null;
+      }),
+      get("./assets/theory-packs/" + year + ".json?v=92")
+    ]).then(function (parts) {
+      var thin = parts[0], rich = parts[1];
+      if (!thin) return rich;
+      if (!rich) return thin;
+      var by = {};
+      (thin.players || []).forEach(function (f) {
+        if (f && f.pk != null) by[f.pk] = Object.assign({}, f);
+      });
+      (rich.players || []).forEach(function (f) {
+        if (!f || f.pk == null) return;
+        by[f.pk] = Object.assign({}, by[f.pk] || {}, f);
+      });
+      var pks = Object.keys(by).map(Number).sort(function (a, b) { return a - b; });
+      return Object.assign({}, thin, rich, { players: pks.map(function (k) { return by[k]; }) });
+    });
+  }
   window.TR = window.TR || {};
   TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, INTENSITY: INTENSITY, PLAYER: PLAYER, HOF_CAP: HOF_CAP, fmtExp: fmtExp, fmtPct: fmtPct, fmtMul: fmtMul, fmtBand: fmtBand, bandHtml: bandHtml, careerHofP: careerHofP, fmtHofRemain: fmtHofRemain };
   TR.deriveFeat = deriveFeat;
   TR.projectPlayer = project;
   TR.bandX = bandX;
   TR.careerHofP = careerHofP;
+  TR.fetchTheoryPack = fetchTheoryPack;
 })();

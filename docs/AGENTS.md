@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Historic year boards were scoring age and size only. all.json has birthdates and no college line; the year pack has the line. Load both and let the year pack win, so Fultz is 3.2 on the 2017 board the same as on his page.
 - 2026-09-16 (Grok chat): Nested evaluation, baseline table, bootstrap intervals. C and the intercept shift are frozen before 2005–2014. Holdout AUC 0.68 vs pick-oracle 0.77. Grey 10–90 range on draft-night cells from 80 train resamples.
 - 2026-09-16 (Grok chat): Scoring is a fitted hurdle GLM, not typed multipliers. Train 1947–2004, holdout 2005–2014, AUC 0.68, mean P(All-Star) matches the holdout rate. HOF is logistic of P(All-Star), not a 20-feature logistic. Pick still out. Missing box scores skip. College lines centered on a typical draftee, not the packed-star mean. Swing and position flags dropped after they stacked with scoring.
 - 2026-09-16 (Grok chat): Pick is out of the projection. Missing box scores no longer get a 1.70 cap, which was punishing everyone we hadn't typed stats for.
