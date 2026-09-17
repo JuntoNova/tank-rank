@@ -17,6 +17,9 @@ Missing production
   does not fire. Production is centered on a typical college draftee line
   (16 / 2.5 / 1.2 / 0.7), not on the star-selected subset we have typed.
   Extreme college lines are winsorized.
+  High school box scores are a different unit. Skip them at predict
+  (theory-model.js). Do not refit origin_hs on the leftover Kobe/KG/LeBron
+  residual — that would mint every prep-to-pro.
 
 Uncertainty
   80 train-resamples, same frozen hyperparameters. Player intervals are

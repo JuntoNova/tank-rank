@@ -516,6 +516,8 @@ def fill_year(year, scrape=False, ssh=None, jason=None, draft_map=None):
         stats["n"] += 1
         origin = (feat.get("origin") or "college").lower()
         if origin in ("hs", "intl"):
+            # HS/intl counting stats are not NCAA. Packs may still show a
+            # high-school line on the card; the GLM skips it at score time.
             stats["skip_origin"] += 1
             if feat.get("pts") not in (None, ""):
                 stats["had"] += 1

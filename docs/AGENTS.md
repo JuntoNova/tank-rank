@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-17 (Grok chat): High school box scores are not college box scores. Kobe 30.8 / KG 25 / LeBron 31.6 no longer fire the college scoring theory. Age, size, and the HS flag still fire. Kobe is 1.5 AS / 11% Hall, not the 28% cap. Iverson (Georgetown) stays ahead of him. Did not refit origin_hs on the leftover residual — that would mint every prep-to-pro.
 - 2026-09-16 (Grok chat): Empty college packs were minting fake overachievers (Payton 0.28 AS / ×19). Last-season pts/ast/stl/blk filled from Sports-Reference for 1986–2026 college draftees. Payton is 3.5 AS, off Over. HS/intl still skip. Under requires fold < 1 so LeBron is not an underachiever.
 - 2026-09-16 (Grok chat): Hall of Fame is not a second All-Star column. Steals and blocks do not feed P(HOF). Mosley is not 25% Springfield for 4.3 blocks.
 - 2026-09-16 (Grok chat): All-time opens on When drafted. Now is career totals. MVP follows P(All-Star)×0.155 because 31 MVPs is not a 17-feature ranking. Nash’s Santa Clara senior line is in the pack; the old 14th was career MVPs on Now.

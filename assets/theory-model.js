@@ -85,6 +85,7 @@
       if (astN >= 2.5 && htIn >= 77) create = 1;
       else if (astN >= 2.0 && guard) create = 1;
     }
+    if (origin === "hs") create = 0;
     return {
       age: isNaN(age) ? null : age, cls: cls || "", origin: origin || "", tier: tier,
       ht: ht, wt: wt, wsp: wsp, reach: reach, pos: pos,
@@ -126,10 +127,13 @@
     var posHt = (G.pos_ht || { G: 75, F: 80, C: 83 })[pg];
     var wsp = inches(feat.wsp);
     var ape = (wsp && htIn) ? (wsp - htIn) : null;
-    var stl = feat.stl != null && feat.stl !== "" ? Number(feat.stl) : null;
-    var blk = feat.blk != null && feat.blk !== "" ? Number(feat.blk) : null;
-    var pts = feat.pts != null && feat.pts !== "" ? Number(feat.pts) : null;
-    var ast = feat.ast != null && feat.ast !== "" ? Number(feat.ast) : null;
+    var hs = feat.origin === "hs";
+    // High school counting stats are not college counting stats.
+    // Age, size, and origin_hs still fire. 31 at Lower Merion is not 31 at Georgetown.
+    var stl = hs ? null : (feat.stl != null && feat.stl !== "" ? Number(feat.stl) : null);
+    var blk = hs ? null : (feat.blk != null && feat.blk !== "" ? Number(feat.blk) : null);
+    var pts = hs ? null : (feat.pts != null && feat.pts !== "" ? Number(feat.pts) : null);
+    var ast = hs ? null : (feat.ast != null && feat.ast !== "" ? Number(feat.ast) : null);
     var rel = (age != null) ? (age - eraMed(year)) : null;
     var dHt = (htIn && posHt) ? (htIn - posHt) : null;
     var raw = {
@@ -146,9 +150,9 @@
       x[k] = (v - G.means[k]) / sd;
     });
     if (!htIn) x.ht_in = 0;
-    x.origin_hs = feat.origin === "hs" ? 1 : 0;
+    x.origin_hs = hs ? 1 : 0;
     x.origin_intl = feat.origin === "intl" ? 1 : 0;
-    x.create_tall = (feat.create && htIn >= 79) ? 1 : 0;
+    x.create_tall = (!hs && feat.create && htIn >= 79) ? 1 : 0;
     if (x.pos_g !== undefined) x.pos_g = 0;
     if (x.pos_c !== undefined) x.pos_c = 0;
     if (x.swing !== undefined) x.swing = 0;
@@ -288,15 +292,23 @@
       { id: "posht", label: "Size at position", keys: ["d_ht"],
         value: (feat.ht || "") + (feat.pos ? " / " + feat.pos : "") },
       { id: "handle", label: "Handle x size", keys: ["create_tall"],
-        value: xFull.create_tall ? ((feat.ht || "6-7+") + " creator") : (feat.ht || "missing") },
+        value: xFull.create_tall ? ((feat.ht || "6-7+") + " creator") : (feat.origin === "hs" ? "high school (not college creation)" : (feat.ht || "missing")) },
       { id: "prod", label: "College scoring", keys: ["pts"],
-        value: raw.pts != null ? (raw.pts + " pts") : "no box score" },
+        value: feat.origin === "hs"
+          ? ((feat.pts != null && feat.pts !== "") ? (feat.pts + " HS pts, not college") : "high school")
+          : (raw.pts != null ? (raw.pts + " pts") : "no box score") },
       { id: "astu", label: "Passing", keys: ["ast"],
-        value: raw.ast != null ? (raw.ast + " ast") : "no box score" },
+        value: feat.origin === "hs"
+          ? ((feat.ast != null && feat.ast !== "") ? (feat.ast + " HS ast, not college") : "high school")
+          : (raw.ast != null ? (raw.ast + " ast") : "no box score") },
       { id: "defense", label: "Steals", keys: ["stl"],
-        value: raw.stl != null ? (raw.stl + " stl") : "no box score" },
+        value: feat.origin === "hs"
+          ? ((feat.stl != null && feat.stl !== "") ? (feat.stl + " HS stl, not college") : "high school")
+          : (raw.stl != null ? (raw.stl + " stl") : "no box score") },
       { id: "rim", label: "Shot blocking", keys: ["blk"],
-        value: raw.blk != null ? (raw.blk + " blk") : "no box score" },
+        value: feat.origin === "hs"
+          ? ((feat.blk != null && feat.blk !== "") ? (feat.blk + " HS blk, not college") : "high school")
+          : (raw.blk != null ? (raw.blk + " blk") : "no box score") },
       { id: "wingspan", label: "Wingspan", keys: ["ape"],
         value: feat.wsp || "missing" }
     ];
