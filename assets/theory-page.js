@@ -44,7 +44,8 @@
     } else if (groups.length === 1 && groups[0].items && groups[0].items.length) {
       html = '<div class="acc theory-list theory-families">' + groups[0].items.map(row).join("") + "</div>";
     }
-    TR.renderSimple(document.getElementById("app"), "theories", title, "", html);
+    var back = '<p class="theory-back"><a class="btn" href="/theories.html">All theories</a></p>';
+    TR.renderSimple(document.getElementById("app"), "theories", title, "", back + html + back);
     bind();
   };
 })();

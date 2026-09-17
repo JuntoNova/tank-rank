@@ -136,4 +136,12 @@ h2.size-h { font-family: var(--serif); font-size: 24px; font-weight: 500; margin
 }
 .theory-method a { color: var(--muted); }
 .theory-method a:hover { color: var(--text); }
+.theory-back {
+  margin: 0 0 18px;
+}
+.theory-back + .theory-families { margin-top: 4px; }
+.theory-families + .theory-back {
+  margin: 28px 0 0;
+}
+.theory-back .btn:hover { border-color: var(--text); color: var(--text); }
 
