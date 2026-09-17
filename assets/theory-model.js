@@ -24,6 +24,13 @@
     const m = String(ht || "").match(/(\d+)\s*-\s*(\d+(?:\.\d+)?)/);
     return m ? Number(m[1]) * 12 + Number(m[2]) : 0;
   }
+  function measureIn(ht, lo, hi) {
+    var v = inches(ht);
+    return (v && v >= lo && v <= hi) ? v : 0;
+  }
+  function isSwing(pos) {
+    return /\//.test(String(pos || ""));
+  }
   function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
   function shrink(raw, keep) { return 1 + (raw - 1) * keep; }
   function keepAs(pk)  { return pk <= 5 ? 0.42 : pk <= 14 ? 0.50 : pk <= 30 ? 0.60 : 0.72; }
@@ -119,14 +126,15 @@
     (G.features || []).forEach(function (k) { x[k] = 0; });
     var age = feat.age;
     if (age != null && !(age >= 17 && age <= 25.5)) age = null;
-    var htIn = inches(feat.ht);
-    if (htIn && (htIn < 68 || htIn > 94)) htIn = 0;
+    var htIn = measureIn(feat.ht, 68, 94);
     var wt = feat.wt != null && feat.wt !== "" ? Number(feat.wt) : null;
     if (wt != null && !(wt >= 150 && wt <= 360)) wt = null;
     var pg = posGroup(feat.pos);
     var posHt = (G.pos_ht || { G: 75, F: 80, C: 83 })[pg];
-    var wsp = inches(feat.wsp);
+    var wsp = measureIn(feat.wsp, 70, 100);
+    var reachIn = measureIn(feat.reach, 90, 125);
     var ape = (wsp && htIn) ? (wsp - htIn) : null;
+    var wpi = (wt && htIn) ? (wt / htIn) : null;
     var hs = feat.origin === "hs";
     // High school counting stats are not college counting stats.
     // Age, size, and origin_hs still fire. 31 at Lower Merion is not 31 at Georgetown.
@@ -140,11 +148,12 @@
     var dHt = (htIn && posHt) ? (htIn - posHt) : null;
     var raw = {
       rel_age: rel, ht_in: htIn || null, wt: wt, d_ht: dHt, ape: ape,
+      wpi: wpi, wsp_in: wsp || null, reach_in: reachIn || null,
       pts: pts, ast: ast, stl: stl, blk: blk, reb: reb
     };
     (G.continuous || []).forEach(function (k) {
       var v = raw[k];
-      if (v == null || (k === "ht_in" && !htIn)) { x[k] = 0; return; }
+      if (v == null || (k === "ht_in" && !htIn) || (k === "wsp_in" && !wsp) || (k === "reach_in" && !reachIn)) { x[k] = 0; return; }
       if (G.winsor && G.winsor[k]) {
         v = Math.max(G.winsor[k][0], Math.min(G.winsor[k][1], v));
       }
@@ -155,9 +164,7 @@
     x.origin_hs = hs ? 1 : 0;
     x.origin_intl = feat.origin === "intl" ? 1 : 0;
     x.create_tall = (!hs && feat.create && htIn >= 79) ? 1 : 0;
-    if (x.pos_g !== undefined) x.pos_g = 0;
-    if (x.pos_c !== undefined) x.pos_c = 0;
-    if (x.swing !== undefined) x.swing = 0;
+    x.swing = isSwing(feat.pos) ? 1 : 0;
     (G.missing || []).forEach(function (k) { x[k] = 0; });
     return { x: x, raw: raw, pg: pg, htIn: htIn, age: age };
   }
@@ -278,10 +285,20 @@
     const xFull = built.x;
     const raw = built.raw;
     const HREF = {
-      age: "./age.html", intl: "./intl.html", size: "./size.html", posht: "./size.html",
-      swing: "./size.html", handle: "./handle.html", wingspan: "./wingspan.html",
+      age: "./age.html", intl: "./intl.html", size: "./size.html", inch: "./size.html",
+      posht: "./size.html", swing: "./size.html", wpi: "./size.html", ape: "./size.html",
+      handle: "./handle.html", wingspan: "./wingspan.html", reach: "./reach.html",
       prod: "./prod.html", defense: "./defense.html", astu: "./astu.html", rim: "./rim.html"
     };
+    function apeLabel() {
+      if (!raw.ape && raw.ape !== 0) return "missing";
+      var s = (raw.ape >= 0 ? "+" : "") + (Math.round(raw.ape * 10) / 10) + " in";
+      return (feat.wsp || "") + " vs " + (feat.ht || "") + " (" + s + ")";
+    }
+    function wpiLabel() {
+      if (raw.wpi == null) return "missing";
+      return raw.wpi.toFixed(2) + " lb/in";
+    }
     const groups = [
       { id: "age", label: "Age", keys: ["rel_age"],
         value: built.age != null ? (feat.age + " " + ageLabel(ageKey(feat.age))) : "unknown" },
@@ -291,8 +308,18 @@
         value: feat.ht || "missing" },
       { id: "weight", label: "Weight", keys: ["wt"],
         value: feat.wt != null ? (feat.wt + " lbs") : "missing" },
+      { id: "wpi", label: "Pounds per inch", keys: ["wpi"],
+        value: wpiLabel() },
+      { id: "wingspan", label: "Wingspan", keys: ["wsp_in"],
+        value: feat.wsp || "missing" },
+      { id: "ape", label: "Arms vs height", keys: ["ape"],
+        value: apeLabel() },
+      { id: "reach", label: "Standing reach", keys: ["reach_in"],
+        value: feat.reach || "missing" },
       { id: "posht", label: "Size at position", keys: ["d_ht"],
-        value: (feat.ht || "") + (feat.pos ? " / " + feat.pos : "") },
+        value: (feat.ht || "") + (feat.pos ? " / " + feat.pos : "") || "missing" },
+      { id: "swing", label: "More than one position", keys: ["swing"],
+        value: feat.pos ? (xFull.swing ? (feat.pos + " (swing)") : (feat.pos + " (one spot)")) : "missing" },
       { id: "handle", label: "Handle x size", keys: ["create_tall"],
         value: xFull.create_tall ? ((feat.ht || "6-7+") + " creator") : (feat.origin === "hs" ? "high school (not college creation)" : (feat.ht || "missing")) },
       { id: "prod", label: "College scoring", keys: ["pts"],
@@ -310,9 +337,7 @@
       { id: "rim", label: "Shot blocking", keys: ["blk"],
         value: feat.origin === "hs"
           ? ((feat.blk != null && feat.blk !== "") ? (feat.blk + " HS blk, not college") : "high school")
-          : (raw.blk != null ? (raw.blk + " blk") : "no box score") },
-      { id: "wingspan", label: "Wingspan", keys: ["ape"],
-        value: feat.wsp || "missing" }
+          : (raw.blk != null ? (raw.blk + " blk") : "no box score") }
     ];
     const x = {};
     (G && G.features || []).forEach(function (k) { x[k] = 0; });

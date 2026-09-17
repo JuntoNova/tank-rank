@@ -16,7 +16,9 @@ Missing production
   (miss dummies in train). At predict those dummies are zero — the theory
   does not fire. Production is centered on a typical college draftee line
   (16 / 2.5 / 1.2 / 0.7), not on the star-selected subset we have typed.
-  Extreme college lines are winsorized.
+  Size: height, weight, pounds-per-inch, raw wingspan, ape, standing
+  reach, size-at-position, listed swing. Missing length/reach/wpi skip
+  at predict. Swing is two listed spots vs one.
   High school box scores are a different unit. Skip them at predict
   (theory-model.js). Do not refit origin_hs on the leftover Kobe/KG/LeBron
   residual — that would mint every prep-to-pro.
@@ -54,6 +56,9 @@ WINSOR = {
     "ast": (0.0, 8.0),
     "stl": (0.0, 4.0),
     "blk": (0.0, 4.0),
+    "wpi": (2.2, 3.5),
+    "wsp_in": (72.0, 94.0),
+    "reach_in": (94.0, 118.0),
 }
 HOF_FLOOR = 0.003
 HOF_CAP = 0.28
@@ -66,16 +71,28 @@ PO_GRID = [3.0, 10.0, 30.0]
 RIDGE_GRID = [0.3, 1.0, 3.0, 10.0]
 
 
-def inches(ht):
-    if ht is None:
+def measure_inches(val, lo, hi):
+    if val is None:
         return None
-    if isinstance(ht, (int, float)) and 60 < float(ht) < 100:
-        return float(ht)
-    m = HT_RE.search(str(ht))
+    if isinstance(val, (int, float)) and lo < float(val) < hi:
+        return float(val)
+    m = HT_RE.search(str(val))
     if not m:
         return None
     v = int(m.group(1)) * 12 + float(m.group(2))
-    return v if 68 <= v <= 94 else None
+    return v if lo <= v <= hi else None
+
+
+def inches(ht):
+    return measure_inches(ht, 68, 94)
+
+
+def wsp_inches(val):
+    return measure_inches(val, 70, 100)
+
+
+def reach_inches(val):
+    return measure_inches(val, 90, 125)
 
 
 def era_med(y):
@@ -102,6 +119,10 @@ def pos_group(pos):
     if "G" in pos:
         return "G"
     return ""
+
+
+def is_swing(pos):
+    return 1.0 if pos and "/" in str(pos) else 0.0
 
 
 def num(x):
@@ -155,8 +176,10 @@ def load_rows():
             ast = num(feat.get("ast"))
             stl = num(feat.get("stl"))
             blk = num(feat.get("blk"))
-            wsp = inches(feat.get("wsp"))
+            wsp = wsp_inches(feat.get("wsp"))
             ape = (wsp - ht) if (wsp and ht) else None
+            reach = reach_inches(feat.get("reach"))
+            wpi = (wt / ht) if (wt and ht) else None
             create = 1.0 if feat.get("create") else 0.0
             pg = pos_group(pos)
             d_ht = (ht - POS_HT[pg]) if (ht and pg in POS_HT) else None
@@ -170,19 +193,21 @@ def load_rows():
                 "hof": 1.0 if h.get("hof") else 0.0,
                 "rel_age": (age - era_med(year)) if age is not None else None,
                 "ht_in": ht, "wt": wt, "d_ht": d_ht, "ape": ape,
+                "wpi": wpi, "wsp_in": wsp, "reach_in": reach,
                 "origin_hs": 1.0 if origin == "hs" else 0.0,
                 "origin_intl": 1.0 if origin == "intl" else 0.0,
                 "create_tall": 1.0 if create and ht and ht >= 79 else 0.0,
+                "swing": is_swing(pos),
                 "pts": pts, "ast": ast, "stl": stl, "blk": blk,
             })
     return rows
 
 
-BODY = ["rel_age", "ht_in", "wt", "d_ht", "ape"]
+BODY = ["rel_age", "ht_in", "wt", "d_ht", "ape", "wpi", "wsp_in", "reach_in"]
 PROD = ["pts", "ast", "stl", "blk"]
 CONT = BODY + PROD
-BIN = ["origin_hs", "origin_intl", "create_tall"]
-MISS_USE = ["pts", "ast", "stl", "blk", "ape"]
+BIN = ["origin_hs", "origin_intl", "create_tall", "swing"]
+MISS_USE = ["pts", "ast", "stl", "blk", "ape", "wpi", "wsp_in", "reach_in", "d_ht"]
 
 THEORY_MAP = {
     "rel_age": "age",
@@ -191,6 +216,14 @@ THEORY_MAP = {
     "ht_in": "size",
     "wt": "weight",
     "d_ht": "posht",
+    "miss_d_ht": "posht",
+    "wpi": "wpi",
+    "miss_wpi": "wpi",
+    "wsp_in": "wingspan",
+    "miss_wsp_in": "wingspan",
+    "reach_in": "reach",
+    "miss_reach_in": "reach",
+    "swing": "swing",
     "create_tall": "handle",
     "pts": "prod",
     "miss_pts": "prod",
@@ -676,7 +709,7 @@ def main():
 
     coefs = {
         "method": "hurdle GLM, nested: C/alpha/shift on 1995–2004, refit 1947–2004, report 2005–2014",
-        "identification": "No draft pick. Draft-night traits only. Age clipped to 17–25.5. Missing production skipped at predict and centered on a typical college line. Swing and position flags dropped after they stacked with scoring.",
+        "identification": "No draft pick. Draft-night traits only. Age clipped to 17–25.5. Missing production skipped at predict and centered on a typical college line. High school box scores are not college box scores and are skipped at predict. Size: height, weight, pounds-per-inch, wingspan, ape, standing reach, size-at-position, swing. Missing length/reach/wpi do not fire. Swing is listed two-spot vs one-spot.",
         "train": [1947, 2004],
         "inner": [1995, 2004],
         "holdout": [2005, 2014],

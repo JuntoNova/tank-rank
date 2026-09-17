@@ -125,7 +125,7 @@
     if (!box || box.getAttribute("data-ready")) return;
     box.setAttribute("data-ready", "1");
     css();
-    fetch("./assets/outliers.json?v=11")
+    fetch("./assets/outliers.json?v=12")
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         if (!data) {

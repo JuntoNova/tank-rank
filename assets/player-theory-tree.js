@@ -191,22 +191,30 @@
     var htIn = inches(ht);
     var found = window.TR && TR.Size ? TR.Size.lookup(feat) : null;
     if (id === "size") {
+      var sizeStep = fromStep(steps, "size");
+      if (sizeStep) return sizeStep;
       var band = found && found.height;
       if (band) return { fact: (ht || "") + " \u00b7 " + band.label, mAs: band.mAs, mNba: band.mNba, mHof: band.mHof, mMvp: band.mMvp };
-      return fromStep(steps, "size");
+      return null;
     }
     if (id === "inch") {
+      var inchStep = fromStep(steps, "size");
+      if (inchStep) return inchStep;
       var key = String(ht || "").replace(/\s+/g, "");
       var inch = INCH[key];
       if (inch && ht) return { fact: ht, mAs: inch.mAs, mNba: inch.mNba, mHof: inch.mHof, mMvp: inch.mMvp };
       return null;
     }
     if (id === "weight") {
+      var wtStep = fromStep(steps, "weight");
+      if (wtStep) return wtStep;
       var wband = found && found.weight;
       if (wband && !isNaN(wt)) return { fact: wt + " lbs \u00b7 " + wband.label, mAs: wband.mAs, mNba: wband.mNba, mHof: wband.mHof, mMvp: wband.mMvp };
-      return fromStep(steps, "weight");
+      return null;
     }
     if (id === "wpi") {
+      var wpiStep = fromStep(steps, "wpi");
+      if (wpiStep) return wpiStep;
       if (!htIn || isNaN(wt)) return null;
       var ratio = wt / htIn;
       var rowW = pick(WPI, ratio);
@@ -214,19 +222,24 @@
       return { fact: ratio.toFixed(2) + " \u00b7 " + rowW.label, mAs: rowW.mAs, mNba: rowW.mNba, mHof: rowW.mHof, mMvp: rowW.mMvp };
     }
     if (id === "wingspan") {
-      var wspIn = inches(feat.wsp);
-      if (!wspIn) return fromStep(steps, "wingspan");
-      return fromStep(steps, "wingspan") || { fact: feat.wsp, mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
+      var wsStep = fromStep(steps, "wingspan");
+      if (wsStep) return wsStep;
+      if (!feat.wsp) return { fact: "missing", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
+      return { fact: feat.wsp, mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
     }
     if (id === "ape") {
+      var apeStep = fromStep(steps, "ape");
+      if (apeStep) return apeStep;
       var aHt = htIn, aWs = inches(feat.wsp);
-      if (!aHt || !aWs) return null;
+      if (!aHt || !aWs) return { fact: "missing", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
       var ape = aWs - aHt;
-      return fromStep(steps, "wingspan") || { fact: (ape >= 0 ? "+" : "") + ape.toFixed(1) + " in", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
+      return { fact: (ape >= 0 ? "+" : "") + ape.toFixed(1) + " in", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
     }
     if (id === "reach") {
-      if (!inches(feat.reach)) return fromStep(steps, "reach");
-      return fromStep(steps, "reach") || { fact: feat.reach, mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
+      var rStep = fromStep(steps, "reach");
+      if (rStep) return rStep;
+      if (!feat.reach) return { fact: "missing", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
+      return { fact: feat.reach, mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
     }
     if (id === "posht") {
       var ph = fromStep(steps, "posht");
