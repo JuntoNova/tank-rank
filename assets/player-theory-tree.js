@@ -44,7 +44,13 @@
     {
       label: "Drafting younger is better",
       kids: [
-        { id: "age", name: "Drafting younger is better" }
+        {
+          name: "Drafting younger is better",
+          kids: [
+            { id: "age-yrs", name: "They last longer" },
+            { id: "age-stars", name: "They become stars more often" }
+          ]
+        }
       ]
     },
     {
@@ -166,17 +172,24 @@
       return '<div class="th-bin"><p class="empty">No measurement</p></div>';
     }
     var fact = spec.fact ? '<p class="who">' + spec.fact + "</p>" : "";
+    var show = spec.show;
+    function want(k) { return !show || show.indexOf(k) >= 0; }
+    var body = "";
+    if (want("yrs")) body += row("Years", spec.mYrs);
+    if (want("as")) body += row("All-Star", spec.mAs);
+    if (want("nba")) body += row("All-NBA", spec.mNba);
+    if (want("hof")) body += row("Hall of Fame", spec.mHof);
+    if (want("mvp")) body += row("MVP", spec.mMvp);
     return '<div class="th-bin">' + fact +
       '<table><thead><tr><th></th><th>This player</th><th class="num">Applied</th></tr></thead><tbody>' +
-      row("All-Star", spec.mAs) + row("All-NBA", spec.mNba) + row("Hall of Fame", spec.mHof) + row("MVP", spec.mMvp) +
-      "</tbody></table></div>";
+      body + "</tbody></table></div>";
   }
   function fromStep(steps, id) {
     var s = (steps || []).find(function (x) { return x.id === id; });
     if (!s) return null;
     var val = cleanFact(s.value);
     if (!val) return null;
-    return { fact: val, mAs: s.mAs, mNba: s.mNba, mHof: s.mHof, mMvp: s.mMvp };
+    return { fact: val, mAs: s.mAs, mNba: s.mNba, mHof: s.mHof, mMvp: s.mMvp, mYrs: s.mYrs };
   }
   function resolve(id, p) {
     var feat = Object.assign({}, p.theoryFeat || {}, {
@@ -253,6 +266,13 @@
       if (sw) return sw;
       var sp = String(feat.pos || p.pos || "");
       return { fact: sp ? sp : "No listed position", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
+    }
+    if (id === "age" || id === "age-yrs" || id === "age-stars") {
+      var ageStep = fromStep(steps, "age");
+      if (!ageStep) ageStep = { fact: "no age", mAs: 1, mNba: 1, mHof: 1, mMvp: 1, mYrs: 1 };
+      if (id === "age-yrs") ageStep = Object.assign({}, ageStep, { show: ["yrs"] });
+      if (id === "age-stars") ageStep = Object.assign({}, ageStep, { show: ["as", "nba", "hof", "mvp"] });
+      return ageStep;
     }
     if (id === "astu" || id === "passers") {
       var astStep = fromStep(steps, "astu");
