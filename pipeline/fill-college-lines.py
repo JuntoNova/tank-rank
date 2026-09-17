@@ -329,6 +329,11 @@ def apply_line(feat, line, overwrite=False):
             if feat.get(k) != line[k]:
                 feat[k] = line[k]
                 changed = True
+    trb = line.get("trb")
+    if trb is not None and (overwrite or feat.get("reb") in (None, "")):
+        if feat.get("reb") != trb:
+            feat["reb"] = trb
+            changed = True
     if line.get("ast") is not None:
         c = want_create(feat, line["ast"])
         if c and not feat.get("create"):

@@ -134,11 +134,13 @@
     var blk = hs ? null : (feat.blk != null && feat.blk !== "" ? Number(feat.blk) : null);
     var pts = hs ? null : (feat.pts != null && feat.pts !== "" ? Number(feat.pts) : null);
     var ast = hs ? null : (feat.ast != null && feat.ast !== "" ? Number(feat.ast) : null);
+    var rebRaw = feat.reb != null && feat.reb !== "" ? feat.reb : feat.trb;
+    var reb = hs ? null : (rebRaw != null && rebRaw !== "" ? Number(rebRaw) : null);
     var rel = (age != null) ? (age - eraMed(year)) : null;
     var dHt = (htIn && posHt) ? (htIn - posHt) : null;
     var raw = {
       rel_age: rel, ht_in: htIn || null, wt: wt, d_ht: dHt, ape: ape,
-      pts: pts, ast: ast, stl: stl, blk: blk
+      pts: pts, ast: ast, stl: stl, blk: blk, reb: reb
     };
     (G.continuous || []).forEach(function (k) {
       var v = raw[k];
@@ -449,7 +451,7 @@
       get("./assets/theory-packs/all.json?v=81").then(function (all) {
         return (all && all[String(year)]) || null;
       }),
-      get("./assets/theory-packs/" + year + ".json?v=93")
+      get("./assets/theory-packs/" + year + ".json?v=94")
     ]).then(function (parts) {
       var thin = parts[0], rich = parts[1];
       if (!thin) return rich;
