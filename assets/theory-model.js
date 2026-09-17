@@ -428,12 +428,15 @@
     return t ? '<span class="band">' + t + "</span>" : "";
   }
   // Remaining Hall odds from the career so far. Draft-night pHof is a different
-  // number (slot × theories, capped at 10%). This one is: given the resume and
-  // whether they are still playing, will Springfield take them?
+  // number. This one is: given the resume and whether they are still playing,
+  // will Springfield take them?
   //   already in → 100%
   //   retired ~20+ years and not in → 0%
-  //   LeBron-tier (MVP + huge All-NBA) → 100% even before induction
-  //   no NBA season yet (2026 class) → null, caller uses draft-night pHof
+  //   empty resume (no AS / All-NBA / MVP) → null (use draft-night). An empty
+  //     year is not a 2% Hall ticket. The logistic at score 0 is ~2% and that
+  //     was painting every 2025 draftee as 2% after one season.
+  //   eight seasons, never an All-Star or All-NBA → 0%
+  //   no NBA season yet → null, caller uses draft-night pHof
   function careerHofP(p, draftYear, nowYear) {
     if (!p) return null;
     if (Number(p.hof)) return 1;
@@ -450,6 +453,10 @@
     const nba = Number(p.allNba != null ? p.allNba : p.nba) || 0;
     const nba1 = Number(p.nba1) || 0;
     const mvp = Number(p.mvp) || 0;
+    if (as === 0 && nba === 0 && nba1 === 0 && mvp === 0) {
+      if (retiredFor >= 8 || yrs >= 8) return 0;
+      return null;
+    }
     const ch = Number(p.champs != null ? p.champs : p.ch) || 0;
     const pts = Number(p.pts) || 0;
     const ws = Number(p.ws) || 0;

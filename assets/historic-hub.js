@@ -133,6 +133,12 @@
   }
   function hofNowOf(r) {
     if (Number(r.hof)) return 1;
+    var fn = window.TR && TR.Model && TR.Model.careerHofP;
+    if (typeof fn === "function") {
+      var p = fn(r, r.y, 2027);
+      if (p == null) return Number(r.pHof) || 0;
+      return p;
+    }
     var now = 2027;
     var yrs = Number(r.yrs) || 0;
     if (yrs === 0 && r.y >= now - 1) return Number(r.pHof) || 0;
@@ -141,6 +147,10 @@
     if (retiredFor >= 20 || yrs === 0) return 0;
     var as = Number(r.as) || 0, nba = Number(r.nba) || 0, nba1 = Number(r.nba1) || 0;
     var mvp = Number(r.mvp) || 0, ch = Number(r.ch) || 0;
+    if (as === 0 && nba === 0 && nba1 === 0 && mvp === 0) {
+      if (retiredFor >= 8 || yrs >= 8) return 0;
+      return Number(r.pHof) || 0;
+    }
     var s = mvp * 4.2 + nba1 * 0.55 + nba * 0.50 + as * 0.22 + ch * 0.28;
     var pr = 1 / (1 + Math.exp(-(s - 4.0)));
     if (mvp >= 1 && (as >= 6 || nba >= 5)) pr = Math.max(pr, 0.97);
