@@ -437,7 +437,7 @@
       get("./assets/theory-packs/all.json?v=81").then(function (all) {
         return (all && all[String(year)]) || null;
       }),
-      get("./assets/theory-packs/" + year + ".json?v=92")
+      get("./assets/theory-packs/" + year + ".json?v=93")
     ]).then(function (parts) {
       var thin = parts[0], rich = parts[1];
       if (!thin) return rich;

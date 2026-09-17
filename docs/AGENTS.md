@@ -17,7 +17,7 @@ Repo: https://github.com/JuntoNova/tank-rank
 - **Historic year boards:** keep a `← Historic drafts` button to `drafts.html` in `.section-head`.
 - **About is off the menu.** `about.html` may stay as a direct URL. Do not add About back to `.nav-links`.
 - **Theories is on the menu.** Hub is `theories.html`. Do not drop it. Individual theory pages (`size.html`, `age.html`, …) stay off the top nav and highlight Theories.
-- **Outliers is a Historic pill, not a nav item.** Data lives in `assets/outliers.json`; rebuild with `pipeline/score-outliers.py` after `all-time.json`. Page is a board table (Year / Pk / Player / Team / AS / 1st / All-NBA / Yrs / Chips / MVP / HOF / Δ). Δ is career ÷ the draft-night model on 1×AS + 2×All-NBA + 3×1st + 4×Chips + 10×MVP + 20×HOF + 0.25×Yrs. Ranked on that fold, not raw career size. Over = largest fold, 1989–2018, 2+ All-Stars or an MVP. Under = smallest fold among lottery picks the model liked (eAs ≥ 3, pk ≤ 14). Diff = largest |log fold|. Do not restore the ranked-list copy or the hidden win-share term.
+- **Outliers is a Historic pill, not a nav item.** Data lives in `assets/outliers.json`; rebuild with `pipeline/score-outliers.py` after `all-time.json`. Page is a board table (Year / Pk / Player / Team / AS / 1st / All-NBA / Yrs / Chips / MVP / HOF / Δ). Δ is career ÷ the draft-night model on 1×AS + 2×All-NBA + 3×1st + 4×Chips + 10×MVP + 20×HOF + 0.25×Yrs. Ranked on that fold, not raw career size. Over = largest fold, 1989–2018, 2+ All-Stars or an MVP. Under = fold < 1 among lottery picks the model liked (eAs ≥ 3, pk ≤ 14). Diff = largest |log fold|. Do not restore the ranked-list copy or the hidden win-share term.
 - **Big Board is off the menu.** It duplicates Upcoming. `board.html?year=` stays as the board URL. Do not put Big Board back in `.nav-links`. About stays off the menu.
 
 ## Living boards
@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-16 (Grok chat): Empty college packs were minting fake overachievers (Payton 0.28 AS / ×19). Last-season pts/ast/stl/blk filled from Sports-Reference for 1986–2026 college draftees. Payton is 3.5 AS, off Over. HS/intl still skip. Under requires fold < 1 so LeBron is not an underachiever.
 - 2026-09-16 (Grok chat): Hall of Fame is not a second All-Star column. Steals and blocks do not feed P(HOF). Mosley is not 25% Springfield for 4.3 blocks.
 - 2026-09-16 (Grok chat): All-time opens on When drafted. Now is career totals. MVP follows P(All-Star)×0.155 because 31 MVPs is not a 17-feature ranking. Nash’s Santa Clara senior line is in the pack; the old 14th was career MVPs on Now.
 - 2026-09-16 (Grok chat): All-time opens on When drafted. Now is career totals. MVP follows P(All-Star)×0.155 because 31 MVPs is not a 17-feature ranking. Nash’s Santa Clara senior line is in the pack; the old 14th was career MVPs on Now.

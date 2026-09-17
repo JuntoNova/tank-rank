@@ -9,7 +9,7 @@ becomes an MVP outranks a #1 who was supposed to be great.
     fold   = career / max(model, 0.6)
 
 Over: largest fold, 1989–2018, at least 2 All-Stars or an MVP.
-Under: smallest fold among lottery picks the model liked (eAs ≥ 3, pk ≤ 14).
+Under: smallest fold < 1 among lottery picks the model liked (eAs ≥ 3, pk ≤ 14).
 Diff: largest |log fold| in that same modern window.
 """
 from __future__ import annotations
@@ -88,7 +88,7 @@ def main():
         hof = num(r.get("hof"))
         ast = num(r.get("as"))
         mvp = num(r.get("mvp"))
-        # Name collisions (Bobby Jones 2006, Hardaway Jr) inherit a HOF flag.
+        # Name collisions (Bobby Jones 2006, Hardaway Jr) inherit a father's honors.
         if y >= 2005 and hof and ast < 8 and mvp == 0:
             hof = 0.0
         act = honor(
@@ -129,7 +129,7 @@ def main():
         })
 
     over_pool = [s for s in scored if 1989 <= s["y"] <= 2018 and (s["as"] >= 2 or s["mvp"] >= 1)]
-    under_pool = [s for s in scored if 1989 <= s["y"] <= 2018 and s["eAs"] >= 3 and s["pk"] <= 14]
+    under_pool = [s for s in scored if 1989 <= s["y"] <= 2018 and s["eAs"] >= 3 and s["pk"] <= 14 and s["fold"] < 1]
     diff_pool = [s for s in scored if 1989 <= s["y"] <= 2018 and (s["as"] >= 2 or (s["eAs"] >= 3 and s["pk"] <= 14))]
 
     over = sorted(over_pool, key=lambda s: -s["fold"])[:N]
