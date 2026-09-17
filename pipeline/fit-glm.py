@@ -60,8 +60,8 @@ WINSOR = {
     "wsp_in": (72.0, 94.0),
     "reach_in": (94.0, 118.0),
 }
-HOF_FLOOR = 0.003
-HOF_CAP = 0.28
+HOF_FLOOR = 0.0004
+HOF_CAP = 0.15
 LAM_MIN = 1.0
 LAM_MAX = 8.0
 BOOT_B = 80
@@ -585,10 +585,25 @@ def main():
 
     p_as_hof = platt_apply(models["as_ever"].predict_proba(Xhof)[:, 1], platt.get("as"))
     yhof = y_of(hof_train, "hof")
-    p_given_as = float(np.mean([r["hof"] for r in hof_train if r["as"] > 0]))
-    p_given_no = float(np.mean([r["hof"] for r in hof_train if r["as"] == 0]))
-    p_hof = np.clip(p_given_no + (p_given_as - p_given_no) * p_as_hof, HOF_FLOOR, HOF_CAP)
-    hof_from_as = {"kind": "mixture", "p_given_as": p_given_as, "p_given_no": p_given_no}
+    none = [r for r in hof_train if r["as"] == 0]
+    one = [r for r in hof_train if r["as"] == 1]
+    multi = [r for r in hof_train if r["as"] >= 2]
+    p_given_0 = float(np.mean([r["hof"] for r in none])) if none else 0.002
+    p_given_1 = float(np.mean([r["hof"] for r in one])) if one else 0.035
+    p_given_2 = float(np.mean([r["hof"] for r in multi])) if multi else 0.49
+    # Draft-night P(2+ All-Star) is not P(ever AS). A 14% All-Star is almost
+    # always a 1-timer if he gets there. P(2+) ≈ P(AS)^2. P(HOF|1 AS) is 3.5%,
+    # not the 34% blended in by multi-time All-Stars.
+    p0 = 1.0 - p_as_hof
+    p1 = p_as_hof * (1.0 - p_as_hof)
+    p2 = p_as_hof * p_as_hof
+    p_hof = np.clip(p_given_0 * p0 + p_given_1 * p1 + p_given_2 * p2, HOF_FLOOR, HOF_CAP)
+    hof_from_as = {
+        "kind": "as_count_mix",
+        "p_given_0": p_given_0,
+        "p_given_1": p_given_1,
+        "p_given_2plus": p_given_2,
+    }
     as_yes = y_of(train, "as") > 0
     mvp_y = y_of(train, "mvp")
     mu_mvp_as = float(mvp_y[as_yes].mean()) if as_yes.any() else 0.155
@@ -603,16 +618,20 @@ def main():
     }
     print("mvp_from_as", "E[MVP|AS]", round(mu_mvp_as, 3), "n_mvp", int((mvp_y > 0).sum()))
     metrics["hof"] = {
-        "from": "P(HOF|AS) P(AS) + P(HOF|no) (1-P(AS))",
-        "p_given_as": round(p_given_as, 4),
-        "p_given_no": round(p_given_no, 4),
+        "from": "P(HOF|0 AS)(1-p) + P(HOF|1 AS)p(1-p) + P(HOF|2+ AS)p^2. One-time All-Stars are 3.5% HOF, not 34%.",
+        "p_given_0": round(p_given_0, 4),
+        "p_given_1": round(p_given_1, 4),
+        "p_given_2plus": round(p_given_2, 4),
+        "n_0": len(none),
+        "n_1": len(one),
+        "n_2plus": len(multi),
         "train_rate": round(float(yhof.mean()), 4),
         "train_mean_pred": round(float(p_hof.mean()), 4),
         "train_brier": round(float(np.mean((p_hof - yhof) ** 2)), 4),
         "n_train": len(hof_train),
     }
     print("hof", "rate", metrics["hof"]["train_rate"], "mean_pred", metrics["hof"]["train_mean_pred"],
-          "P(HOF|AS)", round(p_given_as, 3))
+          "P(HOF|0)", round(p_given_0, 3), "P(HOF|1)", round(p_given_1, 3), "P(HOF|2+)", round(p_given_2, 3))
 
     # Locked-holdout baselines. None of these touch C or the product model.
     zte_as = (y_of(test, "as") > 0).astype(int)
