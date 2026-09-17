@@ -13,7 +13,7 @@
     { label: "Drafting younger is better", items: [
       { id: "age", claim: "Drafting younger is better", href: "./age.html" }
     ]},
-    { label: "How he plays", items: [
+    { label: "Past performance predicts future performance", items: [
       { id: "prod", claim: "College stats tell you who will be good", href: "./prod.html" },
       { id: "ftrate", claim: "Guys who get fouled a lot can get to the rim", href: "./ftrate.html" },
       { id: "three", claim: "Taking a lot of threes matters more than a hot percentage", href: "./three.html" },

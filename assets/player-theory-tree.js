@@ -54,7 +54,7 @@
       ]
     },
     {
-      label: "How he plays",
+      label: "Past performance predicts future performance",
       kids: [
         { id: "prod", name: "College stats tell you who will be good" },
         { id: "ftrate", name: "Guys who get fouled a lot can get to the rim" },
