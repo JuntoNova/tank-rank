@@ -4,40 +4,40 @@
       label: "You can't teach size",
       kids: [
         {
-          name: "You can't teach size",
+          name: "Height",
           kids: [
-            {
-              name: "Height",
-              kids: [
-                { id: "inch", name: "Every extra inch helps" }
-              ]
-            },
-            {
-              name: "Weight",
-              kids: [
-                { id: "weight", name: "Heavier guys perform better" },
-                { id: "wpi", name: "More pounds per inch helps" }
-              ]
-            },
-            {
-              name: "Length",
-              kids: [
-                { id: "wingspan", name: "Longer arms help" },
-                { id: "ape", name: "Arms longer than height help" },
-                { id: "reach", name: "Higher standing reach helps" }
-              ]
-            }
+            { id: "inch", name: "Every extra inch helps" }
+          ]
+        },
+        {
+          name: "Weight",
+          kids: [
+            { id: "weight", name: "Heavier guys perform better" },
+            { id: "wpi", name: "More pounds per inch helps" }
+          ]
+        },
+        {
+          name: "Length",
+          kids: [
+            { id: "wingspan", name: "Longer arms help" },
+            { id: "ape", name: "Arms longer than height help" },
+            { id: "reach", name: "Higher standing reach helps" }
           ]
         },
         { id: "posht", name: "Bigger than the position helps" },
-        { id: "swing", name: "Guys who can play more than one position do better" },
-        {
-          name: "Tall guys who can dribble are rare",
-          kids: [
-            { id: "astu", name: "Passers perform better" },
-            { id: "handle", name: "Tall passers perform better" }
-          ]
-        },
+        { id: "swing", name: "Guys who can play more than one position do better" }
+      ]
+    },
+    {
+      label: "Tall guys who can dribble are rare",
+      kids: [
+        { id: "astu", name: "Passers perform better" },
+        { id: "handle", name: "Tall passers perform better" }
+      ]
+    },
+    {
+      label: "Workout numbers do not mean much",
+      kids: [
         { id: "combine", name: "Workout numbers do not mean much" }
       ]
     },

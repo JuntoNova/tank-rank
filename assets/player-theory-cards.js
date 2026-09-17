@@ -6,8 +6,12 @@
       { id: "wpi", claim: "More pounds per inch helps", href: "./size.html" },
       { id: "wingspan", claim: "Longer arms help", href: "./wingspan.html" },
       { id: "ape", claim: "Arms longer than height help", href: "./size.html" },
-      { id: "reach", claim: "Higher standing reach helps", href: "./reach.html" },
-      { id: "handle", claim: "Tall guys who can dribble are rare", href: "./handle.html" },
+      { id: "reach", claim: "Higher standing reach helps", href: "./reach.html" }
+    ]},
+    { label: "Tall guys who can dribble are rare", items: [
+      { id: "handle", claim: "Tall guys who can dribble are rare", href: "./handle.html" }
+    ]},
+    { label: "Workout numbers do not mean much", items: [
       { id: "combine", claim: "Workout numbers do not mean much", href: "./combine.html" }
     ]},
     { label: "Drafting younger is better", items: [
