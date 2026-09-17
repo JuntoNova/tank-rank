@@ -518,10 +518,105 @@
       return Object.assign({}, thin, rich, { players: pks.map(function (k) { return by[k]; }) });
     });
   }
+  function wsPerYear(p) {
+    var yrs = Number(p.yrs) || 0;
+    var g = Number(p.g) || 0;
+    if (yrs <= 0 && g <= 0) return null;
+    var ws = Number(p.ws);
+    if (!isFinite(ws)) ws = 0;
+    return ws / Math.max(yrs, 1);
+  }
+  function impliedAsFromPace(wpy) {
+    if (wpy == null) return null;
+    if (wpy >= 12) return 10;
+    if (wpy >= 9) return 7;
+    if (wpy >= 7) return 4.5;
+    if (wpy >= 5) return 2.2;
+    if (wpy >= 3.5) return 1.0;
+    if (wpy >= 2) return 0.45;
+    if (wpy >= 1) return 0.18;
+    if (wpy >= 0) return 0.06;
+    return 0.02;
+  }
+  function impliedYrsFromPace(wpy, yrsHave) {
+    if (wpy == null) return null;
+    var extra = wpy >= 7 ? 12 : wpy >= 5 ? 10 : wpy >= 3 ? 8 : wpy >= 1.5 ? 6 : wpy >= 0.5 ? 4 : 2;
+    return yrsHave + extra * 0.85;
+  }
+  function hofFromAsExp(eAs) {
+    var spec = (glm() && glm().hof_from_as) || {};
+    var p13 = spec.p_given_1to3 != null ? spec.p_given_1to3 : 0.027;
+    var p4 = spec.p_given_4plus != null ? spec.p_given_4plus : 0.76;
+    var start = spec.eAs_4plus_start != null ? spec.eAs_4plus_start : 1.5;
+    var scale = spec.eAs_4plus_scale != null ? spec.eAs_4plus_scale : 6;
+    var pAs = clamp(eAs / 3.5, 0, 0.85);
+    var p4plus = clamp((eAs - start) / scale, 0, 0.9);
+    return clamp(p13 * pAs + p4 * p4plus, 0.0002, 0.15);
+  }
+  // Draft-night prior blended with NBA pace so far. One season of 8 WS is
+  // evidence. One season of −0.1 WS is evidence. An empty All-Star box is not
+  // a 2% Hall ticket and is not "same as draft night" either.
+  function projectNow(p, draft) {
+    draft = draft || {};
+    var yrs = Number(p && p.yrs) || 0;
+    var g = Number(p && p.g) || 0;
+    var asHave = Number(p && (p.allStar != null ? p.allStar : p.as)) || 0;
+    var nbaHave = Number(p && (p.allNba != null ? p.allNba : p.nba)) || 0;
+    var nba1Have = Number(p && p.nba1) || 0;
+    var mvpHave = Number(p && p.mvp) || 0;
+    var chHave = Number(p && (p.champs != null ? p.champs : p.ch)) || 0;
+    if (Number(p && p.hof)) {
+      return {
+        expAs: asHave, expNba: nbaHave, expNba1: nba1Have, expYrs: Math.max(yrs, 1),
+        expCh: chHave, expMvp: mvpHave, pHof: 1, pAs: 1, now: true
+      };
+    }
+    if (yrs === 0 && g === 0) {
+      return Object.assign({}, draft, { now: false });
+    }
+    if (yrs >= 8 && asHave === 0 && nbaHave === 0 && mvpHave === 0) {
+      return {
+        expAs: 0, expNba: 0, expNba1: 0, expYrs: yrs, expCh: chHave, expMvp: 0,
+        pHof: 0.0002, pAs: 0, now: true
+      };
+    }
+    var wpy = wsPerYear(p);
+    var w = clamp(yrs / 3, 0.2, 0.8);
+    var eAs0 = Number(draft.expAs) || 0;
+    var eYrs0 = Number(draft.expYrs) || 8;
+    var eNba0 = Number(draft.expNba) || 0;
+    var eMvp0 = Number(draft.expMvp) || 0;
+    var eCh0 = Number(draft.expCh) || 0;
+    var impliedAs = impliedAsFromPace(wpy);
+    var impliedYrs = impliedYrsFromPace(wpy, yrs);
+    var impliedNba = impliedAs * 0.45;
+    var impliedMvp = (wpy != null && wpy >= 8) ? 0.4 : (wpy != null && wpy >= 5) ? 0.12 : 0.02;
+    var expAs = asHave + (1 - w) * Math.max(0, eAs0 - asHave) + w * Math.max(0, (impliedAs || 0) - asHave);
+    var expYrs = (1 - w) * Math.max(yrs, eYrs0) + w * (impliedYrs || eYrs0);
+    var expNba = nbaHave + (1 - w) * Math.max(0, eNba0 - nbaHave) + w * Math.max(0, impliedNba - nbaHave);
+    var expNba1 = nba1Have + expNba * 0.22;
+    var expMvp = mvpHave + (1 - w) * Math.max(0, eMvp0 - mvpHave) + w * impliedMvp;
+    var expCh = chHave + (1 - w) * Math.max(0, eCh0 - chHave);
+    var pAs = 1 - Math.exp(-Math.max(0, expAs));
+    var pHof = hofFromAsExp(expAs);
+    if (asHave >= 4) pHof = Math.max(pHof, 0.08);
+    return {
+      expAs: clamp(expAs, 0, 14),
+      expNba: clamp(expNba, 0, 12),
+      expNba1: clamp(expNba1, 0, 8),
+      expYrs: clamp(expYrs, Math.max(yrs, 1.5), 19),
+      expCh: clamp(expCh, chHave, 8),
+      expMvp: clamp(expMvp, mvpHave, 4),
+      pHof: pHof,
+      pAs: pAs,
+      now: true
+    };
+  }
   window.TR = window.TR || {};
-  TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, INTENSITY: INTENSITY, PLAYER: PLAYER, HOF_CAP: HOF_CAP, fmtExp: fmtExp, fmtPct: fmtPct, fmtMul: fmtMul, fmtBand: fmtBand, bandHtml: bandHtml, careerHofP: careerHofP, fmtHofRemain: fmtHofRemain };
+  TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, projectNow: projectNow, INTENSITY: INTENSITY, PLAYER: PLAYER, HOF_CAP: HOF_CAP, fmtExp: fmtExp, fmtPct: fmtPct, fmtMul: fmtMul, fmtBand: fmtBand, bandHtml: bandHtml, careerHofP: careerHofP, fmtHofRemain: fmtHofRemain };
   TR.deriveFeat = deriveFeat;
   TR.projectPlayer = project;
+  TR.projectNow = projectNow;
   TR.bandX = bandX;
   TR.careerHofP = careerHofP;
   TR.fetchTheoryPack = fetchTheoryPack;

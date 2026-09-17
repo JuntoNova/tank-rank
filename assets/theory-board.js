@@ -134,6 +134,15 @@
     const cls = Math.abs(d) < 0.25 ? "even" : d > 0 ? "up" : "down";
     return n + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
   }
+  function vsProj(nowV, draftV) {
+    const n = Number(nowV) || 0;
+    const d = n - (Number(draftV) || 0);
+    const cls = Math.abs(d) < 0.15 ? "even" : d > 0 ? "up" : "down";
+    const fmt = (window.TR && TR.Model && TR.Model.fmtExp) ? TR.Model.fmtExp : function (x) {
+      return (Math.abs(x) >= 10 ? String(Math.round(x)) : Number(x).toFixed(1));
+    };
+    return fmt(n) + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
+  }
   function fmtHofNow(n) {
     if (window.TR && TR.Model && TR.Model.fmtHofRemain) return TR.Model.fmtHofRemain(n);
     if (n == null || !isFinite(Number(n))) return "\u2014";
@@ -145,8 +154,17 @@
   }
   function hofNowCell(p, proj, year) {
     const cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
-    const fn = window.TR && (TR.careerHofP || (TR.Model && TR.Model.careerHofP));
-    let nowP = fn ? fn(p, year, cur) : null;
+    const nowFn = window.TR && (TR.projectNow || (TR.Model && TR.Model.projectNow));
+    const yrs = Number(p.yrs) || 0;
+    const g = Number(p.g) || 0;
+    const young = yrs <= 2 && year >= cur - 3;
+    let nowP;
+    if (young && (yrs > 0 || g > 0) && typeof nowFn === "function") {
+      nowP = nowFn(p, proj).pHof;
+    } else {
+      const fn = window.TR && (TR.careerHofP || (TR.Model && TR.Model.careerHofP));
+      nowP = fn ? fn(p, year, cur) : null;
+    }
     const draftP = proj && proj.pHof != null ? Number(proj.pHof) : 0;
     if (nowP == null) nowP = draftP;
     if (nowP == null || !isFinite(nowP)) return "\u2014";
@@ -219,6 +237,25 @@
       body.innerHTML = rows.map(function (p) {
         const proj = p.proj || project(p, p.theoryFeat, priors);
         const known = p.yrs != null && p.yrs !== "";
+        const yrs = Number(p.yrs) || 0;
+        const g = Number(p.g) || 0;
+        const curY = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+        const young = yrs <= 2 && year >= curY - 3 && (yrs > 0 || g > 0);
+        const nowFn = window.TR && (TR.projectNow || (TR.Model && TR.Model.projectNow));
+        if (young && typeof nowFn === "function") {
+          const now = nowFn(p, proj);
+          return '<tr onclick="location.href=\'./player.html?year=' + year + "&id=" + p.id + '\'" style="cursor:pointer">'
+            + '<td class="rank">' + String(p.rank).padStart(2, "0") + "</td>"
+            + '<td><div class="name">' + p.name + '</div><div class="meta">' + [p.pos, p.school].filter(Boolean).join(" · ") + "</div></td>"
+            + "<td>" + (p.team || "\u2014") + "</td>"
+            + '<td class="pct">' + vsProj(now.expAs, proj.expAs) + "</td>"
+            + '<td class="pct">' + vsProj(now.expNba1, proj.expNba1) + "</td>"
+            + '<td class="pct">' + vsProj(now.expNba, proj.expNba) + "</td>"
+            + '<td class="pct">' + vsProj(now.expYrs, proj.expYrs) + "</td>"
+            + '<td class="pct">' + vsProj(now.expCh, proj.expCh) + "</td>"
+            + '<td class="pct">' + vsProj(now.expMvp, proj.expMvp) + "</td>"
+            + '<td class="pct">' + hofNowCell(p, proj, year) + "</td></tr>";
+        }
         return '<tr onclick="location.href=\'./player.html?year=' + year + "&id=" + p.id + '\'" style="cursor:pointer">'
           + '<td class="rank">' + String(p.rank).padStart(2, "0") + "</td>"
           + '<td><div class="name">' + p.name + '</div><div class="meta">' + [p.pos, p.school].filter(Boolean).join(" · ") + "</div></td>"
@@ -237,6 +274,9 @@
     if (sub) {
       if (view === "drafted" && year === cur - 1) {
         sub.textContent = "No NBA season yet. These are draft-night projections, not career totals.";
+        sub.style.display = "";
+      } else if (view === "now" && year >= cur - 3) {
+        sub.textContent = "Updated with NBA seasons played. Green and red are versus draft night.";
         sub.style.display = "";
       } else {
         sub.textContent = "";
