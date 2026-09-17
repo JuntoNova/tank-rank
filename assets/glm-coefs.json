@@ -297,7 +297,14 @@
         "spearman": 0.232,
         "note": "Not in the product. Identification cost."
       }
-    ]
+    ],
+    "mvp_from_as": {
+      "from": "E[MVP]=P(AS)\u00b7E[MVP|AS]. 31 MVPs in 1947\u20132004, all All-Stars.",
+      "mu_given_as": 0.155,
+      "mu_given_no": 0.0,
+      "n_mvp": 31,
+      "n_as": 400
+    }
   },
   "n": 4264,
   "pos_ht": {
@@ -15717,5 +15724,10 @@
       "miss_blk": 0.909834,
       "miss_ape": -0.562519
     }
+  },
+  "mvp_from_as": {
+    "kind": "mixture",
+    "mu_given_as": 0.155,
+    "mu_given_no": 0.0
   }
 }

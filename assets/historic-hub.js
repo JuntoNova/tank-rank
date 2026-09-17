@@ -22,8 +22,8 @@
 
   function whenOf() {
     var w = (new URLSearchParams(location.search).get("when") || "").toLowerCase();
-    if (w === "drafted" || w === "then") return "drafted";
-    return "now";
+    if (w === "now") return "now";
+    return "drafted";
   }
 
   function css() {
@@ -61,6 +61,7 @@
       ".at-filters[hidden]{display:none !important}",
       ".at-filters .lab{color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase;align-self:center;margin:0 4px 0 8px}",
       ".at-filters .lab:first-child{margin-left:0}",
+      "#hist-alltime .at-kicker{color:var(--muted);font-size:13px;margin:0 0 12px;max-width:52rem;line-height:1.4}",
       "button.chip[disabled]{opacity:.35;cursor:default}",
       "#hist-alltime td.pct .band{display:block;font-size:11px;color:var(--muted);font-weight:400;line-height:1.15;margin-top:1px;white-space:nowrap}",
       "#hist-alltime .vs{display:inline-block;margin-left:6px;font-size:11px;color:var(--muted)}",
@@ -88,11 +89,12 @@
   }
 
   function fmt(n) {
-    if (window.TR && TR.Model && TR.Model.fmtExp) return TR.Model.fmtExp(n);
     if (n == null || isNaN(n)) return "";
-    if (Math.abs(n) < 0.05) return "0";
-    if (Math.abs(n) < 0.1) return "<0.1";
-    return Math.abs(n) >= 10 ? String(Math.round(n)) : Number(n).toFixed(1);
+    if (Math.abs(n) < 0.005) return "0";
+    var abs = Math.abs(n);
+    if (abs >= 10) return String(Math.round(Math.abs(n)));
+    if (abs >= 1) return abs.toFixed(1);
+    return abs.toFixed(2);
   }
   function fmtPct(n) {
     if (window.TR && TR.Model && TR.Model.fmtPct) return TR.Model.fmtPct(n);
@@ -211,6 +213,7 @@
           '<button type="button" class="chip" data-rd="r1">First</button>' +
           '<button type="button" class="chip" data-rd="r2">Second</button>' +
         "</div>" +
+        '<p class="at-kicker" id="at-kicker"></p>' +
         '<div class="table-wrap"><table><thead><tr id="at-head"></tr></thead><tbody id="at-rows"></tbody></table></div>' +
         '<div class="hist-pager" id="at-pager"></div>';
       main.appendChild(box);
@@ -316,8 +319,8 @@
 
   function syncWhenUrl() {
     var url = new URL(location.href);
-    if (at.when === "now") url.searchParams.delete("when");
-    else url.searchParams.set("when", "drafted");
+    if (at.when === "now") url.searchParams.set("when", "now");
+    else url.searchParams.delete("when");
     history.replaceState({}, "", url);
   }
 
@@ -388,6 +391,12 @@
     });
     var filterBtn = document.getElementById("at-filter-btn");
     if (filterBtn) filterBtn.classList.toggle("on", !!(at.dec || at.pos || at.rd));
+    var kick = document.getElementById("at-kicker");
+    if (kick) {
+      kick.textContent = at.when === "drafted"
+        ? "Draft night from age, size, and the college line. Not the pick. Not the NBA career."
+        : "Career totals. Green and red are versus what the file said on draft night.";
+    }
     at.painted = true;
   }
 
@@ -454,7 +463,7 @@
       at.inited = true;
     }
     if (allTime) { paintAllTime(at.painted ? at.page : 0); return; }
-    fetch("./assets/all-time.json?v=14")
+    fetch("./assets/all-time.json?v=15")
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         allTime = data || { players: [] };

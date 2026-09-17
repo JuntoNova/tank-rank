@@ -211,10 +211,19 @@
     pHof = clamp(pHof, G && G.hof_floor != null ? G.hof_floor : 0.003, G && G.hof_cap != null ? G.hof_cap : 0.28);
     var expAs = clamp(as.exp, 0.02, 14);
     var expNba = clamp(Math.min(nba.exp, expAs), 0.01, 12);
+    var expMvp;
+    var mv = (G && G.mvp_from_as) || {};
+    if (mv.kind === "mixture") {
+      var my = mv.mu_given_as != null ? mv.mu_given_as : 0.155;
+      var mn = mv.mu_given_no != null ? mv.mu_given_no : 0;
+      expMvp = clamp(mn + (my - mn) * as.p, 0.002, 2.5);
+    } else {
+      expMvp = clamp(Math.min(mvp.exp, expAs), 0.002, 2.5);
+    }
     return {
       pAs: as.p, expAs: expAs,
       pNba: nba.p, expNba: expNba, expNba1: clamp(expNba * 0.22, 0.005, 6),
-      expYrs: yrs, expCh: clamp(ch.exp, 0.01, 4), expMvp: clamp(Math.min(mvp.exp, expAs), 0.002, 2.5),
+      expYrs: yrs, expCh: clamp(ch.exp, 0.01, 4), expMvp: expMvp,
       pHof: pHof
     };
   }
@@ -331,10 +340,10 @@
   }
   function fmtExp(n) {
     if (n == null || isNaN(n)) return "";
-    if (Math.abs(n) < 0.05) return "0";
-    if (Math.abs(n) < 0.1) return n < 0 ? "-<0.1" : "<0.1";
+    if (Math.abs(n) < 0.005) return "0";
     const abs = Math.abs(n);
-    return (n < 0 ? "-" : "") + (abs >= 100 ? String(Math.round(abs)) : abs.toFixed(1));
+    const body = abs >= 10 ? String(Math.round(abs)) : abs >= 1 ? abs.toFixed(1) : abs.toFixed(2);
+    return (n < 0 ? "-" : "") + body;
   }
   function fmtPct(n) { return (n == null || !isFinite(Number(n))) ? "" : Math.round(n * 100) + "%"; }
   function fmtMul(m) { return "x" + Number(m == null ? 1 : m).toFixed(2); }

@@ -2,9 +2,11 @@
   function fmtExp(n) {
     if (window.TR && TR.Model) return TR.Model.fmtExp(n);
     if (n == null || isNaN(n)) return "\u2014";
-    if (Math.abs(n) < 0.05) return "0";
-    if (Math.abs(n) < 0.1) return "<0.1";
-    return Math.abs(n) >= 10 ? String(Math.round(n)) : Number(n).toFixed(1);
+    if (Math.abs(n) < 0.005) return "0";
+    var abs = Math.abs(n);
+    if (abs >= 10) return String(Math.round(n));
+    if (abs >= 1) return Number(n).toFixed(1);
+    return Number(n).toFixed(2);
   }
   function fmtPct(n) { return (window.TR && TR.Model ? TR.Model.fmtPct(n) : Math.round((n || 0) * 100) + "%"); }
   function fmtSigned(n) {

@@ -553,6 +553,19 @@ def main():
     p_given_no = float(np.mean([r["hof"] for r in hof_train if r["as"] == 0]))
     p_hof = np.clip(p_given_no + (p_given_as - p_given_no) * p_as_hof, HOF_FLOOR, HOF_CAP)
     hof_from_as = {"kind": "mixture", "p_given_as": p_given_as, "p_given_no": p_given_no}
+    as_yes = y_of(train, "as") > 0
+    mvp_y = y_of(train, "mvp")
+    mu_mvp_as = float(mvp_y[as_yes].mean()) if as_yes.any() else 0.155
+    mu_mvp_no = float(mvp_y[~as_yes].mean()) if (~as_yes).any() else 0.0
+    mvp_from_as = {"kind": "mixture", "mu_given_as": mu_mvp_as, "mu_given_no": mu_mvp_no}
+    metrics["mvp_from_as"] = {
+        "from": "E[MVP]=P(AS)·E[MVP|AS]. 31 MVPs in 1947–2004, all All-Stars.",
+        "mu_given_as": round(mu_mvp_as, 4),
+        "mu_given_no": round(mu_mvp_no, 4),
+        "n_mvp": int((mvp_y > 0).sum()),
+        "n_as": int(as_yes.sum()),
+    }
+    print("mvp_from_as", "E[MVP|AS]", round(mu_mvp_as, 3), "n_mvp", int((mvp_y > 0).sum()))
     metrics["hof"] = {
         "from": "P(HOF|AS) P(AS) + P(HOF|no) (1-P(AS))",
         "p_given_as": round(p_given_as, 4),
@@ -681,6 +694,7 @@ def main():
         "pos_ht": POS_HT,
         "platt": platt,
         "hof_from_as": hof_from_as,
+        "mvp_from_as": mvp_from_as,
         "yrs_shift": yrs_shift,
         "hof_floor": HOF_FLOOR,
         "hof_cap": HOF_CAP,

@@ -27,6 +27,7 @@
         <li>Then the model is refit on all of 1947–2004 and scored on 2005–2014.</li>
         <li>Expected count = P(ever) × E[count | ever]. The count model is a Poisson, shrunk toward the All-Star mean.</li>
         <li>Hall of Fame: about 34% of All-Stars in the file are in Springfield, and about 0.4% of the rest. P(HOF) follows P(All-Star) that way. Cap 28%.</li>
+        <li>MVP: 31 MVPs in 1947–2004, every one of them an All-Star. Expected MVPs follow P(All-Star) × 0.155, the All-Star mean. A 17-feature MVP logistic on 31 events ranked shot blockers as MVPs. That is not a ranking.</li>
       </ul>
       <p>Holdout AUC for ever-All-Star is 0.68. Mean predicted P(All-Star) on the holdout is 10.2%; the actual rate is 9.5%. Spearman on expected All-Star games is 0.15. That is modest on purpose: we are not allowed to use the pick, and most draftees are zeros.</p>
 
@@ -59,6 +60,7 @@
         <li>Two-position listing. It was a proxy for “we wrote a scouting report.”</li>
         <li>Steals+blocks as one number plus blocks again. Rim was counting twice.</li>
         <li>A 20-feature Hall of Fame logistic. Rare event, too many knobs.</li>
+        <li>A 17-feature MVP logistic on 31 events. Colgate blocks were not an MVP theory.</li>
         <li>Picking the penalty on the same slice we report. That inflated the old 0.68. This 0.68 is locked.</li>
       </ul>
 
@@ -75,7 +77,7 @@
         <li>Expected All-Star games, All-NBA, first-team, years, championships, MVPs</li>
         <li>P(Hall of Fame) from P(All-Star), floored at 0.3% and capped at 28%</li>
       </ul>
-      <p>All-NBA is not allowed to exceed All-Star. MVP is not allowed to exceed All-Star. First-team is 22% of expected All-NBA, not a separately fitted count. No bust label. That is not an objective outcome.</p>
+      <p>All-NBA is not allowed to exceed All-Star. MVP follows P(All-Star), not a separately fitted count. First-team is 22% of expected All-NBA, not a separately fitted count. No bust label. That is not an objective outcome.</p>
 
       <h2>Limits that are in the number</h2>
       <ul>
