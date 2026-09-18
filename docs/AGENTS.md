@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. Do **not** point that load back at jsDelivr
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-17 (Grok chat): Index was first ~60 picks and skipped pre-1973 block lines. Added later-round NBA players (Eaton 1979 #107, 3.5 BPG) and filled Elmore Smith / George Johnson 1970 #79.
 - 2026-09-17 (Grok chat): Dropped BPM. Career BPG from BBRef season totals 1973–74 on. LaMelo 0.27 projected vs 0.31 actual. No college block line → —. Holdout MAE 0.19.
 - 2026-09-17 (Grok chat): Missing data is omitted, not a typical college line. No points line → no career PPG (Chomche/LeBron/Kobe print —). Honors fire miss_pts/miss_ast. Length miss dummies stay off.
 - 2026-09-17 (Grok chat): C/E/F. In model vs Looked at on hub, theory pages, and player cards (combine/FT/school/stash not on the card). Methodology: dictionary, calibration quintiles, coefficients, error cases, what would change a pick. app.pinned.js is local; test-invariants.mjs gates Griffin cap, no pick, Nash HOF.

@@ -68,6 +68,14 @@ ok(chomche.expBlk == null, "Chomche has no pre-draft block line; BPG must be omi
 const lamelo = score(2020, 3);
 ok(lamelo.expBlk != null && lamelo.expBlk < 1.2, "LaMelo 0.1 NBL blocks is not 2 BPG (got " + lamelo.expBlk + ")");
 
+const at = JSON.parse(readFileSync(join(ROOT, "assets/all-time.json"), "utf8"));
+const eaton = (at.players || []).find(function (p) { return p.n === "Mark Eaton" && p.y === 1979; });
+const elmore = (at.players || []).find(function (p) { return p.n === "Elmore Smith"; });
+const gj = (at.players || []).find(function (p) { return p.n === "George Johnson" && p.y === 1970 && p.pk === 79; });
+ok(eaton && eaton.blk >= 3.4, "Mark Eaton 1979 #107 must be in the index with ~3.5 BPG (got " + (eaton && eaton.blk) + ")");
+ok(elmore && elmore.blk >= 2.8, "Elmore Smith 1971 must have career BPG (got " + (elmore && elmore.blk) + ")");
+ok(gj && gj.blk >= 2.4, "George Johnson 1970 #79 must have career BPG (got " + (gj && gj.blk) + ")");
+
 const method = readFileSync(join(ROOT, "methodology.html"), "utf8");
 ok(/capped at 2\.0/.test(method), "methodology must document the block cap");
 ok(/0\.14/.test(method), "methodology must show Spearman 0.14");
