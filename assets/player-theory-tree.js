@@ -36,12 +36,6 @@
       ]
     },
     {
-      label: "Workout numbers do not mean much",
-      kids: [
-        { id: "combine", name: "Workout numbers do not mean much" }
-      ]
-    },
-    {
       label: "Drafting younger is better",
       kids: [
         { id: "age-yrs", name: "They last longer" },
@@ -52,8 +46,6 @@
       label: "Past performance predicts future performance",
       kids: [
         { id: "prod", name: "College stats tell you who will be good" },
-        { id: "ftrate", name: "Guys who get fouled a lot can get to the rim" },
-        { id: "three", name: "Taking a lot of threes matters more than a hot percentage" },
         { id: "astu", name: "Passing travels better than scoring" },
         { id: "defense", name: "College defense does not tell you anything" },
         { id: "rim", name: "You still need a big who can block shots" }
@@ -62,50 +54,19 @@
     {
       label: "School, country, and team",
       kids: [
-        { id: "schools", name: "The best players come from the best colleges" },
-        { id: "intl", name: "A pro line is not a college line" },
-        { id: "develop", name: "The team that drafts him matters as much as the player" },
-        { id: "stash", name: "Leave a raw foreign player overseas until he is ready" }
-      ]
-    },
-    {
-      label: "Arguments we cannot check yet",
-      kids: [
-        { id: "switch", name: "Guarding every position matters more than blocking shots" },
-        { id: "march", name: "Tournament games show you who is clutch" },
-        { id: "scheme", name: "He only works in our system" },
-        { id: "medical", name: "Hidden injuries change everything" },
-        { id: "character", name: "Off-court warning signs predict busts" },
-        { id: "shoot", name: "Shooting can be taught" },
-        { id: "motor", name: "He plays harder than everyone else" },
-        { id: "iq", name: "He just knows where to be" },
-        { id: "bpa", name: "Always take the best player, not the one you need" },
-        { id: "listedht", name: "The listed height is the real height" },
-        { id: "keepwt", name: "He can keep the weight on" }
+        { id: "intl", name: "A pro line is not a college line" }
       ]
     }
   ];
 
-  var INCH = {
-    "5-9":{mAs:2.75,mNba:3.33,mHof:3.04,mMvp:0},"5-10":{mAs:0.92,mNba:1.66,mHof:1.51,mMvp:0},
-    "5-11":{mAs:1.28,mNba:0,mHof:1.06,mMvp:0},"6-0":{mAs:0.96,mNba:1.2,mHof:1.47,mMvp:0.98},
-    "6-1":{mAs:1.21,mNba:1.09,mHof:1.51,mMvp:0.68},"6-2":{mAs:0.98,mNba:1.14,mHof:0.34,mMvp:0.47},
-    "6-3":{mAs:0.90,mNba:0.91,mHof:0.64,mMvp:0.63},"6-4":{mAs:1.15,mNba:1.24,mHof:1.43,mMvp:0.38},
-    "6-5":{mAs:0.74,mNba:0.84,mHof:0.85,mMvp:0.62},"6-6":{mAs:1.15,mNba:1.15,mHof:1.13,mMvp:1.21},
-    "6-7":{mAs:1.13,mNba:0.85,mHof:1.17,mMvp:0.52},"6-8":{mAs:0.79,mNba:0.85,mHof:0.81,mMvp:0},
-    "6-9":{mAs:1.07,mNba:0.99,mHof:0.81,mMvp:1.88},"6-10":{mAs:0.96,mNba:0.90,mHof:0.81,mMvp:0.73},
-    "6-11":{mAs:1.02,mNba:0.99,mHof:1.09,mMvp:2.91},"7-0":{mAs:0.70,mNba:0.93,mHof:0.62,mMvp:1.87},
-    "7-1":{mAs:1.48,mNba:1.49,mHof:2.72,mMvp:6.57},"7-2":{mAs:1.60,mNba:1.45,mHof:2.66,mMvp:5.34},
-    "7-3":{mAs:0,mNba:0,mHof:2.66,mMvp:1.80},"7-4":{mAs:4.28,mNba:3.87,mHof:7.09,mMvp:1.80},
-    "7-5":{mAs:0,mNba:0,mHof:0,mMvp:1.80},"7-6":{mAs:3.21,mNba:5.81,mHof:10.64,mMvp:1.80},
-    "7-7":{mAs:0,mNba:0,mHof:0,mMvp:1.80}
-  };
-  var WPI = [
-    { lo: 0, hi: 2.40, label: "Under 2.40", mAs: 0.71, mNba: 0.65, mHof: 0, mMvp: 2.38 },
-    { lo: 2.40, hi: 2.60, label: "2.40\u20132.59", mAs: 0.51, mNba: 0.58, mHof: 0, mMvp: 1.23 },
-    { lo: 2.60, hi: 2.80, label: "2.60\u20132.79", mAs: 0.84, mNba: 1.08, mHof: 0.36, mMvp: 0.72 },
-    { lo: 2.80, hi: 3.00, label: "2.80\u20132.99", mAs: 0.78, mNba: 0.92, mHof: 0.45, mMvp: 0.45 },
-    { lo: 3.00, hi: 9, label: "3.00+", mAs: 0.85, mNba: 1.22, mHof: 0, mMvp: 0.75 }
+  var NOT_IN = [
+    { name: "Workout numbers do not mean much", why: "Looked at. Combine drills are not a GLM feature." },
+    { name: "Guys who get fouled a lot can get to the rim", why: "Looked at. Free-throw rate is not a GLM feature." },
+    { name: "Taking a lot of threes matters more than a hot percentage", why: "Looked at. Three-point volume is not a GLM feature." },
+    { name: "The best players come from the best colleges", why: "Looked at. School is not a GLM feature." },
+    { name: "The team that drafts him matters as much as the player", why: "Looked at. Team logo is not a GLM feature." },
+    { name: "Leave a raw foreign player overseas until he is ready", why: "Looked at. Stash is not a GLM feature." },
+    { name: "Older guys have a higher floor", why: "Disproven. Not in the player score." }
   ];
 
   function css() {
@@ -135,11 +96,6 @@
   function inches(ht) {
     var m = String(ht || "").match(/(\d+)\s*-\s*(\d+(?:\.\d+)?)/);
     return m ? Number(m[1]) * 12 + Number(m[2]) : 0;
-  }
-  function pick(list, x) {
-    if (x == null || isNaN(x)) return null;
-    for (var i = 0; i < list.length; i++) if (x >= list[i].lo && x < list[i].hi) return list[i];
-    return list[list.length - 1];
   }
   function mul(m) { return "\u00d7" + Number(m == null ? 1 : m).toFixed(2); }
   function tone(m) {
@@ -187,98 +143,15 @@
     return { fact: val, mAs: s.mAs, mNba: s.mNba, mHof: s.mHof, mMvp: s.mMvp, mYrs: s.mYrs };
   }
   function resolve(id, p) {
-    var feat = Object.assign({}, p.theoryFeat || {}, {
-      ht: p.ht || (p.theoryFeat && p.theoryFeat.ht),
-      wt: p.wt || (p.theoryFeat && p.theoryFeat.wt),
-      wsp: p.wsp || (p.theoryFeat && p.theoryFeat.wsp),
-      reach: p.reach || (p.theoryFeat && p.theoryFeat.reach)
-    });
     var steps = (p.proj && p.proj.steps) || [];
-    var ht = feat.ht || p.ht;
-    var wt = feat.wt != null && feat.wt !== "" ? Number(feat.wt) : NaN;
-    var htIn = inches(ht);
-    var found = window.TR && TR.Size ? TR.Size.lookup(feat) : null;
-    if (id === "size") {
-      var sizeStep = fromStep(steps, "size");
-      if (sizeStep) return sizeStep;
-      var band = found && found.height;
-      if (band) return { fact: (ht || "") + " \u00b7 " + band.label, mAs: band.mAs, mNba: band.mNba, mHof: band.mHof, mMvp: band.mMvp };
-      return null;
-    }
-    if (id === "inch") {
-      var inchStep = fromStep(steps, "size");
-      if (inchStep) return inchStep;
-      var key = String(ht || "").replace(/\s+/g, "");
-      var inch = INCH[key];
-      if (inch && ht) return { fact: ht, mAs: inch.mAs, mNba: inch.mNba, mHof: inch.mHof, mMvp: inch.mMvp };
-      return null;
-    }
-    if (id === "weight") {
-      var wtStep = fromStep(steps, "weight");
-      if (wtStep) return wtStep;
-      var wband = found && found.weight;
-      if (wband && !isNaN(wt)) return { fact: wt + " lbs \u00b7 " + wband.label, mAs: wband.mAs, mNba: wband.mNba, mHof: wband.mHof, mMvp: wband.mMvp };
-      return null;
-    }
-    if (id === "wpi") {
-      var wpiStep = fromStep(steps, "wpi");
-      if (wpiStep) return wpiStep;
-      if (!htIn || isNaN(wt)) return null;
-      var ratio = wt / htIn;
-      var rowW = pick(WPI, ratio);
-      if (!rowW) return null;
-      return { fact: ratio.toFixed(2) + " \u00b7 " + rowW.label, mAs: rowW.mAs, mNba: rowW.mNba, mHof: rowW.mHof, mMvp: rowW.mMvp };
-    }
-    if (id === "wingspan") {
-      var wsStep = fromStep(steps, "wingspan");
-      if (wsStep) return wsStep;
-      if (!feat.wsp) return { fact: "missing", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
-      return { fact: feat.wsp, mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
-    }
-    if (id === "ape") {
-      var apeStep = fromStep(steps, "ape");
-      if (apeStep) return apeStep;
-      var aHt = htIn, aWs = inches(feat.wsp);
-      if (!aHt || !aWs) return { fact: "missing", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
-      var ape = aWs - aHt;
-      return { fact: (ape >= 0 ? "+" : "") + ape.toFixed(1) + " in", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
-    }
-    if (id === "reach") {
-      var rStep = fromStep(steps, "reach");
-      if (rStep) return rStep;
-      if (!feat.reach) return { fact: "missing", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
-      return { fact: feat.reach, mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
-    }
-    if (id === "posht") {
-      var ph = fromStep(steps, "posht");
-      if (ph) return ph;
-      var pos = String(feat.pos || p.pos || "");
-      if (!ht && !pos) return { fact: "No listed size or position", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
-      return { fact: (ht || "") + (pos ? " · " + pos : ""), mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
-    }
-    if (id === "swing") {
-      var sw = fromStep(steps, "swing");
-      if (sw) return sw;
-      var sp = String(feat.pos || p.pos || "");
-      return { fact: sp ? sp : "No listed position", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
-    }
+    if (id === "inch") return fromStep(steps, "size");
     if (id === "age" || id === "age-yrs" || id === "age-stars") {
-      var ageStep = fromStep(steps, "age");
-      if (!ageStep) ageStep = { fact: "no age", mAs: 1, mNba: 1, mHof: 1, mMvp: 1, mYrs: 1 };
+      var ageStep = fromStep(steps, "age") || { fact: "no age", mAs: 1, mNba: 1, mHof: 1, mMvp: 1, mYrs: 1 };
       if (id === "age-yrs") ageStep = Object.assign({}, ageStep, { show: ["yrs"] });
       if (id === "age-stars") ageStep = Object.assign({}, ageStep, { show: ["as", "nba", "hof", "mvp"] });
       return ageStep;
     }
-    if (id === "astu" || id === "passers") {
-      var astStep = fromStep(steps, "astu");
-      if (astStep) return astStep;
-      return { fact: "no assist line", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
-    }
-    if (id === "handle") {
-      var hStep = fromStep(steps, "handle");
-      if (hStep) return hStep;
-      return { fact: "no assist line", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
-    }
+    if (id === "astu" || id === "passers") return fromStep(steps, "astu") || { fact: "no assist line", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
     return fromStep(steps, id);
   }
   function plusRow(name, inner) {
@@ -341,7 +214,7 @@
     }
     var box = root.querySelector(".th-player");
     if (!box) return;
-    var html = '<div class="kicker">Theories</div><div class="acc theory-families">';
+    var html = '<div class="kicker">In the model</div><p class="who">These levers move this player\u2019s score. Combine, school, FT rate, and stash are tables. They are not here.</p><div class="acc theory-families">';
     TREE.forEach(function (g, gi) {
       var inner = '<div class="acc theory-list">';
       (g.kids || []).forEach(function (k) { inner += renderNode(k, p); });
@@ -349,6 +222,12 @@
       html += '<section class="acc-item group-acc"><button class="acc-btn group-acc-btn" type="button" data-group="' + gi + '"><b>' +
         g.label + '</b><em><i>+</i></em></button><div class="acc-panel">' + inner + "</div></section>";
     });
+    var notInner = '<div class="acc theory-list">';
+    NOT_IN.forEach(function (t) {
+      notInner += plusRow(t.name, '<div class="th-bin"><p class="empty">' + t.why + "</p></div>");
+    });
+    notInner += "</div>";
+    html += '<section class="acc-item group-acc"><button class="acc-btn group-acc-btn" type="button" data-group="not"><b>Not in this score</b><em><i>+</i></em></button><div class="acc-panel">' + notInner + "</div></section>";
     html += "</div>";
     box.className = "section th-player th-apply";
     box.innerHTML = html;

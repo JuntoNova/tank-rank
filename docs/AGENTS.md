@@ -29,11 +29,11 @@ Repo: https://github.com/JuntoNova/tank-rank
 
 ## Why this keeps breaking
 
-`assets/app.js` on main is a **wrapper**. It `GET`s a pinned CDN blob:
+`assets/app.js` is a **wrapper**. It loads a **local** pin:
 
-`https://cdn.jsdelivr.net/gh/JuntoNova/tank-rank@4d2b1729cda9b9a40965b36e5c5f5ce51b72951a/assets/app.js`
+`assets/app.pinned.js` (SHA 4d2b1729cda9b9a40965b36e5c5f5ce51b72951a of the old CDN blob)
 
-then string-replaces and `eval`s it. That blob still has Upcoming-first doors and an About link. Patching only the local `tank-rank-site/assets/app.js` copy does nothing on production. Replacing the wrapper with a full app.js also fights the other agent if they still patch the CDN blob.
+then string-replaces and `eval`s it. Do **not** point that load back at jsDelivr. Scoring is `theory-model.js` + `glm-coefs.js`, not app.js. Run `node pipeline/test-invariants.mjs` before pushing model or methodology changes.
 
 `assets/nav-swap.js` is the runtime lock. It reorders doors + nav and strips About after every render. Leave that lock in place.
 
@@ -46,7 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
-- 2026-09-17 (Grok chat): D, paper version. Blocks capped at 2.0 for honors (steals 2.5). Holdout AUC 0.74 vs uncapped 0.73. Griffin 3.3→1.6, Mosley 3.0→1.3. Zeroing stocks killed Shaq/AD. Yi stays high on 7-0 / 25 pts / 19, not 2.2 blocks. Hall still skips stocks.
+- 2026-09-17 (Grok chat): C/E/F. In model vs Looked at on hub, theory pages, and player cards (combine/FT/school/stash not on the card). Methodology: dictionary, calibration quintiles, coefficients, error cases, what would change a pick. app.pinned.js is local; test-invariants.mjs gates Griffin cap, no pick, Nash HOF.
 - 2026-09-17 (Grok chat): Age is one lever (rel_age) that already moves years and stardom on every player with an age. Card now shows both claims. Missing age skips.
 - 2026-09-17 (Grok chat): Empty intl files were minting fake overs (Jokić/Giannis/Luka/Parker/Manu). Last-season-against-men lines filled. Jokić Mega 11.4 and Giannis Greek A2 9.5 are real overs. Luka EuroLeague 16/4.3 and Parker Paris 14.7/5.6 move. Over ∩ top-20 HOF/MVP is still empty — those boards are Trae/Durant/Yao, not the Over names.
 - 2026-09-17 (Grok chat): Yao’s 2001-02 Shanghai line (32.4/19/2.9/1.5/4.8) was missing. Intl against men now scores. He is 4.3 expected All-Stars, off Over. Duncan’s Wake Forest line was already in; 14.7 reb is on the card but boards are not a live feature (refitting them cut points/blocks). Duncan stays 2.6 AS / ×7.5 because 21 points is not Robinson’s 28.

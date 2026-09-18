@@ -5,7 +5,9 @@
     x.send();
     return x.responseText;
   }
-  var src = load("https://cdn.jsdelivr.net/gh/JuntoNova/tank-rank@4d2b1729cda9b9a40965b36e5c5f5ce51b72951a/assets/app.js");
+  // Pinned core, SHA 4d2b1729cda9b9a40965b36e5c5f5ce51b72951a.
+  // Local file so production does not eval jsDelivr at runtime.
+  var src = load("./assets/app.pinned.js");
   src = src.replace('loadJSON("./assets/history-index.json")', 'loadJSON("./assets/history-index.json?v=84")');
 
   src = src.replace(
