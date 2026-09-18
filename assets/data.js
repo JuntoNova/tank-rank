@@ -6,7 +6,7 @@ window.TANK_RANK = {
   firstYear: 1947,
   horizonYear: 2029,
   years: [],
-  disclaimer: "Theory-adjusted estimates from Methodology. Not guarantees.",
+  disclaimer: "",
   buckets: ["college", "high-school", "international"],
   drafts: {}
 };
@@ -40,7 +40,7 @@ window.TANK_RANK = {
     TANK_RANK.drafts[year] = { year, label, note, players };
   }
 
-  pack(2027, "2027 NBA Draft", "Theory-adjusted estimates from Methodology.", [
+  pack(2027, "2027 NBA Draft", "", [
     { id: "tyran-stokes-2027", name: "Tyran Stokes", bucket: "college", school: "Kansas", pos: "F", age: 19.1, ht: "6-7", wt: 230 },
     { id: "caleb-holt-2027", name: "Caleb Holt", bucket: "college", school: "Arizona", pos: "G", age: 19.2, ht: "6-5", wt: 200 },
     { id: "jordan-smith-jr-2027", name: "Jordan Smith Jr.", bucket: "college", school: "Arkansas", pos: "G", age: 19.0, ht: "6-2", wt: 200 },
@@ -105,7 +105,7 @@ window.TANK_RANK = {
     { id: "dash-daniels-2027", name: "Dash Daniels", bucket: "international", school: "Melbourne United", pos: "—" }
   ]);
 
-  pack(2028, "2028 NBA Draft", "Theory estimates not yet on this board.", [
+  pack(2028, "2028 NBA Draft", "", [
     { id: "joaquim-boumtje-boumtje-2028", name: "Joaquim Boumtje-Boumtje", bucket: "college", school: "Duke", pos: "F/C", age: 17.3, ht: "6-11", wt: 240 },
     { id: "nikola-kusturica-2028", name: "Nikola Kusturica", bucket: "college", school: "UCLA", pos: "F", age: 17.4, ht: "6-8", wt: 210 },
     { id: "nathan-soliman-2028", name: "Nathan Soliman", bucket: "international", school: "France", pos: "F", age: 17.5, ht: "6-8", wt: 205 },
@@ -128,7 +128,7 @@ window.TANK_RANK = {
     { id: "mason-collins-2028", name: "Mason Collins", bucket: "high-school", school: "Tatnall", pos: "F", age: 16.8, ht: "6-6", wt: 190 }
   ]);
 
-  pack(2029, "2029 NBA Draft", "Theory estimates not yet on this board.", [
+  pack(2029, "2029 NBA Draft", "", [
     { id: "jj-crawford-2029", name: "JJ Crawford", bucket: "high-school", school: "Rainier Beach", pos: "G", age: 16.0, ht: "6-5", wt: 175 },
     { id: "draydne-mcdaniel-2029", name: "Draydne McDaniel", bucket: "high-school", school: "Prolific Prep", pos: "F", age: 16.1, ht: "6-7", wt: 205 },
     { id: "rj-evans-2029", name: "RJ Evans", bucket: "high-school", school: "Academy of Central Florida", pos: "G/F", age: 16.0, ht: "6-7", wt: 172 },
@@ -151,10 +151,8 @@ window.TANK_RANK = {
   TANK_RANK.years = TANK_RANK.futureYears.concat(TANK_RANK.historicYears);
 })();
 
-/* Local packs; Hitch-clean disclaimer + living-2027-bios overlay */
+/* Local packs; living-2027-bios overlay */
 (function () {
-  var EXACT = "Theory-adjusted estimates from Methodology. Not guarantees.";
-  if (window.TANK_RANK) TANK_RANK.disclaimer = EXACT;
   function load(url) {
     var x = new XMLHttpRequest();
     x.open("GET", url, false);
