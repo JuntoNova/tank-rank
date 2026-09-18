@@ -623,7 +623,7 @@
       get("./assets/theory-packs/all.json?v=81").then(function (all) {
         return (all && all[String(year)]) || null;
       }),
-      get("./assets/theory-packs/" + year + ".json?v=95")
+      get("./assets/theory-packs/" + year + ".json?v=96")
     ]).then(function (parts) {
       var thin = parts[0], rich = parts[1];
       if (!thin) return rich;

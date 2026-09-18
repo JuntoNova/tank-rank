@@ -73,7 +73,7 @@
     const dec = (Math.floor(Number(year) / 10) * 10) + "s";
     return Promise.all([
       fetch("./assets/slot-priors.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-      fetch("./assets/theory-packs/" + year + ".json?v=95").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+      fetch("./assets/theory-packs/" + year + ".json?v=96").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/outcomes/" + dec + ".json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/outcomes-extra.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
     ]).then(function (parts) {
