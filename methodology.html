@@ -4,10 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Methodology | The Draft Model</title>
-  <meta name="description" content="Estimand, holdout, and what is actually in the player score." />
+  <meta name="description" content="What we estimate, the holdout, and what goes into the player score. Theory-adjusted AS / All-NBA / HOF." />
   <link rel="canonical" href="https://thedraftmodel.com/methodology.html" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#090a0c" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="The Draft Model" />
+  <meta property="og:title" content="Methodology | The Draft Model" />
+  <meta property="og:description" content="What we estimate, the holdout, and what goes into the player score. Theory-adjusted AS / All-NBA / HOF." />
+  <meta property="og:url" content="https://thedraftmodel.com/methodology.html" />
+  <meta property="og:image" content="https://thedraftmodel.com/assets/og.svg" />
   <link rel="stylesheet" href="./assets/styles.css?v=86" />
 </head>
 <body>
@@ -29,7 +35,7 @@
         <li>Expected count = P(ever) × E[count | ever]. Poisson count, shrunk toward the All-Star mean.</li>
         <li>Hall of Fame is not a 20-feature logistic. 1–3 All-Stars in 1980–1998 were about 2.7% Springfield. 4+ All-Stars were about 77%. Never-All-Star is not a Hall path. Cap 15%. Floor 0.02%. Printed ≤15% at the cap, not a ranking among people on the ceiling.</li>
         <li>MVP: 31 MVPs in 1947–2004, every one an All-Star. E[MVP] = P(All-Star) × 0.155. A 17-feature MVP logistic on 31 events ranked shot blockers. That is not a ranking.</li>
-        <li>Career PPG / RPG / APG / BPG are a separate ridge on the same draft-night traits, trained on players with 100+ NBA games. Not honors in different units. Blocks are official from 1973–74. Box plus-minus is not a column; it is missing for too much of the file and it is not a counting stat.</li>
+        <li>Career PPG / RPG / APG / BPG are a separate ridge on the same draft-night traits, trained on players with 100+ games. Not honors in different units. Blocks are official from 1973–74. Box plus-minus is not a column; it is missing for too much of the file and it is not a counting stat.</li>
       </ul>
 
       <h2>Holdout 2005–2014, against simpler models</h2>

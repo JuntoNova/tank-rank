@@ -2,9 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://thedraftmodel.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
   <url><loc>https://thedraftmodel.com/board.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://thedraftmodel.com/upcoming.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://thedraftmodel.com/drafts.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://thedraftmodel.com/theories.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://thedraftmodel.com/outliers.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://thedraftmodel.com/size.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://thedraftmodel.com/wingspan.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://thedraftmodel.com/reach.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
