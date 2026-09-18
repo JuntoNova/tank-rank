@@ -19,6 +19,8 @@
   var lists = { over: [], under: [], diff: [] };
   var page = 0;
   var q = "";
+  var sortKey = "delta";
+  var sortDir = -1;
 
   function keyFromUrl() {
     var query = (new URLSearchParams(location.search).get("list") || "").toLowerCase();
@@ -137,6 +139,8 @@
       ".ol-page td.delta.up{color:var(--lime)}",
       ".ol-page td.delta.down{color:var(--coral)}",
       ".ol-page tr{cursor:pointer}",
+      ".ol-page th[data-k]{cursor:pointer;user-select:none}",
+      ".ol-page th.on{color:var(--ink)}",
       ".vs{display:inline-block;margin-left:6px;font-size:11px;color:var(--muted)}",
       ".vs.up{color:var(--lime)}",
       ".vs.down{color:var(--coral)}",
@@ -189,9 +193,37 @@
     });
   }
 
+  function valOf(r, key, list) {
+    if (key === "n" || key === "t") return String(r[key] || "").toLowerCase();
+    if (key === "delta") {
+      if (list === "under") return r.gap;
+      if (list === "diff") return r.log;
+      return r.fold;
+    }
+    if (r[key] == null || r[key] === "") return sortDir > 0 ? 1e9 : -1e9;
+    var n = Number(r[key]);
+    return isFinite(n) ? n : 0;
+  }
+
+  function sorted(list) {
+    var rows = filtered(list).slice();
+    rows.sort(function (a, b) {
+      var av = valOf(a, sortKey, list), bv = valOf(b, sortKey, list);
+      if (av < bv) return -1 * sortDir;
+      if (av > bv) return 1 * sortDir;
+      if (a.y !== b.y) return b.y - a.y;
+      return a.pk - b.pk;
+    });
+    return rows;
+  }
+
+  function defaultDir(list) {
+    return list === "under" ? 1 : -1;
+  }
+
   function paint(list) {
     css();
-    var rows = filtered(list);
+    var rows = sorted(list);
     var pages = Math.max(1, Math.ceil(rows.length / PAGE));
     if (page >= pages) page = pages - 1;
     if (page < 0) page = 0;
@@ -200,14 +232,44 @@
     var body = document.getElementById("ol-rows");
     var kick = document.getElementById("ol-kicker");
     var pager = document.getElementById("ol-pager");
+    var cols = [
+      { k: "y", label: "Year" },
+      { k: "pk", label: "Pk", num: true },
+      { k: "n", label: "Player" },
+      { k: "t", label: "Team" },
+      { k: "as", label: "AS", num: true },
+      { k: "nba1", label: "1st", num: true },
+      { k: "nba", label: "All-NBA", num: true },
+      { k: "yrs", label: "Yrs", num: true },
+      { k: "pts", label: "PPG", num: true },
+      { k: "trb", label: "RPG", num: true },
+      { k: "ast", label: "APG", num: true },
+      { k: "blk", label: "BLK", num: true },
+      { k: "ch", label: "Chips", num: true },
+      { k: "mvp", label: "MVP", num: true },
+      { k: "hof", label: "HOF", num: true },
+      { k: "delta", label: "Δ", num: true, title: DELTA_TH[list] || "" }
+    ];
     if (head) {
-      head.innerHTML = "<th>Year</th><th>Pk</th><th>Player</th><th>Team</th>"
-        + "<th class=\"num\">AS</th><th class=\"num\">1st</th><th class=\"num\">All-NBA</th>"
-        + "<th class=\"num\">Yrs</th><th class=\"num\">PPG</th><th class=\"num\">RPG</th>"
-        + "<th class=\"num\">APG</th><th class=\"num\">BLK</th>"
-        + "<th class=\"num\">Chips</th><th class=\"num\">MVP</th>"
-        + "<th class=\"num\">HOF</th>"
-        + '<th class="num" title="' + (DELTA_TH[list] || "") + '">Δ</th>';
+      head.innerHTML = cols.map(function (c) {
+        var on = sortKey === c.k;
+        var cls = (c.num ? "num" : "") + (on ? (sortDir > 0 ? " on asc" : " on") : "");
+        return "<th class=\"" + cls.trim() + "\" data-k=\"" + c.k + "\""
+          + (c.title ? " title=\"" + c.title + "\"" : "") + ">" + c.label + "</th>";
+      }).join("");
+      head.querySelectorAll("[data-k]").forEach(function (th) {
+        th.onclick = function () {
+          var k = th.getAttribute("data-k");
+          if (sortKey === k) sortDir *= -1;
+          else {
+            sortKey = k;
+            sortDir = (k === "n" || k === "t" || k === "pk") ? 1 : -1;
+            if (k === "delta" && list === "under") sortDir = 1;
+          }
+          page = 0;
+          paint(list);
+        };
+      });
     }
     if (body) {
       body.innerHTML = slice.length
@@ -244,6 +306,8 @@
     if (location.hash.replace(/^#/, "") !== list) {
       history.replaceState(null, "", location.pathname + location.search + "#" + list);
     }
+    sortKey = "delta";
+    sortDir = defaultDir(list);
     page = 0;
     paint(list);
   }
