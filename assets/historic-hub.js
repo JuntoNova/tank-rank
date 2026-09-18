@@ -102,6 +102,13 @@
     var p = Math.round(Number(n) * 100);
     return p === 0 ? "<1%" : p + "%";
   }
+  function fmtHofDraft(n) {
+    if (window.TR && TR.Model && TR.Model.fmtHof) return TR.Model.fmtHof(n);
+    if (n == null || !isFinite(Number(n))) return "";
+    if (Number(n) >= 0.149) return "\u226415%";
+    var p = Math.round(Number(n) * 100);
+    return p === 0 ? "<1%" : p + "%";
+  }
   function fmtInt(n) {
     n = Number(n) || 0;
     return n ? String(n) : "0";
@@ -111,9 +118,9 @@
     return (n > 0 ? "+" : "\u2212") + Math.abs(n).toFixed(1);
   }
   function bandCell(r, k, pct) {
-    var loKey = ({ eAs: "asL", eNba1: "n1L", eNba: "nbaL", eYrs: "yL", eCh: "chL", eMvp: "mL", pHof: "hL" })[k];
-    var hiKey = ({ eAs: "asH", eNba1: "n1H", eNba: "nbaH", eYrs: "yH", eCh: "chH", eMvp: "mH", pHof: "hH" })[k];
-    var head = pct ? fmtPct(r[k]) : fmt(r[k]);
+    var loKey = ({ eAs: "asL", eNba1: "n1L", eNba: "nbaL", eYrs: "yL", eCh: "chL", eMvp: "mL", pHof: "hL", ePts: "ptsL", eReb: "rbL", eAst: "astL", eBpm: "bpL" })[k];
+    var hiKey = ({ eAs: "asH", eNba1: "n1H", eNba: "nbaH", eYrs: "yH", eCh: "chH", eMvp: "mH", pHof: "hH", ePts: "ptsH", eReb: "rbH", eAst: "astH", eBpm: "bpH" })[k];
+    var head = pct ? (k === "pHof" ? fmtHofDraft(r[k]) : fmtPct(r[k])) : fmt(r[k]);
     if (loKey == null || r[loKey] == null || r[hiKey] == null) return head;
     var t;
     if (pct) {
@@ -332,7 +339,12 @@
   function cell(r, c) {
     if (at.when === "drafted") {
       if (c.k === "pHof") return bandCell(r, "pHof", true);
-      if (c.k === "eBpm") return fmtSigned(r.eBpm);
+      if (c.k === "eBpm") {
+        var head = fmtSigned(r.eBpm);
+        if (r.bpL == null || r.bpH == null) return head;
+        var t = fmtSigned(r.bpL) + "\u2013" + fmtSigned(r.bpH);
+        return t ? head + '<span class="band">' + t + "</span>" : head;
+      }
       return bandCell(r, c.k, false);
     }
     if (c.hof) return hofVs(r);
@@ -424,8 +436,8 @@
     var kick = document.getElementById("at-kicker");
     if (kick) {
       kick.textContent = at.when === "drafted"
-        ? "Draft night from age, size, and prior performance. Not the pick. Not the NBA career. PPG / RPG / APG / BPM are career rates the file expected that night."
-        : "Career totals and per-game rates. Green and red are versus what the file said on draft night.";
+        ? "E[career | age, size, prior line]. Not the pick. Holdout 2005–2014: AUC 0.72 vs pick 0.77. Spearman 0.14. Grey on rates is a typical 10–90 residual, not a promise. HOF is capped at 15%."
+        : "Career versus that draft-night mean. Green and red are not a grade. They are the residual.";
     }
     at.painted = true;
   }
@@ -493,7 +505,7 @@
       at.inited = true;
     }
     if (allTime) { paintAllTime(at.painted ? at.page : 0); return; }
-    fetch("./assets/all-time.json?v=28")
+    fetch("./assets/all-time.json?v=29")
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         allTime = data || { players: [] };

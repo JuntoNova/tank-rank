@@ -8,7 +8,7 @@
     if (abs >= 1) return Number(n).toFixed(1);
     return Number(n).toFixed(2);
   }
-  function fmtPct(n) { return (window.TR && TR.Model ? TR.Model.fmtPct(n) : Math.round((n || 0) * 100) + "%"); }
+  function fmtPct(n) { return (window.TR && TR.Model && TR.Model.fmtHof) ? TR.Model.fmtHof(n) : ((window.TR && TR.Model ? TR.Model.fmtPct(n) : Math.round((n || 0) * 100) + "%")); }
   function fmtSigned(n) {
     if (n == null || isNaN(n) || Math.abs(n) < 0.25) return "0";
     return (n > 0 ? "+" : "\u2212") + Math.abs(n).toFixed(1);
@@ -148,10 +148,17 @@
     return head + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
   }
   function boxDraft(proj) {
-    return '<td class="pct">' + fmtExp(proj.expPts) + "</td>"
-      + '<td class="pct">' + fmtExp(proj.expReb) + "</td>"
-      + '<td class="pct">' + fmtExp(proj.expAst) + "</td>"
-      + '<td class="pct">' + fmtSigned(proj.expBpm) + "</td>";
+    return '<td class="pct">' + bandCell(proj, "expPts") + "</td>"
+      + '<td class="pct">' + bandCell(proj, "expReb") + "</td>"
+      + '<td class="pct">' + bandCell(proj, "expAst") + "</td>"
+      + '<td class="pct">' + bpmDraft(proj) + "</td>";
+  }
+  function bpmDraft(proj) {
+    var head = fmtSigned(proj.expBpm);
+    var b = proj && proj.band && proj.band.expBpm;
+    if (!b) return head;
+    var t = fmtSigned(b.lo) + "\u2013" + fmtSigned(b.hi);
+    return t ? head + '<span class="band">' + t + "</span>" : head;
   }
   function boxNow(p, proj) {
     return '<td class="pct">' + vsRate(p.pts, proj.expPts) + "</td>"
@@ -402,11 +409,14 @@
     const sub = document.querySelector(".section-head .sub");
     const cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
     if (sub) {
-      if (view === "drafted" && year === cur - 1) {
-        sub.textContent = "No NBA season yet. These are draft-night projections, not career totals.";
+      if (view === "drafted") {
+        sub.textContent = "E[career | age, size, prior line]. Not the pick. Holdout 2005–2014: AUC 0.72 vs pick 0.77. Spearman 0.14. Grey on PPG is a residual 10–90, not a promise.";
         sub.style.display = "";
       } else if (view === "now" && year >= cur - 3) {
-        sub.textContent = "Updated with NBA seasons played. Green and red are versus draft night.";
+        sub.textContent = "Updated with NBA seasons played. Green and red are versus the draft-night mean.";
+        sub.style.display = "";
+      } else if (view === "now") {
+        sub.textContent = "Career versus the draft-night mean. Holdout Spearman on All-Stars is 0.14.";
         sub.style.display = "";
       } else {
         sub.textContent = "";

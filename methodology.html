@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Methodology | The Draft Model</title>
-  <meta name="description" content="How The Draft Model uses historic NBA drafts to estimate future outcomes." />
+  <meta name="description" content="Estimand, holdout, and what is actually in the player score." />
   <link rel="canonical" href="https://thedraftmodel.com/methodology.html" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
   <meta name="theme-color" content="#090a0c" />
-  <link rel="stylesheet" href="./assets/styles.css?v=85" />
+  <link rel="stylesheet" href="./assets/styles.css?v=86" />
 </head>
 <body>
   <div id="app"></div>
@@ -17,83 +17,76 @@
   <script src="./assets/nav-swap.js?v=90"></script>
   <script>
     TR.renderSimple(document.getElementById("app"), "method", "Methodology", "The spec",
-      `<p>We fit what happened after past drafts from facts that were knowable on draft night. Pick is not one of those facts. NBA career box scores are not either.</p>
+      `<p>Estimand: expected NBA career honors and per-game rates given facts knowable on draft night. Age, size, origin, and the last pre-draft scoring line. Not the pick. Not reputation. Not NBA box scores.</p>
+      <p>That is a mean, E[Y|X]. Holdout Spearman on expected All-Star games is 0.14. Pick alone is 0.24 / AUC 0.77. We lose to the slot on purpose. The number is not a ranking of who will be great. It is the average career of people who looked like this, most of whom were ordinary.</p>
 
       <h2>The model</h2>
-      <p>A hurdle GLM. Coefficients are fit on draftees 1947–2004. The penalty, the Poisson shrink, the year shrink, and the intercept shift are chosen without looking at 2005–2014. That slice is locked and only used to report.</p>
+      <p>Hurdle GLM. Coefficients fit on draftees 1947–2004 (n = 3,424). Penalty, Poisson shrink, year shrink, and intercept shift chosen on 1995–2004 without looking at 2005–2014. That slice (n = 600) is locked and only used to report.</p>
       <ul>
-        <li>Inner slice for the knobs: 1995–2004. L2 penalty is chosen on Brier, a proper scoring rule.</li>
-        <li>The intercept shift that makes the average probability match the historical rate is fit by five-fold out-of-fold predictions on 1947–2004, with that penalty frozen. The holdout does not get a second chance to pick the shift.</li>
-        <li>Then the model is refit on all of 1947–2004 and scored on 2005–2014.</li>
-        <li>Expected count = P(ever) × E[count | ever]. The count model is a Poisson, shrunk toward the All-Star mean.</li>
-        <li>Hall of Fame: about 34% of All-Stars in the file are in Springfield, and about 0.4% of the rest. P(HOF) follows that rate, but the All-Star probability that feeds it does not get college steals or blocks. Springfield is not a shot-blocking contest. Cap 28%.</li>
-        <li>MVP: 31 MVPs in 1947–2004, every one of them an All-Star. Expected MVPs follow P(All-Star) × 0.155, the All-Star mean. A 17-feature MVP logistic on 31 events ranked shot blockers as MVPs. That is not a ranking.</li>
+        <li>Inner slice for the knobs: 1995–2004. L2 penalty on Brier.</li>
+        <li>Intercept shift from five-fold out-of-fold predictions on 1947–2004, penalty frozen. The holdout does not pick the shift.</li>
+        <li>Then refit on 1947–2004 and score 2005–2014.</li>
+        <li>Expected count = P(ever) × E[count | ever]. Poisson count, shrunk toward the All-Star mean.</li>
+        <li>Hall of Fame is not a 20-feature logistic. 1–3 All-Stars in 1980–1998 were about 2.7% Springfield. 4+ All-Stars were about 77%. Never-All-Star is not a Hall path. Cap 15%. Floor 0.02%. Twenty-odd players sit on the cap; that is a ceiling, printed ≤15%, not a ranking.</li>
+        <li>MVP: 31 MVPs in 1947–2004, every one an All-Star. E[MVP] = P(All-Star) × 0.155. A 17-feature MVP logistic on 31 events ranked shot blockers. That is not a ranking.</li>
+        <li>Career PPG / RPG / APG / BPM are a separate ridge on the same draft-night traits, trained on players with 100+ NBA games. Not honors in different units.</li>
       </ul>
-      <p>Holdout AUC for ever-All-Star is 0.68. Mean predicted P(All-Star) on the holdout is 10.2%; the actual rate is 9.5%. Spearman on expected All-Star games is 0.15. That is modest on purpose: we are not allowed to use the pick, and most draftees are zeros.</p>
 
-      <h2>What the holdout says, against simpler models</h2>
-      <p>Same 2005–2014 players. None of these comparison fits were allowed to see that slice when the knobs were picked. The pick row is the thing we refuse to use.</p>
+      <h2>Holdout 2005–2014, against simpler models</h2>
+      <p>Same 600 players. None of these comparison fits saw that slice when the knobs were picked. The pick row is the thing we refuse to use.</p>
       <div class="table-wrap"><table>
-        <thead><tr><th>Model</th><th>AUC</th><th>Brier</th><th>Mean P</th></tr></thead>
+        <thead><tr><th>Model</th><th>AUC</th><th>Brier</th><th>Spearman</th><th>Mean P</th></tr></thead>
         <tbody>
-          <tr><td>Coin flip / intercept only</td><td>0.50</td><td>0.086</td><td>9.5%</td></tr>
-          <tr><td>Age and size</td><td>0.67</td><td>0.085</td><td>11.8%</td></tr>
-          <tr><td>College box score only</td><td>0.60</td><td>0.162</td><td>33%</td></tr>
-          <tr><td>Full model, no pick</td><td>0.68</td><td>0.080</td><td>10.2%</td></tr>
-          <tr><td>Pick (not in the product)</td><td>0.77</td><td>0.076</td><td>11.8%</td></tr>
+          <tr><td>Intercept only</td><td>0.50</td><td>0.083</td><td>—</td><td>9.2%</td></tr>
+          <tr><td>Age and size</td><td>0.68</td><td>0.082</td><td>0.08</td><td>11.9%</td></tr>
+          <tr><td>College box only</td><td>0.61</td><td>0.083</td><td>0.12</td><td>10.8%</td></tr>
+          <tr><td>Full model, no pick</td><td>0.72</td><td>0.076</td><td>0.14</td><td>9.0%</td></tr>
+          <tr><td>Pick (not in the product)</td><td>0.78</td><td>0.074</td><td>0.24</td><td>11.8%</td></tr>
         </tbody>
       </table></div>
-      <p>Age and size already do most of the ranking. The college line helps a little and keeps the average honest. Using the pick would look better. That is the cost of the rule: the score has to come from the player.</p>
-      <p>College-box-score-only prints 33% because a missing line is not a line. That row is why skip has to sit on top of age and size, not by itself.</p>
+      <p>Actual All-Star rate on the holdout is 9.2%. Age and size already do most of the ranking. The college line helps a little and keeps the average honest. Using the pick would look better. That is the identification cost: the score has to come from the player.</p>
+      <p>Career rates on the same holdout, players with 100+ games: PPG MAE 3.5 (mean 9.2). RPG MAE 1.2. APG MAE 0.9. BPM MAE 1.7. Grey bands on those columns are a residual 10–90 (about ±1.28 × holdout SD), not coefficient jitter and not a prediction of Durant.</p>
 
-      <h2>The grey range on the board</h2>
-      <p>The big number is the fit on the whole training file. The small grey range is a 10th-to-90th interval from 80 refits on reshuffled training history, same frozen knobs. If the range is wide, the file does not know that player well. Fultz at about 3 All-Stars with a range around it is a 23-and-6 freshman line, not a promise.</p>
+      <h2>The grey range on honors</h2>
+      <p>The big number is the fit on the whole training file. The small grey range on All-Star / years / HOF is a 10th–90th interval from 80 refits on reshuffled training history, same frozen knobs. That is sampling uncertainty of the coefficients. It is not a prediction interval for the career. It does not cover a missing college line or a wrong height. Fultz at about 2 All-Stars with a range around it is a 23-and-6 freshman line, not a promise.</p>
 
-      <h2>Features</h2>
-      <p>Age relative to the era median, clipped to 17–25.5 so a bad birthdate is not a 6-year-old prodigy. Listed height and weight. Height vs the usual guy at that position. Prep-to-pro / international origin. A 6-7+ creation flag. College points, assists, steals, blocks when we have them. Wingspan minus height when we have it.</p>
-      <p>College counting stats are centered on a typical draftee line (16 points, 2.5 assists, 1.2 steals, 0.7 blocks), not on the star-selected subset we have typed (~19 points). Extreme lines are winsorized. Missing production is skipped at predict.</p>
+      <h2>Features in the player score</h2>
+      <p>Age relative to the era median, clipped to 17–25.5. Listed height and weight. Height vs the usual guy at that position. Pounds per inch, wingspan, ape, standing reach, listed swing. Prep-to-pro / international origin. A 6-7+ creation flag. College (or pro) points and assists when we have them.</p>
+      <p>Steals and blocks are in the file. They do not feed All-Star, All-NBA, MVP, chips, or Hall. They did, and they minted Yi Jianlian, Eddie Griffin, and Glenn Mosley as top-10 historical prospects. The trained coefficients are still in glm-coefs.json. They are zeroed at predict for honors. Years can still use them. Theory tables on defense and rim still exist. They are looked at, not scored.</p>
+      <p>College counting stats are centered on a typical draftee line (16 / 2.5 / 1.2 / 0.7), not the star-selected subset we have typed. International lines are centered on a typical pro line (10 / 2 / 1 / 0.8). High school box scores are a different unit and are skipped. Extreme college scoring is winsorized for honors; the PPG ridge keeps 28+ college lines.</p>
+      <p>Missing production is skipped at predict (dummy is 0). About 57% of packs have no points line. Those players are age, size, and origin. The board does not invent a college season.</p>
 
       <h2>What we tried and dropped</h2>
       <ul>
         <li>Draft slot. Identification: the score has to come from the player.</li>
         <li>Guard / center flags on top of scoring and passing. They stacked.</li>
-        <li>Two-position listing. It was a proxy for “we wrote a scouting report.”</li>
+        <li>Two-position listing as a talent signal. It was a proxy for “we wrote a scouting report.” (Listed swing is still in, as two spots vs one.)</li>
         <li>Steals+blocks as one number plus blocks again. Rim was counting twice.</li>
+        <li>Letting college blocks mint All-Stars and Hall odds. A 6-8 with 4 blocks is not a 15% Hall guy. Stocks are out of honors.</li>
         <li>A 20-feature Hall of Fame logistic. Rare event, too many knobs.</li>
-        <li>A 17-feature MVP logistic on 31 events. Colgate blocks were not an MVP theory.</li>
-        <li>Letting college blocks mint Hall odds. A 6-8 with 4 blocks is not 25% Springfield.</li>
-        <li>Picking the penalty on the same slice we report. That inflated the old 0.68. This 0.68 is locked.</li>
+        <li>A 17-feature MVP logistic on 31 events.</li>
+        <li>Picking the penalty on the same slice we report.</li>
       </ul>
-
-      <h2>What we do not use</h2>
-      <ul>
-        <li>Draft slot.</li>
-        <li>NBA counting stats.</li>
-        <li>Reputation, scouting adjectives, or “everyone knew.”</li>
-      </ul>
-      <p>The old slot-prior table is still in the repo. It does not score a player anymore.</p>
 
       <h2>What we estimate</h2>
       <ul>
         <li>Expected All-Star games, All-NBA, first-team, years, championships, MVPs</li>
-        <li>P(Hall of Fame) from P(All-Star), floored at 0.3% and capped at 28%</li>
+        <li>P(Hall of Fame) from All-Star quality, capped at 15%</li>
+        <li>Expected career PPG, RPG, APG, BPM (mean; residual band in grey)</li>
       </ul>
-      <p>All-NBA is not allowed to exceed All-Star. MVP follows P(All-Star), not a separately fitted count. First-team is 22% of expected All-NBA, not a separately fitted count. No bust label. That is not an objective outcome.</p>
+      <p>All-NBA cannot exceed All-Star. First-team is 22% of expected All-NBA. Championships are miscalibrated on the holdout (predicted 2.1%, rate 0.7%) because labels are incomplete; we do not shift chips down to that rate, and we do not pretend the column is a ranking. No bust label. That is not an objective outcome.</p>
 
       <h2>Limits that are in the number</h2>
       <ul>
-        <li>The college line is the draft-year season we have, not a career peak. A 21-year-old junior at 19.6 points is not the same input as an 18-year-old at 31.</li>
-        <li>We do not have a college or international line for most of the file. Those theories do not fire. Age, size, and origin still do.</li>
-        <li>A 6-8 who blocked 4 shots a night looks, to the All-Star number, like a shot-blocking star. Most of those guys were not. That miss is in the 0.68 AUC. It does not get to mint Hall odds.</li>
-        <li>Championship labels on the 2005–2014 holdout are incomplete, so we do not shift chips down to that rate.</li>
-        <li>The interval is sampling uncertainty of the coefficients. It is not a prediction interval for the career, and it does not cover missing college stats or a wrong height.</li>
+        <li>Spearman 0.14. Yi Jianlian used to outrank Magic. Stocks are out of honors so that happens less. Residual variance is still most of a career.</li>
+        <li>The college line is the draft-year season we have, not a career peak.</li>
+        <li>25 college PPG usually becomes about 11 NBA PPG among guys who stuck, not 27. Durant is the right tail of his own forecast.</li>
+        <li>1947–2004 is not 2027. Relative age helps. Production is still mixed-era.</li>
+        <li>2027–2029 high schoolers have no college line. Age and size still fire. Hall odds on those cards are age-and-size, capped, and weak.</li>
       </ul>
 
-      <h2>Pack vs depth (2027)</h2>
-      <p>Theory-pack features cover picks 1–62. The living board runs to about 100. Picks 63–100 are depth fills with thinner inputs. No invented bios. No invented odds.</p>
-
       <h2>What this page is for</h2>
-      <p>Assumptions, features, coefficients, and failed tests land here. If it is not on this page, it is not part of the model.</p>`
+      <p>If a theory is not in the GLM feature list (age, size, origin, create_tall, pts, ast, and the skipped stl/blk), it is a table on Theories, not a player score. Combine, free-throw rate, threes, schools, development, and stash are looked at. They are not scored. If this page and the live glm-coefs.json disagree, the JSON wins and this page is wrong.</p>`
     );
   </script>
 </body>

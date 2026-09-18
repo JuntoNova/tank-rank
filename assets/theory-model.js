@@ -244,13 +244,15 @@
     if (!G && !P) {
       return { expAs: 0.4, expNba: 0.2, expNba1: 0.05, expYrs: 7, expCh: 0.08, expMvp: 0.02, pHof: 0.03, pAs: 0.11, pNba: 0.06 };
     }
-    var as = hurdle("as", x, P);
-    var nba = hurdle("nba", x, P);
-    var mvp = hurdle("mvp", x, P);
-    var ch = hurdle("ch", x, P);
+    var honorSkip = (G && G.honor_skip) || [];
+    var xH = honorSkip.length ? xSkip(x, honorSkip) : x;
+    var as = hurdle("as", xH, P);
+    var nba = hurdle("nba", xH, P);
+    var mvp = hurdle("mvp", xH, P);
+    var ch = hurdle("ch", xH, P);
     var yrsSpec = (P && P.yrs) || (G && G.yrs);
     var yrs = clamp(linpred(yrsSpec, x) + ((G && G.yrs_shift) || 0), 1.5, 19);
-    var skip = (G && G.hof_skip) || [];
+    var skip = (G && G.hof_skip) || honorSkip;
     var asHof = skip.length ? hurdle("as", xSkip(x, skip), P) : as;
     var pHof;
     var spec = (G && G.hof_from_as) || {};
@@ -302,16 +304,33 @@
       var v = linpred(spec, xb) + (Number(spec.shift) || 0);
       return clamp(v, spec.lo != null ? spec.lo : -20, spec.hi != null ? spec.hi : 30);
     }
+    function boxBandOf(v, spec) {
+      if (v == null || !spec) return null;
+      var sd = spec.resid_sd != null ? spec.resid_sd : (spec.holdout_mae != null ? spec.holdout_mae / 0.8 : null);
+      if (sd == null) return null;
+      var w = 1.2816 * sd;
+      return {
+        lo: clamp(v - w, spec.lo != null ? spec.lo : -20, spec.hi != null ? spec.hi : 30),
+        hi: clamp(v + w, spec.lo != null ? spec.lo : -20, spec.hi != null ? spec.hi : 30)
+      };
+    }
     var expPts = boxPred("nba_pts", x);
     var expReb = boxPred("nba_trb", x);
     var expAst = boxPred("nba_ast", x);
     var expBpm = boxPred("nba_bpm", x);
+    var boxBand = {
+      expPts: boxBandOf(expPts, G && G.box && G.box.nba_pts),
+      expReb: boxBandOf(expReb, G && G.box && G.box.nba_trb),
+      expAst: boxBandOf(expAst, G && G.box && G.box.nba_ast),
+      expBpm: boxBandOf(expBpm, G && G.box && G.box.nba_bpm)
+    };
     return {
       pAs: as.p, expAs: expAs,
       pNba: nba.p, expNba: expNba, expNba1: clamp(expNba * 0.22, 0.005, 6),
       expYrs: yrs, expCh: clamp(ch.exp, 0.01, 4), expMvp: expMvp,
       pHof: pHof,
-      expPts: expPts, expReb: expReb, expAst: expAst, expBpm: expBpm
+      expPts: expPts, expReb: expReb, expAst: expAst, expBpm: expBpm,
+      boxBand: boxBand
     };
   }
   function quantile(arr, q) {
@@ -341,6 +360,12 @@
     Object.keys(acc).forEach(function (k) {
       out[k] = { lo: quantile(acc[k], qs[0]), hi: quantile(acc[k], qs[1]) };
     });
+    var scored = scoreX(x);
+    if (scored && scored.boxBand) {
+      Object.keys(scored.boxBand).forEach(function (k) {
+        if (scored.boxBand[k]) out[k] = scored.boxBand[k];
+      });
+    }
     return out;
   }
   function project(p, feat, priors) {
@@ -423,17 +448,23 @@
     groups.forEach(function (g) {
       g.keys.forEach(function (k) { x[k] = xFull[k] || 0; });
       var cur = scoreX(x);
+      var honorSkip = (G && G.honor_skip) || [];
       var dLog = 0;
       if (G && G.as_ever) {
-        g.keys.forEach(function (k) { dLog += (G.as_ever.coef[k] || 0) * (xFull[k] || 0); });
+        g.keys.forEach(function (k) {
+          if (honorSkip.indexOf(k) >= 0) return;
+          dLog += (G.as_ever.coef[k] || 0) * (xFull[k] || 0);
+        });
       }
       var mAs = Math.exp(dLog);
       var dNba = 0, dMvp = 0, dHof = 0, dYrs = 0;
       if (G) {
         g.keys.forEach(function (k) {
-          if (G.nba_ever) dNba += (G.nba_ever.coef[k] || 0) * (xFull[k] || 0);
-          if (G.mvp_ever) dMvp += (G.mvp_ever.coef[k] || 0) * (xFull[k] || 0);
-          if (G.hof) dHof += (G.hof.coef[k] || 0) * (xFull[k] || 0);
+          if (honorSkip.indexOf(k) < 0) {
+            if (G.nba_ever) dNba += (G.nba_ever.coef[k] || 0) * (xFull[k] || 0);
+            if (G.mvp_ever) dMvp += (G.mvp_ever.coef[k] || 0) * (xFull[k] || 0);
+            if (G.hof) dHof += (G.hof.coef[k] || 0) * (xFull[k] || 0);
+          }
           if (G.yrs) dYrs += (G.yrs.coef[k] || 0) * (xFull[k] || 0);
         });
       }
@@ -471,6 +502,13 @@
     return (n < 0 ? "-" : "") + body;
   }
   function fmtPct(n) { return (n == null || !isFinite(Number(n))) ? "" : Math.round(n * 100) + "%"; }
+  function fmtHof(n) {
+    if (n == null || !isFinite(Number(n))) return "";
+    var cap = (glm() && glm().hof_cap != null) ? glm().hof_cap : 0.15;
+    if (Number(n) >= cap - 0.0005) return "\u2264" + Math.round(cap * 100) + "%";
+    var p = Math.round(Number(n) * 100);
+    return p === 0 ? "<1%" : p + "%";
+  }
   function fmtMul(m) { return "x" + Number(m == null ? 1 : m).toFixed(2); }
   function fmtBand(lo, hi, pct) {
     if (lo == null || hi == null || !isFinite(Number(lo)) || !isFinite(Number(hi))) return "";
@@ -673,7 +711,7 @@
     };
   }
   window.TR = window.TR || {};
-  TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, projectNow: projectNow, INTENSITY: INTENSITY, PLAYER: PLAYER, HOF_CAP: HOF_CAP, fmtExp: fmtExp, fmtPct: fmtPct, fmtMul: fmtMul, fmtBand: fmtBand, bandHtml: bandHtml, careerHofP: careerHofP, fmtHofRemain: fmtHofRemain };
+  TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, projectNow: projectNow, INTENSITY: INTENSITY, PLAYER: PLAYER, HOF_CAP: HOF_CAP, fmtExp: fmtExp, fmtPct: fmtPct, fmtHof: fmtHof, fmtMul: fmtMul, fmtBand: fmtBand, bandHtml: bandHtml, careerHofP: careerHofP, fmtHofRemain: fmtHofRemain };
   TR.deriveFeat = deriveFeat;
   TR.projectPlayer = project;
   TR.projectNow = projectNow;

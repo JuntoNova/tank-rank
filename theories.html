@@ -27,61 +27,62 @@
       {
         label: "You can't teach size",
         items: [
-          { name: "You can't teach size", href: "./size.html", pill: "Checked", cls: "num",
+          { name: "You can't teach size", href: "./size.html", pill: "In model", cls: "num",
             cuts: ["What people say: You cannot teach height, length, or strength. Take the bigger guy.", "What we found: Height, weight, wingspan, reach, and size at the position all move the odds. Draft slot is not in this check."] }
         ]
       },
       {
         label: "Tall guys who can dribble are rare",
         items: [
-          { name: "Tall guys who can dribble are rare", href: "./handle.html", pill: "Checked", cls: "num",
+          { name: "Tall guys who can dribble are rare", href: "./handle.html", pill: "In model", cls: "num",
             cuts: ["What people say: A 6-foot-8 player who can pass and handle is the hardest thing to find.", "What we found: At the same height, the passers become All-Stars more often. 6-7 and up: 15% vs 11%. Under 6-5: 25% vs 5%. Draft slot is not in this check."] }
         ]
       },
       {
         label: "Workout numbers do not mean much",
+        kind: "look",
         items: [
-          { name: "Workout numbers do not mean much", href: "./combine.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: The lane agility drill and the bench press do not tell you who can play.", "What we found: Half true. The clock and the bench move the odds a bit. Max vertical does not. Skipping the combine is mostly about pick slot, not talent."] }
+          { name: "Workout numbers do not mean much", href: "./combine.html", pill: "Looked at", cls: "na",
+            cuts: ["What people say: The lane agility drill and the bench press do not tell you who can play.", "What we found: A table. Not a player score. Combine numbers are not in the GLM."] }
         ]
       },
       {
         label: "Drafting younger is better",
         items: [
-          { name: "They last longer", href: "./age.html", pill: "Checked", cls: "num",
+          { name: "They last longer", href: "./age.html", pill: "In model", cls: "num",
             cuts: ["What people say: A 19-year-old has more years to get good than a 22-year-old.", "What we found: True. Under 19.5 lasts 10.4 years. 22.5 and older: 5.3. Draft slot is not in this check."] },
-          { name: "They become stars more often", href: "./age.html", pill: "Checked", cls: "num",
+          { name: "They become stars more often", href: "./age.html", pill: "In model", cls: "num",
             cuts: ["What people say: Younger guys develop into All-Stars more often.", "What we found: True. Under 19.5: 26% All-Star. 22.5 and older: 12%. Class year is this theory, not a second lever. Draft slot is not in this check."] }
         ]
       },
       {
         label: "Past performance predicts future performance",
         items: [
-          { name: "College stats tell you who will be good", href: "./prod.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: If he scored a lot in college, he will score in the NBA.", "What we found: Barely. High college scorers are only a little more likely to become All-Stars than low ones."] },
-          { name: "Guys who get fouled a lot can get to the rim", href: "./ftrate.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Drawing fouls is the honest version of being able to drive.", "What we found: True. High free-throw rate players become All-Stars about twice as often. Shooting percentage alone is flat."] },
-          { name: "Taking a lot of threes matters more than a hot percentage", href: "./three.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Volume and the shot diet matter. A small-sample percentage does not.", "What we found: Neither version wins cleanly. High three-point volume and high percentage both look ordinary."] },
-          { name: "Passing travels better than scoring", href: "./astu.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Assist-to-usage is the smart way to measure a creator. Raw assists lie.", "What we found: Creation itself helps. The fancy ratio is not clearly better than counting assists."] },
-          { name: "College defense does not tell you anything", href: "./defense.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: You cannot see NBA defense in college stats. Scoring is what boards overweight.", "What we found: False. College steals-plus-blocks do show up. The high-stocks group becomes All-Stars about twice as often."] },
-          { name: "You still need a big who can block shots", href: "./rim.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: A defense without a rim protector leaks at the basket.", "What we found: True for bigs. High-block centers and power forwards do better. It is flat if you mix in every position."] }
+          { name: "College stats tell you who will be good", href: "./prod.html", pill: "In model", cls: "num",
+            cuts: ["What people say: If he scored a lot in college, he will score in the NBA.", "What we found: Points, assists, steals, and blocks are in the file. Steals and blocks do not feed All-Star, All-NBA, MVP, or Hall. They minted Yi Jianlian and Eddie Griffin when they did."] },
+          { name: "Guys who get fouled a lot can get to the rim", href: "./ftrate.html", pill: "Looked at", cls: "na",
+            cuts: ["What people say: Drawing fouls is the honest version of being able to drive.", "What we found: A table. Free-throw rate is not a GLM feature."] },
+          { name: "Taking a lot of threes matters more than a hot percentage", href: "./three.html", pill: "Looked at", cls: "na",
+            cuts: ["What people say: Volume and the shot diet matter. A small-sample percentage does not.", "What we found: A table. Three-point volume is not a GLM feature."] },
+          { name: "Passing travels better than scoring", href: "./astu.html", pill: "In model", cls: "num",
+            cuts: ["What people say: Assist-to-usage is the smart way to measure a creator. Raw assists lie.", "What we found: Raw assists and the tall-passer flag are in the player score. The fancy ratio is not."] },
+          { name: "College defense does not tell you anything", href: "./defense.html", pill: "Looked at", cls: "na",
+            cuts: ["What people say: You cannot see NBA defense in college stats. Scoring is what boards overweight.", "What we found: Steals correlate in a raw table. They also mint shot-blocking 'stars' who were not. They do not feed All-Star, All-NBA, MVP, or Hall."] },
+          { name: "You still need a big who can block shots", href: "./rim.html", pill: "Looked at", cls: "na",
+            cuts: ["What people say: A defense without a rim protector leaks at the basket.", "What we found: Blocks correlate for bigs in a table. They do not feed honors. Eddie Griffin is why."] }
         ]
       },
       {
         label: "School, country, and team",
         items: [
-          { name: "The best players come from the best colleges", href: "./schools.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Duke, Kentucky, and the other blue bloods concentrate future stars.", "What we found: False once you know the pick. Mid-lottery players from other schools do just as well."] },
-          { name: "A pro line is not a college line", href: "./intl.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Overseas stats are noise next to college stats. Or they are the same points per game.", "What we found: 10 points against men is not 10 points in the NCAA. Rubio, Giannis, and Jokić all sat at 9–11 points as pros and lasted 12 years. College 8–12 points: 5.6 years, 8.5% All-Star. We keep the international line and score it against a typical pro line, not a typical college line. Draft slot is not in this check."] },
-          { name: "The team that drafts him matters as much as the player", href: "./develop.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Put him in the right program and he becomes a star. Put him in the wrong one and he dies.", "What we found: We cannot prove a team bonus yet. Honors still follow the pick more than the logo."] },
-          { name: "Leave a raw foreign player overseas until he is ready", href: "./stash.html", pill: "Checked", cls: "num",
-            cuts: ["What people say: Stashing a young big in Europe cuts the risk that he is not ready.", "What we found: It does cut the risk that he never arrives. It is not a proven way to find extra stars."] }
+          { name: "The best players come from the best colleges", href: "./schools.html", pill: "Looked at", cls: "na",
+            cuts: ["What people say: Duke, Kentucky, and the other blue bloods concentrate future stars.", "What we found: A table. School is not a GLM feature. Once you know the pick, blue bloods are ordinary. We do not use the pick."] },
+          { name: "A pro line is not a college line", href: "./intl.html", pill: "In model", cls: "num",
+            cuts: ["What people say: Overseas stats are noise next to college stats. Or they are the same points per game.", "What we found: 10 points against men is not 10 points in the NCAA. International lines are kept and centered on a typical pro line (10 / 2 / 1 / 0.8), not a college line."] },
+          { name: "The team that drafts him matters as much as the player", href: "./develop.html", pill: "Looked at", cls: "na",
+            cuts: ["What people say: Put him in the right program and he becomes a star. Put him in the wrong one and he dies.", "What we found: A table. Team logo is not a GLM feature."] },
+          { name: "Leave a raw foreign player overseas until he is ready", href: "./stash.html", pill: "Looked at", cls: "na",
+            cuts: ["What people say: Stashing a young big in Europe cuts the risk that he is not ready.", "What we found: A table. Stash is not a GLM feature."] }
         ]
       },
       {
@@ -142,6 +143,12 @@
     function groupHint(g) {
       if (g.kind === "qual") return g.items.length + " not yet";
       if (g.kind === "dead") return g.items.length + " disproven";
+      if (g.kind === "look") return g.items.length + " looked at";
+      var n = g.items.filter(function (t) { return t.pill === "In model"; }).length;
+      var look = g.items.filter(function (t) { return t.pill === "Looked at"; }).length;
+      if (n && look) return n + " in the model, " + look + " looked at";
+      if (n) return n + " in the model";
+      if (look) return look + " looked at";
       return g.items.length + " checked";
     }
 

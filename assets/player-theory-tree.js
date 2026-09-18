@@ -324,7 +324,7 @@
       "<tr><td>APG</td><td class=\"num\">" + fmtExp(full.expAst) + "</td></tr>" +
       "<tr><td>BPM</td><td class=\"num\">" + fmtBpm(full.expBpm) + "</td></tr>" +
       "<tr><td>MVP</td><td class=\"num\">" + fmtExp(full.expMvp) + "</td></tr>" +
-      "<tr><td>Hall of Fame then</td><td class=\"num\">" + fmtPct(full.pHof) + "</td></tr>" +
+      "<tr><td>Hall of Fame then</td><td class=\"num\">" + (TR.Model && TR.Model.fmtHof ? TR.Model.fmtHof(full.pHof) : fmtPct(full.pHof)) + "</td></tr>" +
       now + "</tbody></table></div>";
   }
   function restyle(root) {

@@ -191,12 +191,12 @@
         cell("AS", fmtExp(full.expAs), bandOf(full, "expAs")) +
         cell("All-NBA", fmtExp(full.expNba), bandOf(full, "expNba")) +
         cell("Yrs", fmtExp(full.expYrs), bandOf(full, "expYrs")) +
-        cell("PPG", fmtExp(full.expPts)) +
-        cell("RPG", fmtExp(full.expReb)) +
-        cell("APG", fmtExp(full.expAst)) +
-        cell("BPM", (full.expBpm == null ? "" : (Number(full.expBpm) >= 0 ? "+" : "\u2212") + Math.abs(Number(full.expBpm)).toFixed(1))) +
+        cell("PPG", fmtExp(full.expPts), bandOf(full, "expPts")) +
+        cell("RPG", fmtExp(full.expReb), bandOf(full, "expReb")) +
+        cell("APG", fmtExp(full.expAst), bandOf(full, "expAst")) +
+        cell("BPM", (full.expBpm == null ? "" : (Number(full.expBpm) >= 0 ? "+" : "\u2212") + Math.abs(Number(full.expBpm)).toFixed(1)), bandOf(full, "expBpm")) +
         cell("MVP", fmtExp(full.expMvp), bandOf(full, "expMvp")) +
-        cell("HOF then", fmtPct(full.pHof), bandOf(full, "pHof", true));
+        cell("HOF then", (TR.Model && TR.Model.fmtHof ? TR.Model.fmtHof(full.pHof) : fmtPct(full.pHof)), bandOf(full, "pHof", true));
       if (historic) html += cell("HOF now", fmtHof(hofNow));
       metrics.innerHTML = html;
     }

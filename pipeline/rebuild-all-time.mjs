@@ -88,6 +88,10 @@ for (let i = 0; i < players.length; i++) {
     r.chL = round(band.expCh.lo, 2); r.chH = round(band.expCh.hi, 2);
     r.mL = round(band.expMvp.lo, 2); r.mH = round(band.expMvp.hi, 2);
     r.hL = round(band.pHof.lo, 3); r.hH = round(band.pHof.hi, 3);
+    if (band.expPts) { r.ptsL = round(band.expPts.lo, 1); r.ptsH = round(band.expPts.hi, 1); }
+    if (band.expReb) { r.rbL = round(band.expReb.lo, 1); r.rbH = round(band.expReb.hi, 1); }
+    if (band.expAst) { r.astL = round(band.expAst.lo, 1); r.astH = round(band.expAst.hi, 1); }
+    if (band.expBpm) { r.bpL = round(band.expBpm.lo, 1); r.bpH = round(band.expBpm.hi, 1); }
   }
 }
 

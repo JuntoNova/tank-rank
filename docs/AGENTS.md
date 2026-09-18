@@ -46,7 +46,7 @@ then string-replaces and `eval`s it. That blob still has Upcoming-first doors an
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
-- 2026-09-17 (Grok chat): PPG/RPG/APG/BPM on every year board (historic + 2027–2029) and every player card. Same draft-night model as all-time.
+- 2026-09-17 (Grok chat): Credibility pass. Methodology matches the live file. Stocks out of honors (Yi/Griffin/Mosley). HOF prints ≤15% at the cap. Residual 10–90 on PPG. Holdout AUC 0.72 vs pick 0.77 on every board. Theories: In model vs Looked at.
 - 2026-09-17 (Grok chat): Age is one lever (rel_age) that already moves years and stardom on every player with an age. Card now shows both claims. Missing age skips.
 - 2026-09-17 (Grok chat): Empty intl files were minting fake overs (Jokić/Giannis/Luka/Parker/Manu). Last-season-against-men lines filled. Jokić Mega 11.4 and Giannis Greek A2 9.5 are real overs. Luka EuroLeague 16/4.3 and Parker Paris 14.7/5.6 move. Over ∩ top-20 HOF/MVP is still empty — those boards are Trae/Durant/Yao, not the Over names.
 - 2026-09-17 (Grok chat): Yao’s 2001-02 Shanghai line (32.4/19/2.9/1.5/4.8) was missing. Intl against men now scores. He is 4.3 expected All-Stars, off Over. Duncan’s Wake Forest line was already in; 14.7 reb is on the card but boards are not a live feature (refitting them cut points/blocks). Duncan stays 2.6 AS / ×7.5 because 21 points is not Robinson’s 28.
