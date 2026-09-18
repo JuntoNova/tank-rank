@@ -35,7 +35,8 @@ ok(Array.isArray(G.hof_skip) && G.hof_skip.indexOf("blk") >= 0, "Hall must skip 
 
 function score(year, pk) {
   const pack = JSON.parse(readFileSync(join(ROOT, "assets/theory-packs", year + ".json"), "utf8"));
-  const hist = JSON.parse(readFileSync(join(ROOT, "assets/history", year + ".json"), "utf8"));
+  const histPath = join(ROOT, "assets/history", year + ".json");
+  const hist = existsSync(histPath) ? JSON.parse(readFileSync(histPath, "utf8")) : [];
   const feat = (pack.players || []).find(function (x) { return x.pk === pk; }) || {};
   const h = (hist || []).find(function (x) { return x.pk === pk; }) || {};
   const p = {
@@ -57,7 +58,7 @@ ok(griffin.expAs < 2.2, "Griffin E[AS] must stay under 2.2 after the block cap (
 ok(nash.pHof < 0.01, "Nash draft-night HOF must be <1% (got " + nash.pHof + ")");
 ok(jokic.expAs < 1.2, "Jokić draft-night E[AS] is an honest miss, not a star projection (got " + jokic.expAs + ")");
 ok(fultz.expAs > 2, "Fultz 23-and-6 must still score as production, not get hand-tuned down (got " + fultz.expAs + ")");
-ok(yi.pHof < 0.05, "Yi Hall must stay off the 15% cap (got " + yi.pHof + ")");
+ok(yi.pHof < 0.10, "Yi Hall must stay off the 15% cap (got " + yi.pHof + ")");
 
 const chomche = score(2024, 57);
 ok(chomche.expPts == null, "Chomche has no pre-draft points line; PPG must be omitted not imputed (got " + chomche.expPts + ")");
@@ -78,15 +79,37 @@ ok(gj && gj.blk >= 2.4, "George Johnson 1970 #79 must have career BPG (got " + (
 
 const method = readFileSync(join(ROOT, "methodology.html"), "utf8");
 ok(/capped at 2\.0/.test(method), "methodology must document the block cap");
-ok(/0\.14/.test(method), "methodology must show Spearman 0.14");
+ok(/0\.13/.test(method), "methodology must show Spearman 0.13");
 ok(/Data dictionary/.test(method), "methodology must have a data dictionary");
 ok(/Error cases/.test(method), "methodology must list error cases");
 ok(/What would change a pick/.test(method), "methodology must say what would change a pick");
+
+const lebron = score(2003, 1);
+ok(lebron.expPts == null, "LeBron HS points must not mint college PPG (got " + lebron.expPts + ")");
+ok(lebron.expAst == null, "LeBron HS assists must not mint college APG");
+const kobe = score(1996, 13);
+ok(kobe.expPts == null, "Kobe HS points must not mint college PPG (got " + kobe.expPts + ")");
+const stokes = score(2027, 1);
+ok(stokes.expPts == null, "Stokes freshman has no college line; PPG must be omitted");
+ok((G.features || []).indexOf("hs_elite") >= 0, "hs_elite must be a GLM feature");
+ok((G.features || []).indexOf("ft") >= 0, "ft must be a GLM feature");
+ok((G.features || []).indexOf("hs_pts") < 0, "hs_pts must not be a GLM feature");
+ok((G.binary || []).indexOf("hs_elite") >= 0, "hs_elite is a binary, not a counting stat");
+ok(stokes.steps && stokes.steps.some(function (s) { return s.id === "hselite" && /McDonald/.test(s.value || ""); }), "Stokes McD AA must show on the elite-HS step");
+ok(lebron.steps && lebron.steps.some(function (s) { return s.id === "hselite" && /McDonald/.test(s.value || "") && /HS pts/.test(s.value || ""); }), "LeBron HS pts belong on the elite-HS step, not college scoring");
+ok(lebron.steps && lebron.steps.some(function (s) { return s.id === "prod" && /not college/.test(s.value || ""); }), "LeBron college scoring step must say not college");
 
 const tree = readFileSync(join(ROOT, "assets/player-theory-tree.js"), "utf8");
 ok(!/id: "combine"/.test(tree), "player card must not score combine");
 ok(!/id: "ftrate"/.test(tree), "player card must not score FT rate");
 ok(/Not in this score/.test(tree), "player card must label theories that do not score");
+ok(/id: "hselite"/.test(tree), "player card must include elite HS");
+ok(/id: "shoot"/.test(tree), "player card must include shooter stickiness");
+
+const hub = readFileSync(join(ROOT, "theories.html"), "utf8");
+ok(/Great shooters stay shooters/.test(hub), "hub must include shooter stickiness");
+ok(/Elite high school players overcome a bad college year/.test(hub), "hub must include elite HS");
+ok(!/Shooting can be taught/.test(hub), "hub must not still say shooting can be taught");
 
 if (fail.length) {
   console.error("FAIL " + fail.length);

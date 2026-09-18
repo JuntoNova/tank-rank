@@ -10,6 +10,8 @@
     "Passing travels better than scoring": "In the model. Raw assists move the player score. Assist-to-usage does not.",
     "College defense does not tell you anything": "In the model. Steals are capped at 2.5 for honors. They do not feed Hall.",
     "You still need a big who can block shots": "In the model. Blocks are capped at 2.0 for honors.",
+    "Great shooters stay shooters": "In the model. College FT% is skip-missing. The claim that holds is the shot, not All-Star odds.",
+    "Elite high school players overcome a bad college year": "In the model. McDonald's All-American is a binary from 1977 on. Pre-1977 is missing. High school points are not college points.",
     "The best players come from the best colleges": "Looked at. School is not a GLM feature.",
     "A pro line is not a college line": "In the model. International lines are kept and centered on a typical pro line.",
     "The team that drafts him matters as much as the player": "Looked at. Team logo is not a GLM feature.",

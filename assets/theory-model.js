@@ -100,7 +100,10 @@
       create: create,
       pts: given.pts, ast: given.ast, stl: given.stl, blk: given.blk,
       reb: given.reb != null && given.reb !== "" ? given.reb : given.trb,
-      fga: given.fga, fta: given.fta, fg3a: given.fg3a
+      fga: given.fga, fta: given.fta, fg3a: given.fg3a,
+      ft: given.ft,
+      hs_elite: given.hs_elite,
+      hs_pts: given.hs_pts, hs_reb: given.hs_reb, hs_ast: given.hs_ast, hs_blk: given.hs_blk
     };
   }
   function glm() { return (window.TR && TR.GLM) || null; }
@@ -151,12 +154,25 @@
     var ast = hs ? null : boxNum(feat.ast);
     var rebRaw = feat.reb != null && feat.reb !== "" ? feat.reb : feat.trb;
     var reb = hs ? null : boxNum(rebRaw);
+    function ftNum(v) {
+      var n = boxNum(v);
+      if (n == null) return null;
+      if (n > 2) n = n / 1000;
+      else if (n > 1.5) n = n / 100;
+      if (n < 0.3 || n > 1) return null;
+      return n;
+    }
+    var ft = ftNum(feat.ft);
+    var elite = null;
+    if (year && year < 1977) elite = null;
+    else if (feat.hs_elite) elite = 1;
+    else if (year >= 1977) elite = 0;
     var rel = (age != null) ? (age - eraMed(year)) : null;
     var dHt = (htIn && posHt) ? (htIn - posHt) : null;
     var raw = {
       rel_age: rel, ht_in: htIn || null, wt: wt, d_ht: dHt, ape: ape,
       wpi: wpi, wsp_in: wsp || null, reach_in: reachIn || null,
-      pts: pts, ast: ast, stl: stl, blk: blk, reb: reb
+      pts: pts, ast: ast, stl: stl, blk: blk, reb: reb, ft: ft
     };
     (G.continuous || []).forEach(function (k) {
       var v = raw[k];
@@ -174,6 +190,7 @@
     x.origin_intl = feat.origin === "intl" ? 1 : 0;
     x.create_tall = (!hs && htIn >= 79 && ast != null && ast >= 2.2) ? 1 : 0;
     x.swing = isSwing(feat.pos) ? 1 : 0;
+    x.hs_elite = elite ? 1 : 0;
     (G.missing || []).forEach(function (k) { x[k] = 0; });
     // Missing is omitted, not imputed as typical. Fire only the scoring-line
     // miss dummies (miss_stl/blk/length mint junk). Box rates stay null below.
@@ -209,7 +226,7 @@
       x.ast_hi = Math.max(0, av - 5) / 2;
     }
     var xHonor = honorCap(x, raw, G, intl);
-    return { x: x, xHonor: xHonor, raw: raw, pg: pg, htIn: htIn, age: age };
+    return { x: x, xHonor: xHonor, raw: raw, pg: pg, htIn: htIn, age: age, elite: elite, year: year };
   }
   function honorCap(x, raw, G, intl) {
     var y = {};
@@ -402,7 +419,8 @@
       age: "./age.html", intl: "./intl.html", size: "./size.html", inch: "./size.html",
       posht: "./size.html", swing: "./size.html", wpi: "./size.html", ape: "./size.html",
       handle: "./handle.html", wingspan: "./wingspan.html", reach: "./reach.html",
-      prod: "./prod.html", defense: "./defense.html", astu: "./astu.html", rim: "./rim.html"
+      prod: "./prod.html", defense: "./defense.html", astu: "./astu.html", rim: "./rim.html",
+      hselite: "./hselite.html", shoot: "./shoot.html"
     };
     function apeLabel() {
       if (!raw.ape && raw.ape !== 0) return "missing";
@@ -423,6 +441,18 @@
         return v + " intl " + unit;
       }
       return raw[key] != null ? (raw[key] + " " + unit) : ("no " + unit + " line");
+    }
+    function shootLabel() {
+      if (raw.ft == null) return "no FT%";
+      return (Math.round(raw.ft * 1000) / 10) + "% FT";
+    }
+    function hseliteLabel() {
+      if (year && year < 1977) return "McDonald's AA did not exist";
+      var bits = [];
+      if (xFull.hs_elite) bits.push("McDonald's All-American");
+      else bits.push("not McDonald's AA");
+      if (feat.hs_pts != null && feat.hs_pts !== "") bits.push(feat.hs_pts + " HS pts");
+      return bits.join(", ");
     }
     function tallPassLabel() {
       if (feat.origin === "hs") return "high school (not college creation)";
@@ -462,7 +492,11 @@
       { id: "defense", label: "Steals", keys: ["stl"],
         value: prodLabel("stl", "stl") },
       { id: "rim", label: "Shot blocking", keys: ["blk"],
-        value: prodLabel("blk", "blk") }
+        value: prodLabel("blk", "blk") },
+      { id: "hselite", label: "Elite high school players overcome a bad college year", keys: ["hs_elite"],
+        value: hseliteLabel() },
+      { id: "shoot", label: "Great shooters stay shooters", keys: ["ft"],
+        value: shootLabel() }
     ];
     const x = {};
     (G && G.features || []).forEach(function (k) { x[k] = 0; });
@@ -623,7 +657,7 @@
       get("./assets/theory-packs/all.json?v=81").then(function (all) {
         return (all && all[String(year)]) || null;
       }),
-      get("./assets/theory-packs/" + year + ".json?v=96")
+      get("./assets/theory-packs/" + year + ".json?v=97")
     ]).then(function (parts) {
       var thin = parts[0], rich = parts[1];
       if (!thin) return rich;

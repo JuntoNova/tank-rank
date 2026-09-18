@@ -22,10 +22,21 @@
     if (Array.isArray(entry)) return entry;
     return [entry];
   }
-  function paint(root, year, pick) {
+  function paint(root, year, pick, feat) {
     css();
     const pack = window.TANK_RANK && TANK_RANK.preDraft && TANK_RANK.preDraft[String(year)];
-    const rows = rowsOf(pack && (pack[String(pick)] || pack[pick]));
+    const rows = rowsOf(pack && (pack[String(pick)] || pack[pick])).slice();
+    if (feat && feat.hs_pts != null && feat.hs_pts !== "") {
+      rows.push({
+        lvl: "HS senior",
+        team: "High school",
+        pts: feat.hs_pts,
+        trb: feat.hs_reb,
+        ast: feat.hs_ast,
+        stl: feat.hs_stl,
+        blk: feat.hs_blk
+      });
+    }
     let box = document.getElementById("pd-box");
     if (!rows.length) {
       if (box) box.remove();
@@ -57,6 +68,7 @@
     const rows = rowsOf(pack && (pack[String(pick)] || pack[pick]));
     if (!rows.length || !p) return;
     const row = rows[0];
+    if (row.lvl && /hs/i.test(String(row.lvl))) return;
     p.theoryFeat = p.theoryFeat || {};
     if (row.ast != null) p.theoryFeat.ast = row.ast;
     if (row.pts != null) p.theoryFeat.pts = row.pts;
@@ -71,7 +83,7 @@
     if (window.TANK_RANK && TANK_RANK.preDraft && TANK_RANK.preDraft[String(year)]) {
       return Promise.resolve(TANK_RANK.preDraft[String(year)]);
     }
-    return fetch("./assets/pre-draft/" + year + ".json?v=98").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+    return fetch("./assets/pre-draft/" + year + ".json?v=99").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
       .then(function (pack) {
         window.TANK_RANK = window.TANK_RANK || {};
         TANK_RANK.preDraft = TANK_RANK.preDraft || {};
@@ -92,7 +104,8 @@
           const draft = window.TANK_RANK && TANK_RANK.drafts && TANK_RANK.drafts[y];
           const p = draft && (draft.players || []).find(function (x) { return x.id === id || Number(x.rank) === pk; });
           if (p) attachFeat(y, p.rank || pk, p);
-          paint(root, y, (p && p.rank) || pk);
+          var feat = (p && p.theoryFeat) || {};
+          paint(root, y, (p && p.rank) || pk, feat);
         });
       };
       if (r && typeof r.then === "function") return r.then(after);

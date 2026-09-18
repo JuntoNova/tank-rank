@@ -445,7 +445,7 @@
     return Promise.all([
       (window.TR && typeof TR.fetchTheoryPack === "function"
         ? TR.fetchTheoryPack(year)
-        : fetch("./assets/theory-packs/" + year + ".json?v=96").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })),
+        : fetch("./assets/theory-packs/" + year + ".json?v=97").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })),
       fetch("./assets/slot-priors.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/outcomes-legacy.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/outcomes-extra.json").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),

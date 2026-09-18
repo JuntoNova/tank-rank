@@ -48,7 +48,9 @@
         { id: "prod", name: "College stats tell you who will be good" },
         { id: "astu", name: "Passing travels better than scoring" },
         { id: "defense", name: "College defense does not tell you anything" },
-        { id: "rim", name: "You still need a big who can block shots" }
+        { id: "rim", name: "You still need a big who can block shots" },
+        { id: "shoot", name: "Great shooters stay shooters" },
+        { id: "hselite", name: "Elite high school players overcome a bad college year" }
       ]
     },
     {

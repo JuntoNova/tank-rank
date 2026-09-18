@@ -18,7 +18,7 @@
   <script>
     TR.renderSimple(document.getElementById("app"), "method", "Methodology", "The spec",
       `<p>Estimand: expected NBA career honors and per-game rates given facts knowable on draft night. Age, size, origin, and the last pre-draft scoring line. Not the pick. Not reputation. Not NBA box scores.</p>
-      <p>That is a mean, E[Y|X]. Holdout Spearman on expected All-Star games is 0.14. Pick alone is 0.24 / AUC 0.77. We lose to the slot on purpose. The number is not a ranking of who will be great. It is the average career of people who looked like this, most of whom were ordinary.</p>
+      <p>That is a mean, E[Y|X]. Holdout Spearman on expected All-Star games is 0.13. Pick alone is 0.24 / AUC 0.78. We lose to the slot on purpose. The number is not a ranking of who will be great. It is the average career of people who looked like this, most of whom were ordinary.</p>
 
       <h2>The model</h2>
       <p>Hurdle GLM. Coefficients fit on draftees 1947–2004 (n = 3,424). Penalty, Poisson shrink, year shrink, and intercept shift chosen on 1995–2004 without looking at 2005–2014. That slice (n = 600) is locked and only used to report.</p>
@@ -38,10 +38,10 @@
         <thead><tr><th>Model</th><th>AUC</th><th>Brier</th><th>Spearman</th><th>Mean P</th></tr></thead>
         <tbody>
           <tr><td>Intercept only</td><td>0.50</td><td>0.083</td><td>—</td><td>9.2%</td></tr>
-          <tr><td>Age and size</td><td>0.68</td><td>0.082</td><td>0.08</td><td>11.9%</td></tr>
-          <tr><td>College box only</td><td>0.61</td><td>0.083</td><td>0.12</td><td>10.8%</td></tr>
-          <tr><td>Full model, no pick</td><td>0.72</td><td>0.076</td><td>0.14</td><td>9.0%</td></tr>
-          <tr><td>Pick (not in the product)</td><td>0.78</td><td>0.074</td><td>0.24</td><td>11.8%</td></tr>
+          <tr><td>Age and size</td><td>0.67</td><td>0.082</td><td>0.08</td><td>10.5%</td></tr>
+          <tr><td>College box only</td><td>0.61</td><td>0.083</td><td>0.12</td><td>10.9%</td></tr>
+          <tr><td>Full model, no pick</td><td>0.72</td><td>0.076</td><td>0.13</td><td>9.4%</td></tr>
+          <tr><td>Pick (not in the product)</td><td>0.78</td><td>0.074</td><td>0.24</td><td>11.5%</td></tr>
         </tbody>
       </table></div>
       <p>Actual All-Star rate on the holdout is 9.2%. Age and size already do most of the ranking. The college line helps a little and keeps the average honest. Using the pick would look better. That is the identification cost: the score has to come from the player.</p>
@@ -76,14 +76,16 @@
       <p>The big number is the fit on the whole training file. The small grey range on All-Star / years / HOF is a 10th–90th interval from 80 refits on reshuffled training history, same frozen knobs. That is sampling uncertainty of the coefficients. It is not a prediction interval for the career. It does not cover a missing college line or a wrong height. Fultz at about 2 All-Stars with a range around it is a 23-and-6 freshman line, not a promise.</p>
 
       <h2>Features in the player score</h2>
-      <p>Age relative to the era median, clipped to 17–25.5. Listed height and weight. Height vs the usual guy at that position. Pounds per inch, wingspan, ape, standing reach, listed swing. Prep-to-pro / international origin. A 6-7+ creation flag. College (or pro) points and assists when we have them.</p>
+      <p>Age relative to the era median, clipped to 17–25.5. Listed height and weight. Height vs the usual guy at that position. Pounds per inch, wingspan, ape, standing reach, listed swing. Prep-to-pro / international origin. A 6-7+ creation flag. College (or pro) points and assists when we have them. McDonald's All-American from 1977 on. College FT% when we have it.</p>
       <p>Steals and blocks are in the file. For honors, blocks are capped at 2.0 and steals at 2.5. A night of 4.4 blocks is scored as 2.0. Zeroing stocks entirely killed Shaq and AD and under-called the All-Star rate (6.9% vs 9.2%). The cap keeps the holdout and stops Eddie Griffin and Glenn Mosley from looking like inner-circle stars. Hall still skips stocks. Springfield is not a shot-blocking contest.</p>
-      <p>College counting stats are centered on a typical draftee line (16 / 2.5 / 1.2 / 0.7), not the star-selected subset we have typed. International lines are centered on a typical pro line (10 / 2 / 1 / 0.8). High school box scores are a different unit and are skipped. Extreme college scoring is winsorized for honors; the PPG ridge keeps 28+ college lines.</p>
+      <p>College counting stats are centered on a typical draftee line (16 / 2.5 / 1.2 / 0.7), not the star-selected subset we have typed. International lines are centered on a typical pro line (10 / 2 / 1 / 0.8). High school box scores are a different unit and are skipped. Extreme college scoring is winsorized for honors; the PPG ridge keeps 28+ college lines. McDonald's All-American is a binary from 1977 on; pre-1977 is missing, not a zero. College FT% is skip-missing, centered on 72%. High school counting stats are stored as HS and never scored as college points.</p>
       <p>Missing production is omitted, not imputed as a typical college line. No points line means no career PPG (printed —). Same for rebounds and assists. Age, size, and origin still fire. A trained miss_pts dummy moves honors when the scoring line is absent. About 57% of packs have no points line. The board does not invent a college season.</p>
 
       <h2>Data dictionary</h2>
       <ul>
-        <li>Last pre-draft season in the theory pack: college, or the last season against men for internationals. Not a career peak. Not a high school line.</li>
+        <li>Last pre-draft season in the theory pack: college, or the last season against men for internationals. Not a career peak. Not a high school line. High school senior lines, when we have them, are labeled HS and live in hs_pts / hs_reb / hs_ast / hs_blk.</li>
+        <li>McDonald's All-American (Basketball-Reference awards page, 1977–2026). Missing before 1977. 0 after 1977 means he was not on the team.</li>
+        <li>College FT% from the last pre-draft season. Skip if missing. Career NBA FT% is the stickiness check, not a projection column.</li>
         <li>Height and weight are listed numbers. Combine height is not a separate file yet.</li>
         <li>Age is draft-night age, clipped to 17–25.5, centered on the era median.</li>
         <li>Position is the listed string. Swing is two listed spots vs one.</li>
@@ -103,25 +105,26 @@
           <tr><td>5 (highest)</td><td>22.4%</td><td>20.8%</td><td>0.89</td><td>1.24</td></tr>
         </tbody>
       </table></div>
-      <p>The ranking is coarse and the top quintile is still mostly not All-Stars. The mean is honest. That is what 0.14 Spearman looks like in a table.</p>
+      <p>The ranking is coarse and the top quintile is still mostly not All-Stars. The mean is honest. That is what 0.13 Spearman looks like in a table.</p>
 
       <h2>All-Star ever coefficients (predict-time)</h2>
-      <p>Intercept −2.75. Missingness dummies are estimated in training and set to 0 at predict, so they are not a second score. Blocks and steals are then capped (2.0 / 2.5) before this linear predictor for honors.</p>
+      <p>Intercept −2.81. Missingness dummies other than miss_pts/miss_ast are estimated in training and set to 0 at predict. miss_pts and miss_ast fire when that line is absent. Blocks and steals are then capped (2.0 / 2.5) before this linear predictor for honors.</p>
       <div class="table-wrap"><table>
         <thead><tr><th>Feature</th><th>Coef</th></tr></thead>
         <tbody>
-          <tr><td>College / pro points</td><td>+0.51</td></tr>
-          <tr><td>International origin</td><td>−0.46</td></tr>
-          <tr><td>Blocks (then capped)</td><td>+0.43</td></tr>
-          <tr><td>Relative age (younger is positive)</td><td>−0.43</td></tr>
-          <tr><td>Tall creator flag</td><td>+0.39</td></tr>
-          <tr><td>Steals (then capped)</td><td>+0.29</td></tr>
+          <tr><td>College / pro points</td><td>+0.52</td></tr>
+          <tr><td>Listed swing</td><td>+0.44</td></tr>
+          <tr><td>Relative age (younger is positive)</td><td>−0.42</td></tr>
+          <tr><td>Tall creator flag</td><td>+0.38</td></tr>
+          <tr><td>Blocks (then capped)</td><td>+0.37</td></tr>
+          <tr><td>Steals (then capped)</td><td>+0.33</td></tr>
+          <tr><td>International origin</td><td>−0.32</td></tr>
           <tr><td>Weight</td><td>−0.28</td></tr>
           <tr><td>Pounds per inch</td><td>+0.25</td></tr>
-          <tr><td>Assists</td><td>+0.25</td></tr>
-          <tr><td>Listed swing</td><td>+0.22</td></tr>
-          <tr><td>High school origin</td><td>−0.20</td></tr>
-          <tr><td>Ape (wingspan − height)</td><td>+0.15</td></tr>
+          <tr><td>Assists</td><td>+0.23</td></tr>
+          <tr><td>High school origin</td><td>+0.17</td></tr>
+          <tr><td>McDonald's All-American</td><td>+0.10</td></tr>
+          <tr><td>College FT%</td><td>+0.00</td></tr>
         </tbody>
       </table></div>
 
@@ -130,17 +133,17 @@
       <div class="table-wrap"><table>
         <thead><tr><th></th><th>Draft-night E[AS]</th><th>Career AS</th><th>Why</th></tr></thead>
         <tbody>
-          <tr><td>Kevin Durant, 2007</td><td>4.2</td><td>16</td><td>18, 6-11, 26 points. The model’s high tail. Still a mean, not 27 PPG.</td></tr>
-          <tr><td>Magic Johnson, 1979</td><td>3.1</td><td>12</td><td>19, 6-9, 8.4 assists. The identification working.</td></tr>
-          <tr><td>Markelle Fultz, 2017</td><td>3.3</td><td>0</td><td>23-and-6 freshman line. Production, not blocks. Residual.</td></tr>
-          <tr><td>Yi Jianlian, 2007</td><td>3.3</td><td>0</td><td>7-0, 19, 25 points, 2.2 blocks. Size and scoring. The cap barely moves him.</td></tr>
-          <tr><td>Eddie Griffin, 2001</td><td>1.6</td><td>0</td><td>Was 3.3 uncapped on 4.4 blocks. Cap is why he is not a top-10 prospect.</td></tr>
-          <tr><td>Shaquille O’Neal, 1992</td><td>1.7</td><td>15</td><td>The cost of the cap. 5.2 blocks count as 2.0.</td></tr>
-          <tr><td>Anthony Davis, 2012</td><td>1.3</td><td>10</td><td>Same cost. 14 college points and 5.8 blocks, capped.</td></tr>
-          <tr><td>Steve Nash, 1996</td><td>0.3</td><td>8</td><td>Santa Clara 17 and 3.5 at 22. Nobody’s model should have seen two MVPs. This one does not.</td></tr>
-          <tr><td>Nikola Jokić, 2014</td><td>0.4</td><td>8</td><td>Mega 11.4 against men. Honest miss. He is the Over list, not a 15% Hall on draft night.</td></tr>
-          <tr><td>Michael Jordan, 1984</td><td>0.9</td><td>14</td><td>High school box scores are skipped. Age, size, and the HS flag only.</td></tr>
-          <tr><td>LeBron James, 2003</td><td>1.2</td><td>22</td><td>Same HS skip. We do not invent a college line from 31 high school points.</td></tr>
+          <tr><td>Kevin Durant, 2007</td><td>4.3</td><td>16</td><td>18, 6-11, 26 points. The model’s high tail. Still a mean, not 27 PPG.</td></tr>
+          <tr><td>Magic Johnson, 1979</td><td>3.7</td><td>12</td><td>19, 6-9, 8.4 assists. The identification working.</td></tr>
+          <tr><td>Markelle Fultz, 2017</td><td>3.6</td><td>0</td><td>23-and-6 freshman line. Production, not blocks. Residual.</td></tr>
+          <tr><td>Yi Jianlian, 2007</td><td>3.6</td><td>0</td><td>7-0, 19, 25 points, 2.2 blocks. Size and scoring. The cap barely moves him.</td></tr>
+          <tr><td>Eddie Griffin, 2001</td><td>1.7</td><td>0</td><td>Was ~3.3 uncapped on 4.4 blocks. Cap is why he is not a top-10 prospect.</td></tr>
+          <tr><td>Shaquille O’Neal, 1992</td><td>2.0</td><td>15</td><td>The cost of the cap. 5.2 blocks count as 2.0.</td></tr>
+          <tr><td>Anthony Davis, 2012</td><td>1.6</td><td>10</td><td>Same cost. 14 college points and 5.8 blocks, capped.</td></tr>
+          <tr><td>Steve Nash, 1996</td><td>0.2</td><td>8</td><td>Santa Clara 17 and 6 at 22. Nobody’s model should have seen two MVPs. This one does not.</td></tr>
+          <tr><td>Nikola Jokić, 2014</td><td>0.5</td><td>8</td><td>Mega 11.4 against men. Honest miss. He is the Over list, not a 15% Hall on draft night.</td></tr>
+          <tr><td>Michael Jordan, 1984</td><td>1.2</td><td>14</td><td>UNC line fires. High school 27.8 is labeled HS, not college.</td></tr>
+          <tr><td>LeBron James, 2003</td><td>0.6</td><td>22</td><td>High school 31.6 is skipped as college production. McDonald's AA is ×1.10, not a 30-point college season.</td></tr>
         </tbody>
       </table></div>
 
@@ -169,15 +172,15 @@
 
       <h2>Limits that are in the number</h2>
       <ul>
-        <li>Spearman 0.14. Griffin is not a 3-All-Star prospect. Yi still ranks high because he is 7-0 with 25 points at 19, not because he blocked 2 shots.</li>
+        <li>Spearman 0.13. Griffin is not a 3-All-Star prospect. Yi still ranks high because he is 7-0 with 25 points at 19, not because he blocked 2 shots.</li>
         <li>The college line is the draft-year season we have, not a career peak.</li>
         <li>25 college PPG usually becomes about 11 NBA PPG among guys who stuck, not 27. Durant is the right tail of his own forecast.</li>
         <li>1947–2004 is not 2027. Relative age helps. Production is still mixed-era.</li>
-        <li>2027–2029 high schoolers have no college line. Age and size still fire. Hall odds on those cards are age-and-size, capped, and weak.</li>
+        <li>2027–2029 high schoolers have no college line. Age, size, and McDonald's All-American still fire. Hall odds on those cards are capped, and weak.</li>
       </ul>
 
       <h2>What this page is for</h2>
-      <p>If a theory is not in the GLM feature list (age, size, origin, create_tall, pts, ast, stl, blk), it is a table on Theories, not a player score. Blocks are capped at 2.0 for honors. Combine, free-throw rate, threes, schools, development, and stash are looked at. They are not scored. If this page and the live glm-coefs.json disagree, the JSON wins and this page is wrong.</p>
+      <p>If a theory is not in the GLM feature list (age, size, origin, create_tall, pts, ast, stl, blk, hs_elite, ft), it is a table on Theories, not a player score. Blocks are capped at 2.0 for honors. Combine, free-throw rate, threes, schools, development, and stash are looked at. They are not scored. If this page and the live glm-coefs.json disagree, the JSON wins and this page is wrong.</p>
       <p>Scoring is <code>assets/theory-model.js</code> plus <code>assets/glm-coefs.js</code>. Chrome is a pinned local <code>app.pinned.js</code>, not a jsDelivr eval. <code>node pipeline/test-invariants.mjs</code> checks the Griffin cap, no pick in features, and that this page still matches the file.</p>`
     );
   </script>

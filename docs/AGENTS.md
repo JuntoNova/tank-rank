@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. Do **not** point that load back at jsDelivr
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-18 (Grok chat): Great shooters stay shooters, and elite HS players overcome a missing college year. McDonald's AA is a GLM binary from 1977 on (×1.10). Pre-1977 is missing. College FT% is skip-missing; it sticks (85%+ stay 83%, under 65% stay 63%) and does not mint All-Stars. High school box scores stay labeled HS and never score as college points. Stokes is McD AA with no college line. LeBron 0.6 AS on draft night, not 31 HS points.
 - 2026-09-17 (Grok chat): Filled 2027 returner college lines (Toppin, Cadeau, Boozer, etc.). Freshmen still — because they have not played college.
 - 2026-09-17 (Grok chat): Index was first ~60 picks and skipped pre-1973 block lines. Added later-round NBA players (Eaton 1979 #107, 3.5 BPG) and filled Elmore Smith / George Johnson 1970 #79.
 - 2026-09-17 (Grok chat): Dropped BPM. Career BPG from BBRef season totals 1973–74 on. LaMelo 0.27 projected vs 0.31 actual. No college block line → —. Holdout MAE 0.19.

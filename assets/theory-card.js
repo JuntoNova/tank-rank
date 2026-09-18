@@ -68,6 +68,7 @@
     if (ht && wt) tags.push(ht + " / " + wt);
     else if (ht) tags.push(String(ht));
     if (age != null && age !== "") tags.push("Age " + age);
+    if (feat.hs_elite) tags.push("McDonald's AA");
     if (p.hof) tags.push("Hall of Fame");
     pills.innerHTML = tags.map(function (x) { return '<span class="tag">' + x + "</span>"; }).join("");
   }
@@ -239,7 +240,7 @@
       fetch("./assets/slot-priors.json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       (window.TR && typeof TR.fetchTheoryPack === "function"
         ? TR.fetchTheoryPack(year)
-        : fetch("./assets/theory-packs/" + year + ".json?v=96").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })),
+        : fetch("./assets/theory-packs/" + year + ".json?v=97").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })),
       fetch("./assets/outcomes/" + dec + ".json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/outcomes-extra.json?v=78").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
       fetch("./assets/measurements-listed.json?v=82").then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })

@@ -22,6 +22,8 @@ Missing production
   High school box scores are a different unit. Skip them at predict
   (theory-model.js). Do not refit origin_hs on the leftover Kobe/KG/LeBron
   residual — that would mint every prep-to-pro.
+  McDonald's All-American is a binary from 1977 on. Pre-1977 is missing,
+  not a zero. College FT% is skip-missing, centered on 72%.
 
 Uncertainty
   80 train-resamples, same frozen hyperparameters. Player intervals are
@@ -51,6 +53,7 @@ HT_RE = re.compile(r"(\d+)\s*-\s*(\d+(?:\.\d+)?)")
 POS_HT = {"G": 75.0, "F": 80.0, "C": 83.0}
 
 PROD_CENTER = {"pts": 16.0, "ast": 2.5, "stl": 1.2, "blk": 0.7}
+RATE_CENTER = {"ft": 0.72}
 WINSOR = {
     "pts": (8.0, 28.0),
     "ast": (0.0, 8.0),
@@ -59,6 +62,7 @@ WINSOR = {
     "wpi": (2.2, 3.5),
     "wsp_in": (72.0, 94.0),
     "reach_in": (94.0, 118.0),
+    "ft": (0.50, 0.92),
 }
 HOF_FLOOR = 0.0002
 HOF_CAP = 0.15
@@ -69,6 +73,24 @@ BOOT_SEED = 1
 C_GRID = [0.2, 0.4, 0.8, 1.5, 3.0]
 PO_GRID = [3.0, 10.0, 30.0]
 RIDGE_GRID = [0.3, 1.0, 3.0, 10.0]
+INTL_CENTER = {"pts": 10.0, "ast": 2.0, "stl": 1.0, "blk": 0.8, "reb": 6.0}
+IDENT = (
+    "No draft pick. Draft-night traits only. Age clipped to 17–25.5. "
+    "Missing production is omitted, not treated as a typical college line. "
+    "Career PPG/RPG/APG print only when that counting stat exists. "
+    "Honors use miss_pts/miss_ast when the scoring or assist line is absent. "
+    "High school box scores are skipped. High school counting stats are stored "
+    "as hs_* and never scored as college points. McDonald's All-American is a "
+    "binary from 1977 on; pre-1977 is missing, not a zero. College FT% is "
+    "skip-missing and centered on 72%. International counting stats are kept "
+    "and centered on a typical pro line (10 pts, 2 ast, 1 stl, 0.8 blk), not "
+    "an NCAA line. Size: height, weight, pounds-per-inch, wingspan, ape, "
+    "standing reach, size-at-position, swing. Missing length/reach/wpi do not "
+    "fire. Swing is listed two-spot vs one-spot. Career PPG/RPG/APG/BPG from "
+    "the same draft-night traits. No pick. College blocks are capped at 2.0 "
+    "for honors (steals at 2.5). A 4-block night is not 4 All-Stars. Hall "
+    "still skips stocks. Springfield is not a shot-blocking contest."
+)
 
 
 def measure_inches(val, lo, hi):
@@ -148,6 +170,19 @@ def winsor(k, v):
     return min(hi, max(lo, v))
 
 
+def clean_ft(v):
+    v = num(v)
+    if v is None:
+        return None
+    if v > 2:
+        v = v / 1000.0
+    elif v > 1.5:
+        v = v / 100.0
+    if not (0.30 <= v <= 1.0):
+        return None
+    return v
+
+
 def load_rows():
     rows = []
     for fn in sorted(os.listdir(HIST)):
@@ -176,6 +211,13 @@ def load_rows():
             ast = num(feat.get("ast"))
             stl = num(feat.get("stl"))
             blk = num(feat.get("blk"))
+            ft = clean_ft(feat.get("ft"))
+            if origin == "hs":
+                pts = ast = stl = blk = ft = None
+            if year < 1977:
+                hs_elite = None
+            else:
+                hs_elite = 1.0 if feat.get("hs_elite") else 0.0
             wsp = wsp_inches(feat.get("wsp"))
             ape = (wsp - ht) if (wsp and ht) else None
             reach = reach_inches(feat.get("reach"))
@@ -199,15 +241,17 @@ def load_rows():
                 "create_tall": 1.0 if origin != "hs" and ht and ht >= 79 and ast is not None and ast >= 2.2 else 0.0,
                 "swing": is_swing(pos),
                 "pts": pts, "ast": ast, "stl": stl, "blk": blk,
+                "ft": ft, "hs_elite": hs_elite,
             })
     return rows
 
 
 BODY = ["rel_age", "ht_in", "wt", "d_ht", "ape", "wpi", "wsp_in", "reach_in"]
 PROD = ["pts", "ast", "stl", "blk"]
-CONT = BODY + PROD
-BIN = ["origin_hs", "origin_intl", "create_tall", "swing"]
-MISS_USE = ["pts", "ast", "stl", "blk", "ape", "wpi", "wsp_in", "reach_in", "d_ht"]
+RATES = ["ft"]
+CONT = BODY + PROD + RATES
+BIN = ["origin_hs", "origin_intl", "create_tall", "swing", "hs_elite"]
+MISS_USE = ["pts", "ast", "stl", "blk", "ape", "wpi", "wsp_in", "reach_in", "d_ht", "ft", "hs_elite"]
 
 THEORY_MAP = {
     "rel_age": "age",
@@ -235,6 +279,10 @@ THEORY_MAP = {
     "miss_blk": "rim",
     "ape": "wingspan",
     "miss_ape": "wingspan",
+    "hs_elite": "hselite",
+    "miss_hs_elite": "hselite",
+    "ft": "shoot",
+    "miss_ft": "shoot",
 }
 
 
@@ -254,6 +302,11 @@ def moments(rows):
         a = np.asarray(xs, dtype=float) if xs else np.array([1.0])
         means[k] = float(PROD_CENTER[k])
         sds[k] = float(a.std()) or 1.0
+    for k in RATES:
+        xs = [winsor(k, r[k]) for r in rows if r.get(k) is not None]
+        a = np.asarray(xs, dtype=float) if xs else np.array([RATE_CENTER[k]])
+        means[k] = float(RATE_CENTER[k])
+        sds[k] = float(a.std()) or 0.08
     return means, sds
 
 
@@ -278,8 +331,6 @@ def design(rows, means, sds, predict=False):
                 v.append(1.0 if r.get(k) is None else 0.0)
         X.append(v)
     return np.asarray(X, dtype=float)
-
-
 def pack_linear(kind, intercept, coef, names, nd=6):
     return {
         "kind": kind,
@@ -725,7 +776,7 @@ def main():
 
     coefs = {
         "method": "hurdle GLM, nested: C/alpha/shift on 1995–2004, refit 1947–2004, report 2005–2014",
-        "identification": "No draft pick. Draft-night traits only. Age clipped to 17–25.5. Missing production skipped at predict and centered on a typical college line. High school box scores are not college box scores and are skipped at predict. Size: height, weight, pounds-per-inch, wingspan, ape, standing reach, size-at-position, swing. Missing length/reach/wpi do not fire. Swing is listed two-spot vs one-spot.",
+        "identification": IDENT,
         "train": [1947, 2004],
         "inner": [1995, 2004],
         "holdout": [2005, 2014],
@@ -756,6 +807,8 @@ def main():
         "boot_q": [0.1, 0.9],
         "boot_B": len(boots),
         "boot": boots,
+        "intl_center": INTL_CENTER,
+        "rate_center": RATE_CENTER,
     }
     for key in ("as", "nba", "mvp", "ch"):
         lg = models[key + "_ever"]
@@ -766,6 +819,13 @@ def main():
         else:
             coefs[key + "_pos"] = {"kind": "constant", "mu": models[key + "_mu"]}
     coefs["yrs"] = pack_linear("linear", models["yrs"].intercept_, models["yrs"].coef_, names)
+    if os.path.exists(OUT_JSON):
+        try:
+            old = json.load(open(OUT_JSON))
+            if old.get("stocks_ablation"):
+                coefs["stocks_ablation"] = old["stocks_ablation"]
+        except Exception:
+            pass
 
     json.dump(coefs, open(OUT_JSON, "w"), indent=2)
     with open(OUT_JS, "w") as f:
