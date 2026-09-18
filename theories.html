@@ -1,1 +1,61 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Draft Theories | The Draft Model</title>
+  <meta name="description" content="The arguments NBA teams actually have on draft night, written plainly, then checked against history when we can." />
+  <link rel="canonical" href="https://thedraftmodel.com/theories.html" />
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#090a0c" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="The Draft Model" />
+  <meta property="og:title" content="Draft Theories | The Draft Model" />
+  <meta property="og:description" content="The arguments NBA teams actually have on draft night, written plainly." />
+  <meta property="og:url" content="https://thedraftmodel.com/theories.html" />
+  <meta property="og:image" content="https://thedraftmodel.com/assets/og.svg" />
+  <link rel="stylesheet" href="./assets/styles.css?v=85" />
+  <link rel="stylesheet" href="./assets/theories.css?v=58" />
+</head>
+<body>
+  <div id="app"></div>
+  <script src="./assets/data.js?v=42"></script>
+  <script src="./assets/app.js?v=86"></script>
+  <script src="./assets/nav-swap.js?v=91"></script>
+  <script>
+    const groups = [
+      {
+        label: "You can't teach size",
+        items: [
+          { name: "You can't teach size", href: "./size.html", pill: "In model", cls: "num",
+            cuts: ["What people say: You cannot teach height, length, or strength. Take the bigger guy.", "What we found: Height, weight, wingspan, reach, and size at the position all move the odds. Draft slot is not in this check."] }
+        ]
+      },
+      {
+        label: "Tall guys who can dribble are rare",
+        items: [
+          { name: "Tall guys who can dribble are rare", href: "./handle.html", pill: "In model", cls: "num",
+            cuts: ["What people say: A 6-foot-8 player who can pass and handle is the hardest thing to find.", "What we found: At the same height, the passers become All-Stars more often. 6-7 and up: 15% vs 11%. Under 6-5: 25% vs 5%. Draft slot is not in this check."] }
+        ]
+      },
+      {
+        label: "Workout numbers do not mean much",
+        kind: "look",
+        items: [
+          { name: "Workout numbers do not mean much", href: "./combine.html", pill: "Looked at", cls: "na",
+            cuts: ["What people say: The lane agility drill and the bench press do not tell you who can play.", "What we found: A table. Not a player score. Combine numbers are not in the GLM."] }
+        ]
+      },
+      {
+        label: "Drafting younger is better",
+        items: [
+          { name: "Drafting younger is better", href: "./age.html", pill: "In model", cls: "num",
+            cuts: ["What people say: Take the younger guy. He has more runway.", "What we found: Younger draftees last longer and become All-Stars more often, at the same slot. Age is in the model."] }
+        ]
+      }
+    ];
+    // RESTORE_MARKER_PARTIAL — full body continues via follow-up if needed
+    TR.renderTheories ? TR.renderTheories(document.getElementById("app"), groups) : document.getElementById("app").textContent = "theories restore in progress";
+  </script>
+</body>
+</html>
