@@ -1,1 +1,1 @@
-@/workspace/prh/historic-hub.js
+file:///workspace/prh/historic-hub.js
