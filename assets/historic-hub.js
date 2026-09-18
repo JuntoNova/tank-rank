@@ -315,7 +315,7 @@
         { k: "ePts", label: "PPG" },
         { k: "eReb", label: "RPG" },
         { k: "eAst", label: "APG" },
-        { k: "eBpm", label: "BPM" },
+        { k: "eBpm", label: "+/−", title: "Career box plus-minus. Not blocks." },
         { k: "eCh", label: "Chips" },
         { k: "eMvp", label: "MVP" },
         { k: "pHof", label: "HOF" }
@@ -329,7 +329,7 @@
       { k: "pts", e: "ePts", label: "PPG" },
       { k: "trb", e: "eReb", label: "RPG" },
       { k: "ast", e: "eAst", label: "APG" },
-      { k: "bpm", e: "eBpm", label: "BPM" },
+      { k: "bpm", e: "eBpm", label: "+/−", title: "Career box plus-minus. Not blocks." },
       { k: "ch", e: "eCh", label: "Chips" },
       { k: "mvp", e: "eMvp", label: "MVP" },
       { k: "hofNow", e: "pHof", label: "HOF", hof: true }
@@ -385,7 +385,7 @@
         + '<th data-k="y">Year</th><th class="num" data-k="pk">Pk</th><th data-k="n">Player</th><th data-k="t">Team</th>'
         + honor.map(function (c) {
           var cls = "num" + (at.sort === c.k ? (at.dir > 0 ? " on asc" : " on") : "");
-          return '<th class="' + cls + '" data-k="' + c.k + '">' + c.label + "</th>";
+          return '<th class="' + cls + '" data-k="' + c.k + '"' + (c.title ? ' title="' + c.title + '"' : "") + ">" + c.label + "</th>";
         }).join("");
       head.querySelectorAll("[data-k]").forEach(function (th) {
         if (th.getAttribute("data-k") === at.sort) th.classList.add(at.dir > 0 ? "asc" : "on");

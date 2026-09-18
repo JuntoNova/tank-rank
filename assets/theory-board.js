@@ -347,7 +347,7 @@
       + '<th data-k="pts" class="num' + onCls("pts") + '">PPG</th>'
       + '<th data-k="reb" class="num' + onCls("reb") + '">RPG</th>'
       + '<th data-k="ast" class="num' + onCls("ast") + '">APG</th>'
-      + '<th data-k="bpm" class="num' + onCls("bpm") + '">BPM</th>'
+      + '<th data-k="bpm" class="num' + onCls("bpm") + '" title="Career box plus-minus. Not blocks.">+/−</th>'
       + '<th data-k="ch" class="num' + onCls("ch") + '">Chips</th>'
       + '<th data-k="mvp" class="num' + onCls("mvp") + '">MVP</th>'
       + '<th data-k="hof" class="num' + onCls("hof") + '">HOF</th>';
