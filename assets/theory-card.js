@@ -177,6 +177,9 @@
           cell("Yrs", yrs) +
           cell("G", g) +
           cell("PTS", pts) +
+          cell("TRB", (p.trb != null && p.trb !== "") ? Number(p.trb).toFixed(1) : "") +
+          cell("AST", (p.ast != null && p.ast !== "") ? Number(p.ast).toFixed(1) : "") +
+          cell("BPM", (p.bpm != null && p.bpm !== "") ? ((Number(p.bpm) > 0 ? "+" : "") + Number(p.bpm).toFixed(1)) : "") +
           cell("WS", ws) +
           cell("AS", p.allStar != null && p.allStar !== "" ? p.allStar : 0) +
           cell("All-NBA", p.allNba != null && p.allNba !== "" ? p.allNba : 0) +
@@ -188,6 +191,10 @@
         cell("AS", fmtExp(full.expAs), bandOf(full, "expAs")) +
         cell("All-NBA", fmtExp(full.expNba), bandOf(full, "expNba")) +
         cell("Yrs", fmtExp(full.expYrs), bandOf(full, "expYrs")) +
+        cell("PPG", fmtExp(full.expPts)) +
+        cell("RPG", fmtExp(full.expReb)) +
+        cell("APG", fmtExp(full.expAst)) +
+        cell("BPM", (full.expBpm == null ? "" : (Number(full.expBpm) >= 0 ? "+" : "\u2212") + Math.abs(Number(full.expBpm)).toFixed(1))) +
         cell("MVP", fmtExp(full.expMvp), bandOf(full, "expMvp")) +
         cell("HOF then", fmtPct(full.pHof), bandOf(full, "pHof", true));
       if (historic) html += cell("HOF now", fmtHof(hofNow));

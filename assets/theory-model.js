@@ -99,6 +99,7 @@
       stash: given.stash || 0, delay: given.delay || 0, never: given.never || 0,
       create: create,
       pts: given.pts, ast: given.ast, stl: given.stl, blk: given.blk,
+      reb: given.reb != null && given.reb !== "" ? given.reb : given.trb,
       fga: given.fga, fta: given.fta, fg3a: given.fg3a
     };
   }

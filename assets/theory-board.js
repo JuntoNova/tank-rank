@@ -68,7 +68,7 @@
     let create = 0;
     if (g.create != null && g.create !== "") create = Number(g.create) ? 1 : 0;
     else if (isFinite(astN) && ((astN >= 2.5 && htIn >= 77) || (astN >= 2.0 && guard))) create = 1;
-    return { age: age, cls: cls, origin: origin, ht: ht, wsp: g.wsp || p.wsp || "", pos: pos, create: create, stash: g.stash || 0, delay: g.delay || 0, never: g.never || 0, pts: g.pts, ast: g.ast, stl: g.stl, blk: g.blk, fga: g.fga, fta: g.fta, fg3a: g.fg3a };
+    return { age: age, cls: cls, origin: origin, ht: ht, wsp: g.wsp || p.wsp || "", pos: pos, create: create, stash: g.stash || 0, delay: g.delay || 0, never: g.never || 0, pts: g.pts, ast: g.ast, stl: g.stl, blk: g.blk, reb: g.reb != null ? g.reb : g.trb, fga: g.fga, fta: g.fta, fg3a: g.fg3a };
   }
   function project(p, feat, priors) {
     const fn = window.TR && (TR.projectPlayer || (TR.Model && TR.Model.project));
@@ -137,6 +137,27 @@
     const d = n - exp;
     const cls = Math.abs(d) < 0.25 ? "even" : d > 0 ? "up" : "down";
     return n + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
+  }
+  function vsRate(got, exp, signed) {
+    if (got == null || got === "") return "\u2014";
+    var n = Number(got);
+    if (!isFinite(n)) return "\u2014";
+    var d = n - (Number(exp) || 0);
+    var cls = Math.abs(d) < 0.25 ? "even" : d > 0 ? "up" : "down";
+    var head = signed ? fmtSigned(n) : fmtExp(n);
+    return head + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
+  }
+  function boxDraft(proj) {
+    return '<td class="pct">' + fmtExp(proj.expPts) + "</td>"
+      + '<td class="pct">' + fmtExp(proj.expReb) + "</td>"
+      + '<td class="pct">' + fmtExp(proj.expAst) + "</td>"
+      + '<td class="pct">' + fmtSigned(proj.expBpm) + "</td>";
+  }
+  function boxNow(p, proj) {
+    return '<td class="pct">' + vsRate(p.pts, proj.expPts) + "</td>"
+      + '<td class="pct">' + vsRate(p.trb, proj.expReb) + "</td>"
+      + '<td class="pct">' + vsRate(p.ast, proj.expAst) + "</td>"
+      + '<td class="pct">' + vsRate(p.bpm, proj.expBpm, true) + "</td>";
   }
   function vsProj(nowV, draftV) {
     const n = Number(nowV) || 0;
@@ -236,6 +257,10 @@
       }
     }
     var proj = dispProj(p, year);
+    if (k === "pts") return (view === "now" && p.pts != null && p.pts !== "") ? Number(p.pts) || 0 : Number(proj.expPts) || 0;
+    if (k === "reb") return (view === "now" && p.trb != null && p.trb !== "") ? Number(p.trb) || 0 : Number(proj.expReb) || 0;
+    if (k === "ast") return (view === "now" && p.ast != null && p.ast !== "") ? Number(p.ast) || 0 : Number(proj.expAst) || 0;
+    if (k === "bpm") return (view === "now" && p.bpm != null && p.bpm !== "") ? Number(p.bpm) : Number(proj.expBpm) || 0;
     if (k === "as") return Number(proj.expAs) || 0;
     if (k === "nba1") return Number(proj.expNba1) || 0;
     if (k === "nba") return Number(proj.expNba) || 0;
@@ -312,6 +337,10 @@
       + '<th data-k="nba1" class="num' + onCls("nba1") + '">1st</th>'
       + '<th data-k="nba" class="num' + onCls("nba") + '">All-NBA</th>'
       + '<th data-k="yrs" class="num' + onCls("yrs") + '">Yrs</th>'
+      + '<th data-k="pts" class="num' + onCls("pts") + '">PPG</th>'
+      + '<th data-k="reb" class="num' + onCls("reb") + '">RPG</th>'
+      + '<th data-k="ast" class="num' + onCls("ast") + '">APG</th>'
+      + '<th data-k="bpm" class="num' + onCls("bpm") + '">BPM</th>'
       + '<th data-k="ch" class="num' + onCls("ch") + '">Chips</th>'
       + '<th data-k="mvp" class="num' + onCls("mvp") + '">MVP</th>'
       + '<th data-k="hof" class="num' + onCls("hof") + '">HOF</th>';
@@ -327,6 +356,7 @@
           + '<td class="pct">' + bandCell(proj, "expNba1") + "</td>"
           + '<td class="pct">' + bandCell(proj, "expNba") + "</td>"
           + '<td class="pct">' + bandCell(proj, "expYrs") + "</td>"
+          + boxDraft(proj)
           + '<td class="pct">' + bandCell(proj, "expCh") + "</td>"
           + '<td class="pct">' + bandCell(proj, "expMvp") + "</td>"
           + '<td class="pct">' + bandCell(proj, "pHof", true) + "</td></tr>";
@@ -350,6 +380,7 @@
             + '<td class="pct">' + vsProj(now.expNba1, proj.expNba1) + "</td>"
             + '<td class="pct">' + vsProj(now.expNba, proj.expNba) + "</td>"
             + '<td class="pct">' + vsProj(now.expYrs, proj.expYrs) + "</td>"
+            + boxNow(p, proj)
             + '<td class="pct">' + vsProj(now.expCh, proj.expCh) + "</td>"
             + '<td class="pct">' + vsProj(now.expMvp, proj.expMvp) + "</td>"
             + '<td class="pct">' + hofNowCell(p, proj, year) + "</td></tr>";
@@ -362,6 +393,7 @@
           + '<td class="pct">' + vsCell(p.nba1, proj.expNba1) + "</td>"
           + '<td class="pct">' + vsCell(p.allNba, proj.expNba) + "</td>"
           + '<td class="pct">' + (known ? vsCell(p.yrs, proj.expYrs) : "\u2014") + "</td>"
+          + boxNow(p, proj)
           + '<td class="pct">' + (known || p.champs ? vsCell(p.champs, proj.expCh) : "\u2014") + "</td>"
           + '<td class="pct">' + (known || p.mvp ? vsCell(p.mvp, proj.expMvp) : "\u2014") + "</td>"
           + '<td class="pct">' + hofNowCell(p, proj, year) + "</td></tr>";

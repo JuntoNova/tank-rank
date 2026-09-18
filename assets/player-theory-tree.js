@@ -309,10 +309,20 @@
       var hofNow = hofFn ? hofFn(p, y, cur) : null;
       if (hofNow != null) now = "<tr><td>Hall of Fame now</td><td class=\"num\">" + fmtHof(hofNow) + "</td></tr>";
     }
+    var fmtBpm = function (n) {
+      if (n == null || !isFinite(Number(n))) return "";
+      n = Number(n);
+      if (Math.abs(n) < 0.05) return "0.0";
+      return (n > 0 ? "+" : "\u2212") + Math.abs(n).toFixed(1);
+    };
     return '<div class="th-dn"><div class="kicker">Draft night</div><table><tbody>' +
       "<tr><td>All-Star</td><td class=\"num\">" + fmtExp(full.expAs) + "</td></tr>" +
       "<tr><td>All-NBA</td><td class=\"num\">" + fmtExp(full.expNba) + "</td></tr>" +
       "<tr><td>Years</td><td class=\"num\">" + fmtExp(full.expYrs) + "</td></tr>" +
+      "<tr><td>PPG</td><td class=\"num\">" + fmtExp(full.expPts) + "</td></tr>" +
+      "<tr><td>RPG</td><td class=\"num\">" + fmtExp(full.expReb) + "</td></tr>" +
+      "<tr><td>APG</td><td class=\"num\">" + fmtExp(full.expAst) + "</td></tr>" +
+      "<tr><td>BPM</td><td class=\"num\">" + fmtBpm(full.expBpm) + "</td></tr>" +
       "<tr><td>MVP</td><td class=\"num\">" + fmtExp(full.expMvp) + "</td></tr>" +
       "<tr><td>Hall of Fame then</td><td class=\"num\">" + fmtPct(full.pHof) + "</td></tr>" +
       now + "</tbody></table></div>";
