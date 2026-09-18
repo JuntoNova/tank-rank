@@ -176,13 +176,28 @@
     (G.missing || []).forEach(function (k) { x[k] = 0; });
     x.reb = 0;
     x.miss_reb = 0;
+    x.pts_hi = 0;
+    x.ast_hi = 0;
+    x.reb_hi = 0;
     if (raw.reb != null) {
       var rmu = 7;
       if (intl && G.intl_center && G.intl_center.reb != null) rmu = G.intl_center.reb;
       else if (G.box && G.box.means && G.box.means.reb != null) rmu = G.box.means.reb;
       var rsd = (G.box && G.box.sds && G.box.sds.reb) || 3;
-      var rv = Math.max(1, Math.min(16, raw.reb));
+      var rv = Math.max(1, Math.min(20, raw.reb));
       x.reb = (rv - rmu) / rsd;
+      x.reb_hi = Math.max(0, rv - 10) / 3;
+    }
+    if (raw.pts != null) {
+      var pv = Math.max(8, Math.min(36, raw.pts));
+      var psd = (G.sds && G.sds.pts) || 4.8;
+      var pmu = (intl && G.intl_center && G.intl_center.pts != null) ? G.intl_center.pts : 16;
+      x.pts_box = (pv - pmu) / psd;
+      x.pts_hi = Math.max(0, pv - 24) / 4;
+    }
+    if (raw.ast != null) {
+      var av = Math.max(0, Math.min(12, raw.ast));
+      x.ast_hi = Math.max(0, av - 5) / 2;
     }
     return { x: x, raw: raw, pg: pg, htIn: htIn, age: age };
   }
@@ -280,7 +295,10 @@
     function boxPred(key, x) {
       var spec = G && G.box && G.box[key];
       if (!spec) return null;
-      var v = linpred(spec, x) + (Number(spec.shift) || 0);
+      var xb = {};
+      Object.keys(x || {}).forEach(function (k) { xb[k] = x[k]; });
+      if (xb.pts_box != null) xb.pts = xb.pts_box;
+      var v = linpred(spec, xb) + (Number(spec.shift) || 0);
       return clamp(v, spec.lo != null ? spec.lo : -20, spec.hi != null ? spec.hi : 30);
     }
     var expPts = boxPred("nba_pts", x);

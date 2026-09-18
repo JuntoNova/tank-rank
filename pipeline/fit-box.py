@@ -22,12 +22,12 @@ HIST = fg.HIST
 PACK = fg.PACK
 OUT_JSON = fg.OUT_JSON
 OUT_JS = fg.OUT_JS
-RIDGE_GRID = [0.3, 1.0, 3.0, 10.0, 30.0]
+RIDGE_GRID = [0.1, 0.3, 1.0, 3.0]
 CAPS = {
-    "nba_pts": (1.5, 22.0),
-    "nba_trb": (0.4, 12.0),
-    "nba_ast": (0.2, 10.0),
-    "nba_bpm": (-5.0, 8.0),
+    "nba_pts": (2.0, 28.0),
+    "nba_trb": (0.5, 14.0),
+    "nba_ast": (0.3, 11.0),
+    "nba_bpm": (-5.5, 9.0),
 }
 
 
@@ -59,20 +59,39 @@ def load():
 
 
 def design_reb(rows, means, sds, predict=False):
-    names = fg.feature_names() + ["reb", "miss_reb"]
+    names = fg.feature_names() + ["reb", "miss_reb", "pts_hi", "ast_hi", "reb_hi"]
+    pts_idx = fg.feature_names().index("pts")
+    ast_idx = fg.feature_names().index("ast")
+    sd_pts = sds.get("pts") or 4.8
+    sd_ast = sds.get("ast") or 2.0
+    mu_reb = means.get("reb", 7.0)
+    sd_reb = sds.get("reb", 3.0) or 1.0
     X = []
-    mu = means.get("reb", 7.0)
-    sd = sds.get("reb", 3.0) or 1.0
     for r in rows:
         base = fg.design([r], means, sds, predict=predict)[0].tolist()
+        pts = r.get("pts")
+        if pts is not None:
+            pts = min(36.0, max(8.0, pts))
+            base[pts_idx] = (pts - 16.0) / sd_pts
+        ast = r.get("ast")
+        if ast is not None:
+            ast = min(12.0, max(0.0, ast))
+            base[ast_idx] = (ast - 2.5) / sd_ast
         v = r.get("college_reb")
         if v is None:
             base.append(0.0)
             base.append(0.0 if predict else 1.0)
+            reb_hi = 0.0
         else:
-            v = min(16.0, max(1.0, v))
-            base.append((v - mu) / sd)
+            v = min(20.0, max(1.0, v))
+            base.append((v - mu_reb) / sd_reb)
             base.append(0.0)
+            reb_hi = max(0.0, v - 10.0) / 3.0
+        pts_hi = max(0.0, (pts if pts is not None else 16.0) - 24.0) / 4.0 if pts is not None else 0.0
+        ast_hi = max(0.0, (ast if ast is not None else 2.5) - 5.0) / 2.0 if ast is not None else 0.0
+        base.append(pts_hi)
+        base.append(ast_hi)
+        base.append(reb_hi)
         X.append(base)
     return np.asarray(X, float), names
 
@@ -114,10 +133,10 @@ def main():
     box = {"means": {"reb": 7.0}, "sds": {"reb": round(sds["reb"], 4)}}
     names = None
     for key, min_g, min_year in (
-        ("nba_pts", 10, 1947),
-        ("nba_trb", 10, 1951),
-        ("nba_ast", 10, 1947),
-        ("nba_bpm", 20, 1974),
+        ("nba_pts", 100, 1947),
+        ("nba_trb", 100, 1951),
+        ("nba_ast", 100, 1947),
+        ("nba_bpm", 100, 1974),
     ):
         use = [
             r for r in rows
