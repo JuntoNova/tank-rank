@@ -344,15 +344,6 @@ footer .icon-link svg { display: block; }
   .theory-grid { grid-template-columns: 1fr; }
 }
 
-.pack-depth-note {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
-  max-width: 68ch;
-  margin: -4px 0 16px;
-}
-
 .section:has(.ol-page) .prose { max-width: none; }
 .ol-page { max-width: none; }
 .ol-pills { margin: 0 0 14px; }
-
