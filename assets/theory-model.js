@@ -174,6 +174,16 @@
     x.create_tall = (!hs && htIn >= 79 && ast != null && ast >= 2.2) ? 1 : 0;
     x.swing = isSwing(feat.pos) ? 1 : 0;
     (G.missing || []).forEach(function (k) { x[k] = 0; });
+    x.reb = 0;
+    x.miss_reb = 0;
+    if (raw.reb != null) {
+      var rmu = 7;
+      if (intl && G.intl_center && G.intl_center.reb != null) rmu = G.intl_center.reb;
+      else if (G.box && G.box.means && G.box.means.reb != null) rmu = G.box.means.reb;
+      var rsd = (G.box && G.box.sds && G.box.sds.reb) || 3;
+      var rv = Math.max(1, Math.min(16, raw.reb));
+      x.reb = (rv - rmu) / rsd;
+    }
     return { x: x, raw: raw, pg: pg, htIn: htIn, age: age };
   }
   function linpred(spec, x) {
@@ -267,11 +277,22 @@
     } else {
       expMvp = clamp(Math.min(mvp.exp, expAs), 0.002, 2.5);
     }
+    function boxPred(key, x) {
+      var spec = G && G.box && G.box[key];
+      if (!spec) return null;
+      var v = linpred(spec, x) + (Number(spec.shift) || 0);
+      return clamp(v, spec.lo != null ? spec.lo : -20, spec.hi != null ? spec.hi : 30);
+    }
+    var expPts = boxPred("nba_pts", x);
+    var expReb = boxPred("nba_trb", x);
+    var expAst = boxPred("nba_ast", x);
+    var expBpm = boxPred("nba_bpm", x);
     return {
       pAs: as.p, expAs: expAs,
       pNba: nba.p, expNba: expNba, expNba1: clamp(expNba * 0.22, 0.005, 6),
       expYrs: yrs, expCh: clamp(ch.exp, 0.01, 4), expMvp: expMvp,
-      pHof: pHof
+      pHof: pHof,
+      expPts: expPts, expReb: expReb, expAst: expAst, expBpm: expBpm
     };
   }
   function quantile(arr, q) {
@@ -417,6 +438,7 @@
       pAs: full.pAs, pNba: full.pNba, pHof: full.pHof,
       expAs: full.expAs, expNba: full.expNba, expNba1: full.expNba1,
       expYrs: full.expYrs, expCh: full.expCh, expMvp: full.expMvp,
+      expPts: full.expPts, expReb: full.expReb, expAst: full.expAst, expBpm: full.expBpm,
       band: band,
       mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
       scale: mAs, steps: steps, feat: feat

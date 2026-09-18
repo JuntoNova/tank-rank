@@ -26,6 +26,17 @@ function packByPk(year) {
   packCache[year] = by;
   return by;
 }
+const histCache = {};
+function histByPk(year) {
+  if (histCache[year] !== undefined) return histCache[year];
+  const fp = join(ROOT, "assets/history", year + ".json");
+  const by = {};
+  if (existsSync(fp)) {
+    JSON.parse(readFileSync(fp, "utf8")).forEach(function (h) { if (h && h.pk != null) by[h.pk] = h; });
+  }
+  histCache[year] = by;
+  return by;
+}
 
 function round(n, d) {
   const m = Math.pow(10, d);
@@ -52,6 +63,11 @@ for (let i = 0; i < players.length; i++) {
     id: r.id
   };
   const proj = TR.projectPlayer(p, TR.deriveFeat(p), {});
+  const h = histByPk(r.y)[r.pk] || {};
+  if (h.pts != null) r.pts = h.pts;
+  if (h.trb != null) r.trb = h.trb;
+  if (h.ast != null) r.ast = h.ast;
+  if (h.bpm != null) r.bpm = h.bpm;
   r.eAs = round(proj.expAs, 3);
   r.eNba1 = round(proj.expNba1, 3);
   r.eNba = round(proj.expNba, 3);
@@ -59,6 +75,10 @@ for (let i = 0; i < players.length; i++) {
   r.eCh = round(proj.expCh, 3);
   r.eMvp = round(proj.expMvp, 3);
   r.pHof = round(proj.pHof, 4);
+  if (proj.expPts != null) r.ePts = round(proj.expPts, 2);
+  if (proj.expReb != null) r.eReb = round(proj.expReb, 2);
+  if (proj.expAst != null) r.eAst = round(proj.expAst, 2);
+  if (proj.expBpm != null) r.eBpm = round(proj.expBpm, 2);
   const band = proj.band;
   if (band) {
     r.asL = round(band.expAs.lo, 2); r.asH = round(band.expAs.hi, 2);

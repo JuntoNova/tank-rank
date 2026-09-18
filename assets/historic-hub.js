@@ -34,7 +34,7 @@
       ".hist-pills{margin:0 0 18px}",
       ".hist-pills a.chip{text-decoration:none}",
       "#hist-alltime .table-wrap,#hist-outliers .table-wrap{margin-top:0;-webkit-overflow-scrolling:touch}",
-      "#hist-alltime table{table-layout:fixed;width:100%;min-width:1080px}",
+      "#hist-alltime table{table-layout:fixed;width:100%;min-width:1320px}",
       "#hist-alltime td.pct,#hist-alltime td.rank,#hist-alltime th.num{text-align:right;font-variant-numeric:tabular-nums}",
       "#hist-alltime th.num{white-space:nowrap}",
       "#hist-alltime td.pct{white-space:normal}",
@@ -305,6 +305,10 @@
         { k: "eNba1", label: "1st" },
         { k: "eNba", label: "All-NBA" },
         { k: "eYrs", label: "Yrs" },
+        { k: "ePts", label: "PPG" },
+        { k: "eReb", label: "RPG" },
+        { k: "eAst", label: "APG" },
+        { k: "eBpm", label: "BPM" },
         { k: "eCh", label: "Chips" },
         { k: "eMvp", label: "MVP" },
         { k: "pHof", label: "HOF" }
@@ -315,6 +319,10 @@
       { k: "nba1", e: "eNba1", label: "1st" },
       { k: "nba", e: "eNba", label: "All-NBA" },
       { k: "yrs", e: "eYrs", label: "Yrs" },
+      { k: "pts", e: "ePts", label: "PPG" },
+      { k: "trb", e: "eReb", label: "RPG" },
+      { k: "ast", e: "eAst", label: "APG" },
+      { k: "bpm", e: "eBpm", label: "BPM" },
       { k: "ch", e: "eCh", label: "Chips" },
       { k: "mvp", e: "eMvp", label: "MVP" },
       { k: "hofNow", e: "pHof", label: "HOF", hof: true }
@@ -324,9 +332,18 @@
   function cell(r, c) {
     if (at.when === "drafted") {
       if (c.k === "pHof") return bandCell(r, "pHof", true);
+      if (c.k === "eBpm") return fmtSigned(r.eBpm);
       return bandCell(r, c.k, false);
     }
     if (c.hof) return hofVs(r);
+    if (c.k === "bpm") {
+      var got = r.bpm, exp = r.eBpm;
+      if (got == null || isNaN(Number(got))) return "—";
+      var d = Number(got) - (Number(exp) || 0);
+      var cls = Math.abs(d) < 0.25 ? "even" : d > 0 ? "up" : "down";
+      return fmtSigned(got) + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
+    }
+    if ((c.k === "pts" || c.k === "trb" || c.k === "ast") && (r[c.k] == null || r[c.k] === "")) return "—";
     return vsCell(r[c.k], r[c.e]);
   }
 
@@ -384,7 +401,7 @@
         + "<td>" + (r.t || "\u2014") + "</td>"
         + honor.map(function (c) { return '<td class="pct">' + cell(r, c) + "</td>"; }).join("")
         + "</tr>";
-    }).join("") : '<tr><td colspan="12" style="color:var(--muted);padding:24px">No players match.</td></tr>';
+    }).join("") : '<tr><td colspan="16" style="color:var(--muted);padding:24px">No players match.</td></tr>';
     if (pager) {
       var from = n ? page * PAGE + 1 : 0;
       var to = Math.min(n, (page + 1) * PAGE);
@@ -407,8 +424,8 @@
     var kick = document.getElementById("at-kicker");
     if (kick) {
       kick.textContent = at.when === "drafted"
-        ? "Draft night from age, size, and the college line. Not the pick. Not the NBA career."
-        : "Career totals. Green and red are versus what the file said on draft night.";
+        ? "Draft night from age, size, and prior performance. Not the pick. Not the NBA career. PPG / RPG / APG / BPM are career rates the file expected that night."
+        : "Career totals and per-game rates. Green and red are versus what the file said on draft night.";
     }
     at.painted = true;
   }
@@ -416,10 +433,10 @@
   function setWhen(when) {
     at.when = when === "drafted" ? "drafted" : "now";
     if (at.when === "drafted") {
-      var map = { as: "eAs", nba1: "eNba1", nba: "eNba", yrs: "eYrs", ch: "eCh", mvp: "eMvp", hofNow: "pHof", hof: "pHof" };
+      var map = { as: "eAs", nba1: "eNba1", nba: "eNba", yrs: "eYrs", ch: "eCh", mvp: "eMvp", hofNow: "pHof", hof: "pHof", pts: "ePts", trb: "eReb", ast: "eAst", bpm: "eBpm" };
       if (map[at.sort]) at.sort = map[at.sort];
     } else {
-      var back = { eAs: "as", eNba1: "nba1", eNba: "nba", eYrs: "yrs", eCh: "ch", eMvp: "mvp", pHof: "hofNow" };
+      var back = { eAs: "as", eNba1: "nba1", eNba: "nba", eYrs: "yrs", eCh: "ch", eMvp: "mvp", pHof: "hofNow", ePts: "pts", eReb: "trb", eAst: "ast", eBpm: "bpm" };
       if (back[at.sort]) at.sort = back[at.sort];
     }
     at.dir = -1;
@@ -476,7 +493,7 @@
       at.inited = true;
     }
     if (allTime) { paintAllTime(at.painted ? at.page : 0); return; }
-    fetch("./assets/all-time.json?v=26")
+    fetch("./assets/all-time.json?v=27")
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         allTime = data || { players: [] };
