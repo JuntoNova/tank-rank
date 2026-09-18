@@ -33,6 +33,12 @@
     return isFinite(n) ? n : 0;
   }
 
+  function rawNum(v) {
+    if (v == null || v === "") return null;
+    var n = Number(v);
+    return isFinite(n) ? n : null;
+  }
+
   function honor(as_, nba, nba1, ch, mvp, hof, yrs) {
     return W.as * as_ + W.nba * nba + W.nba1 * nba1 + W.ch * ch + W.mvp * mvp + W.hof * hof + W.yrs * yrs;
   }
@@ -56,6 +62,8 @@
       as: ast, nba1: num(r.nba1), nba: num(r.nba), yrs: num(r.yrs), ch: num(r.ch), mvp: mvp, hof: hof,
       eAs: num(r.eAs), eNba1: num(r.eNba1), eNba: num(r.eNba), eYrs: num(r.eYrs),
       eCh: num(r.eCh), eMvp: num(r.eMvp), eHof: num(r.pHof),
+      pts: rawNum(r.pts), trb: rawNum(r.trb), ast: rawNum(r.ast), blk: rawNum(r.blk),
+      ePts: rawNum(r.ePts), eReb: rawNum(r.eReb), eAst: rawNum(r.eAst), eBlk: rawNum(r.eBlk),
       act: act, exp: exp, expNow: expNow, gap: gap, fold: fold, log: log
     };
   }
@@ -78,6 +86,17 @@
     var d = n - (Number(exp) || 0);
     var cls = Math.abs(d) < 0.25 ? "even" : d > 0 ? "up" : "down";
     return n + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
+  }
+
+  function vsRate(got, exp) {
+    if (got == null || got === "") return "\u2014";
+    var n = Number(got);
+    if (!isFinite(n)) return "\u2014";
+    var head = n.toFixed(1);
+    if (exp == null || exp === "" || !isFinite(Number(exp))) return head;
+    var d = n - Number(exp);
+    var cls = Math.abs(d) < 0.25 ? "even" : d > 0 ? "up" : "down";
+    return head + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
   }
 
   function fmtFold(n) {
@@ -146,6 +165,10 @@
         + '<td class="pct">' + vsCell(r.nba1, r.eNba1) + "</td>"
         + '<td class="pct">' + vsCell(r.nba, r.eNba) + "</td>"
         + '<td class="pct">' + vsCell(r.yrs, r.eYrs) + "</td>"
+        + '<td class="pct">' + vsRate(r.pts, r.ePts) + "</td>"
+        + '<td class="pct">' + vsRate(r.trb, r.eReb) + "</td>"
+        + '<td class="pct">' + vsRate(r.ast, r.eAst) + "</td>"
+        + '<td class="pct">' + vsRate(r.blk, r.eBlk) + "</td>"
         + '<td class="pct">' + vsCell(r.ch, r.eCh) + "</td>"
         + '<td class="pct">' + vsCell(r.mvp, r.eMvp) + "</td>"
         + '<td class="pct">' + vsCell(r.hof, r.eHof) + "</td>"
@@ -180,14 +203,16 @@
     if (head) {
       head.innerHTML = "<th>Year</th><th>Pk</th><th>Player</th><th>Team</th>"
         + "<th class=\"num\">AS</th><th class=\"num\">1st</th><th class=\"num\">All-NBA</th>"
-        + "<th class=\"num\">Yrs</th><th class=\"num\">Chips</th><th class=\"num\">MVP</th>"
+        + "<th class=\"num\">Yrs</th><th class=\"num\">PPG</th><th class=\"num\">RPG</th>"
+        + "<th class=\"num\">APG</th><th class=\"num\">BLK</th>"
+        + "<th class=\"num\">Chips</th><th class=\"num\">MVP</th>"
         + "<th class=\"num\">HOF</th>"
         + '<th class="num" title="' + (DELTA_TH[list] || "") + '">Δ</th>';
     }
     if (body) {
       body.innerHTML = slice.length
         ? slice.map(function (r) { return rowHtml(r, list); }).join("")
-        : '<tr><td colspan="12" style="color:var(--muted);padding:24px">No rows.</td></tr>';
+        : '<tr><td colspan="16" style="color:var(--muted);padding:24px">No rows.</td></tr>';
     }
     if (kick) kick.textContent = KICK[list] || "";
     if (pager) {
@@ -252,7 +277,7 @@
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         if (!data || !data.players) {
-          box.innerHTML = '<tr><td colspan="12" style="color:var(--muted);padding:24px">Could not load the lists.</td></tr>';
+          box.innerHTML = '<tr><td colspan="16" style="color:var(--muted);padding:24px">Could not load the lists.</td></tr>';
           return;
         }
         buildLists(data.players);
@@ -260,7 +285,7 @@
         setList(keyFromUrl());
       })
       .catch(function () {
-        box.innerHTML = '<tr><td colspan="12" style="color:var(--muted);padding:24px">Could not load the lists.</td></tr>';
+        box.innerHTML = '<tr><td colspan="16" style="color:var(--muted);padding:24px">Could not load the lists.</td></tr>';
       });
   }
 
