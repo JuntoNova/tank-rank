@@ -747,6 +747,8 @@ def main():
         "platt": platt,
         "hof_from_as": hof_from_as,
         "hof_skip": ["stl", "blk"],
+        "honor_skip": [],
+        "honor_winsor": {"stl": [0.0, 2.5], "blk": [0.0, 2.0]},
         "mvp_from_as": mvp_from_as,
         "yrs_shift": yrs_shift,
         "hof_floor": HOF_FLOOR,

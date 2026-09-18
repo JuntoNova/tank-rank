@@ -200,7 +200,22 @@
       var av = Math.max(0, Math.min(12, raw.ast));
       x.ast_hi = Math.max(0, av - 5) / 2;
     }
-    return { x: x, raw: raw, pg: pg, htIn: htIn, age: age };
+    var xHonor = honorCap(x, raw, G, intl);
+    return { x: x, xHonor: xHonor, raw: raw, pg: pg, htIn: htIn, age: age };
+  }
+  function honorCap(x, raw, G, intl) {
+    var y = {};
+    Object.keys(x || {}).forEach(function (k) { y[k] = x[k]; });
+    var hw = (G && G.honor_winsor) || {};
+    ["stl", "blk"].forEach(function (k) {
+      if (!hw[k] || raw[k] == null) return;
+      var v = Math.max(hw[k][0], Math.min(hw[k][1], raw[k]));
+      var mu = (G.prod_center && G.prod_center[k] != null) ? G.prod_center[k] : ((G.means && G.means[k]) || 0);
+      if (intl && G.intl_center && G.intl_center[k] != null) mu = G.intl_center[k];
+      var sd = (G.sds && G.sds[k]) || 1;
+      y[k] = (v - mu) / sd;
+    });
+    return y;
   }
   function linpred(spec, x) {
     if (!spec || spec.kind === "constant") return Math.log(spec && spec.mu ? spec.mu : 1);
@@ -239,21 +254,20 @@
     (keys || []).forEach(function (k) { y[k] = 0; });
     return y;
   }
-  function scoreX(x, P) {
+  function scoreX(x, P, xH) {
     const G = glm();
     if (!G && !P) {
       return { expAs: 0.4, expNba: 0.2, expNba1: 0.05, expYrs: 7, expCh: 0.08, expMvp: 0.02, pHof: 0.03, pAs: 0.11, pNba: 0.06 };
     }
-    var honorSkip = (G && G.honor_skip) || [];
-    var xH = honorSkip.length ? xSkip(x, honorSkip) : x;
+    xH = xH || x;
     var as = hurdle("as", xH, P);
     var nba = hurdle("nba", xH, P);
     var mvp = hurdle("mvp", xH, P);
     var ch = hurdle("ch", xH, P);
     var yrsSpec = (P && P.yrs) || (G && G.yrs);
     var yrs = clamp(linpred(yrsSpec, x) + ((G && G.yrs_shift) || 0), 1.5, 19);
-    var skip = (G && G.hof_skip) || honorSkip;
-    var asHof = skip.length ? hurdle("as", xSkip(x, skip), P) : as;
+    var skip = (G && G.hof_skip) || [];
+    var asHof = skip.length ? hurdle("as", xSkip(xH, skip), P) : as;
     var pHof;
     var spec = (G && G.hof_from_as) || {};
     var pAsHof = asHof.p;
@@ -339,14 +353,14 @@
     var i = Math.min(a.length - 1, Math.max(0, Math.floor(q * (a.length - 1))));
     return a[i];
   }
-  function bandX(x) {
+  function bandX(x, xH) {
     const G = glm();
     var boots = (G && G.boot) || [];
     if (boots.length < 10) return null;
     var qs = (G.boot_q && G.boot_q.length === 2) ? G.boot_q : [0.1, 0.9];
     var acc = { expAs: [], expNba: [], expNba1: [], expYrs: [], expCh: [], expMvp: [], pHof: [], pAs: [] };
     for (var i = 0; i < boots.length; i++) {
-      var s = scoreX(x, boots[i]);
+      var s = scoreX(x, boots[i], xH);
       acc.expAs.push(s.expAs);
       acc.expNba.push(s.expNba);
       acc.expNba1.push(s.expNba1);
@@ -360,7 +374,7 @@
     Object.keys(acc).forEach(function (k) {
       out[k] = { lo: quantile(acc[k], qs[0]), hi: quantile(acc[k], qs[1]) };
     });
-    var scored = scoreX(x);
+    var scored = scoreX(x, null, xH);
     if (scored && scored.boxBand) {
       Object.keys(scored.boxBand).forEach(function (k) {
         if (scored.boxBand[k]) out[k] = scored.boxBand[k];
@@ -374,6 +388,7 @@
     const G = glm();
     const built = glmX(feat, year);
     const xFull = built.x;
+    const xHonor = built.xHonor || xFull;
     const raw = built.raw;
     const HREF = {
       age: "./age.html", intl: "./intl.html", size: "./size.html", inch: "./size.html",
@@ -443,28 +458,29 @@
     ];
     const x = {};
     (G && G.features || []).forEach(function (k) { x[k] = 0; });
-    var prev = scoreX(x);
+    var xH = {};
+    (G && G.features || []).forEach(function (k) { xH[k] = 0; });
+    var prev = scoreX(x, null, xH);
     const steps = [];
     groups.forEach(function (g) {
-      g.keys.forEach(function (k) { x[k] = xFull[k] || 0; });
-      var cur = scoreX(x);
-      var honorSkip = (G && G.honor_skip) || [];
+      g.keys.forEach(function (k) {
+        x[k] = xFull[k] || 0;
+        xH[k] = xHonor[k] || 0;
+      });
+      var cur = scoreX(x, null, xH);
       var dLog = 0;
       if (G && G.as_ever) {
         g.keys.forEach(function (k) {
-          if (honorSkip.indexOf(k) >= 0) return;
-          dLog += (G.as_ever.coef[k] || 0) * (xFull[k] || 0);
+          dLog += (G.as_ever.coef[k] || 0) * (xHonor[k] || 0);
         });
       }
       var mAs = Math.exp(dLog);
       var dNba = 0, dMvp = 0, dHof = 0, dYrs = 0;
       if (G) {
         g.keys.forEach(function (k) {
-          if (honorSkip.indexOf(k) < 0) {
-            if (G.nba_ever) dNba += (G.nba_ever.coef[k] || 0) * (xFull[k] || 0);
-            if (G.mvp_ever) dMvp += (G.mvp_ever.coef[k] || 0) * (xFull[k] || 0);
-            if (G.hof) dHof += (G.hof.coef[k] || 0) * (xFull[k] || 0);
-          }
+          if (G.nba_ever) dNba += (G.nba_ever.coef[k] || 0) * (xHonor[k] || 0);
+          if (G.mvp_ever) dMvp += (G.mvp_ever.coef[k] || 0) * (xHonor[k] || 0);
+          if (G.hof) dHof += (G.hof.coef[k] || 0) * (xHonor[k] || 0);
           if (G.yrs) dYrs += (G.yrs.coef[k] || 0) * (xFull[k] || 0);
         });
       }
@@ -477,8 +493,8 @@
       });
       prev = cur;
     });
-    const full = scoreX(xFull);
-    const band = bandX(xFull);
+    const full = scoreX(xFull, null, xHonor);
+    const band = bandX(xFull, xHonor);
     var mAs = 1, mNba = 1, mHof = 1, mMvp = 1, mYrs = 1;
     steps.forEach(function (s) {
       mAs *= s.mAs; mNba *= s.mNba; mHof *= s.mHof; mMvp *= s.mMvp; mYrs *= s.mYrs;

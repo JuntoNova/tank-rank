@@ -47,12 +47,37 @@
       <p>Actual All-Star rate on the holdout is 9.2%. Age and size already do most of the ranking. The college line helps a little and keeps the average honest. Using the pick would look better. That is the identification cost: the score has to come from the player.</p>
       <p>Career rates on the same holdout, players with 100+ games: PPG MAE 3.5 (mean 9.2). RPG MAE 1.2. APG MAE 0.9. BPM MAE 1.7. Grey bands on those columns are a residual 10–90 (about ±1.28 × holdout SD), not coefficient jitter and not a prediction of Durant.</p>
 
+      <h2>Stocks: uncapped vs capped vs zeroed</h2>
+      <p>Same 2005–2014 holdout. Same frozen knobs. Only the draft-night steal and block values change.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Rule</th><th>AUC</th><th>Brier</th><th>Spearman</th><th>Mean P</th></tr></thead>
+        <tbody>
+          <tr><td>Uncapped stocks</td><td>0.73</td><td>0.076</td><td>0.23</td><td>9.1%</td></tr>
+          <tr><td>Blocks capped at 2.0 (in the product)</td><td>0.74</td><td>0.077</td><td>0.24</td><td>8.4%</td></tr>
+          <tr><td>Zero stocks at predict</td><td>0.72</td><td>0.079</td><td>0.23</td><td>6.9%</td></tr>
+        </tbody>
+      </table></div>
+      <p>Draft-night expected All-Stars under those rules:</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th></th><th>College blk</th><th>Uncapped</th><th>Capped (live)</th><th>Zeroed</th></tr></thead>
+        <tbody>
+          <tr><td>Eddie Griffin</td><td>4.4</td><td>3.3</td><td>1.6</td><td>1.0</td></tr>
+          <tr><td>Glenn Mosley</td><td>4.3</td><td>3.0</td><td>1.3</td><td>0.4</td></tr>
+          <tr><td>Yi Jianlian</td><td>2.2</td><td>3.5</td><td>3.3</td><td>1.7</td></tr>
+          <tr><td>Shaquille O'Neal</td><td>5.2</td><td>3.6</td><td>1.7</td><td>1.0</td></tr>
+          <tr><td>David Robinson</td><td>4.5</td><td>4.3</td><td>2.2</td><td>0.9</td></tr>
+          <tr><td>Anthony Davis</td><td>5.8</td><td>2.9</td><td>1.3</td><td>0.3</td></tr>
+          <tr><td>Magic Johnson</td><td>0.1</td><td>3.1</td><td>3.1</td><td>2.7</td></tr>
+        </tbody>
+      </table></div>
+      <p>Griffin and Mosley were the mint. Yi barely moves: 7-0, 19 years old, 25 points, 2.2 blocks. That is size and scoring, not stocks. Zeroing stocks to put him under Magic also puts Shaq and AD under a 1. We cap. We do not hand-edit Yi.</p>
+
       <h2>The grey range on honors</h2>
       <p>The big number is the fit on the whole training file. The small grey range on All-Star / years / HOF is a 10th–90th interval from 80 refits on reshuffled training history, same frozen knobs. That is sampling uncertainty of the coefficients. It is not a prediction interval for the career. It does not cover a missing college line or a wrong height. Fultz at about 2 All-Stars with a range around it is a 23-and-6 freshman line, not a promise.</p>
 
       <h2>Features in the player score</h2>
       <p>Age relative to the era median, clipped to 17–25.5. Listed height and weight. Height vs the usual guy at that position. Pounds per inch, wingspan, ape, standing reach, listed swing. Prep-to-pro / international origin. A 6-7+ creation flag. College (or pro) points and assists when we have them.</p>
-      <p>Steals and blocks are in the file. They do not feed All-Star, All-NBA, MVP, chips, or Hall. They did, and they minted Yi Jianlian, Eddie Griffin, and Glenn Mosley as top-10 historical prospects. The trained coefficients are still in glm-coefs.json. They are zeroed at predict for honors. Years can still use them. Theory tables on defense and rim still exist. They are looked at, not scored.</p>
+      <p>Steals and blocks are in the file. For honors, blocks are capped at 2.0 and steals at 2.5. A night of 4.4 blocks is scored as 2.0. Zeroing stocks entirely killed Shaq and AD and under-called the All-Star rate (6.9% vs 9.2%). The cap keeps the holdout and stops Eddie Griffin and Glenn Mosley from looking like inner-circle stars. Hall still skips stocks. Springfield is not a shot-blocking contest.</p>
       <p>College counting stats are centered on a typical draftee line (16 / 2.5 / 1.2 / 0.7), not the star-selected subset we have typed. International lines are centered on a typical pro line (10 / 2 / 1 / 0.8). High school box scores are a different unit and are skipped. Extreme college scoring is winsorized for honors; the PPG ridge keeps 28+ college lines.</p>
       <p>Missing production is skipped at predict (dummy is 0). About 57% of packs have no points line. Those players are age, size, and origin. The board does not invent a college season.</p>
 
@@ -62,7 +87,7 @@
         <li>Guard / center flags on top of scoring and passing. They stacked.</li>
         <li>Two-position listing as a talent signal. It was a proxy for “we wrote a scouting report.” (Listed swing is still in, as two spots vs one.)</li>
         <li>Steals+blocks as one number plus blocks again. Rim was counting twice.</li>
-        <li>Letting college blocks mint All-Stars and Hall odds. A 6-8 with 4 blocks is not a 15% Hall guy. Stocks are out of honors.</li>
+        <li>Letting raw 4-block seasons mint All-Stars. Cap 2.0 on honors. Hall still skips stocks.</li>
         <li>A 20-feature Hall of Fame logistic. Rare event, too many knobs.</li>
         <li>A 17-feature MVP logistic on 31 events.</li>
         <li>Picking the penalty on the same slice we report.</li>
@@ -78,7 +103,7 @@
 
       <h2>Limits that are in the number</h2>
       <ul>
-        <li>Spearman 0.14. Yi Jianlian used to outrank Magic. Stocks are out of honors so that happens less. Residual variance is still most of a career.</li>
+        <li>Spearman 0.14. Griffin is not a 3-All-Star prospect. Yi still ranks high because he is 7-0 with 25 points at 19, not because he blocked 2 shots.</li>
         <li>The college line is the draft-year season we have, not a career peak.</li>
         <li>25 college PPG usually becomes about 11 NBA PPG among guys who stuck, not 27. Durant is the right tail of his own forecast.</li>
         <li>1947–2004 is not 2027. Relative age helps. Production is still mixed-era.</li>
@@ -86,7 +111,7 @@
       </ul>
 
       <h2>What this page is for</h2>
-      <p>If a theory is not in the GLM feature list (age, size, origin, create_tall, pts, ast, and the skipped stl/blk), it is a table on Theories, not a player score. Combine, free-throw rate, threes, schools, development, and stash are looked at. They are not scored. If this page and the live glm-coefs.json disagree, the JSON wins and this page is wrong.</p>`
+      <p>If a theory is not in the GLM feature list (age, size, origin, create_tall, pts, ast, stl, blk), it is a table on Theories, not a player score. Blocks are capped at 2.0 for honors. Combine, free-throw rate, threes, schools, development, and stash are looked at. They are not scored. If this page and the live glm-coefs.json disagree, the JSON wins and this page is wrong.</p>`
     );
   </script>
 </body>

@@ -59,17 +59,17 @@
         label: "Past performance predicts future performance",
         items: [
           { name: "College stats tell you who will be good", href: "./prod.html", pill: "In model", cls: "num",
-            cuts: ["What people say: If he scored a lot in college, he will score in the NBA.", "What we found: Points, assists, steals, and blocks are in the file. Steals and blocks do not feed All-Star, All-NBA, MVP, or Hall. They minted Yi Jianlian and Eddie Griffin when they did."] },
+            cuts: ["What people say: If he scored a lot in college, he will score in the NBA.", "What we found: Points and assists are in the player score. Blocks are in too, capped at 2.0 for honors so a 4-block night is not 4 All-Stars."] },
           { name: "Guys who get fouled a lot can get to the rim", href: "./ftrate.html", pill: "Looked at", cls: "na",
             cuts: ["What people say: Drawing fouls is the honest version of being able to drive.", "What we found: A table. Free-throw rate is not a GLM feature."] },
           { name: "Taking a lot of threes matters more than a hot percentage", href: "./three.html", pill: "Looked at", cls: "na",
             cuts: ["What people say: Volume and the shot diet matter. A small-sample percentage does not.", "What we found: A table. Three-point volume is not a GLM feature."] },
           { name: "Passing travels better than scoring", href: "./astu.html", pill: "In model", cls: "num",
             cuts: ["What people say: Assist-to-usage is the smart way to measure a creator. Raw assists lie.", "What we found: Raw assists and the tall-passer flag are in the player score. The fancy ratio is not."] },
-          { name: "College defense does not tell you anything", href: "./defense.html", pill: "Looked at", cls: "na",
-            cuts: ["What people say: You cannot see NBA defense in college stats. Scoring is what boards overweight.", "What we found: Steals correlate in a raw table. They also mint shot-blocking 'stars' who were not. They do not feed All-Star, All-NBA, MVP, or Hall."] },
-          { name: "You still need a big who can block shots", href: "./rim.html", pill: "Looked at", cls: "na",
-            cuts: ["What people say: A defense without a rim protector leaks at the basket.", "What we found: Blocks correlate for bigs in a table. They do not feed honors. Eddie Griffin is why."] }
+          { name: "College defense does not tell you anything", href: "./defense.html", pill: "In model", cls: "num",
+            cuts: ["What people say: You cannot see NBA defense in college stats. Scoring is what boards overweight.", "What we found: Steals are in the player score, capped at 2.5. They do not feed Hall."] },
+          { name: "You still need a big who can block shots", href: "./rim.html", pill: "In model", cls: "num",
+            cuts: ["What people say: A defense without a rim protector leaks at the basket.", "What we found: Blocks are in the player score, capped at 2.0 for honors. Eddie Griffin 4.4 becomes 2.0. Uncapped he was 3.3 All-Stars. Zeroed, Shaq dies. We cap."] },
         ]
       },
       {
