@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Career PPG / RPG / APG / BPM from draft-night traits. No pick."""
+"""Career PPG / RPG / APG / BPG from draft-night traits. No pick. No BPM."""
 from __future__ import annotations
 
 import json
@@ -27,7 +27,7 @@ CAPS = {
     "nba_pts": (2.0, 28.0),
     "nba_trb": (0.5, 14.0),
     "nba_ast": (0.3, 11.0),
-    "nba_bpm": (-5.5, 9.0),
+    "nba_blk": (0.0, 3.5),
 }
 
 
@@ -52,7 +52,7 @@ def load():
             rec["nba_pts"] = fg.num(h.get("pts"))
             rec["nba_trb"] = fg.num(h.get("trb"))
             rec["nba_ast"] = fg.num(h.get("ast"))
-            rec["nba_bpm"] = fg.num(h.get("bpm"))
+            rec["nba_blk"] = fg.num(h.get("blk"))
             rec["nba_g"] = fg.num(h.get("g"))
             extra.append(rec)
     return extra
@@ -136,7 +136,7 @@ def main():
         ("nba_pts", 100, 1947),
         ("nba_trb", 100, 1951),
         ("nba_ast", 100, 1947),
-        ("nba_bpm", 100, 1974),
+        ("nba_blk", 100, 1974),
     ):
         use = [
             r for r in rows
@@ -181,7 +181,9 @@ def main():
     glm["box"] = box
     ident = glm.get("identification") or ""
     if "Career PPG" not in ident:
-        glm["identification"] = ident + " Career PPG/RPG/APG/BPM from the same draft-night traits. No pick."
+        glm["identification"] = ident + " Career PPG/RPG/APG/BPG from the same draft-night traits. No pick."
+    else:
+        glm["identification"] = ident.replace("PPG/RPG/APG/BPM", "PPG/RPG/APG/BPG").replace("or BPM", "or BPG")
     json.dump(glm, open(OUT_JSON, "w"))
     with open(OUT_JS, "w") as f:
         f.write("window.TR=window.TR||{};TR.GLM=")

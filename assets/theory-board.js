@@ -157,7 +157,7 @@
     return '<td class="pct">' + bandCell(proj, "expPts") + "</td>"
       + '<td class="pct">' + bandCell(proj, "expReb") + "</td>"
       + '<td class="pct">' + bandCell(proj, "expAst") + "</td>"
-      + '<td class="pct">' + bpmDraft(proj) + "</td>";
+      + '<td class="pct">' + bandCell(proj, "expBlk") + "</td>";
   }
   function bpmDraft(proj) {
     if (proj.expBpm == null || proj.expBpm === "") return "\u2014";
@@ -171,7 +171,7 @@
     return '<td class="pct">' + vsRate(p.pts, proj.expPts) + "</td>"
       + '<td class="pct">' + vsRate(p.trb, proj.expReb) + "</td>"
       + '<td class="pct">' + vsRate(p.ast, proj.expAst) + "</td>"
-      + '<td class="pct">' + vsRate(p.bpm, proj.expBpm, true) + "</td>";
+      + '<td class="pct">' + vsRate(p.blk, proj.expBlk) + "</td>";
   }
   function vsProj(nowV, draftV) {
     const n = Number(nowV) || 0;
@@ -274,7 +274,7 @@
     if (k === "pts") return (view === "now" && p.pts != null && p.pts !== "") ? Number(p.pts) || 0 : Number(proj.expPts) || 0;
     if (k === "reb") return (view === "now" && p.trb != null && p.trb !== "") ? Number(p.trb) || 0 : Number(proj.expReb) || 0;
     if (k === "ast") return (view === "now" && p.ast != null && p.ast !== "") ? Number(p.ast) || 0 : Number(proj.expAst) || 0;
-    if (k === "bpm") return (view === "now" && p.bpm != null && p.bpm !== "") ? Number(p.bpm) : Number(proj.expBpm) || 0;
+    if (k === "blk") return (view === "now" && p.blk != null && p.blk !== "") ? Number(p.blk) : Number(proj.expBlk) || 0;
     if (k === "as") return Number(proj.expAs) || 0;
     if (k === "nba1") return Number(proj.expNba1) || 0;
     if (k === "nba") return Number(proj.expNba) || 0;
@@ -354,7 +354,7 @@
       + '<th data-k="pts" class="num' + onCls("pts") + '">PPG</th>'
       + '<th data-k="reb" class="num' + onCls("reb") + '">RPG</th>'
       + '<th data-k="ast" class="num' + onCls("ast") + '">APG</th>'
-      + '<th data-k="bpm" class="num' + onCls("bpm") + '" title="Career box plus-minus. Not blocks.">+/−</th>'
+      + '<th data-k="blk" class="num' + onCls("blk") + '" title="Career blocks per game.">BLK</th>'
       + '<th data-k="ch" class="num' + onCls("ch") + '">Chips</th>'
       + '<th data-k="mvp" class="num' + onCls("mvp") + '">MVP</th>'
       + '<th data-k="hof" class="num' + onCls("hof") + '">HOF</th>';

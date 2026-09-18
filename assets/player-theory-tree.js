@@ -195,7 +195,7 @@
       "<tr><td>PPG</td><td class=\"num\">" + fmtExp(full.expPts) + "</td></tr>" +
       "<tr><td>RPG</td><td class=\"num\">" + fmtExp(full.expReb) + "</td></tr>" +
       "<tr><td>APG</td><td class=\"num\">" + fmtExp(full.expAst) + "</td></tr>" +
-      "<tr><td>Box +/−</td><td class=\"num\">" + fmtBpm(full.expBpm) + "</td></tr>" +
+      "<tr><td>BLK</td><td class=\"num\">" + fmtExp(full.expBlk) + "</td></tr>" +
       "<tr><td>MVP</td><td class=\"num\">" + fmtExp(full.expMvp) + "</td></tr>" +
       "<tr><td>Hall of Fame then</td><td class=\"num\">" + (TR.Model && TR.Model.fmtHof ? TR.Model.fmtHof(full.pHof) : fmtPct(full.pHof)) + "</td></tr>" +
       now + "</tbody></table></div>";

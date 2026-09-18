@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pull career PPG / RPG / APG / BPM from Basketball-Reference draft pages."""
+"""Pull career PPG / RPG / APG / BPG from Basketball-Reference draft pages."""
 from __future__ import annotations
 
 import json
@@ -13,7 +13,7 @@ HIST = os.path.join(ROOT, "assets", "history")
 UA = "Mozilla/5.0 (compatible; TheDraftModel/1.0; +https://thedraftmodel.com)"
 
 STAT = re.compile(
-    r'<t[dh][^>]*data-stat="(pick_overall|pts_per_g|trb_per_g|ast_per_g|bpm|g|seasons)"[^>]*>(.*?)</t[dh]>',
+    r'<t[dh][^>]*data-stat="(pick_overall|pts_per_g|trb_per_g|ast_per_g|blk_per_g|bpm|g|seasons)"[^>]*>(.*?)</t[dh]>',
     re.I | re.S,
 )
 NUM = re.compile(r"-?\d+(?:\.\d+)?")
@@ -47,6 +47,8 @@ def parse_draft(html: str) -> dict:
             rec["trb"] = got["trb_per_g"]
         if got.get("ast_per_g") is not None:
             rec["ast"] = got["ast_per_g"]
+        if got.get("blk_per_g") is not None:
+            rec["blk"] = got["blk_per_g"]
         if got.get("bpm") is not None:
             rec["bpm"] = got["bpm"]
         if got.get("g") is not None:
@@ -70,36 +72,27 @@ def fetch(year: int) -> dict:
 
 def main():
     merged = 0
-    years = []
-    for y in range(1947, 2027):
-        path = os.path.join(HIST, f"{y}.json")
-        if os.path.exists(path):
-            years.append(y)
+    # Blocks are official from 1973-74. Earlier years stay blank.
+    years = [y for y in range(1974, 2027) if os.path.exists(os.path.join(HIST, f"{y}.json"))]
     for i, y in enumerate(years):
         by = fetch(y)
         path = os.path.join(HIST, f"{y}.json")
         hist = json.load(open(path))
         n = 0
+        with_blk = 0
         for h in hist:
             rec = by.get(h.get("pk"))
             if not rec:
                 continue
-            if rec.get("pts") is not None:
-                h["pts"] = rec["pts"]
-            if rec.get("trb") is not None:
-                h["trb"] = rec["trb"]
-            if rec.get("ast") is not None:
-                h["ast"] = rec["ast"]
-            if rec.get("bpm") is not None:
-                h["bpm"] = rec["bpm"]
-            if rec.get("g") is not None:
-                h["g"] = rec["g"]
+            if rec.get("blk") is not None:
+                h["blk"] = rec["blk"]
+                with_blk += 1
             n += 1
         json.dump(hist, open(path, "w"), separators=(",", ":"))
         merged += n
-        print(y, "rows", n, "of", len(hist))
+        print(y, "rows", n, "blk", with_blk, "of", len(hist))
         if i + 1 < len(years):
-            time.sleep(1.2)
+            time.sleep(1.15)
     print("merged", merged)
 
 

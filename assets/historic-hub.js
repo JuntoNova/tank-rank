@@ -119,8 +119,8 @@
   }
   function bandCell(r, k, pct) {
     if (r[k] == null || r[k] === "") return "\u2014";
-    var loKey = ({ eAs: "asL", eNba1: "n1L", eNba: "nbaL", eYrs: "yL", eCh: "chL", eMvp: "mL", pHof: "hL", ePts: "ptsL", eReb: "rbL", eAst: "astL", eBpm: "bpL" })[k];
-    var hiKey = ({ eAs: "asH", eNba1: "n1H", eNba: "nbaH", eYrs: "yH", eCh: "chH", eMvp: "mH", pHof: "hH", ePts: "ptsH", eReb: "rbH", eAst: "astH", eBpm: "bpH" })[k];
+    var loKey = ({ eAs: "asL", eNba1: "n1L", eNba: "nbaL", eYrs: "yL", eCh: "chL", eMvp: "mL", pHof: "hL", ePts: "ptsL", eReb: "rbL", eAst: "astL", eBlk: "bkL" })[k];
+    var hiKey = ({ eAs: "asH", eNba1: "n1H", eNba: "nbaH", eYrs: "yH", eCh: "chH", eMvp: "mH", pHof: "hH", ePts: "ptsH", eReb: "rbH", eAst: "astH", eBlk: "bkH" })[k];
     var head = pct ? (k === "pHof" ? fmtHofDraft(r[k]) : fmtPct(r[k])) : fmt(r[k]);
     if (loKey == null || r[loKey] == null || r[hiKey] == null) return head;
     var t;
@@ -316,7 +316,7 @@
         { k: "ePts", label: "PPG" },
         { k: "eReb", label: "RPG" },
         { k: "eAst", label: "APG" },
-        { k: "eBpm", label: "+/−", title: "Career box plus-minus. Not blocks." },
+        { k: "eBlk", label: "BLK", title: "Career blocks per game." },
         { k: "eCh", label: "Chips" },
         { k: "eMvp", label: "MVP" },
         { k: "pHof", label: "HOF" }
@@ -330,7 +330,7 @@
       { k: "pts", e: "ePts", label: "PPG" },
       { k: "trb", e: "eReb", label: "RPG" },
       { k: "ast", e: "eAst", label: "APG" },
-      { k: "bpm", e: "eBpm", label: "+/−", title: "Career box plus-minus. Not blocks." },
+      { k: "blk", e: "eBlk", label: "BLK", title: "Career blocks per game." },
       { k: "ch", e: "eCh", label: "Chips" },
       { k: "mvp", e: "eMvp", label: "MVP" },
       { k: "hofNow", e: "pHof", label: "HOF", hof: true }
@@ -340,26 +340,11 @@
   function cell(r, c) {
     if (at.when === "drafted") {
       if (c.k === "pHof") return bandCell(r, "pHof", true);
-      if (c.k === "eBpm") {
-        if (r.eBpm == null || r.eBpm === "") return "\u2014";
-        var head = fmtSigned(r.eBpm);
-        if (r.bpL == null || r.bpH == null) return head;
-        var t = fmtSigned(r.bpL) + "\u2013" + fmtSigned(r.bpH);
-        return t ? head + '<span class="band">' + t + "</span>" : head;
-      }
       return bandCell(r, c.k, false);
     }
     if (c.hof) return hofVs(r);
-    if (c.k === "bpm") {
-      var got = r.bpm, exp = r.eBpm;
-      if (got == null || isNaN(Number(got))) return "\u2014";
-      if (exp == null || exp === "") return fmtSigned(got);
-      var d = Number(got) - Number(exp);
-      var cls = Math.abs(d) < 0.25 ? "even" : d > 0 ? "up" : "down";
-      return fmtSigned(got) + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
-    }
-    if ((c.k === "pts" || c.k === "trb" || c.k === "ast") && (r[c.k] == null || r[c.k] === "")) return "—";
-    if ((c.k === "pts" || c.k === "trb" || c.k === "ast") && (r[c.e] == null || r[c.e] === "")) {
+    if ((c.k === "pts" || c.k === "trb" || c.k === "ast" || c.k === "blk") && (r[c.k] == null || r[c.k] === "")) return "—";
+    if ((c.k === "pts" || c.k === "trb" || c.k === "ast" || c.k === "blk") && (r[c.e] == null || r[c.e] === "")) {
       return fmt(r[c.k]);
     }
     return vsCell(r[c.k], r[c.e]);
@@ -451,10 +436,10 @@
   function setWhen(when) {
     at.when = when === "drafted" ? "drafted" : "now";
     if (at.when === "drafted") {
-      var map = { as: "eAs", nba1: "eNba1", nba: "eNba", yrs: "eYrs", ch: "eCh", mvp: "eMvp", hofNow: "pHof", hof: "pHof", pts: "ePts", trb: "eReb", ast: "eAst", bpm: "eBpm" };
+      var map = { as: "eAs", nba1: "eNba1", nba: "eNba", yrs: "eYrs", ch: "eCh", mvp: "eMvp", hofNow: "pHof", hof: "pHof", pts: "ePts", trb: "eReb", ast: "eAst", blk: "eBlk" };
       if (map[at.sort]) at.sort = map[at.sort];
     } else {
-      var back = { eAs: "as", eNba1: "nba1", eNba: "nba", eYrs: "yrs", eCh: "ch", eMvp: "mvp", pHof: "hofNow", ePts: "pts", eReb: "trb", eAst: "ast", eBpm: "bpm" };
+      var back = { eAs: "as", eNba1: "nba1", eNba: "nba", eYrs: "yrs", eCh: "ch", eMvp: "mvp", pHof: "hofNow", ePts: "pts", eReb: "trb", eAst: "ast", eBlk: "blk" };
       if (back[at.sort]) at.sort = back[at.sort];
     }
     at.dir = -1;
@@ -511,7 +496,7 @@
       at.inited = true;
     }
     if (allTime) { paintAllTime(at.painted ? at.page : 0); return; }
-    fetch("./assets/all-time.json?v=31")
+    fetch("./assets/all-time.json?v=32")
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         allTime = data || { players: [] };

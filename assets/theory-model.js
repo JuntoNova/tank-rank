@@ -182,6 +182,7 @@
     x.has_pts = raw.pts != null ? 1 : 0;
     x.has_ast = raw.ast != null ? 1 : 0;
     x.has_reb = raw.reb != null ? 1 : 0;
+    x.has_blk = raw.blk != null ? 1 : 0;
     x.reb = 0;
     x.miss_reb = 0;
     x.pts_hi = 0;
@@ -338,19 +339,19 @@
     var expPts = x.has_pts ? boxPred("nba_pts", x) : null;
     var expReb = x.has_reb ? boxPred("nba_trb", x) : null;
     var expAst = x.has_ast ? boxPred("nba_ast", x) : null;
-    var expBpm = (x.has_pts || x.has_ast || x.has_reb) ? boxPred("nba_bpm", x) : null;
+    var expBlk = x.has_blk ? boxPred("nba_blk", x) : null;
     var boxBand = {
       expPts: x.has_pts ? boxBandOf(expPts, G && G.box && G.box.nba_pts) : null,
       expReb: x.has_reb ? boxBandOf(expReb, G && G.box && G.box.nba_trb) : null,
       expAst: x.has_ast ? boxBandOf(expAst, G && G.box && G.box.nba_ast) : null,
-      expBpm: (x.has_pts || x.has_ast || x.has_reb) ? boxBandOf(expBpm, G && G.box && G.box.nba_bpm) : null
+      expBlk: x.has_blk ? boxBandOf(expBlk, G && G.box && G.box.nba_blk) : null
     };
     return {
       pAs: as.p, expAs: expAs,
       pNba: nba.p, expNba: expNba, expNba1: clamp(expNba * 0.22, 0.005, 6),
       expYrs: yrs, expCh: clamp(ch.exp, 0.01, 4), expMvp: expMvp,
       pHof: pHof,
-      expPts: expPts, expReb: expReb, expAst: expAst, expBpm: expBpm,
+      expPts: expPts, expReb: expReb, expAst: expAst, expBlk: expBlk,
       boxBand: boxBand
     };
   }
@@ -511,7 +512,7 @@
       pAs: full.pAs, pNba: full.pNba, pHof: full.pHof,
       expAs: full.expAs, expNba: full.expNba, expNba1: full.expNba1,
       expYrs: full.expYrs, expCh: full.expCh, expMvp: full.expMvp,
-      expPts: full.expPts, expReb: full.expReb, expAst: full.expAst, expBpm: full.expBpm,
+      expPts: full.expPts, expReb: full.expReb, expAst: full.expAst, expBlk: full.expBlk,
       band: band,
       mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
       scale: mAs, steps: steps, feat: feat

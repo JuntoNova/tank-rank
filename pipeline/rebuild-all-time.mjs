@@ -67,6 +67,7 @@ for (let i = 0; i < players.length; i++) {
   if (h.pts != null) r.pts = h.pts;
   if (h.trb != null) r.trb = h.trb;
   if (h.ast != null) r.ast = h.ast;
+  if (h.blk != null) r.blk = h.blk;
   if (h.bpm != null) r.bpm = h.bpm;
   r.eAs = round(proj.expAs, 3);
   r.eNba1 = round(proj.expNba1, 3);
@@ -82,7 +83,8 @@ for (let i = 0; i < players.length; i++) {
   setBox("ePts", proj.expPts, 2);
   setBox("eReb", proj.expReb, 2);
   setBox("eAst", proj.expAst, 2);
-  setBox("eBpm", proj.expBpm, 2);
+  setBox("eBlk", proj.expBlk, 2);
+  delete r.eBpm; delete r.bpL; delete r.bpH;
   const band = proj.band;
   if (band) {
     r.asL = round(band.expAs.lo, 2); r.asH = round(band.expAs.hi, 2);
@@ -95,7 +97,7 @@ for (let i = 0; i < players.length; i++) {
     setBox("ptsL", band.expPts && band.expPts.lo, 1); setBox("ptsH", band.expPts && band.expPts.hi, 1);
     setBox("rbL", band.expReb && band.expReb.lo, 1); setBox("rbH", band.expReb && band.expReb.hi, 1);
     setBox("astL", band.expAst && band.expAst.lo, 1); setBox("astH", band.expAst && band.expAst.hi, 1);
-    setBox("bpL", band.expBpm && band.expBpm.lo, 1); setBox("bpH", band.expBpm && band.expBpm.hi, 1);
+    setBox("bkL", band.expBlk && band.expBlk.lo, 1); setBox("bkH", band.expBlk && band.expBlk.hi, 1);
   }
 }
 

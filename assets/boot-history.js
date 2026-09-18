@@ -36,7 +36,7 @@
           school: r.c || "\u2014",
           team: r.t || "",
           pos: r.pos || "",
-          rd: r.rd, yrs: r.yrs, g: r.g, pts: r.pts, trb: r.trb, ast: r.ast, bpm: r.bpm, ws: r.ws, vorp: r.vorp,
+          rd: r.rd, yrs: r.yrs, g: r.g, pts: r.pts, trb: r.trb, ast: r.ast, blk: r.blk, bpm: r.bpm, ws: r.ws, vorp: r.vorp,
           hof: r.hof || 0, allStar: r.as || 0, nba1: r.nba1 || 0, allNba: r.nba || 0,
           champs: r.ch || 0, mvp: r.mvp || 0,
           ht: r.ht || "", wt: r.wt || "", age: r.age || "",

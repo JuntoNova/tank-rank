@@ -29,7 +29,7 @@
         <li>Expected count = P(ever) × E[count | ever]. Poisson count, shrunk toward the All-Star mean.</li>
         <li>Hall of Fame is not a 20-feature logistic. 1–3 All-Stars in 1980–1998 were about 2.7% Springfield. 4+ All-Stars were about 77%. Never-All-Star is not a Hall path. Cap 15%. Floor 0.02%. Printed ≤15% at the cap, not a ranking among people on the ceiling.</li>
         <li>MVP: 31 MVPs in 1947–2004, every one an All-Star. E[MVP] = P(All-Star) × 0.155. A 17-feature MVP logistic on 31 events ranked shot blockers. That is not a ranking.</li>
-        <li>Career PPG / RPG / APG / BPM are a separate ridge on the same draft-night traits, trained on players with 100+ NBA games. Not honors in different units.</li>
+        <li>Career PPG / RPG / APG / BPG are a separate ridge on the same draft-night traits, trained on players with 100+ NBA games. Not honors in different units. Blocks are official from 1973–74. Box plus-minus is not a column; it is missing for too much of the file and it is not a counting stat.</li>
       </ul>
 
       <h2>Holdout 2005–2014, against simpler models</h2>
@@ -45,7 +45,7 @@
         </tbody>
       </table></div>
       <p>Actual All-Star rate on the holdout is 9.2%. Age and size already do most of the ranking. The college line helps a little and keeps the average honest. Using the pick would look better. That is the identification cost: the score has to come from the player.</p>
-      <p>Career rates on the same holdout, players with 100+ games: PPG MAE 3.5 (mean 9.2). RPG MAE 1.2. APG MAE 0.9. BPM MAE 1.7. Grey bands on those columns are a residual 10–90 (about ±1.28 × holdout SD), not coefficient jitter and not a prediction of Durant.</p>
+      <p>Career rates on the same holdout, players with 100+ games: PPG MAE 3.5 (mean 9.2). RPG MAE 1.2. APG MAE 0.9. BPG MAE 0.19 (mean 0.45). Grey bands on those columns are a residual 10–90, not a promise.</p>
 
       <h2>Stocks: uncapped vs capped vs zeroed</h2>
       <p>Same 2005–2014 holdout. Same frozen knobs. Only the draft-night steal and block values change.</p>
@@ -88,7 +88,7 @@
         <li>Age is draft-night age, clipped to 17–25.5, centered on the era median.</li>
         <li>Position is the listed string. Swing is two listed spots vs one.</li>
         <li>All-Star, All-NBA, years, chips, MVP, Hall are career totals in history/*.json.</li>
-        <li>Career PPG/RPG/APG/BPM are Basketball-Reference career rates for players with games. BPM is missing before the box-plus-minus era.</li>
+        <li>Career PPG/RPG/APG/BPG are Basketball-Reference career rates. Blocks are official from 1973–74. No college block line means no projected BPG (printed —).</li>
       </ul>
 
       <h2>Calibration, 2005–2014</h2>
@@ -163,7 +163,7 @@
       <ul>
         <li>Expected All-Star games, All-NBA, first-team, years, championships, MVPs</li>
         <li>P(Hall of Fame) from All-Star quality, capped at 15%</li>
-        <li>Expected career PPG, RPG, APG, BPM (mean; residual band in grey)</li>
+        <li>Expected career PPG, RPG, APG, BPG (mean; residual band in grey)</li>
       </ul>
       <p>All-NBA cannot exceed All-Star. First-team is 22% of expected All-NBA. Championships are miscalibrated on the holdout (predicted 2.1%, rate 0.7%) because labels are incomplete; we do not shift chips down to that rate, and we do not pretend the column is a ranking. No bust label. That is not an objective outcome.</p>
 

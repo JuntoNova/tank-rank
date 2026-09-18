@@ -63,6 +63,10 @@ const chomche = score(2024, 57);
 ok(chomche.expPts == null, "Chomche has no pre-draft points line; PPG must be omitted not imputed (got " + chomche.expPts + ")");
 ok(chomche.expReb == null, "Chomche RPG must be omitted");
 ok(chomche.expAst == null, "Chomche APG must be omitted");
+ok(chomche.expBlk == null, "Chomche has no pre-draft block line; BPG must be omitted");
+
+const lamelo = score(2020, 3);
+ok(lamelo.expBlk != null && lamelo.expBlk < 1.2, "LaMelo 0.1 NBL blocks is not 2 BPG (got " + lamelo.expBlk + ")");
 
 const method = readFileSync(join(ROOT, "methodology.html"), "utf8");
 ok(/capped at 2\.0/.test(method), "methodology must document the block cap");
