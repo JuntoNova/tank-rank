@@ -118,6 +118,7 @@
     return (n > 0 ? "+" : "\u2212") + Math.abs(n).toFixed(1);
   }
   function bandCell(r, k, pct) {
+    if (r[k] == null || r[k] === "") return "\u2014";
     var loKey = ({ eAs: "asL", eNba1: "n1L", eNba: "nbaL", eYrs: "yL", eCh: "chL", eMvp: "mL", pHof: "hL", ePts: "ptsL", eReb: "rbL", eAst: "astL", eBpm: "bpL" })[k];
     var hiKey = ({ eAs: "asH", eNba1: "n1H", eNba: "nbaH", eYrs: "yH", eCh: "chH", eMvp: "mH", pHof: "hH", ePts: "ptsH", eReb: "rbH", eAst: "astH", eBpm: "bpH" })[k];
     var head = pct ? (k === "pHof" ? fmtHofDraft(r[k]) : fmtPct(r[k])) : fmt(r[k]);
@@ -340,6 +341,7 @@
     if (at.when === "drafted") {
       if (c.k === "pHof") return bandCell(r, "pHof", true);
       if (c.k === "eBpm") {
+        if (r.eBpm == null || r.eBpm === "") return "\u2014";
         var head = fmtSigned(r.eBpm);
         if (r.bpL == null || r.bpH == null) return head;
         var t = fmtSigned(r.bpL) + "\u2013" + fmtSigned(r.bpH);
@@ -350,12 +352,16 @@
     if (c.hof) return hofVs(r);
     if (c.k === "bpm") {
       var got = r.bpm, exp = r.eBpm;
-      if (got == null || isNaN(Number(got))) return "—";
-      var d = Number(got) - (Number(exp) || 0);
+      if (got == null || isNaN(Number(got))) return "\u2014";
+      if (exp == null || exp === "") return fmtSigned(got);
+      var d = Number(got) - Number(exp);
       var cls = Math.abs(d) < 0.25 ? "even" : d > 0 ? "up" : "down";
       return fmtSigned(got) + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
     }
     if ((c.k === "pts" || c.k === "trb" || c.k === "ast") && (r[c.k] == null || r[c.k] === "")) return "—";
+    if ((c.k === "pts" || c.k === "trb" || c.k === "ast") && (r[c.e] == null || r[c.e] === "")) {
+      return fmt(r[c.k]);
+    }
     return vsCell(r[c.k], r[c.e]);
   }
 
@@ -505,7 +511,7 @@
       at.inited = true;
     }
     if (allTime) { paintAllTime(at.painted ? at.page : 0); return; }
-    fetch("./assets/all-time.json?v=30")
+    fetch("./assets/all-time.json?v=31")
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         allTime = data || { players: [] };

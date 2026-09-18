@@ -59,6 +59,11 @@ ok(jokic.expAs < 1.2, "Jokić draft-night E[AS] is an honest miss, not a star pr
 ok(fultz.expAs > 2, "Fultz 23-and-6 must still score as production, not get hand-tuned down (got " + fultz.expAs + ")");
 ok(yi.pHof < 0.05, "Yi Hall must stay off the 15% cap (got " + yi.pHof + ")");
 
+const chomche = score(2024, 57);
+ok(chomche.expPts == null, "Chomche has no pre-draft points line; PPG must be omitted not imputed (got " + chomche.expPts + ")");
+ok(chomche.expReb == null, "Chomche RPG must be omitted");
+ok(chomche.expAst == null, "Chomche APG must be omitted");
+
 const method = readFileSync(join(ROOT, "methodology.html"), "utf8");
 ok(/capped at 2\.0/.test(method), "methodology must document the block cap");
 ok(/0\.14/.test(method), "methodology must show Spearman 0.14");

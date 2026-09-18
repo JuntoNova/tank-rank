@@ -46,6 +46,7 @@ then string-replaces and `eval`s it. Do **not** point that load back at jsDelivr
 5. Do not reintroduce About, Prototype badge, betting language, DBA/NBA footer lines, or Upcoming-first doors.
 
 ## Changelog
+- 2026-09-17 (Grok chat): Missing data is omitted, not a typical college line. No points line → no career PPG (Chomche/LeBron/Kobe print —). Honors fire miss_pts/miss_ast. Length miss dummies stay off.
 - 2026-09-17 (Grok chat): C/E/F. In model vs Looked at on hub, theory pages, and player cards (combine/FT/school/stash not on the card). Methodology: dictionary, calibration quintiles, coefficients, error cases, what would change a pick. app.pinned.js is local; test-invariants.mjs gates Griffin cap, no pick, Nash HOF.
 - 2026-09-17 (Grok chat): Age is one lever (rel_age) that already moves years and stardom on every player with an age. Card now shows both claims. Missing age skips.
 - 2026-09-17 (Grok chat): Empty intl files were minting fake overs (Jokić/Giannis/Luka/Parker/Manu). Last-season-against-men lines filled. Jokić Mega 11.4 and Giannis Greek A2 9.5 are real overs. Luka EuroLeague 16/4.3 and Parker Paris 14.7/5.6 move. Over ∩ top-20 HOF/MVP is still empty — those boards are Trae/Durant/Yao, not the Over names.

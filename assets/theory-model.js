@@ -175,6 +175,13 @@
     x.create_tall = (!hs && htIn >= 79 && ast != null && ast >= 2.2) ? 1 : 0;
     x.swing = isSwing(feat.pos) ? 1 : 0;
     (G.missing || []).forEach(function (k) { x[k] = 0; });
+    // Missing is omitted, not imputed as typical. Fire only the scoring-line
+    // miss dummies (miss_stl/blk/length mint junk). Box rates stay null below.
+    if (raw.pts == null) x.miss_pts = 1;
+    if (raw.ast == null) x.miss_ast = 1;
+    x.has_pts = raw.pts != null ? 1 : 0;
+    x.has_ast = raw.ast != null ? 1 : 0;
+    x.has_reb = raw.reb != null ? 1 : 0;
     x.reb = 0;
     x.miss_reb = 0;
     x.pts_hi = 0;
@@ -328,15 +335,15 @@
         hi: clamp(v + w, spec.lo != null ? spec.lo : -20, spec.hi != null ? spec.hi : 30)
       };
     }
-    var expPts = boxPred("nba_pts", x);
-    var expReb = boxPred("nba_trb", x);
-    var expAst = boxPred("nba_ast", x);
-    var expBpm = boxPred("nba_bpm", x);
+    var expPts = x.has_pts ? boxPred("nba_pts", x) : null;
+    var expReb = x.has_reb ? boxPred("nba_trb", x) : null;
+    var expAst = x.has_ast ? boxPred("nba_ast", x) : null;
+    var expBpm = (x.has_pts || x.has_ast || x.has_reb) ? boxPred("nba_bpm", x) : null;
     var boxBand = {
-      expPts: boxBandOf(expPts, G && G.box && G.box.nba_pts),
-      expReb: boxBandOf(expReb, G && G.box && G.box.nba_trb),
-      expAst: boxBandOf(expAst, G && G.box && G.box.nba_ast),
-      expBpm: boxBandOf(expBpm, G && G.box && G.box.nba_bpm)
+      expPts: x.has_pts ? boxBandOf(expPts, G && G.box && G.box.nba_pts) : null,
+      expReb: x.has_reb ? boxBandOf(expReb, G && G.box && G.box.nba_trb) : null,
+      expAst: x.has_ast ? boxBandOf(expAst, G && G.box && G.box.nba_ast) : null,
+      expBpm: (x.has_pts || x.has_ast || x.has_reb) ? boxBandOf(expBpm, G && G.box && G.box.nba_bpm) : null
     };
     return {
       pAs: as.p, expAs: expAs,
@@ -447,9 +454,9 @@
         value: feat.pos ? (xFull.swing ? (feat.pos + " (swing)") : (feat.pos + " (one spot)")) : "missing" },
       { id: "handle", label: "Tall passers perform better", keys: ["create_tall"],
         value: tallPassLabel() },
-      { id: "prod", label: "College scoring", keys: ["pts"],
+      { id: "prod", label: "College scoring", keys: ["pts", "miss_pts"],
         value: prodLabel("pts", "pts") },
-      { id: "astu", label: "Passers perform better", keys: ["ast"],
+      { id: "astu", label: "Passers perform better", keys: ["ast", "miss_ast"],
         value: prodLabel("ast", "ast") },
       { id: "defense", label: "Steals", keys: ["stl"],
         value: prodLabel("stl", "stl") },
@@ -511,7 +518,7 @@
     };
   }
   function fmtExp(n) {
-    if (n == null || isNaN(n)) return "";
+    if (n == null || n === "" || isNaN(n)) return "\u2014";
     if (Math.abs(n) < 0.005) return "0";
     const abs = Math.abs(n);
     const body = abs >= 10 ? String(Math.round(abs)) : abs >= 1 ? abs.toFixed(1) : abs.toFixed(2);

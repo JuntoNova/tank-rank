@@ -139,6 +139,12 @@
     return n + ' <span class="vs ' + cls + '">' + fmtSigned(d) + "</span>";
   }
   function vsRate(got, exp, signed) {
+    if (exp == null || exp === "") {
+      if (got == null || got === "") return "\u2014";
+      var n0 = Number(got);
+      if (!isFinite(n0)) return "\u2014";
+      return signed ? fmtSigned(n0) : fmtExp(n0);
+    }
     if (got == null || got === "") return "\u2014";
     var n = Number(got);
     if (!isFinite(n)) return "\u2014";
@@ -154,6 +160,7 @@
       + '<td class="pct">' + bpmDraft(proj) + "</td>";
   }
   function bpmDraft(proj) {
+    if (proj.expBpm == null || proj.expBpm === "") return "\u2014";
     var head = fmtSigned(proj.expBpm);
     var b = proj && proj.band && proj.band.expBpm;
     if (!b) return head;

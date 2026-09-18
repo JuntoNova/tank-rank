@@ -75,10 +75,14 @@ for (let i = 0; i < players.length; i++) {
   r.eCh = round(proj.expCh, 3);
   r.eMvp = round(proj.expMvp, 3);
   r.pHof = round(proj.pHof, 4);
-  if (proj.expPts != null) r.ePts = round(proj.expPts, 2);
-  if (proj.expReb != null) r.eReb = round(proj.expReb, 2);
-  if (proj.expAst != null) r.eAst = round(proj.expAst, 2);
-  if (proj.expBpm != null) r.eBpm = round(proj.expBpm, 2);
+  function setBox(key, v, nd) {
+    if (v == null || !isFinite(Number(v))) delete r[key];
+    else r[key] = round(v, nd);
+  }
+  setBox("ePts", proj.expPts, 2);
+  setBox("eReb", proj.expReb, 2);
+  setBox("eAst", proj.expAst, 2);
+  setBox("eBpm", proj.expBpm, 2);
   const band = proj.band;
   if (band) {
     r.asL = round(band.expAs.lo, 2); r.asH = round(band.expAs.hi, 2);
@@ -88,10 +92,10 @@ for (let i = 0; i < players.length; i++) {
     r.chL = round(band.expCh.lo, 2); r.chH = round(band.expCh.hi, 2);
     r.mL = round(band.expMvp.lo, 2); r.mH = round(band.expMvp.hi, 2);
     r.hL = round(band.pHof.lo, 3); r.hH = round(band.pHof.hi, 3);
-    if (band.expPts) { r.ptsL = round(band.expPts.lo, 1); r.ptsH = round(band.expPts.hi, 1); }
-    if (band.expReb) { r.rbL = round(band.expReb.lo, 1); r.rbH = round(band.expReb.hi, 1); }
-    if (band.expAst) { r.astL = round(band.expAst.lo, 1); r.astH = round(band.expAst.hi, 1); }
-    if (band.expBpm) { r.bpL = round(band.expBpm.lo, 1); r.bpH = round(band.expBpm.hi, 1); }
+    setBox("ptsL", band.expPts && band.expPts.lo, 1); setBox("ptsH", band.expPts && band.expPts.hi, 1);
+    setBox("rbL", band.expReb && band.expReb.lo, 1); setBox("rbH", band.expReb && band.expReb.hi, 1);
+    setBox("astL", band.expAst && band.expAst.lo, 1); setBox("astH", band.expAst && band.expAst.hi, 1);
+    setBox("bpL", band.expBpm && band.expBpm.lo, 1); setBox("bpH", band.expBpm && band.expBpm.hi, 1);
   }
 }
 
