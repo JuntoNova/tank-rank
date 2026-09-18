@@ -1,1 +1,1 @@
-PLACEHOLDER_WILL_FAIL_CHECK
+@file:///tmp/content_for_mcp.js
