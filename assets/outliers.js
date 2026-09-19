@@ -282,8 +282,8 @@
       var from = n ? page * PAGE + 1 : 0;
       var to = Math.min(n, page * PAGE + PAGE);
       pager.innerHTML =
-        '<button type="button" class="chip" data-ol-page="prev"' + (page <= 0 ? " disabled" : "") + ">Prev</button>' +
-        '<button type="button" class="chip" data-ol-page="next"' + (page >= pages - 1 ? " disabled" : "") + ">Next</button>' +
+        '<button type="button" class="chip" data-ol-page="prev"' + (page <= 0 ? " disabled" : "") + ">Prev</button>" +
+        '<button type="button" class="chip" data-ol-page="next"' + (page >= pages - 1 ? " disabled" : "") + ">Next</button>" +
         '<span class="count">' + from + "\u2013" + to + " of " + n + "</span>";
       pager.querySelectorAll("[data-ol-page]").forEach(function (btn) {
         btn.onclick = function () {
