@@ -1,1 +1,1 @@
-@LOAD_FROM_FILE:/tmp/mcp_theory_content.js
+/tmp/gh-theory-model.fixed.js
