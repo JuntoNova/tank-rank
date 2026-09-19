@@ -5,14 +5,14 @@
   var FLOOR = 0.6;
   var W = { as: 1, nba: 2, nba1: 3, ch: 4, mvp: 10, hof: 20, yrs: 0.25 };
   var KICK = {
-    over: "Players with a real career (2+ All-Stars or an MVP). Sorted by career ÷ draft-night.",
-    under: "Every player in the file. Sorted by how far the career is below the draft-night number. Years that have not happened yet are not counted as a miss.",
-    diff: "Largest gap either way, on the same honor score."
+    over: "",
+    under: "",
+    diff: ""
   };
   var DELTA_TH = {
-    over: "Δ is career ÷ the draft-night model on 1×AS + 2×All-NBA + 3×1st + 4×Chips + 10×MVP + 20×HOF + 0.25×Yrs.",
-    under: "Δ is career minus the draft-night model, prorated for seasons that have been played. More negative = more under.",
-    diff: "Δ is career ÷ the draft-night model. Sorted by |log fold|."
+    over: "",
+    under: "",
+    diff: ""
   };
 
   var scored = null;
@@ -158,7 +158,7 @@
     var team = teamOf(r.t);
     var meta = metaOf(r);
     return (
-      '<tr onclick="location.href=\'' + href + '\'">'
+      '<tr onclick="location.href=\'' + href + '\'">' 
         + '<td class="rank">' + r.y + "</td>"
         + '<td class="rank">' + String(r.pk).padStart(2, "0") + "</td>"
         + '<td><div class="name">' + r.n + "</div>"
@@ -282,8 +282,8 @@
       var from = n ? page * PAGE + 1 : 0;
       var to = Math.min(n, page * PAGE + PAGE);
       pager.innerHTML =
-        '<button type="button" class="chip" data-ol-page="prev"' + (page <= 0 ? " disabled" : "") + ">Prev</button>" +
-        '<button type="button" class="chip" data-ol-page="next"' + (page >= pages - 1 ? " disabled" : "") + ">Next</button>" +
+        '<button type="button" class="chip" data-ol-page="prev"' + (page <= 0 ? " disabled" : "") + ">Prev</button>' +
+        '<button type="button" class="chip" data-ol-page="next"' + (page >= pages - 1 ? " disabled" : "") + ">Next</button>' +
         '<span class="count">' + from + "\u2013" + to + " of " + n + "</span>";
       pager.querySelectorAll("[data-ol-page]").forEach(function (btn) {
         btn.onclick = function () {

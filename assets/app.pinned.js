@@ -151,7 +151,6 @@ function nav(active) {
           <a class="${active === "method" ? "active" : ""}" href="./methodology.html">Methodology</a>
           <a class="${active === "about" ? "active" : ""}" href="./about.html">About</a>
         </nav>
-        <span class="badge">Prototype</span>
       </div>
     </header>`;
 }
@@ -172,9 +171,7 @@ function footer() {
     <div class="foot">
       <div class="copy">
         <div><b>© 2026 Junto Nova</b></div>
-        <div>The Draft Model is a DBA of Junto Nova.</div>
-        <div>Not affiliated with, endorsed by, or sponsored by the NBA, the NBA Draft, or any NBA team.</div>
-        <div>Probabilities, not opinions. · Updated ${TANK_RANK.updated} · v${TANK_RANK.version}</div>
+        <div>Updated ${TANK_RANK.updated} · v${TANK_RANK.version}</div>
       </div>
       <nav class="foot-links">
         <a href="./terms.html">Terms</a>
@@ -257,7 +254,6 @@ function renderBoard(root) {
   root.innerHTML = `
     ${nav(year === currentYear() ? "board" : "drafts")}
     <main class="wrap section">
-      <div class="banner">${TANK_RANK.disclaimer} ${draft.note || ""}</div>
       <div class="section-head">
         <div>
           <div class="kicker">${year === currentYear() ? "Living board" : year > currentYear() ? "Upcoming class" : year <= 1949 ? "BAA draft" : "Historic draft"}</div>
@@ -473,7 +469,6 @@ function renderPlayer(root) {
   root.innerHTML = `
     ${nav(year === currentYear() ? "board" : "drafts")}
     <main class="wrap">
-      <div class="banner">${TANK_RANK.disclaimer}</div>
       <section class="player-hero">
         <div>
           <div class="kicker">${year} · #${p.rank} overall · #${p.catRank} ${bucketLabel[p.bucket]}</div>
@@ -486,7 +481,6 @@ function renderPlayer(root) {
             <span class="tag">${p.ht} / ${p.wt} lbs</span>
             <span class="tag">Age ${p.age}</span>
           </div>
-          <p class="lede">Feature drivers in this prototype card: ${p.features.join(", ")}. Real SHAP-style contributions land when the model is wired in.</p>
           <div class="cta-row">
             <a class="btn ghost" href="./board.html?year=${year}">Back to ${year} board</a>
           </div>
