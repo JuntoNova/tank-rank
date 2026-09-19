@@ -43,32 +43,14 @@
       "<td class=\"num " + toneMul(m) + "\">" + mul(m) + "</td>" +
       "</tr>";
   }
-  function applyCopy(kind, measured, bin) {
-    const n = bin.n.toLocaleString("en-US");
-    if (kind === "Height") {
-      return "He measured <b>" + measured + "</b> on draft night. Historically, listed draftees in the <b>" +
-        bin.label + "</b> band (n = " + n + ") move the projection " +
-        shiftWord(bin.mAs) + " for All-Star (" + mul(bin.mAs) + "), " +
-        shiftWord(bin.mNba) + " for All-NBA (" + mul(bin.mNba) + "), " +
-        shiftWord(bin.mHof) + " for Hall of Fame (" + mul(bin.mHof) + "), and " +
-        shiftWord(bin.mMvp) + " for MVP (" + mul(bin.mMvp) + "). That is the height adjustment on this pick only.";
-    }
-    return "He weighed <b>" + measured + "</b>. Historically, listed draftees at <b>" +
-      bin.label + "</b> (n = " + n + ") move the projection " +
-      shiftWord(bin.mAs) + " for All-Star (" + mul(bin.mAs) + "), " +
-      shiftWord(bin.mNba) + " for All-NBA (" + mul(bin.mNba) + "), " +
-      shiftWord(bin.mHof) + " for Hall of Fame (" + mul(bin.mHof) + "), and " +
-      shiftWord(bin.mMvp) + " for MVP (" + mul(bin.mMvp) + "). That is the weight adjustment on this pick only.";
-  }
   function binCard(kind, measured, bin) {
     if (!bin) {
       return '<div class="th-bin"><div class="who"><b>' + kind + "</b></div>" +
-        '<p class="empty">No listed or combine ' + kind.toLowerCase() + " on draft night, so size does not move this pick.</p></div>";
+        '<p class="empty">No listed or combine ' + kind.toLowerCase() + ".</p></div>";
     }
     return '<div class="th-bin">' +
       '<div class="who"><b>' + kind + " " + measured + "</b>" +
       "<span>players " + bin.label + " \u00b7 n = " + bin.n.toLocaleString("en-US") + "</span></div>" +
-      '<p class="apply">' + applyCopy(kind, measured, bin) + "</p>" +
       '<div class="table-wrap"><table><thead><tr>' +
       "<th></th><th>This player</th><th class=\"num\">Applied</th>" +
       "</tr></thead><tbody>" +
@@ -76,8 +58,7 @@
       effectRow("All-NBA", bin.mNba) +
       effectRow("Hall of Fame", bin.mHof) +
       effectRow("MVP", bin.mMvp) +
-      "</tbody></table></div>" +
-      '<p class="more"><a href="./size.html">Full ' + kind.toLowerCase() + " table on /size</a></p></div>";
+      "</tbody></table></div></div>";
   }
   function paintSize(root, feat) {
     if (!TR.Size || !root) return;
@@ -92,9 +73,6 @@
     const htLabel = (feat && feat.ht) ? feat.ht : "\u2014";
     const wtLabel = (feat && feat.wt != null && feat.wt !== "") ? (feat.wt + " lbs") : "\u2014";
     sec.innerHTML =
-      '<div class="th-size-head"><h2>You can\'t teach size</h2>' +
-      '<div class="kicker"><a href="./size.html">/size</a></div></div>' +
-      '<p class="th-size-note">Only this player\u2019s height and weight. The full height and weight tables live on the size page.</p>' +
       binCard("Height", htLabel, found.height) +
       binCard("Weight", wtLabel, found.weight);
     const theories = root.querySelector(".th-player");
