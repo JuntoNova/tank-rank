@@ -1,1 +1,1 @@
-#file:/tmp/mcp_theory_content.js
+/workspace/tdm-hs-path/PUSH_CONTENT.js
