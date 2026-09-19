@@ -175,7 +175,7 @@
         + '<td class="pct">' + vsRate(r.blk, r.eBlk) + "</td>"
         + '<td class="pct">' + vsCell(r.ch, r.eCh) + "</td>"
         + '<td class="pct">' + vsCell(r.mvp, r.eMvp) + "</td>"
-        + '<td class="pct">' + vsCell(r.hof, r.eHof) + "</td>'
+        + '<td class="pct">' + vsCell(r.hof, r.eHof) + "</td>"
         + '<td class="delta' + dcls + '">' + dtxt + "</td>"
       + "</tr>"
     );
@@ -284,7 +284,7 @@
       pager.innerHTML =
         '<button type="button" class="chip" data-ol-page="prev"' + (page <= 0 ? " disabled" : "") + ">Prev</button>" +
         '<button type="button" class="chip" data-ol-page="next"' + (page >= pages - 1 ? " disabled" : "") + ">Next</button>" +
-        '<span class="count">' + from + "–" + to + " of " + n + "</span>";
+        '<span class="count">' + from + "\u2013" + to + " of " + n + "</span>";
       pager.querySelectorAll("[data-ol-page]").forEach(function (btn) {
         btn.onclick = function () {
           if (btn.disabled) return;
