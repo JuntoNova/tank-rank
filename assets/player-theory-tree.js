@@ -1,9 +1,263 @@
-(async function () {
-  var b64 = "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";
-  var bin = Uint8Array.from(atob(b64), function (c) { return c.charCodeAt(0); });
-  var ds = new DecompressionStream("gzip");
-  var stream = new Blob([bin]).stream().pipeThrough(ds);
-  var buf = await new Response(stream).arrayBuffer();
-  var src = new TextDecoder().decode(buf);
-  (0, eval)(src);
+(function () {
+  var TREE = [
+    {
+      label: "You can't teach size",
+      kids: [
+        {
+          name: "Height",
+          kids: [
+            { id: "inch", name: "Every extra inch helps" }
+          ]
+        },
+        {
+          name: "Weight",
+          kids: [
+            { id: "weight", name: "Heavier guys perform better" },
+            { id: "wpi", name: "More pounds per inch helps" }
+          ]
+        },
+        {
+          name: "Length",
+          kids: [
+            { id: "wingspan", name: "Longer arms help" },
+            { id: "ape", name: "Arms longer than height help" },
+            { id: "reach", name: "Higher standing reach helps" }
+          ]
+        },
+        { id: "posht", name: "Bigger than the position helps" },
+        { id: "swing", name: "Guys who can play more than one position do better" }
+      ]
+    },
+    {
+      label: "Tall guys who can dribble are rare",
+      kids: [
+        { id: "astu", name: "Passers perform better" },
+        { id: "handle", name: "Tall passers perform better" }
+      ]
+    },
+    {
+      label: "Drafting younger is better",
+      kids: [
+        { id: "age-yrs", name: "They last longer" },
+        { id: "age-stars", name: "They become stars more often" }
+      ]
+    },
+    {
+      label: "Past performance predicts future performance",
+      kids: [
+        { id: "prod", name: "College stats tell you who will be good" },
+        { id: "astu", name: "Passing travels better than scoring" },
+        { id: "defense", name: "College defense does not tell you anything" },
+        { id: "rim", name: "You still need a big who can block shots" },
+        { id: "shoot", name: "Great shooters stay shooters" },
+        { id: "hselite", name: "Elite high school players overcome a bad college year" }
+      ]
+    },
+    {
+      label: "School, country, and team",
+      kids: [
+        { id: "intl", name: "A pro line is not a college line" }
+      ]
+    }
+  ];
+
+  var NOT_IN = [
+    { name: "Workout numbers do not mean much", why: "Looked at. Combine drills are not a GLM feature." },
+    { name: "Guys who get fouled a lot can get to the rim", why: "Looked at. Free-throw rate is not a GLM feature." },
+    { name: "Taking a lot of threes matters more than a hot percentage", why: "Looked at. Three-point volume is not a GLM feature." },
+    { name: "The best players come from the best colleges", why: "Looked at. School is not a GLM feature." },
+    { name: "The team that drafts him matters as much as the player", why: "Looked at. Team logo is not a GLM feature." },
+    { name: "Leave a raw foreign player overseas until he is ready", why: "Looked at. Stash is not a GLM feature." },
+    { name: "Older guys have a higher floor", why: "Disproven. Not in the player score." }
+  ];
+
+  function css() {
+    if (document.getElementById("player-theory-tree-css")) return;
+    var s = document.createElement("style");
+    s.id = "player-theory-tree-css";
+    s.textContent =
+      ".th-ledger{display:none!important}" +
+      ".th-apply{margin:8px 0 40px}.th-apply .kicker{margin:0 0 8px}" +
+      ".th-apply .theory-list .theory-list{border-top:1px solid var(--line)}" +
+      ".th-apply .theory-acc .theory-acc .theory-name{font-size:18px}" +
+      ".th-apply .theory-acc .theory-acc .theory-acc .theory-name{font-size:17px}" +
+      ".th-bin{margin:4px 0 8px}" +
+      ".th-bin table{width:100%;max-width:420px;border-collapse:collapse;font-size:13px}" +
+      ".th-bin th{text-align:left;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:4px 8px 8px 0}" +
+      ".th-bin td{padding:6px 8px 6px 0;border-top:1px solid var(--line)}" +
+      ".th-bin td.num,.th-bin th.num{text-align:right}" +
+      ".th-bin .pos{color:var(--lime)}.th-bin .neg{color:var(--coral)}" +
+      ".th-bin .empty{color:var(--muted);font-size:13px;margin:0}" +
+      ".th-bin .who{color:var(--muted);font-size:13px;margin:0 0 10px}" +
+      ".th-dn{margin:0 0 22px}.th-dn table{width:100%;max-width:560px;border-collapse:collapse;font-size:13px}" +
+      ".th-dn th{text-align:left;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:4px 12px 8px 0}" +
+      ".th-dn td{padding:6px 12px 6px 0;border-top:1px solid var(--line)}" +
+      ".th-dn td.num{text-align:right;font-family:var(--mono)}";
+    document.head.appendChild(s);
+  }
+  function inches(ht) {
+    var m = String(ht || "").match(/(\d+)\s*-\s*(\d+(?:\.\d+)?)/);
+    return m ? Number(m[1]) * 12 + Number(m[2]) : 0;
+  }
+  function mul(m) { return "\u00d7" + Number(m == null ? 1 : m).toFixed(2); }
+  function tone(m) {
+    m = Number(m == null ? 1 : m);
+    if (m > 1.02) return "pos";
+    if (m < 0.98) return "neg";
+    return "";
+  }
+  function word(m) {
+    m = Number(m == null ? 1 : m);
+    if (m > 1.02) return "up";
+    if (m < 0.98) return "down";
+    return "even";
+  }
+  function row(label, m) {
+    return "<tr><td>" + label + '</td><td class="' + tone(m) + '">' + word(m) + '</td><td class="num ' + tone(m) + '">' + mul(m) + "</td></tr>";
+  }
+  function cleanFact(v) {
+    v = String(v || "").replace(/\s*22\.5\+\s*$/, "").replace(/\s*u19\s*$/i, "").trim();
+    if (v === "-" || v === "missing" || v === "unknown") return "";
+    return v;
+  }
+  function applied(spec) {
+    if (!spec || spec.mAs == null) {
+      return '<div class="th-bin"><p class="empty">No measurement</p></div>';
+    }
+    var fact = spec.fact ? '<p class="who">' + spec.fact + "</p>" : "";
+    var show = spec.show;
+    function want(k) { return !show || show.indexOf(k) >= 0; }
+    var body = "";
+    if (want("yrs")) body += row("Years", spec.mYrs);
+    if (want("as")) body += row("All-Star", spec.mAs);
+    if (want("nba")) body += row("All-NBA", spec.mNba);
+    if (want("hof")) body += row("Hall of Fame", spec.mHof);
+    if (want("mvp")) body += row("MVP", spec.mMvp);
+    return '<div class="th-bin">' + fact +
+      '<table><thead><tr><th></th><th>This player</th><th class="num">Applied</th></tr></thead><tbody>' +
+      body + "</tbody></table></div>";
+  }
+  function fromStep(steps, id) {
+    var s = (steps || []).find(function (x) { return x.id === id; });
+    if (!s) return null;
+    var val = cleanFact(s.value);
+    if (!val) return null;
+    return { fact: val, mAs: s.mAs, mNba: s.mNba, mHof: s.mHof, mMvp: s.mMvp, mYrs: s.mYrs };
+  }
+  function resolve(id, p) {
+    var steps = (p.proj && p.proj.steps) || [];
+    if (id === "inch") return fromStep(steps, "size");
+    if (id === "age" || id === "age-yrs" || id === "age-stars") {
+      var ageStep = fromStep(steps, "age") || { fact: "no age", mAs: 1, mNba: 1, mHof: 1, mMvp: 1, mYrs: 1 };
+      if (id === "age-yrs") ageStep = Object.assign({}, ageStep, { show: ["yrs"] });
+      if (id === "age-stars") ageStep = Object.assign({}, ageStep, { show: ["as", "nba", "hof", "mvp"] });
+      return ageStep;
+    }
+    if (id === "astu" || id === "passers") return fromStep(steps, "astu") || { fact: "no assist line", mAs: 1, mNba: 1, mHof: 1, mMvp: 1 };
+    return fromStep(steps, id);
+  }
+  function plusRow(name, inner) {
+    return '<div class="acc-item theory-acc"><div class="theory-row">' +
+      '<button class="theory-plus" data-acc type="button" aria-label="Toggle">+</button>' +
+      '<span class="theory-name">' + name + "</span></div>" +
+      '<div class="acc-panel">' + inner + "</div></div>";
+  }
+  function renderNode(node, p) {
+    if (node.kids && node.kids.length) {
+      var list = '<div class="acc theory-list">';
+      node.kids.forEach(function (k) { list += renderNode(k, p); });
+      list += "</div>";
+      return plusRow(node.name || node.label, list);
+    }
+    return plusRow(node.name, applied(resolve(node.id, p)));
+  }
+  function draftNight(p, y) {
+    var full = p.proj;
+    if (!full) return "";
+    var fmtPct = (window.TR && TR.Model && TR.Model.fmtPct) ? TR.Model.fmtPct : function (n) { return Math.round((n || 0) * 100) + "%"; };
+    var fmtExp = (window.TR && TR.Model && TR.Model.fmtExp) ? TR.Model.fmtExp : function (n) { return String(n); };
+    var fmtHof = (window.TR && TR.Model && TR.Model.fmtHofRemain) ? TR.Model.fmtHofRemain : fmtPct;
+    var cur = (window.TANK_RANK && TANK_RANK.currentYear) || 2027;
+    var now = "";
+    if (y < cur) {
+      var hofFn = window.TR && (TR.careerHofP || (TR.Model && TR.Model.careerHofP));
+      var hofNow = hofFn ? hofFn(p, y, cur) : null;
+      if (hofNow != null) now = "<tr><td>Hall of Fame now</td><td class=\"num\">" + fmtHof(hofNow) + "</td></tr>";
+    }
+    var fmtBpm = function (n) {
+      if (n == null || !isFinite(Number(n))) return "";
+      n = Number(n);
+      if (Math.abs(n) < 0.05) return "0.0";
+      return (n > 0 ? "+" : "\u2212") + Math.abs(n).toFixed(1);
+    };
+    return '<div class="th-dn"><div class="kicker">Draft night</div><table><tbody>' +
+      "<tr><td>All-Star</td><td class=\"num\">" + fmtExp(full.expAs) + "</td></tr>" +
+      "<tr><td>All-NBA</td><td class=\"num\">" + fmtExp(full.expNba) + "</td></tr>" +
+      "<tr><td>Years</td><td class=\"num\">" + fmtExp(full.expYrs) + "</td></tr>" +
+      "<tr><td>PPG</td><td class=\"num\">" + fmtExp(full.expPts) + "</td></tr>" +
+      "<tr><td>RPG</td><td class=\"num\">" + fmtExp(full.expReb) + "</td></tr>" +
+      "<tr><td>APG</td><td class=\"num\">" + fmtExp(full.expAst) + "</td></tr>" +
+      "<tr><td>BLK</td><td class=\"num\">" + fmtExp(full.expBlk) + "</td></tr>" +
+      "<tr><td>MVP</td><td class=\"num\">" + fmtExp(full.expMvp) + "</td></tr>" +
+      "<tr><td>Hall of Fame then</td><td class=\"num\">" + (TR.Model && TR.Model.fmtHof ? TR.Model.fmtHof(full.pHof) : fmtPct(full.pHof)) + "</td></tr>" +
+      now + "</tbody></table></div>";
+  }
+  function restyle(root) {
+    css();
+    var y = Number(new URLSearchParams(location.search).get("year"));
+    var id = new URLSearchParams(location.search).get("id");
+    var draft = window.TANK_RANK && TANK_RANK.drafts[y];
+    if (!draft || !root) return;
+    var list = draft.players || [];
+    var p = list.find(function (x) { return x.id === id; }) || list[0];
+    if (!p) return;
+    if (!p.proj && window.TR && typeof TR.projectPlayer === "function") {
+      p.proj = TR.projectPlayer(p, Object.assign({}, TR.deriveFeat ? TR.deriveFeat(p) : {}, p.theoryFeat || {}), {});
+    }
+    var box = root.querySelector(".th-player");
+    if (!box) return;
+    var html = '<div class="acc theory-families">';
+    TREE.forEach(function (g, gi) {
+      var inner = '<div class="acc theory-list">';
+      (g.kids || []).forEach(function (k) { inner += renderNode(k, p); });
+      inner += "</div>";
+      html += '<section class="acc-item group-acc"><button class="acc-btn group-acc-btn" type="button" data-group="' + gi + '"><b>' +
+        g.label + '</b><em><i>+</i></em></button><div class="acc-panel">' + inner + "</div></section>";
+    });
+    var notInner = '<div class="acc theory-list">';
+    NOT_IN.forEach(function (t) {
+      notInner += plusRow(t.name, '<div class="th-bin"><p class="empty">' + t.why + "</p></div>");
+    });
+    notInner += "</div>";
+    html += '<section class="acc-item group-acc"><button class="acc-btn group-acc-btn" type="button" data-group="not"><b>Not in this score</b><em><i>+</i></em></button><div class="acc-panel">' + notInner + "</div></section>";
+    html += "</div>";
+    box.className = "section th-player th-apply";
+    box.innerHTML = html;
+    box.querySelectorAll("[data-group]").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        var item = btn.closest(".group-acc");
+        item.classList.toggle("open");
+        var icon = btn.querySelector("i");
+        if (icon) icon.textContent = item.classList.contains("open") ? "\u2212" : "+";
+      });
+    });
+    box.querySelectorAll("[data-acc]").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var item = btn.closest(".theory-acc");
+        item.classList.toggle("open");
+        btn.textContent = item.classList.contains("open") ? "\u2212" : "+";
+      });
+    });
+  }
+  var prev = window.TR && TR.renderPlayer;
+  if (typeof prev === "function") {
+    TR.renderPlayer = function (root) {
+      return Promise.resolve(prev.apply(this, arguments)).then(function () {
+        restyle(root);
+      });
+    };
+  }
 })();
