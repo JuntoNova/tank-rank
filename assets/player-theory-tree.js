@@ -1,1 +1,1 @@
-PLACEHOLDER
+@/workspace/tank-rank-pr19/assets/player-theory-tree.js
