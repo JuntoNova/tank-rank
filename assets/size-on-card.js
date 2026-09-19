@@ -73,8 +73,6 @@
     const htLabel = (feat && feat.ht) ? feat.ht : "\u2014";
     const wtLabel = (feat && feat.wt != null && feat.wt !== "") ? (feat.wt + " lbs") : "\u2014";
     sec.innerHTML =
-      '<div class="th-size-head"><h2>You can\'t teach size</h2>' +
-      '<div class="kicker"><a href="./size.html">/size</a></div></div>' +
       binCard("Height", htLabel, found.height) +
       binCard("Weight", wtLabel, found.weight);
     const theories = root.querySelector(".th-player");
