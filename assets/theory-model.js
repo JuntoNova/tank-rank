@@ -1,1 +1,1 @@
-/tmp/gh-theory-model.fixed.js
+PLACEHOLDER_REPLACE_WITH_FILE
