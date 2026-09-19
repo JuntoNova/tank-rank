@@ -1,1 +1,1 @@
-@file:/tmp/gh-theory-model.fixed.js
+#file:/tmp/mcp_theory_content.js
