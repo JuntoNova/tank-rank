@@ -1,1 +1,785 @@
-!function(){const e=["spain","france","italy","germany","greece","serbia","croatia","slovenia","lithuania","latvia","russia","ukraine","turkey","israel","australia","brazil","argentina","china","senegal","nigeria","cameroon","congo","mali","montenegro","bosnia","poland","czech","sweden","finland","belgium","netherlands","japan","korea","venezuela","mexico","cuba","haiti","jamaica","bahamas","sudan","egypt","ghana","angola","portugal","hungary","romania","bulgaria","georgia","new zealand","dominican","puerto rico","ivory coast"];function n(e){const n=String(e||"").match(/(\d+)\s*-\s*(\d+(?:\.\d+)?)/);return n?12*Number(n[1])+Number(n[2]):0}function t(e,t,a){var l=n(e);return l&&l>=t&&l<=a?l:0}function a(e,n,t){return Math.max(n,Math.min(t,e))}function l(t){const a=t.theoryFeat||{},l=String(t.school||a.school||""),r=l.toLowerCase();let s="",i=a.origin||t.origin||"",u=a.tier||"other";const o=l.match(/\((RS-Fr|RS-So|RS-Jr|RS-Sr|Fr|So|Jr|Sr|HS[^)]*)\.?\)\s*$/i);if(o){const e=o[1].replace(/\./g,"");/^hs/i.test(e)?(s="HS",i=i||"hs",u="hs"):s=e.replace(/^rs-/i,"RS-")}s||(s=a.cls||t.cls||""),i||(/\bhs\b|high school|academy/i.test(r)?(i="hs",s=s||"HS",u="hs"):e.some((function(e){return r.indexOf(e)>=0}))&&!o?(i="intl",s=s||"Intl",u="intl"):i="college");let p=null!=a.age?a.age:null!=t.draftAge?t.draftAge:t.age;""!==p&&null!=p||(p={HS:18,Fr:19,"RS-Fr":19,So:20,"RS-So":20,Jr:21,"RS-Jr":21,Sr:22,"RS-Sr":23,Intl:20}[s]||("intl"===i?20:"hs"===i?18:21)),p=Number(p);const h=a.ht||t.htCombine||t.ht||t.htListed||"",c=null!=a.wt?a.wt:null!=t.wt?t.wt:null,b=a.wsp||t.wsp||"",m=a.reach||t.reach||"",f=String(t.pos||a.pos||""),_=n(h),x=/(^|\b)(PG|SG|G)(\b|\/)/i.test(f),v=null!=a.ast?Number(a.ast):NaN;let g=0;return null!=a.create&&""!==a.create?g=Number(a.create)?1:0:isFinite(v)&&(v>=2.5&&_>=77||v>=2&&x)&&(g=1),{age:isNaN(p)?null:p,cls:s||"",origin:i||"",tier:u,ht:h,wt:c,wsp:b,reach:m,pos:f,stash:a.stash||0,delay:a.delay||0,never:a.never||0,create:g,pts:a.pts,ast:a.ast,stl:a.stl,blk:a.blk,reb:null!=a.reb&&""!==a.reb?a.reb:a.trb,fga:a.fga,fta:a.fta,fg3a:a.fg3a,ft:a.ft,hs_elite:a.hs_elite,hs_pts:a.hs_pts,hs_reb:a.hs_reb,hs_ast:a.hs_ast,hs_blk:a.hs_blk}}function r(){return window.TR&&TR.GLM||null}function s(e){return 1/(1+Math.exp(-a(e,-20,20)))}function i(e,n){const a=r(),l={};(a.features||[]).forEach((function(e){l[e]=0}));var s=e.age;null==s||s>=17&&s<=25.5||(s=null);var i=t(e.ht,68,94),u=null!=e.wt&&""!==e.wt?Number(e.wt):null;null==u||u>=150&&u<=360||(u=null);var o,p=(o=e.pos,o=String(o||"").toUpperCase(),/C/.test(o)&&!/(PG|SG|SF|G)/.test(o)?"C":/(PG|SG|\bG\b)/.test(o)&&!/(PF|C)/.test(o)?"G":/(SF|PF|\bF\b)/.test(o)?"F":/C/.test(o)?"C":/G/.test(o)?"G":""),h=(a.pos_ht||{G:75,F:80,C:83})[p],c=t(e.wsp,70,100),b=t(e.reach,90,125),m=c&&i?c-i:null,f=u&&i?u/i:null,_="hs"===e.origin,x="intl"===e.origin;function v(e){if(null==e||""===e)return null;var n=Number(e);return isFinite(n)?n:null}var g=_?null:v(e.stl),d=_?null:v(e.blk),N=_?null:v(e.pts),M=_?null:v(e.ast),y=null!=e.reb&&""!==e.reb?e.reb:e.trb,k=_?null:v(y);var w,A,S=(w=e.ft,null==(A=v(w))?null:(A>2?A/=1e3:A>1.5&&(A/=100),A<.3||A>1?null:A)),F=null;n&&n<1977?F=null:e.hs_elite?F=1:n>=1977&&(F=0);var H,R={rel_age:null!=s?s-(H=n,(H=Number(H)||0)<=1975?21.7:H<=1988?21.4:H<=2005?21:20.2):null,ht_in:i||null,wt:u,d_ht:i&&h?i-h:null,ape:m,wpi:f,wsp_in:c||null,reach_in:b||null,pts:N,ast:M,stl:g,blk:d,reb:k,ft:S};(a.continuous||[]).forEach((function(e){var n=R[e];if(null==n||"ht_in"===e&&!i||"wsp_in"===e&&!c||"reach_in"===e&&!b)l[e]=0;else{a.winsor&&a.winsor[e]&&(n=Math.max(a.winsor[e][0],Math.min(a.winsor[e][1],n)));var t=a.sds&&a.sds[e]||1,r=a.means[e];x&&a.intl_center&&null!=a.intl_center[e]&&(r=a.intl_center[e]),l[e]=(n-r)/t}})),i||(l.ht_in=0),l.origin_hs=_?1:0,l.origin_intl="intl"===e.origin?1:0;var E=e.create?1:0,C=v(e.hs_ast);if(l.create_tall=_?i>=79&&(E||null!=C&&C>=2.2)?1:0:i>=79&&null!=M&&M>=2.2?1:0,l.swing=function(e){return/\//.test(String(e||""))}(e.pos)?1:0,l.hs_elite=F?1:0,(a.missing||[]).forEach((function(e){l[e]=0})),_||x||(null==R.pts&&(l.miss_pts=1),null==R.ast&&(l.miss_ast=1)),l.has_pts=null!=R.pts?1:0,l.has_ast=null!=R.ast?1:0,l.has_reb=null!=R.reb?1:0,l.has_blk=null!=R.blk?1:0,l.reb=0,l.miss_reb=0,l.pts_hi=0,l.ast_hi=0,l.reb_hi=0,null!=R.reb){var j=7;x&&a.intl_center&&null!=a.intl_center.reb?j=a.intl_center.reb:a.box&&a.box.means&&null!=a.box.means.reb&&(j=a.box.means.reb);var P=a.box&&a.box.sds&&a.box.sds.reb||3,T=Math.max(1,Math.min(20,R.reb));l.reb=(T-j)/P,l.reb_hi=Math.max(0,T-10)/3}if(null!=R.pts){var Y=Math.max(8,Math.min(36,R.pts)),G=a.sds&&a.sds.pts||4.8,O=x&&a.intl_center&&null!=a.intl_center.pts?a.intl_center.pts:16;l.pts_box=(Y-O)/G,l.pts_hi=Math.max(0,Y-24)/4}if(null!=R.ast){var z=Math.max(0,Math.min(12,R.ast));l.ast_hi=Math.max(0,z-5)/2}var B=function(e,n,t,a){var l={};Object.keys(e||{}).forEach((function(n){l[n]=e[n]}));var r=t&&t.honor_winsor||{};return["stl","blk"].forEach((function(e){if(r[e]&&null!=n[e]){var s=Math.max(r[e][0],Math.min(r[e][1],n[e])),i=t.prod_center&&null!=t.prod_center[e]?t.prod_center[e]:t.means&&t.means[e]||0;a&&t.intl_center&&null!=t.intl_center[e]&&(i=t.intl_center[e]);var u=t.sds&&t.sds[e]||1;l[e]=(s-i)/u}})),l}(l,R,a,x);return{x:l,xHonor:B,raw:R,pg:p,htIn:i,age:s,elite:F,year:n}}function u(e,n){if(!e||"constant"===e.kind)return Math.log(e&&e.mu?e.mu:1);var t=Number(e.intercept)||0,a=e.coef||{};return Object.keys(a).forEach((function(e){t+=a[e]*(n[e]||0)})),t}function o(e){return e=a(e,1e-6,.999999),Math.log(e/(1-e))}function p(e,n,t){const l=r();var i=s(u((t=t||l)&&t[e+"_ever"]||l&&l[e+"_ever"],n));i=function(e,n){if(!n)return e;var t=null==n.slope?1:Number(n.slope);return s((Number(n.intercept)||0)+t*o(e))}(i,l&&l.platt&&l.platt[e]);var p,h=t&&t[e+"_pos"]||l&&l[e+"_pos"]||{kind:"constant",mu:1},c=l&&null!=l.lam_min?l.lam_min:1,b=l&&null!=l.lam_max?l.lam_max:8;return{p:i,lam:p="constant"===h.kind?h.mu:a(Math.exp(u(h,n)),c,b),exp:i*p}}function h(e,n,t){const l=r();if(!l&&!n)return{expAs:.4,expNba:.2,expNba1:.05,expYrs:7,expCh:.08,expMvp:.02,pHof:.03,pAs:.11,pNba:.06};var i,h=p("as",t=t||e,n),c=p("nba",t,n),b=p("mvp",t,n),m=p("ch",t,n),f=a(u(n&&n.yrs||l&&l.yrs,e)+(l&&l.yrs_shift||0),1.5,19),_=l&&l.hof_skip||[],x=_.length?p("as",function(e,n){var t={};return Object.keys(e||{}).forEach((function(n){t[n]=e[n]})),(n||[]).forEach((function(e){t[e]=0})),t}(t,_),n):h,v=l&&l.hof_from_as||{},g=x.p,d=x.exp;if("as_star_mix"===v.kind)i=(null!=v.p_given_1to3?v.p_given_1to3:.027)*g+(null!=v.p_given_4plus?v.p_given_4plus:.76)*a((d-(null!=v.eAs_4plus_start?v.eAs_4plus_start:1.5))/(null!=v.eAs_4plus_scale?v.eAs_4plus_scale:6),0,.9);else if("as_count_mix"===v.kind){var N=1-g,M=g*(1-g),y=g*g;i=(null!=v.p_given_0?v.p_given_0:0)*N+(null!=v.p_given_1?v.p_given_1:.027)*M+(null!=v.p_given_2plus?v.p_given_2plus:.04)*y}else if("mixture"===v.kind){var k=null!=v.p_given_as?v.p_given_as:.027,w=null!=v.p_given_no?v.p_given_no:0;i=w+(k-w)*g}else i=null!=v.intercept?s(v.intercept+v.slope*o(g)):.027*g+.76*a((d-1.5)/6,0,.9);i=a(i,l&&null!=l.hof_floor?l.hof_floor:2e-4,l&&null!=l.hof_cap?l.hof_cap:.15);var A,S=a(h.exp,.02,14),F=a(Math.min(c.exp,S),.01,12),H=l&&l.mvp_from_as||{};if("mixture"===H.kind){var R=null!=H.mu_given_as?H.mu_given_as:.155,E=null!=H.mu_given_no?H.mu_given_no:0;A=a(E+(R-E)*h.p,.002,2.5)}else A=a(Math.min(b.exp,S),.002,2.5);function C(e,n){var t=l&&l.box&&l.box[e];if(!t)return null;var r={};return Object.keys(n||{}).forEach((function(e){r[e]=n[e]})),null!=r.pts_box&&(r.pts=r.pts_box),a(u(t,r)+(Number(t.shift)||0),null!=t.lo?t.lo:-20,null!=t.hi?t.hi:30)}function j(e,n){if(null==e||!n)return null;var t=null!=n.resid_sd?n.resid_sd:null!=n.holdout_mae?n.holdout_mae/.8:null;if(null==t)return null;var l=1.2816*t;return{lo:a(e-l,null!=n.lo?n.lo:-20,null!=n.hi?n.hi:30),hi:a(e+l,null!=n.lo?n.lo:-20,null!=n.hi?n.hi:30)}}var P=e.has_pts?C("nba_pts",e):null,T=e.has_reb?C("nba_trb",e):null,Y=e.has_ast?C("nba_ast",e):null,G=e.has_blk?C("nba_blk",e):null,O={expPts:e.has_pts?j(P,l&&l.box&&l.box.nba_pts):null,expReb:e.has_reb?j(T,l&&l.box&&l.box.nba_trb):null,expAst:e.has_ast?j(Y,l&&l.box&&l.box.nba_ast):null,expBlk:e.has_blk?j(G,l&&l.box&&l.box.nba_blk):null};return{pAs:h.p,expAs:S,pNba:c.p,expNba:F,expNba1:a(.22*F,.005,6),expYrs:f,expCh:a(m.exp,.01,4),expMvp:A,pHof:i,expPts:P,expReb:T,expAst:Y,expBlk:G,boxBand:O}}function c(e,n){var t=e.slice().sort((function(e,n){return e-n}));return t.length?t[Math.min(t.length-1,Math.max(0,Math.floor(n*(t.length-1))))]:null}function b(e,n){const t=r();var a=t&&t.boot||[];if(a.length<10)return null;for(var l=t.boot_q&&2===t.boot_q.length?t.boot_q:[.1,.9],s={expAs:[],expNba:[],expNba1:[],expYrs:[],expCh:[],expMvp:[],pHof:[],pAs:[]},i=0;i<a.length;i++){var u=h(e,a[i],n);s.expAs.push(u.expAs),s.expNba.push(u.expNba),s.expNba1.push(u.expNba1),s.expYrs.push(u.expYrs),s.expCh.push(u.expCh),s.expMvp.push(u.expMvp),s.pHof.push(u.pHof),s.pAs.push(u.pAs)}var o={};Object.keys(s).forEach((function(e){o[e]={lo:c(s[e],l[0]),hi:c(s[e],l[1])}}));var p=h(e,null,n);return p&&p.boxBand&&Object.keys(p.boxBand).forEach((function(e){p.boxBand[e]&&(o[e]=p.boxBand[e])})),o}function m(e,n,t){n=n||l(e);const a=Number(e.year||e.y||n.year)||0,s=r(),u=i(n,a),o=u.x,p=u.xHonor||o,c=u.raw,m={age:"./age.html",intl:"./intl.html",size:"./size.html",inch:"./size.html",posht:"./size.html",swing:"./size.html",wpi:"./size.html",ape:"./size.html",handle:"./handle.html",wingspan:"./wingspan.html",reach:"./reach.html",prod:"./prod.html",defense:"./defense.html",astu:"./astu.html",rim:"./rim.html",hselite:"./hselite.html",shoot:"./shoot.html"};function f(e,t){var a=n[e];return"hs"===n.origin?null!=a&&""!==a?a+" HS "+t:"high school":"intl"===n.origin?null==a||""===a?"no "+t+" line":a+" intl "+t:null!=c[e]?c[e]+" "+t:"no "+t+" line"}const _=[{id:"age",label:"Drafting younger",keys:["rel_age"],value:null!=u.age?n.age+" "+(v=n.age,x=null==v||isNaN(v)?"a21":v<19.5?"u19":v<20.5?"a19":v<21.5?"a20":v<22.5?"a21":"a22",{u19:"under 19.5",a19:"19.5-20.5",a20:"20.5-21.5",a21:"21.5-22.5",a22:"22.5+"}[x]||x):"unknown"},{id:"intl",label:"Origin",keys:["origin_hs","origin_intl"],value:"hs"===n.origin?"high school":"intl"===n.origin?"international":"college"},{id:"size",label:"Every extra inch",keys:["ht_in"],value:n.ht||"missing"},{id:"weight",label:"Weight",keys:["wt"],value:null!=n.wt?n.wt+" lbs":"missing"},{id:"wpi",label:"Pounds per inch",keys:["wpi"],value:null==c.wpi?"missing":c.wpi.toFixed(2)+" lb/in"},{id:"wingspan",label:"Wingspan",keys:["wsp_in"],value:n.wsp||"missing"},{id:"ape",label:"Arms vs height",keys:["ape"],value:function(){if(!c.ape&&0!==c.ape)return"missing";var e=(c.ape>=0?"+":"")+Math.round(10*c.ape)/10+" in";return(n.wsp||"")+" vs "+(n.ht||"")+" ("+e+")"}()},{id:"reach",label:"Standing reach",keys:["reach_in"],value:n.reach||"missing"},{id:"posht",label:"Size at position",keys:["d_ht"],value:(n.ht||"")+(n.pos?" / "+n.pos:"")||"missing"},{id:"swing",label:"More than one position",keys:["swing"],value:n.pos?o.swing?n.pos+" (swing)":n.pos+" (one spot)":"missing"},{id:"handle",label:"Tall passers perform better",keys:["create_tall"],value:function(){if("hs"===n.origin)return"high school";if(null==c.ast)return"no assist line";var e=null!=n.ast&&""!==n.ast?n.ast:c.ast;return o.create_tall?(n.ht||"6-7+")+", "+e+" ast, creator":u.htIn>=79?(n.ht||"6-7+")+", "+e+" ast, not a creator":(n.ht||"under 6-7")+", "+e+" ast"}()},{id:"prod",label:"College scoring",keys:["pts","miss_pts"],value:f("pts","pts")},{id:"astu",label:"Passers perform better",keys:["ast","miss_ast"],value:f("ast","ast")},{id:"defense",label:"Steals",keys:["stl"],value:f("stl","stl")},{id:"rim",label:"Shot blocking",keys:["blk"],value:f("blk","blk")},{id:"hselite",label:"Elite high school players overcome a bad college year",keys:["hs_elite"],value:function(){if(a&&a<1977)return"McDonald's AA did not exist";var e=[];return o.hs_elite?e.push("McDonald's All-American"):e.push("not McDonald's AA"),null!=n.hs_pts&&""!==n.hs_pts&&e.push(n.hs_pts+" HS pts"),e.join(", ")}()},{id:"shoot",label:"Great shooters stay shooters",keys:["ft"],value:null==c.ft?"no FT%":Math.round(1e3*c.ft)/10+"% FT"}];var x,v;const g={};(s&&s.features||[]).forEach((function(e){g[e]=0}));var d={};(s&&s.features||[]).forEach((function(e){d[e]=0}));var N=h(g,null,d);const M=[];_.forEach((function(e){e.keys.forEach((function(e){g[e]=o[e]||0,d[e]=p[e]||0}));var n=h(g,null,d),t=0;s&&s.as_ever&&e.keys.forEach((function(e){t+=(s.as_ever.coef[e]||0)*(p[e]||0)}));var a=Math.exp(t),l=0,r=0,i=0,u=0;s&&e.keys.forEach((function(e){s.nba_ever&&(l+=(s.nba_ever.coef[e]||0)*(p[e]||0)),s.mvp_ever&&(r+=(s.mvp_ever.coef[e]||0)*(p[e]||0)),s.hof&&(i+=(s.hof.coef[e]||0)*(p[e]||0)),s.yrs&&(u+=(s.yrs.coef[e]||0)*(o[e]||0))})),M.push({id:e.id,label:e.label,value:e.value,mAs:a,mNba:Math.exp(l),mHof:Math.exp(i),mMvp:Math.exp(r),mYrs:Math.exp(u/8),why:"",href:m[e.id]||"",snap:n,prev:N}),N=n}));const y=h(o,null,p),k=b(o,p);var w=1,A=1,S=1,F=1,H=1;return M.forEach((function(e){w*=e.mAs,A*=e.mNba,S*=e.mHof,F*=e.mMvp,H*=e.mYrs})),{slot:"player",slotAs:1,slotNba:1,slotHof:y.pHof,slotMvp:y.expMvp,pAs:y.pAs,pNba:y.pNba,pHof:y.pHof,expAs:y.expAs,expNba:y.expNba,expNba1:y.expNba1,expYrs:y.expYrs,expCh:y.expCh,expMvp:y.expMvp,expPts:y.expPts,expReb:y.expReb,expAst:y.expAst,expBlk:y.expBlk,band:k,mAs:w,mNba:A,mHof:S,mMvp:F,mYrs:H,scale:w,steps:M,feat:n}}function f(e){if(null==e||""===e||isNaN(e))return"\u2014";if(Math.abs(e)<.005)return"0";const n=Math.abs(e);return(e<0?"-":"")+(n>=10?String(Math.round(n)):n>=1?n.toFixed(1):n.toFixed(2))}function _(e,n,t){if(null==e||null==n||!isFinite(Number(e))||!isFinite(Number(n)))return"";if(t)return(a=Math.round(100*Number(e)))===(l=Math.round(100*Number(n)))?"":a+"\u2013"+l+"%";var a=f(e),l=f(n);return a&&l&&a!==l?a+"\u2013"+l:""}function x(e,n,t){if(!e)return null;if(Number(e.hof))return 1;const l=Number(e.yrs)||0,r=Number(e.g)||0,s=Number(n)||0,i=Number(t)||2027,u=i-(s+Math.max(l,0));if(0===l&&0===r&&s>=i-1)return null;if(u>=20)return 0;if(0===l&&0===r)return 0;const o=Number(null!=e.allStar?e.allStar:e.as)||0,p=Number(null!=e.allNba?e.allNba:e.nba)||0,h=Number(e.nba1)||0,c=Number(e.mvp)||0;if(0===o&&0===p&&0===h&&0===c)return u>=8||l>=8?0:null;const b=Number(null!=e.champs?e.champs:e.ch)||0,m=Number(e.pts)||0,f=Number(e.ws)||0,_=Number(e.vorp)||0,x=m*r;let v=4.2*c+.55*h+.5*p+.22*o+.28*b+.01*Math.max(0,f)+x/14e3+.008*Math.max(0,_);const g=(Number(null!=e.age&&""!==e.age?e.age:e.draftAge)||20)+(i-s);if(u<=1){const e=a(33-g,0,12),n=Math.max(l,1);let t=(o/n*.22+p/n*.5+c/n*4.2)*e*.45;g<=27&&p>=1&&(t+=1.6),g<=26&&c>=1&&(t+=2.5),g<=25&&o>=1&&0===p&&(t+=.7),v+=t}let d=1/(1+Math.exp(-(v-4)));return c>=1&&(o>=6||p>=5)&&(d=Math.max(d,.97)),c>=2&&(d=Math.max(d,.995)),(o>=12||p>=10)&&(d=Math.max(d,.97)),(o>=15||c>=1&&o>=8)&&(d=Math.max(d,.995)),(c>=3||c>=1&&p>=10||o>=18)&&(d=1),u>=8&&u<20&&(d*=Math.max(0,1-(u-8)/12)),a(d,0,1)}function v(e,n){n=n||{};var t=Number(e&&e.yrs)||0,l=Number(e&&e.g)||0,s=Number(e&&(null!=e.allStar?e.allStar:e.as))||0,i=Number(e&&(null!=e.allNba?e.allNba:e.nba))||0,u=Number(e&&e.nba1)||0,o=Number(e&&e.mvp)||0,p=Number(e&&(null!=e.champs?e.champs:e.ch))||0;if(Number(e&&e.hof))return{expAs:s,expNba:i,expNba1:u,expYrs:Math.max(t,1),expCh:p,expMvp:o,pHof:1,pAs:1,now:!0};if(0===t&&0===l)return Object.assign({},n,{now:!1});if(t>=8&&0===s&&0===i&&0===o)return{expAs:0,expNba:0,expNba1:0,expYrs:t,expCh:p,expMvp:0,pHof:2e-4,pAs:0,now:!0};var h=function(e){var n=Number(e.yrs)||0,t=Number(e.g)||0;if(n<=0&&t<=0)return null;var a=Number(e.ws);return isFinite(a)||(a=0),a/Math.max(n,1)}(e),c=a(t/3,.2,.8),b=Number(n.expAs)||0,m=Number(n.expYrs)||8,f=Number(n.expNba)||0,_=Number(n.expMvp)||0,x=Number(n.expCh)||0,v=function(e){return null==e?null:e>=12?10:e>=9?7:e>=7?4.5:e>=5?2.2:e>=3.5?1:e>=2?.45:e>=1?.18:e>=0?.06:.02}(h),g=function(e,n){return null==e?null:n+.85*(e>=7?12:e>=5?10:e>=3?8:e>=1.5?6:e>=.5?4:2)}(h,t),d=.45*v,N=null!=h&&h>=8?.4:null!=h&&h>=5?.12:.02,M=s+(1-c)*Math.max(0,b-s)+c*Math.max(0,(v||0)-s),y=(1-c)*Math.max(t,m)+c*(g||m),k=i+(1-c)*Math.max(0,f-i)+c*Math.max(0,d-i),w=u+.22*k,A=o+(1-c)*Math.max(0,_-o)+c*N,S=p+(1-c)*Math.max(0,x-p),F=1-Math.exp(-Math.max(0,M)),H=function(e){var n=r()&&r().hof_from_as||{},t=null!=n.p_given_1to3?n.p_given_1to3:.027,l=null!=n.p_given_4plus?n.p_given_4plus:.76,s=null!=n.eAs_4plus_start?n.eAs_4plus_start:1.5,i=null!=n.eAs_4plus_scale?n.eAs_4plus_scale:6,u=a(e/3.5,0,.85),o=a((e-s)/i,0,.9);return a(t*u+l*o,2e-4,.15)}(M);return s>=4&&(H=Math.max(H,.08)),{expAs:a(M,0,14),expNba:a(k,0,12),expNba1:a(w,0,8),expYrs:a(y,Math.max(t,1.5),19),expCh:a(S,p,8),expMvp:a(A,o,4),pHof:H,pAs:F,now:!0}}window.TR=window.TR||{},TR.Model={slotBucket:function(e){return 1===(e=Number(e)||99)?"1":e<=3?"2-3":e<=5?"4-5":e<=10?"6-10":e<=14?"11-14":e<=30?"15-30":"31+"},inches:n,deriveFeat:l,project:m,projectNow:v,INTENSITY:{1:{as:5.5,nba:3.2,nba1:.9,yrs:13.5,ch:.55,mvp:.25},"2-3":{as:4.2,nba:2.4,nba1:.65,yrs:11.5,ch:.4,mvp:.06},"4-5":{as:3.8,nba:2.2,nba1:.45,yrs:10.5,ch:.32,mvp:.03},"6-10":{as:3.2,nba:1.8,nba1:.28,yrs:9,ch:.25,mvp:.015},"11-14":{as:2.8,nba:1.6,nba1:.2,yrs:8,ch:.2,mvp:.008},"15-30":{as:2.2,nba:1.4,nba1:.12,yrs:6.5,ch:.14,mvp:.003},"31+":{as:1.8,nba:1.3,nba1:.08,yrs:3.5,ch:.06,mvp:.001}},PLAYER:{as:2.8,nba:1.35,nba1:.3,yrs:8.5,ch:.18,mvp:.2},HOF_CAP:.15,fmtExp:f,fmtPct:function(e){return null!=e&&isFinite(Number(e))?Math.round(100*e)+"%":""},fmtHof:function(e){if(null==e||!isFinite(Number(e)))return"";var n=r()&&null!=r().hof_cap?r().hof_cap:.15;if(Number(e)>=n-5e-4)return"\u2264"+Math.round(100*n)+"%";var t=Math.round(100*Number(e));return 0===t?"<1%":t+"%"},fmtMul:function(e){return"x"+Number(null==e?1:e).toFixed(2)},fmtBand:_,bandHtml:function(e,n,t){var a=_(e,n,t);return a?'<span class="band">'+a+"</span>":""},careerHofP:x,fmtHofRemain:function(e){if(null==e||!isFinite(Number(e)))return"";const n=Number(e);if(n<=0)return"0%";if(n>=.995)return"100%";const t=Math.round(100*n);return 0===t?"<1%":t+"%"}},TR.deriveFeat=l,TR.projectPlayer=m,TR.projectNow=v,TR.bandX=b,TR.careerHofP=x,TR.fetchTheoryPack=function(e){function n(e){return fetch(e).then((function(e){return e.ok?e.json():null})).catch((function(){return null}))}return e=Number(e),Promise.all([n("./assets/theory-packs/all.json?v=81").then((function(n){return n&&n[String(e)]||null})),n("./assets/theory-packs/"+e+".json?v=97")]).then((function(e){var n=e[0],t=e[1];if(!n)return t;if(!t)return n;var a={};(n.players||[]).forEach((function(e){e&&null!=e.pk&&(a[e.pk]=Object.assign({},e))})),(t.players||[]).forEach((function(e){e&&null!=e.pk&&(a[e.pk]=Object.assign({},a[e.pk]||{},e))}));var l=Object.keys(a).map(Number).sort((function(e,n){return e-n}));return Object.assign({},n,t,{players:l.map((function(e){return a[e]}))})}))}}();
+(function () {
+  const COUNTRY = ["spain","france","italy","germany","greece","serbia","croatia","slovenia","lithuania","latvia","russia","ukraine","turkey","israel","australia","brazil","argentina","china","senegal","nigeria","cameroon","congo","mali","montenegro","bosnia","poland","czech","sweden","finland","belgium","netherlands","japan","korea","venezuela","mexico","cuba","haiti","jamaica","bahamas","sudan","egypt","ghana","angola","portugal","hungary","romania","bulgaria","georgia","new zealand","dominican","puerto rico","ivory coast"];
+  const INTENSITY = {
+    "1":     { as: 5.5, nba: 3.2, nba1: 0.90, yrs: 13.5, ch: 0.55, mvp: 0.25 },
+    "2-3":   { as: 4.2, nba: 2.4, nba1: 0.65, yrs: 11.5, ch: 0.40, mvp: 0.06 },
+    "4-5":   { as: 3.8, nba: 2.2, nba1: 0.45, yrs: 10.5, ch: 0.32, mvp: 0.03 },
+    "6-10":  { as: 3.2, nba: 1.8, nba1: 0.28, yrs:  9.0, ch: 0.25, mvp: 0.015 },
+    "11-14": { as: 2.8, nba: 1.6, nba1: 0.20, yrs:  8.0, ch: 0.20, mvp: 0.008 },
+    "15-30": { as: 2.2, nba: 1.4, nba1: 0.12, yrs:  6.5, ch: 0.14, mvp: 0.003 },
+    "31+":   { as: 1.8, nba: 1.3, nba1: 0.08, yrs:  3.5, ch: 0.06, mvp: 0.001 }
+  };
+  const AGE_AS  = { u19: 24.1 / 10.9, a19: 23.3 / 10.9, a20: 17.7 / 10.9, a21: 1, a22: 3.5 / 10.9 };
+  function slotBucket(pk) {
+    pk = Number(pk) || 99;
+    if (pk === 1) return "1";
+    if (pk <= 3) return "2-3";
+    if (pk <= 5) return "4-5";
+    if (pk <= 10) return "6-10";
+    if (pk <= 14) return "11-14";
+    if (pk <= 30) return "15-30";
+    return "31+";
+  }
+  function inches(ht) {
+    const m = String(ht || "").match(/(\d+)\s*-\s*(\d+(?:\.\d+)?)/);
+    return m ? Number(m[1]) * 12 + Number(m[2]) : 0;
+  }
+  function measureIn(ht, lo, hi) {
+    var v = inches(ht);
+    return (v && v >= lo && v <= hi) ? v : 0;
+  }
+  function isSwing(pos) {
+    return /\//.test(String(pos || ""));
+  }
+  function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
+  function shrink(raw, keep) { return 1 + (raw - 1) * keep; }
+  function keepAs(pk)  { return pk <= 5 ? 0.42 : pk <= 14 ? 0.50 : pk <= 30 ? 0.60 : 0.72; }
+  // ~4,700 draftees in the file, ~111 NBA players in Springfield. HOF is ~2% of
+  // people who played and far rarer among all picks. All-time slot rates (~2.4
+  // expected per draft, 34% at #1) overstate that. Scale so a class is ~0.5
+  // expected HOFers and no prospect prints as a near-lock.
+  const PLAYER = { as: 2.8, nba: 1.35, nba1: 0.30, yrs: 8.5, ch: 0.18, mvp: 0.20 };
+  const PLAYER_HOF = 0.010;
+  const HOF_CAP = 0.15;
+  function ageKey(age) {
+    if (age == null || isNaN(age)) return "a21";
+    if (age < 19.5) return "u19";
+    if (age < 20.5) return "a19";
+    if (age < 21.5) return "a20";
+    if (age < 22.5) return "a21";
+    return "a22";
+  }
+  function ageLabel(key) {
+    return ({ u19: "under 19.5", a19: "19.5-20.5", a20: "20.5-21.5", a21: "21.5-22.5", a22: "22.5+" })[key] || key;
+  }
+  function deriveFeat(p) {
+    const given = p.theoryFeat || {};
+    const school = String(p.school || given.school || "");
+    const low = school.toLowerCase();
+    let cls = "";
+    let origin = given.origin || p.origin || "";
+    let tier = given.tier || "other";
+    const cm = school.match(/\((RS-Fr|RS-So|RS-Jr|RS-Sr|Fr|So|Jr|Sr|HS[^)]*)\.?\)\s*$/i);
+    if (cm) {
+      const raw = cm[1].replace(/\./g, "");
+      if (/^hs/i.test(raw)) { cls = "HS"; origin = origin || "hs"; tier = "hs"; }
+      else cls = raw.replace(/^rs-/i, "RS-");
+    }
+    if (!cls) cls = given.cls || p.cls || "";
+    if (!origin) {
+      if (/\bhs\b|high school|academy/i.test(low)) { origin = "hs"; cls = cls || "HS"; tier = "hs"; }
+      else if (COUNTRY.some(function (c) { return low.indexOf(c) >= 0; }) && !cm) {
+        origin = "intl"; cls = cls || "Intl"; tier = "intl";
+      } else origin = "college";
+    }
+    let age = given.age != null ? given.age : (p.draftAge != null ? p.draftAge : p.age);
+    if (age === "" || age == null) {
+      age = ({ HS: 18, Fr: 19, "RS-Fr": 19, So: 20, "RS-So": 20, Jr: 21, "RS-Jr": 21, Sr: 22, "RS-Sr": 23, Intl: 20 })[cls]
+        || (origin === "intl" ? 20 : origin === "hs" ? 18 : 21);
+    }
+    age = Number(age);
+    const ht = given.ht || p.htCombine || p.ht || p.htListed || "";
+    const wt = given.wt != null ? given.wt : (p.wt != null ? p.wt : null);
+    const wsp = given.wsp || p.wsp || "";
+    const reach = given.reach || p.reach || "";
+    const pos = String(p.pos || given.pos || "");
+    const htIn = inches(ht);
+    const guard = /(^|\b)(PG|SG|G)(\b|\/)/i.test(pos);
+    const astN = given.ast != null ? Number(given.ast) : NaN;
+    let create = 0;
+    if (given.create != null && given.create !== "") create = Number(given.create) ? 1 : 0;
+    else if (isFinite(astN)) {
+      if (astN >= 2.5 && htIn >= 77) create = 1;
+      else if (astN >= 2.0 && guard) create = 1;
+    }
+    return {
+      age: isNaN(age) ? null : age, cls: cls || "", origin: origin || "", tier: tier,
+      ht: ht, wt: wt, wsp: wsp, reach: reach, pos: pos,
+      stash: given.stash || 0, delay: given.delay || 0, never: given.never || 0,
+      create: create,
+      pts: given.pts, ast: given.ast, stl: given.stl, blk: given.blk,
+      reb: given.reb != null && given.reb !== "" ? given.reb : given.trb,
+      fga: given.fga, fta: given.fta, fg3a: given.fg3a,
+      ft: given.ft,
+      hs_elite: given.hs_elite,
+      hs_pts: given.hs_pts, hs_reb: given.hs_reb, hs_ast: given.hs_ast, hs_blk: given.hs_blk
+    };
+  }
+  function glm() { return (window.TR && TR.GLM) || null; }
+  function sigmoid(z) { return 1 / (1 + Math.exp(-clamp(z, -20, 20))); }
+  function eraMed(y) {
+    y = Number(y) || 0;
+    if (y <= 1975) return 21.7;
+    if (y <= 1988) return 21.4;
+    if (y <= 2005) return 21.0;
+    return 20.2;
+  }
+  function posGroup(pos) {
+    pos = String(pos || "").toUpperCase();
+    if (/C/.test(pos) && !/(PG|SG|SF|G)/.test(pos)) return "C";
+    if (/(PG|SG|\bG\b)/.test(pos) && !/(PF|C)/.test(pos)) return "G";
+    if (/(SF|PF|\bF\b)/.test(pos)) return "F";
+    if (/C/.test(pos)) return "C";
+    if (/G/.test(pos)) return "G";
+    return "";
+  }
+  function glmX(feat, year) {
+    const G = glm();
+    const x = {};
+    (G.features || []).forEach(function (k) { x[k] = 0; });
+    var age = feat.age;
+    if (age != null && !(age >= 17 && age <= 25.5)) age = null;
+    var htIn = measureIn(feat.ht, 68, 94);
+    var wt = feat.wt != null && feat.wt !== "" ? Number(feat.wt) : null;
+    if (wt != null && !(wt >= 150 && wt <= 360)) wt = null;
+    var pg = posGroup(feat.pos);
+    var posHt = (G.pos_ht || { G: 75, F: 80, C: 83 })[pg];
+    var wsp = measureIn(feat.wsp, 70, 100);
+    var reachIn = measureIn(feat.reach, 90, 125);
+    var ape = (wsp && htIn) ? (wsp - htIn) : null;
+    var wpi = (wt && htIn) ? (wt / htIn) : null;
+    var hs = feat.origin === "hs";
+    var intl = feat.origin === "intl";
+    function boxNum(v) {
+      if (v == null || v === "") return null;
+      var n = Number(v);
+      return isFinite(n) ? n : null;
+    }
+    // High school counting stats are not college counting stats.
+    // International lines are kept and scored against a typical pro line.
+    var stl = hs ? null : boxNum(feat.stl);
+    var blk = hs ? null : boxNum(feat.blk);
+    var pts = hs ? null : boxNum(feat.pts);
+    var ast = hs ? null : boxNum(feat.ast);
+    var rebRaw = feat.reb != null && feat.reb !== "" ? feat.reb : feat.trb;
+    var reb = hs ? null : boxNum(rebRaw);
+    function ftNum(v) {
+      var n = boxNum(v);
+      if (n == null) return null;
+      if (n > 2) n = n / 1000;
+      else if (n > 1.5) n = n / 100;
+      if (n < 0.3 || n > 1) return null;
+      return n;
+    }
+    var ft = ftNum(feat.ft);
+    var elite = null;
+    if (year && year < 1977) elite = null;
+    else if (feat.hs_elite) elite = 1;
+    else if (year >= 1977) elite = 0;
+    var rel = (age != null) ? (age - eraMed(year)) : null;
+    var dHt = (htIn && posHt) ? (htIn - posHt) : null;
+    var raw = {
+      rel_age: rel, ht_in: htIn || null, wt: wt, d_ht: dHt, ape: ape,
+      wpi: wpi, wsp_in: wsp || null, reach_in: reachIn || null,
+      pts: pts, ast: ast, stl: stl, blk: blk, reb: reb, ft: ft
+    };
+    (G.continuous || []).forEach(function (k) {
+      var v = raw[k];
+      if (v == null || (k === "ht_in" && !htIn) || (k === "wsp_in" && !wsp) || (k === "reach_in" && !reachIn)) { x[k] = 0; return; }
+      if (G.winsor && G.winsor[k]) {
+        v = Math.max(G.winsor[k][0], Math.min(G.winsor[k][1], v));
+      }
+      var sd = (G.sds && G.sds[k]) || 1;
+      var mu = G.means[k];
+      if (intl && G.intl_center && G.intl_center[k] != null) mu = G.intl_center[k];
+      x[k] = (v - mu) / sd;
+    });
+    if (!htIn) x.ht_in = 0;
+    x.origin_hs = hs ? 1 : 0;
+    x.origin_intl = feat.origin === "intl" ? 1 : 0;
+    var createFlag = feat.create ? 1 : 0;
+    var hsAst = boxNum(feat.hs_ast);
+    if (hs) {
+      x.create_tall = (htIn >= 79 && (createFlag || (hsAst != null && hsAst >= 2.2))) ? 1 : 0;
+    } else {
+      x.create_tall = (htIn >= 79 && ast != null && ast >= 2.2) ? 1 : 0;
+    }
+    x.swing = isSwing(feat.pos) ? 1 : 0;
+    x.hs_elite = elite ? 1 : 0;
+    (G.missing || []).forEach(function (k) { x[k] = 0; });
+    // Missing is omitted, not imputed as typical. Fire only the scoring-line
+    // miss dummies (miss_stl/blk/length mint junk). Box rates stay null below.
+    // Non-college origins have no college box by design — do not invent a production deficit.
+    if (!hs && !intl) {
+      if (raw.pts == null) x.miss_pts = 1;
+      if (raw.ast == null) x.miss_ast = 1;
+    }
+    x.has_pts = raw.pts != null ? 1 : 0;
+    x.has_ast = raw.ast != null ? 1 : 0;
+    x.has_reb = raw.reb != null ? 1 : 0;
+    x.has_blk = raw.blk != null ? 1 : 0;
+    x.reb = 0;
+    x.miss_reb = 0;
+    x.pts_hi = 0;
+    x.ast_hi = 0;
+    x.reb_hi = 0;
+    if (raw.reb != null) {
+      var rmu = 7;
+      if (intl && G.intl_center && G.intl_center.reb != null) rmu = G.intl_center.reb;
+      else if (G.box && G.box.means && G.box.means.reb != null) rmu = G.box.means.reb;
+      var rsd = (G.box && G.box.sds && G.box.sds.reb) || 3;
+      var rv = Math.max(1, Math.min(20, raw.reb));
+      x.reb = (rv - rmu) / rsd;
+      x.reb_hi = Math.max(0, rv - 10) / 3;
+    }
+    if (raw.pts != null) {
+      var pv = Math.max(8, Math.min(36, raw.pts));
+      var psd = (G.sds && G.sds.pts) || 4.8;
+      var pmu = (intl && G.intl_center && G.intl_center.pts != null) ? G.intl_center.pts : 16;
+      x.pts_box = (pv - pmu) / psd;
+      x.pts_hi = Math.max(0, pv - 24) / 4;
+    }
+    if (raw.ast != null) {
+      var av = Math.max(0, Math.min(12, raw.ast));
+      x.ast_hi = Math.max(0, av - 5) / 2;
+    }
+    var xHonor = honorCap(x, raw, G, intl);
+    return { x: x, xHonor: xHonor, raw: raw, pg: pg, htIn: htIn, age: age, elite: elite, year: year };
+  }
+  function honorCap(x, raw, G, intl) {
+    var y = {};
+    Object.keys(x || {}).forEach(function (k) { y[k] = x[k]; });
+    var hw = (G && G.honor_winsor) || {};
+    ["stl", "blk"].forEach(function (k) {
+      if (!hw[k] || raw[k] == null) return;
+      var v = Math.max(hw[k][0], Math.min(hw[k][1], raw[k]));
+      var mu = (G.prod_center && G.prod_center[k] != null) ? G.prod_center[k] : ((G.means && G.means[k]) || 0);
+      if (intl && G.intl_center && G.intl_center[k] != null) mu = G.intl_center[k];
+      var sd = (G.sds && G.sds[k]) || 1;
+      y[k] = (v - mu) / sd;
+    });
+    return y;
+  }
+  function linpred(spec, x) {
+    if (!spec || spec.kind === "constant") return Math.log(spec && spec.mu ? spec.mu : 1);
+    var s = Number(spec.intercept) || 0;
+    var coef = spec.coef || {};
+    Object.keys(coef).forEach(function (k) { s += coef[k] * (x[k] || 0); });
+    return s;
+  }
+  function logit(p) {
+    p = clamp(p, 1e-6, 1 - 1e-6);
+    return Math.log(p / (1 - p));
+  }
+  function platt(p, spec) {
+    if (!spec) return p;
+    var sl = spec.slope == null ? 1 : Number(spec.slope);
+    var ic = Number(spec.intercept) || 0;
+    return sigmoid(ic + sl * logit(p));
+  }
+  function hurdle(key, x, P) {
+    const G = glm();
+    P = P || G;
+    var ever = (P && P[key + "_ever"]) || (G && G[key + "_ever"]);
+    var p = sigmoid(linpred(ever, x));
+    p = platt(p, G && G.platt && G.platt[key]);
+    var pos = (P && P[key + "_pos"]) || (G && G[key + "_pos"]) || { kind: "constant", mu: 1 };
+    var lo = G && G.lam_min != null ? G.lam_min : 1;
+    var hi = G && G.lam_max != null ? G.lam_max : 8;
+    var lam;
+    if (pos.kind === "constant") lam = pos.mu;
+    else lam = clamp(Math.exp(linpred(pos, x)), lo, hi);
+    return { p: p, lam: lam, exp: p * lam };
+  }
+  function xSkip(x, keys) {
+    var y = {};
+    Object.keys(x || {}).forEach(function (k) { y[k] = x[k]; });
+    (keys || []).forEach(function (k) { y[k] = 0; });
+    return y;
+  }
+  function scoreX(x, P, xH) {
+    const G = glm();
+    if (!G && !P) {
+      return { expAs: 0.4, expNba: 0.2, expNba1: 0.05, expYrs: 7, expCh: 0.08, expMvp: 0.02, pHof: 0.03, pAs: 0.11, pNba: 0.06 };
+    }
+    xH = xH || x;
+    var as = hurdle("as", xH, P);
+    var nba = hurdle("nba", xH, P);
+    var mvp = hurdle("mvp", xH, P);
+    var ch = hurdle("ch", xH, P);
+    var yrsSpec = (P && P.yrs) || (G && G.yrs);
+    var yrs = clamp(linpred(yrsSpec, x) + ((G && G.yrs_shift) || 0), 1.5, 19);
+    var skip = (G && G.hof_skip) || [];
+    var asHof = skip.length ? hurdle("as", xSkip(xH, skip), P) : as;
+    var pHof;
+    var spec = (G && G.hof_from_as) || {};
+    var pAsHof = asHof.p;
+    var eAsHof = asHof.exp;
+    if (spec.kind === "as_star_mix") {
+      // Hall is a 4+ All-Star career. 1–3 All-Stars are ~3% HOF (1980–1998).
+      // Never-All-Star is not a Hall path. A 14% All-Star is not 2% to be inner-circle.
+      var p13 = spec.p_given_1to3 != null ? spec.p_given_1to3 : 0.027;
+      var p4 = spec.p_given_4plus != null ? spec.p_given_4plus : 0.76;
+      var start = spec.eAs_4plus_start != null ? spec.eAs_4plus_start : 1.5;
+      var scale = spec.eAs_4plus_scale != null ? spec.eAs_4plus_scale : 6;
+      var p4plus = clamp((eAsHof - start) / scale, 0, 0.9);
+      pHof = p13 * pAsHof + p4 * p4plus;
+    } else if (spec.kind === "as_count_mix") {
+      var p0 = 1 - pAsHof;
+      var p1 = pAsHof * (1 - pAsHof);
+      var p2 = pAsHof * pAsHof;
+      pHof = (spec.p_given_0 != null ? spec.p_given_0 : 0) * p0
+        + (spec.p_given_1 != null ? spec.p_given_1 : 0.027) * p1
+        + (spec.p_given_2plus != null ? spec.p_given_2plus : 0.04) * p2;
+    } else if (spec.kind === "mixture") {
+      var yes = spec.p_given_as != null ? spec.p_given_as : 0.027;
+      var no = spec.p_given_no != null ? spec.p_given_no : 0;
+      pHof = no + (yes - no) * pAsHof;
+    } else if (spec.intercept != null) {
+      pHof = sigmoid(spec.intercept + spec.slope * logit(pAsHof));
+    } else {
+      pHof = 0.027 * pAsHof + 0.76 * clamp((eAsHof - 1.5) / 6, 0, 0.9);
+    }
+    pHof = clamp(pHof, G && G.hof_floor != null ? G.hof_floor : 0.0002, G && G.hof_cap != null ? G.hof_cap : 0.15);
+    var expAs = clamp(as.exp, 0.02, 14);
+    var expNba = clamp(Math.min(nba.exp, expAs), 0.01, 12);
+    var expMvp;
+    var mv = (G && G.mvp_from_as) || {};
+    if (mv.kind === "mixture") {
+      var my = mv.mu_given_as != null ? mv.mu_given_as : 0.155;
+      var mn = mv.mu_given_no != null ? mv.mu_given_no : 0;
+      expMvp = clamp(mn + (my - mn) * as.p, 0.002, 2.5);
+    } else {
+      expMvp = clamp(Math.min(mvp.exp, expAs), 0.002, 2.5);
+    }
+    function boxPred(key, x) {
+      var spec = G && G.box && G.box[key];
+      if (!spec) return null;
+      var xb = {};
+      Object.keys(x || {}).forEach(function (k) { xb[k] = x[k]; });
+      if (xb.pts_box != null) xb.pts = xb.pts_box;
+      var v = linpred(spec, xb) + (Number(spec.shift) || 0);
+      return clamp(v, spec.lo != null ? spec.lo : -20, spec.hi != null ? spec.hi : 30);
+    }
+    function boxBandOf(v, spec) {
+      if (v == null || !spec) return null;
+      var sd = spec.resid_sd != null ? spec.resid_sd : (spec.holdout_mae != null ? spec.holdout_mae / 0.8 : null);
+      if (sd == null) return null;
+      var w = 1.2816 * sd;
+      return {
+        lo: clamp(v - w, spec.lo != null ? spec.lo : -20, spec.hi != null ? spec.hi : 30),
+        hi: clamp(v + w, spec.lo != null ? spec.lo : -20, spec.hi != null ? spec.hi : 30)
+      };
+    }
+    var expPts = x.has_pts ? boxPred("nba_pts", x) : null;
+    var expReb = x.has_reb ? boxPred("nba_trb", x) : null;
+    var expAst = x.has_ast ? boxPred("nba_ast", x) : null;
+    var expBlk = x.has_blk ? boxPred("nba_blk", x) : null;
+    var boxBand = {
+      expPts: x.has_pts ? boxBandOf(expPts, G && G.box && G.box.nba_pts) : null,
+      expReb: x.has_reb ? boxBandOf(expReb, G && G.box && G.box.nba_trb) : null,
+      expAst: x.has_ast ? boxBandOf(expAst, G && G.box && G.box.nba_ast) : null,
+      expBlk: x.has_blk ? boxBandOf(expBlk, G && G.box && G.box.nba_blk) : null
+    };
+    return {
+      pAs: as.p, expAs: expAs,
+      pNba: nba.p, expNba: expNba, expNba1: clamp(expNba * 0.22, 0.005, 6),
+      expYrs: yrs, expCh: clamp(ch.exp, 0.01, 4), expMvp: expMvp,
+      pHof: pHof,
+      expPts: expPts, expReb: expReb, expAst: expAst, expBlk: expBlk,
+      boxBand: boxBand
+    };
+  }
+  function quantile(arr, q) {
+    var a = arr.slice().sort(function (x, y) { return x - y; });
+    if (!a.length) return null;
+    var i = Math.min(a.length - 1, Math.max(0, Math.floor(q * (a.length - 1))));
+    return a[i];
+  }
+  function bandX(x, xH) {
+    const G = glm();
+    var boots = (G && G.boot) || [];
+    if (boots.length < 10) return null;
+    var qs = (G.boot_q && G.boot_q.length === 2) ? G.boot_q : [0.1, 0.9];
+    var acc = { expAs: [], expNba: [], expNba1: [], expYrs: [], expCh: [], expMvp: [], pHof: [], pAs: [] };
+    for (var i = 0; i < boots.length; i++) {
+      var s = scoreX(x, boots[i], xH);
+      acc.expAs.push(s.expAs);
+      acc.expNba.push(s.expNba);
+      acc.expNba1.push(s.expNba1);
+      acc.expYrs.push(s.expYrs);
+      acc.expCh.push(s.expCh);
+      acc.expMvp.push(s.expMvp);
+      acc.pHof.push(s.pHof);
+      acc.pAs.push(s.pAs);
+    }
+    var out = {};
+    Object.keys(acc).forEach(function (k) {
+      out[k] = { lo: quantile(acc[k], qs[0]), hi: quantile(acc[k], qs[1]) };
+    });
+    var scored = scoreX(x, null, xH);
+    if (scored && scored.boxBand) {
+      Object.keys(scored.boxBand).forEach(function (k) {
+        if (scored.boxBand[k]) out[k] = scored.boxBand[k];
+      });
+    }
+    return out;
+  }
+  function project(p, feat, priors) {
+    feat = feat || deriveFeat(p);
+    const year = Number(p.year || p.y || feat.year) || 0;
+    const G = glm();
+    const built = glmX(feat, year);
+    const xFull = built.x;
+    const xHonor = built.xHonor || xFull;
+    const raw = built.raw;
+    const HREF = {
+      age: "./age.html", intl: "./intl.html", size: "./size.html", inch: "./size.html",
+      posht: "./size.html", swing: "./size.html", wpi: "./size.html", ape: "./size.html",
+      handle: "./handle.html", wingspan: "./wingspan.html", reach: "./reach.html",
+      prod: "./prod.html", defense: "./defense.html", astu: "./astu.html", rim: "./rim.html",
+      hselite: "./hselite.html", shoot: "./shoot.html"
+    };
+    function apeLabel() {
+      if (!raw.ape && raw.ape !== 0) return "missing";
+      var s = (raw.ape >= 0 ? "+" : "") + (Math.round(raw.ape * 10) / 10) + " in";
+      return (feat.wsp || "") + " vs " + (feat.ht || "") + " (" + s + ")";
+    }
+    function wpiLabel() {
+      if (raw.wpi == null) return "missing";
+      return raw.wpi.toFixed(2) + " lb/in";
+    }
+    function prodLabel(key, unit) {
+      var v = feat[key];
+      if (feat.origin === "hs") {
+        return (v != null && v !== "") ? (v + " HS " + unit) : "high school";
+      }
+      if (feat.origin === "intl") {
+        if (v == null || v === "") return "no " + unit + " line";
+        return v + " intl " + unit;
+      }
+      return raw[key] != null ? (raw[key] + " " + unit) : ("no " + unit + " line");
+    }
+    function shootLabel() {
+      if (raw.ft == null) return "no FT%";
+      return (Math.round(raw.ft * 1000) / 10) + "% FT";
+    }
+    function hseliteLabel() {
+      if (year && year < 1977) return "McDonald's AA did not exist";
+      var bits = [];
+      if (xFull.hs_elite) bits.push("McDonald's All-American");
+      else bits.push("not McDonald's AA");
+      if (feat.hs_pts != null && feat.hs_pts !== "") bits.push(feat.hs_pts + " HS pts");
+      return bits.join(", ");
+    }
+    function tallPassLabel() {
+      if (feat.origin === "hs") return "high school";
+      if (raw.ast == null) return "no assist line";
+      var asts = feat.ast != null && feat.ast !== "" ? feat.ast : raw.ast;
+      if (xFull.create_tall) return (feat.ht || "6-7+") + ", " + asts + " ast, creator";
+      if (built.htIn >= 79) return (feat.ht || "6-7+") + ", " + asts + " ast, not a creator";
+      return (feat.ht || "under 6-7") + ", " + asts + " ast";
+    }
+    const groups = [
+      { id: "age", label: "Drafting younger", keys: ["rel_age"],
+        value: built.age != null ? (feat.age + " " + ageLabel(ageKey(feat.age))) : "unknown" },
+      { id: "intl", label: "Origin", keys: ["origin_hs", "origin_intl"],
+        value: feat.origin === "hs" ? "high school" : feat.origin === "intl" ? "international" : "college" },
+      { id: "size", label: "Every extra inch", keys: ["ht_in"],
+        value: feat.ht || "missing" },
+      { id: "weight", label: "Weight", keys: ["wt"],
+        value: feat.wt != null ? (feat.wt + " lbs") : "missing" },
+      { id: "wpi", label: "Pounds per inch", keys: ["wpi"],
+        value: wpiLabel() },
+      { id: "wingspan", label: "Wingspan", keys: ["wsp_in"],
+        value: feat.wsp || "missing" },
+      { id: "ape", label: "Arms vs height", keys: ["ape"],
+        value: apeLabel() },
+      { id: "reach", label: "Standing reach", keys: ["reach_in"],
+        value: feat.reach || "missing" },
+      { id: "posht", label: "Size at position", keys: ["d_ht"],
+        value: (feat.ht || "") + (feat.pos ? " / " + feat.pos : "") || "missing" },
+      { id: "swing", label: "More than one position", keys: ["swing"],
+        value: feat.pos ? (xFull.swing ? (feat.pos + " (swing)") : (feat.pos + " (one spot)")) : "missing" },
+      { id: "handle", label: "Tall passers perform better", keys: ["create_tall"],
+        value: tallPassLabel() },
+      { id: "prod", label: "College scoring", keys: ["pts", "miss_pts"],
+        value: prodLabel("pts", "pts") },
+      { id: "astu", label: "Passers perform better", keys: ["ast", "miss_ast"],
+        value: prodLabel("ast", "ast") },
+      { id: "defense", label: "Steals", keys: ["stl"],
+        value: prodLabel("stl", "stl") },
+      { id: "rim", label: "Shot blocking", keys: ["blk"],
+        value: prodLabel("blk", "blk") },
+      { id: "hselite", label: "Elite high school players overcome a bad college year", keys: ["hs_elite"],
+        value: hseliteLabel() },
+      { id: "shoot", label: "Great shooters stay shooters", keys: ["ft"],
+        value: shootLabel() }
+    ];
+    const x = {};
+    (G && G.features || []).forEach(function (k) { x[k] = 0; });
+    var xH = {};
+    (G && G.features || []).forEach(function (k) { xH[k] = 0; });
+    var prev = scoreX(x, null, xH);
+    const steps = [];
+    groups.forEach(function (g) {
+      g.keys.forEach(function (k) {
+        x[k] = xFull[k] || 0;
+        xH[k] = xHonor[k] || 0;
+      });
+      var cur = scoreX(x, null, xH);
+      var dLog = 0;
+      if (G && G.as_ever) {
+        g.keys.forEach(function (k) {
+          dLog += (G.as_ever.coef[k] || 0) * (xHonor[k] || 0);
+        });
+      }
+      var mAs = Math.exp(dLog);
+      var dNba = 0, dMvp = 0, dHof = 0, dYrs = 0;
+      if (G) {
+        g.keys.forEach(function (k) {
+          if (G.nba_ever) dNba += (G.nba_ever.coef[k] || 0) * (xHonor[k] || 0);
+          if (G.mvp_ever) dMvp += (G.mvp_ever.coef[k] || 0) * (xHonor[k] || 0);
+          if (G.hof) dHof += (G.hof.coef[k] || 0) * (xHonor[k] || 0);
+          if (G.yrs) dYrs += (G.yrs.coef[k] || 0) * (xFull[k] || 0);
+        });
+      }
+      steps.push({
+        id: g.id, label: g.label, value: g.value,
+        mAs: mAs, mNba: Math.exp(dNba), mHof: Math.exp(dHof), mMvp: Math.exp(dMvp),
+        mYrs: Math.exp(dYrs / 8),
+        why: "", href: HREF[g.id] || "",
+        snap: cur, prev: prev
+      });
+      prev = cur;
+    });
+    const full = scoreX(xFull, null, xHonor);
+    const band = bandX(xFull, xHonor);
+    var mAs = 1, mNba = 1, mHof = 1, mMvp = 1, mYrs = 1;
+    steps.forEach(function (s) {
+      mAs *= s.mAs; mNba *= s.mNba; mHof *= s.mHof; mMvp *= s.mMvp; mYrs *= s.mYrs;
+    });
+    return {
+      slot: "player", slotAs: 1, slotNba: 1, slotHof: full.pHof, slotMvp: full.expMvp,
+      pAs: full.pAs, pNba: full.pNba, pHof: full.pHof,
+      expAs: full.expAs, expNba: full.expNba, expNba1: full.expNba1,
+      expYrs: full.expYrs, expCh: full.expCh, expMvp: full.expMvp,
+      expPts: full.expPts, expReb: full.expReb, expAst: full.expAst, expBlk: full.expBlk,
+      band: band,
+      mAs: mAs, mNba: mNba, mHof: mHof, mMvp: mMvp, mYrs: mYrs,
+      scale: mAs, steps: steps, feat: feat
+    };
+  }
+  function fmtExp(n) {
+    if (n == null || n === "" || isNaN(n)) return "\u2014";
+    if (Math.abs(n) < 0.005) return "0";
+    const abs = Math.abs(n);
+    const body = abs >= 10 ? String(Math.round(abs)) : abs >= 1 ? abs.toFixed(1) : abs.toFixed(2);
+    return (n < 0 ? "-" : "") + body;
+  }
+  function fmtPct(n) { return (n == null || !isFinite(Number(n))) ? "" : Math.round(n * 100) + "%"; }
+  function fmtHof(n) {
+    if (n == null || !isFinite(Number(n))) return "";
+    var cap = (glm() && glm().hof_cap != null) ? glm().hof_cap : 0.15;
+    if (Number(n) >= cap - 0.0005) return "\u2264" + Math.round(cap * 100) + "%";
+    var p = Math.round(Number(n) * 100);
+    return p === 0 ? "<1%" : p + "%";
+  }
+  function fmtMul(m) { return "x" + Number(m == null ? 1 : m).toFixed(2); }
+  function fmtBand(lo, hi, pct) {
+    if (lo == null || hi == null || !isFinite(Number(lo)) || !isFinite(Number(hi))) return "";
+    if (pct) {
+      var a = Math.round(Number(lo) * 100), b = Math.round(Number(hi) * 100);
+      if (a === b) return "";
+      return a + "\u2013" + b + "%";
+    }
+    var a = fmtExp(lo), b = fmtExp(hi);
+    if (!a || !b || a === b) return "";
+    return a + "\u2013" + b;
+  }
+  function bandHtml(lo, hi, pct) {
+    var t = fmtBand(lo, hi, pct);
+    return t ? '<span class="band">' + t + "</span>" : "";
+  }
+  // Remaining Hall odds from the career so far. Draft-night pHof is a different
+  // number. This one is: given the resume and whether they are still playing,
+  // will Springfield take them?
+  //   already in → 100%
+  //   retired ~20+ years and not in → 0%
+  //   empty resume (no AS / All-NBA / MVP) → null (use draft-night). An empty
+  //     year is not a 2% Hall ticket. The logistic at score 0 is ~2% and that
+  //     was painting every 2025 draftee as 2% after one season.
+  function careerHofP(p, draftYear, nowYear) {
+    if (!p) return null;
+    if (Number(p.hof)) return 1;
+    const yrs = Number(p.yrs) || 0;
+    const g = Number(p.g) || 0;
+    const y = Number(draftYear) || 0;
+    const now = Number(nowYear) || 2027;
+    const last = y + Math.max(yrs, 0);
+    const retiredFor = now - last;
+    if (yrs === 0 && g === 0 && y >= now - 1) return null;
+    if (retiredFor >= 20) return 0;
+    if (yrs === 0 && g === 0) return 0;
+    const as = Number(p.allStar != null ? p.allStar : p.as) || 0;
+    const nba = Number(p.allNba != null ? p.allNba : p.nba) || 0;
+    const nba1 = Number(p.nba1) || 0;
+    const mvp = Number(p.mvp) || 0;
+    if (as === 0 && nba === 0 && nba1 === 0 && mvp === 0) {
+      if (retiredFor >= 8 || yrs >= 8) return 0;
+      return null;
+    }
+    const ch = Number(p.champs != null ? p.champs : p.ch) || 0;
+    const pts = Number(p.pts) || 0;
+    const ws = Number(p.ws) || 0;
+    const vorp = Number(p.vorp) || 0;
+    const totpts = pts * g;
+    let s = mvp * 4.2 + nba1 * 0.55 + nba * 0.50 + as * 0.22 + ch * 0.28
+      + Math.max(0, ws) * 0.010 + totpts / 14000 + Math.max(0, vorp) * 0.008;
+    const draftAge = Number(p.age != null && p.age !== "" ? p.age : p.draftAge) || 20;
+    const ageNow = draftAge + (now - y);
+    if (retiredFor <= 1) {
+      const runway = clamp(33 - ageNow, 0, 12);
+      const denom = Math.max(yrs, 1);
+      let extra = (as / denom * 0.22 + nba / denom * 0.50 + mvp / denom * 4.2) * runway * 0.45;
+      if (ageNow <= 27 && nba >= 1) extra += 1.6;
+      if (ageNow <= 26 && mvp >= 1) extra += 2.5;
+      if (ageNow <= 25 && as >= 1 && nba === 0) extra += 0.7;
+      s += extra;
+    }
+    let pr = 1 / (1 + Math.exp(-(s - 4.0)));
+    if (mvp >= 1 && (as >= 6 || nba >= 5)) pr = Math.max(pr, 0.97);
+    if (mvp >= 2) pr = Math.max(pr, 0.995);
+    if (as >= 12 || nba >= 10) pr = Math.max(pr, 0.97);
+    if (as >= 15 || (mvp >= 1 && as >= 8)) pr = Math.max(pr, 0.995);
+    if (mvp >= 3 || (mvp >= 1 && nba >= 10) || as >= 18) pr = 1;
+    if (retiredFor >= 8 && retiredFor < 20) pr *= Math.max(0, 1 - (retiredFor - 8) / 12);
+    return clamp(pr, 0, 1);
+  }
+  function fmtHofRemain(n) {
+    if (n == null || !isFinite(Number(n))) return "";
+    const p = Number(n);
+    if (p <= 0) return "0%";
+    if (p >= 0.995) return "100%";
+    const pct = Math.round(p * 100);
+    return pct === 0 ? "<1%" : pct + "%";
+  }
+  function fetchTheoryPack(year) {
+    year = Number(year);
+    function get(url) {
+      return fetch(url).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+    }
+    return Promise.all([
+      get("./assets/theory-packs/all.json?v=81").then(function (all) {
+        return (all && all[String(year)]) || null;
+      }),
+      get("./assets/theory-packs/" + year + ".json?v=97")
+    ]).then(function (parts) {
+      var thin = parts[0], rich = parts[1];
+      if (!thin) return rich;
+      if (!rich) return thin;
+      var by = {};
+      (thin.players || []).forEach(function (f) {
+        if (f && f.pk != null) by[f.pk] = Object.assign({}, f);
+      });
+      (rich.players || []).forEach(function (f) {
+        if (!f || f.pk == null) return;
+        by[f.pk] = Object.assign({}, by[f.pk] || {}, f);
+      });
+      var pks = Object.keys(by).map(Number).sort(function (a, b) { return a - b; });
+      return Object.assign({}, thin, rich, { players: pks.map(function (k) { return by[k]; }) });
+    });
+  }
+  function wsPerYear(p) {
+    var yrs = Number(p.yrs) || 0;
+    var g = Number(p.g) || 0;
+    if (yrs <= 0 && g <= 0) return null;
+    var ws = Number(p.ws);
+    if (!isFinite(ws)) ws = 0;
+    return ws / Math.max(yrs, 1);
+  }
+  function impliedAsFromPace(wpy) {
+    if (wpy == null) return null;
+    if (wpy >= 12) return 10;
+    if (wpy >= 9) return 7;
+    if (wpy >= 7) return 4.5;
+    if (wpy >= 5) return 2.2;
+    if (wpy >= 3.5) return 1.0;
+    if (wpy >= 2) return 0.45;
+    if (wpy >= 1) return 0.18;
+    if (wpy >= 0) return 0.06;
+    return 0.02;
+  }
+  function impliedYrsFromPace(wpy, yrsHave) {
+    if (wpy == null) return null;
+    var extra = wpy >= 7 ? 12 : wpy >= 5 ? 10 : wpy >= 3 ? 8 : wpy >= 1.5 ? 6 : wpy >= 0.5 ? 4 : 2;
+    return yrsHave + extra * 0.85;
+  }
+  function hofFromAsExp(eAs) {
+    var spec = (glm() && glm().hof_from_as) || {};
+    var p13 = spec.p_given_1to3 != null ? spec.p_given_1to3 : 0.027;
+    var p4 = spec.p_given_4plus != null ? spec.p_given_4plus : 0.76;
+    var start = spec.eAs_4plus_start != null ? spec.eAs_4plus_start : 1.5;
+    var scale = spec.eAs_4plus_scale != null ? spec.eAs_4plus_scale : 6;
+    var pAs = clamp(eAs / 3.5, 0, 0.85);
+    var p4plus = clamp((eAs - start) / scale, 0, 0.9);
+    return clamp(p13 * pAs + p4 * p4plus, 0.0002, 0.15);
+  }
+  // Draft-night prior blended with NBA pace so far. One season of 8 WS is
+  // evidence. One season of −0.1 WS is evidence. An empty All-Star box is not
+  // a 2% Hall ticket and is not "same as draft night" either.
+  function projectNow(p, draft) {
+    draft = draft || {};
+    var yrs = Number(p && p.yrs) || 0;
+    var g = Number(p && p.g) || 0;
+    var asHave = Number(p && (p.allStar != null ? p.allStar : p.as)) || 0;
+    var nbaHave = Number(p && (p.allNba != null ? p.allNba : p.nba)) || 0;
+    var nba1Have = Number(p && p.nba1) || 0;
+    var mvpHave = Number(p && p.mvp) || 0;
+    var chHave = Number(p && (p.champs != null ? p.champs : p.ch)) || 0;
+    if (Number(p && p.hof)) {
+      return {
+        expAs: asHave, expNba: nbaHave, expNba1: nba1Have, expYrs: Math.max(yrs, 1),
+        expCh: chHave, expMvp: mvpHave, pHof: 1, pAs: 1, now: true
+      };
+    }
+    if (yrs === 0 && g === 0) {
+      return Object.assign({}, draft, { now: false });
+    }
+    if (yrs >= 8 && asHave === 0 && nbaHave === 0 && mvpHave === 0) {
+      return {
+        expAs: 0, expNba: 0, expNba1: 0, expYrs: yrs, expCh: chHave, expMvp: 0,
+        pHof: 0.0002, pAs: 0, now: true
+      };
+    }
+    var wpy = wsPerYear(p);
+    var w = clamp(yrs / 3, 0.2, 0.8);
+    var eAs0 = Number(draft.expAs) || 0;
+    var eYrs0 = Number(draft.expYrs) || 8;
+    var eNba0 = Number(draft.expNba) || 0;
+    var eMvp0 = Number(draft.expMvp) || 0;
+    var eCh0 = Number(draft.expCh) || 0;
+    var impliedAs = impliedAsFromPace(wpy);
+    var impliedYrs = impliedYrsFromPace(wpy, yrs);
+    var impliedNba = impliedAs * 0.45;
+    var impliedMvp = (wpy != null && wpy >= 8) ? 0.4 : (wpy != null && wpy >= 5) ? 0.12 : 0.02;
+    var expAs = asHave + (1 - w) * Math.max(0, eAs0 - asHave) + w * Math.max(0, (impliedAs || 0) - asHave);
+    var expYrs = (1 - w) * Math.max(yrs, eYrs0) + w * (impliedYrs || eYrs0);
+    var expNba = nbaHave + (1 - w) * Math.max(0, eNba0 - nbaHave) + w * Math.max(0, impliedNba - nbaHave);
+    var expNba1 = nba1Have + expNba * 0.22;
+    var expMvp = mvpHave + (1 - w) * Math.max(0, eMvp0 - mvpHave) + w * impliedMvp;
+    var expCh = chHave + (1 - w) * Math.max(0, eCh0 - chHave);
+    var pAs = 1 - Math.exp(-Math.max(0, expAs));
+    var pHof = hofFromAsExp(expAs);
+    if (asHave >= 4) pHof = Math.max(pHof, 0.08);
+    return {
+      expAs: clamp(expAs, 0, 14),
+      expNba: clamp(expNba, 0, 12),
+      expNba1: clamp(expNba1, 0, 8),
+      expYrs: clamp(expYrs, Math.max(yrs, 1.5), 19),
+      expCh: clamp(expCh, chHave, 8),
+      expMvp: clamp(expMvp, mvpHave, 4),
+      pHof: pHof,
+      pAs: pAs,
+      now: true
+    };
+  }
+  window.TR = window.TR || {};
+  TR.Model = { slotBucket: slotBucket, inches: inches, deriveFeat: deriveFeat, project: project, projectNow: projectNow, INTENSITY: INTENSITY, PLAYER: PLAYER, HOF_CAP: HOF_CAP, fmtExp: fmtExp, fmtPct: fmtPct, fmtHof: fmtHof, fmtMul: fmtMul, fmtBand: fmtBand, bandHtml: bandHtml, careerHofP: careerHofP, fmtHofRemain: fmtHofRemain };
+  TR.deriveFeat = deriveFeat;
+  TR.projectPlayer = project;
+  TR.projectNow = projectNow;
+  TR.bandX = bandX;
+  TR.careerHofP = careerHofP;
+  TR.fetchTheoryPack = fetchTheoryPack;
+})();
