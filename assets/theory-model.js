@@ -92,7 +92,6 @@
       if (astN >= 2.5 && htIn >= 77) create = 1;
       else if (astN >= 2.0 && guard) create = 1;
     }
-    if (origin === "hs") create = 0;
     return {
       age: isNaN(age) ? null : age, cls: cls || "", origin: origin || "", tier: tier,
       ht: ht, wt: wt, wsp: wsp, reach: reach, pos: pos,
@@ -188,14 +187,23 @@
     if (!htIn) x.ht_in = 0;
     x.origin_hs = hs ? 1 : 0;
     x.origin_intl = feat.origin === "intl" ? 1 : 0;
-    x.create_tall = (!hs && htIn >= 79 && ast != null && ast >= 2.2) ? 1 : 0;
+    var createFlag = feat.create ? 1 : 0;
+    var hsAst = boxNum(feat.hs_ast);
+    if (hs) {
+      x.create_tall = (htIn >= 79 && (createFlag || (hsAst != null && hsAst >= 2.2))) ? 1 : 0;
+    } else {
+      x.create_tall = (htIn >= 79 && ast != null && ast >= 2.2) ? 1 : 0;
+    }
     x.swing = isSwing(feat.pos) ? 1 : 0;
     x.hs_elite = elite ? 1 : 0;
     (G.missing || []).forEach(function (k) { x[k] = 0; });
     // Missing is omitted, not imputed as typical. Fire only the scoring-line
     // miss dummies (miss_stl/blk/length mint junk). Box rates stay null below.
-    if (raw.pts == null) x.miss_pts = 1;
-    if (raw.ast == null) x.miss_ast = 1;
+    // Non-college origins have no college box by design — do not invent a production deficit.
+    if (!hs && !intl) {
+      if (raw.pts == null) x.miss_pts = 1;
+      if (raw.ast == null) x.miss_ast = 1;
+    }
     x.has_pts = raw.pts != null ? 1 : 0;
     x.has_ast = raw.ast != null ? 1 : 0;
     x.has_reb = raw.reb != null ? 1 : 0;
@@ -434,7 +442,7 @@
     function prodLabel(key, unit) {
       var v = feat[key];
       if (feat.origin === "hs") {
-        return (v != null && v !== "") ? (v + " HS " + unit + ", not college") : "high school";
+        return (v != null && v !== "") ? (v + " HS " + unit) : "high school";
       }
       if (feat.origin === "intl") {
         if (v == null || v === "") return "no " + unit + " line";
@@ -455,7 +463,7 @@
       return bits.join(", ");
     }
     function tallPassLabel() {
-      if (feat.origin === "hs") return "high school (not college creation)";
+      if (feat.origin === "hs") return "high school";
       if (raw.ast == null) return "no assist line";
       var asts = feat.ast != null && feat.ast !== "" ? feat.ast : raw.ast;
       if (xFull.create_tall) return (feat.ht || "6-7+") + ", " + asts + " ast, creator";
@@ -591,8 +599,6 @@
   //   empty resume (no AS / All-NBA / MVP) → null (use draft-night). An empty
   //     year is not a 2% Hall ticket. The logistic at score 0 is ~2% and that
   //     was painting every 2025 draftee as 2% after one season.
-  //   eight seasons, never an All-Star or All-NBA → 0%
-  //   no NBA season yet → null, caller uses draft-night pHof
   function careerHofP(p, draftYear, nowYear) {
     if (!p) return null;
     if (Number(p.hof)) return 1;
