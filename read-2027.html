@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>How to read the 2027 board | The Draft Model</title>
+  <meta name="description" content="Consensus order plus theory-adjusted All-Star, All-NBA, and Hall of Fame estimates for the 2027 class. Method on Methodology." />
+  <link rel="canonical" href="https://thedraftmodel.com/read-2027.html" />
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#090a0c" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="The Draft Model" />
+  <meta property="og:title" content="How to read the 2027 board | The Draft Model" />
+  <meta property="og:description" content="Consensus order plus theory-adjusted All-Star, All-NBA, and Hall of Fame estimates for the 2027 class. Method on Methodology." />
+  <meta property="og:url" content="https://thedraftmodel.com/read-2027.html" />
+  <meta property="og:image" content="https://thedraftmodel.com/assets/og.svg" />
+  <link rel="stylesheet" href="./assets/styles.css?v=86" />
+</head>
+<body>
+  <div id="app"></div>
+  <script src="./assets/data.js?v=67"></script>
+  <script src="./assets/app.js?v=86"></script>
+  <script src="./assets/nav-swap.js?v=90"></script>
+  <script>
+    TR.renderSimple(document.getElementById("app"), "", "How to read the 2027 board", "2027 board", `
+      <p>The living board is a working consensus order for the 2027 class: college and international. The heading shows the real count (100 players today).</p>
+      <p>Each row carries theory-adjusted All-Star, All-NBA, years, and Hall of Fame estimates from draft-night traits. Estimates, not guarantees. Tiny Hall figures print as <code>&lt;1%</code>, never <code>0%</code>. Missing scoring lines stay blank; the board does not invent a college season. Method is on <a href="./methodology.html">Methodology</a>.</p>
+      <h2>A worked example: Tyran Stokes at #1</h2>
+      <p>Stokes sits first on the 2027 board (Kansas, forward). Hall of Fame shows <code>&lt;1%</code> from age, size, and origin without a scored college line. Argue with <a href="./theories.html">Theories</a>, then open the <a href="./board.html?year=2027">board</a>.</p>
+      <h2>What the columns mean</h2>
+      <ul>
+        <li><strong>AS / 1st / All-NBA / HOF</strong>: estimated career honors from the theory model.</li>
+        <li><strong>Yrs / Chips / MVP</strong>: expected counts on the same path.</li>
+        <li><strong>PPG / RPG / APG / BLK</strong>: career-rate projections when a pre-draft line exists; blank when no pre-draft line exists.</li>
+        <li><strong>No P(Bust)</strong>: no published bust definition, so that column stays off.</li>
+      </ul>
+      <h2>What this site is not</h2>
+      <p>Not affiliated with, endorsed by, or sponsored by the NBA, the NBA Draft, or any NBA team. No team logos. No game film. Public names and box-score facts only.</p>
+      <p>Questions: <a href="mailto:andrew@juntonova.com">andrew@juntonova.com</a> · <a href="https://x.com/jandrewclark" target="_blank" rel="noopener noreferrer">@jandrewclark</a></p>
+    `);
+  </script>
+</body>
+</html>
