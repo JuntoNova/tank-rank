@@ -1,1 +1,1 @@
-/workspace/tdm-hs-path/PUSH_CONTENT.js
+PLACEHOLDER_LOAD_FROM_/tmp/full_theory_push.json
