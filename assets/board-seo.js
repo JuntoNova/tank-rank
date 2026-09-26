@@ -29,8 +29,8 @@
     var historic = year < cur();
     var title = year + " NBA Draft " + (historic ? "Results" : "Big Board") + " | The Draft Model";
     var desc = historic
-      ? year + " NBA draft results with theory-adjusted AS / All-NBA / HOF estimates versus career. Method on Methodology."
-      : year + " NBA draft board with theory-adjusted AS / All-NBA / HOF estimates. Method on Methodology.";
+      ? year + " NBA draft results, with each pick's career so far next to the model's draft-night expected All-Star and All-NBA selections and Hall of Fame chance."
+      : year + " NBA draft big board, with each prospect's expected All-Star and All-NBA selections and Hall of Fame chance.";
     var url = ORIGIN + "/board.html?year=" + year;
     document.title = title;
     meta("name", "description", desc);
