@@ -1,0 +1,10 @@
+# Keep internal notes and the research pipeline out of the public deploy.
+# Workers static assets: gitignore syntax, read by wrangler deploy.
+/docs/
+/pipeline/
+# Repo and build internals (Workers Builds checkout and generated config).
+/.git/
+/wrangler.jsonc
+/.gitignore
+/.nojekyll
+/README.md
