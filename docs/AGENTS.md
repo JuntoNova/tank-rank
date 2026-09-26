@@ -1,7 +1,7 @@
 # Agent notes — The Draft Model
 
 Read this file before changing nav, homepage doors, About, or `assets/app.js`.
-Grok (chat) and Grok bot both ship to `JuntoNova/tank-rank` main. Cloudflare Pages deploys that branch. If you skip this file you will undo the other agent.
+Grok (chat) and Grok bot both ship to `JuntoNova/tank-rank` main. Cloudflare Workers Builds deploys that branch. If you skip this file you will undo the other agent.
 
 Live: https://thedraftmodel.com
 Repo: https://github.com/JuntoNova/tank-rank
