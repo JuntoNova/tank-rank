@@ -5,7 +5,7 @@ window.__THEORY_GROUPS = [
         label: "You can't teach size",
         items: [
           { name: "You can't teach size", href: "./size.html", pill: "In model", cls: "num",
-            cuts: ["What people say: You cannot teach height, length, or strength. Take the bigger guy.", "What we found: Height, weight, wingspan, reach, and size at the position all move the odds. Draft slot is not in this check."] }
+            cuts: ["What people say: You cannot teach height, length, or strength. Take the bigger guy.", "What we found: Height, weight, wingspan, reach, and size at the position all move the model's career estimates. Draft slot is not in this check."] }
         ]
       },
       {
